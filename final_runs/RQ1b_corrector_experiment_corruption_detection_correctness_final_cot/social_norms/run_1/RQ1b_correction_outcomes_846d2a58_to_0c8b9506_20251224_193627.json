@@ -1,0 +1,68 @@
+[
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action taken: \nI revised the motivation to clarify that there is no direct causal relationship from Norm BMI to Socio-cultural Ideal BMI. The new motivation states:\n\"There is no direct causal relationship from Norm BMI to Socio-cultural Ideal BMI. Instead, socio-cultural ideals often influence perceptions of a normal BMI, not the other way around.\""
+  },
+  {
+    "source": "Group-level BMI",
+    "target": "Norm BMI",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to accurately reflect the social and perceptual mechanisms by which higher Group-level BMI can shift the perceived 'normal' BMI, rather than incorrectly emphasizing physiological or metabolic adaptation. The edge type remains POSITIVE, as the relationship is indeed causal and directional."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is correct, as there is no causal relationship (the terms are essentially synonymous). I have revised the motivation to explain that \"Norm BMI\" and \"Healthy BMI\" are overlapping definitions and thus not causally related."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Societal or group BMI norms influence what individuals perceive as an ideal BMI for themselves through social comparison and internalization of societal standards.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Group-level BMI",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NEGATIVE) is correct because higher physical activity leads to lower group-level BMI. However, the motivation was a bit unclear. I have revised the motivation to provide clearer causal reasoning:\n\nRevised Motivation:\n\"Higher levels of physical activity increase energy expenditure, which can lead to reduced body fat and lower BMI at the group level, resulting in a negative association between physical activity and BMI.\""
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Total Daily Energy Intake (TDEI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: Changed edge type from NONE to POSITIVE.\n\nNew Motivation: Increased physical activity raises energy expenditure, which often leads to higher appetite and food intake to compensate for energy loss, resulting in a higher total daily energy intake.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "error",
+    "corrected": false,
+    "note": "Connection error."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NONE) is appropriate since there is no direct causal relationship from Norm BMI to Group-level BMI. I have added a clear motivation: there is no direct causal link; group-level BMI arises from multiple other factors. The existence of a Norm BMI may reflect ideals, but does not itself cause changes in group averages without further influences or actions."
+  }
+]

@@ -101,12 +101,19 @@ def analyze_single_mode(df: pd.DataFrame, mode: str, output_dir: Path):
     # Calculate speedup relative to 1 worker
     baseline_time = mode_df[mode_df["worker_count"] == 1]["wall_clock_s"].mean()
     
-    # Aggregate by worker count
-    agg = mode_df.groupby("worker_count").agg({
+    # Aggregate by worker count (tokens_per_edge is optional)
+    agg_dict = {
         "wall_clock_s": list,
         "cumulative_api_s": "mean",
-        "tokens_per_edge": "mean",
-    }).reset_index()
+    }
+    if "tokens_per_edge" in mode_df.columns:
+        agg_dict["tokens_per_edge"] = "mean"
+    
+    agg = mode_df.groupby("worker_count").agg(agg_dict).reset_index()
+    
+    # Add tokens_per_edge column with NaN if not present
+    if "tokens_per_edge" not in agg.columns:
+        agg["tokens_per_edge"] = np.nan
     
     agg["wall_clock_mean"] = agg["wall_clock_s"].apply(lambda x: np.mean(x))
     agg["wall_clock_std"] = agg["wall_clock_s"].apply(lambda x: np.std(x, ddof=1) if len(x) > 1 else 0)
@@ -145,8 +152,11 @@ def create_combined_figure(all_agg: pd.DataFrame, output_dir: Path):
     ax = axes[0, 0]
     for mode in modes:
         mode_agg = all_agg[all_agg["mode"] == mode]
+        # Use asymmetric [min, max] error bars per uncertainty rule (N<30)
+        lower_err = mode_agg["wall_clock_mean"] - mode_agg["wall_clock_min"]
+        upper_err = mode_agg["wall_clock_max"] - mode_agg["wall_clock_mean"]
         ax.errorbar(mode_agg["worker_count"], mode_agg["wall_clock_mean"], 
-                    yerr=mode_agg["wall_clock_ci"], fmt='o-', capsize=5, 
+                    yerr=[lower_err, upper_err], fmt='o-', capsize=5, 
                     color=colors.get(mode, "#95a5a6"), markersize=8, linewidth=2,
                     label=f'{mode.capitalize()}')
     
@@ -157,7 +167,7 @@ def create_combined_figure(all_agg: pd.DataFrame, output_dir: Path):
     ax.plot(workers, theoretical, '--', color='gray', linewidth=2, label='Theoretical')
     
     ax.set_xlabel('Number of Workers')
-    ax.set_ylabel('Wall-Clock Time (s) ± 95% CI')
+    ax.set_ylabel('Wall-Clock Time (s) [min, max]')
     ax.set_title('(A) Wall-Clock Time vs Parallelization')
     ax.legend()
     ax.set_xticks(workers)
@@ -210,7 +220,7 @@ def create_combined_figure(all_agg: pd.DataFrame, output_dir: Path):
     ax.legend(loc='upper right')
     ax.grid(axis='y', alpha=0.3)
     
-    # Panel D: Tokens per edge comparison
+    # Panel D: Tokens per edge comparison (skip if data not available)
     ax = axes[1, 1]
     tokens_data = []
     for mode in modes:
@@ -218,17 +228,24 @@ def create_combined_figure(all_agg: pd.DataFrame, output_dir: Path):
         tokens = mode_agg["tokens_per_edge"].mean()
         tokens_data.append(tokens)
     
-    bars = ax.bar(modes, tokens_data, color=[colors.get(m, "#95a5a6") for m in modes],
-                  alpha=0.8, edgecolor='black')
-    
-    for bar, tokens in zip(bars, tokens_data):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 10,
-               f'{tokens:.0f}', ha='center', va='bottom', fontsize=11, fontweight='bold')
-    
-    ax.set_xlabel('Judge Type')
-    ax.set_ylabel('Tokens per Edge')
-    ax.set_title('(D) Token Usage by Judge Type')
-    ax.grid(axis='y', alpha=0.3)
+    if not all(np.isnan(t) for t in tokens_data):
+        bars = ax.bar(modes, tokens_data, color=[colors.get(m, "#95a5a6") for m in modes],
+                      alpha=0.8, edgecolor='black')
+        
+        for bar, tokens in zip(bars, tokens_data):
+            if not np.isnan(tokens):
+                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 10,
+                       f'{tokens:.0f}', ha='center', va='bottom', fontsize=11, fontweight='bold')
+        
+        ax.set_xlabel('Judge Type')
+        ax.set_ylabel('Tokens per Edge')
+        ax.set_title('(D) Token Usage by Judge Type')
+        ax.grid(axis='y', alpha=0.3)
+    else:
+        ax.text(0.5, 0.5, 'Token data\nnot available', ha='center', va='center', 
+                fontsize=14, transform=ax.transAxes)
+        ax.set_title('(D) Token Usage by Judge Type')
+        ax.axis('off')
     
     plt.tight_layout()
     plt.savefig(figures_dir / "parallelization_combined.png", dpi=300)
@@ -244,8 +261,11 @@ def create_combined_figure(all_agg: pd.DataFrame, output_dir: Path):
     ax = axes[0]
     for mode in modes:
         mode_agg = all_agg[all_agg["mode"] == mode]
+        # Use asymmetric [min, max] error bars per uncertainty rule (N<30)
+        lower_err = mode_agg["wall_clock_mean"] - mode_agg["wall_clock_min"]
+        upper_err = mode_agg["wall_clock_max"] - mode_agg["wall_clock_mean"]
         ax.errorbar(mode_agg["worker_count"], mode_agg["wall_clock_mean"], 
-                    yerr=mode_agg["wall_clock_ci"], fmt='o-', capsize=5, 
+                    yerr=[lower_err, upper_err], fmt='o-', capsize=5, 
                     color=colors.get(mode, "#95a5a6"), markersize=10, linewidth=2,
                     label=f'{mode.capitalize()} Judge')
     
@@ -318,7 +338,9 @@ def generate_summary(all_agg: pd.DataFrame, output_dir: Path):
                        f"{row['efficiency']:.0f}%\n")
             
             f.write(f"\nBaseline (sequential): {baseline:.1f}s\n")
-            f.write(f"Tokens per edge: {mode_agg['tokens_per_edge'].mean():.0f}\n")
+            tokens_mean = mode_agg['tokens_per_edge'].mean()
+            if not np.isnan(tokens_mean):
+                f.write(f"Tokens per edge: {tokens_mean:.0f}\n")
             f.write("\n")
         
         f.write("\nKEY FINDINGS:\n")
@@ -377,14 +399,14 @@ def generate_latex_table(all_agg: pd.DataFrame, output_dir: Path):
             line = f"{int(w)}"
             
             if len(corr) > 0:
-                line += f" & ${corr['wall_clock_mean'].values[0]:.1f} \\pm {corr['wall_clock_ci'].values[0]:.1f}$"
+                line += f" & ${corr['wall_clock_mean'].values[0]:.1f}~[{corr['wall_clock_min'].values[0]:.1f}, {corr['wall_clock_max'].values[0]:.1f}]$"
                 line += f" & {corr['speedup'].values[0]:.2f}$\\times$"
                 line += f" & {corr['efficiency'].values[0]:.0f}\\%"
             else:
                 line += " & --- & --- & ---"
             
             if len(cit) > 0:
-                line += f" & ${cit['wall_clock_mean'].values[0]:.1f} \\pm {cit['wall_clock_ci'].values[0]:.1f}$"
+                line += f" & ${cit['wall_clock_mean'].values[0]:.1f}~[{cit['wall_clock_min'].values[0]:.1f}, {cit['wall_clock_max'].values[0]:.1f}]$"
                 line += f" & {cit['speedup'].values[0]:.2f}$\\times$"
                 line += f" & {cit['efficiency'].values[0]:.0f}\\%"
             else:

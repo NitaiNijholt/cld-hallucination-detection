@@ -1,0 +1,131 @@
+[
+  {
+    "source": "Individual Ideal BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"The concept of Individual Ideal BMI is often influenced by normative standards such as the Norm BMI, which reflects population-level guidelines or cultural standards. Individuals' understanding or selection of their ideal BMI is shaped by these societal norms.\")\n\nReasoning:\n- Judge flagged a lack of motivation, but more importantly, there is a likely POSITIVE causal relationship: Norm BMI (societal standards) influence what individuals consider their Ideal BMI.\n- Therefore, the edge type should be changed to POSITIVE with clear reasoning.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Basal Metabolic Rate",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The correct action was to use revise_motivation. The edge type (POSITIVE) is appropriate, but the motivation needed to clarify that the effect of physical activity on Basal Metabolic Rate is indirect and mediated by muscle mass. The revised motivation is:\n\n\"Physical activity level influences Basal Metabolic Rate (BMR) primarily through its effect on muscle mass. Increased physical activity, especially resistance or strength training, can lead to greater muscle mass, which in turn elevates BMR because muscle tissue requires more energy at rest than fat tissue. Thus, the causal effect from physical activity to BMR is indirect and mediated by changes in muscle mass.\""
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Societal norms around BMI can influence what individuals consider to be their ideal BMI. People often adjust their personal body weight goals to align with what is considered normative or desirable in their social context.\")\n\nReasoning:\n- The edge was set as NONE, meaning no causal relationship, but in reality, societal 'Norm BMI' does influence an individual's perception of their ideal BMI (POSITIVE).\n- The motivation was missing; the new motivation now correctly explains how norms shape individuals' ideals.\n- The correction addresses the absence of reasoning and fixes the type.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to clearly explain why there is no causal relationship. The edge type (NONE) was correct, as \"Healthy BMI\" and \"Norm BMI\" are overlapping concepts. The new motivation now states:\n\n\"There is no causal relationship between 'Healthy BMI' and 'Norm BMI' because they represent overlapping or equivalent concepts. A healthy BMI is typically defined as being within the normal BMI range.\""
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is correct, since \"Healthy BMI\" (a population-level guideline) does not causally determine an individual's ideal BMI. I have revised the motivation to clearly explain there is no direct causal relationship: an individual's ideal BMI depends on unique personal and medical factors, not on the existence of general healthy BMI standards."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Having a normal (norm) BMI is defined as being within a range that is considered healthy for adults, according to established medical guidelines. Therefore, achieving or maintaining a norm BMI directly results in having a healthy BMI.\")\n\nReasoning:\n- The judge noted there was no reasoning and the \"NONE\" edge was incorrect.\n- There is a direct, definitional causal relationship: a norm BMI is, by definition, a healthy BMI.\n- The correct edge is POSITIVE, since having a norm BMI causes (is equivalent to) having a healthy BMI.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE',\nnew_motivation=\"Higher physical activity levels increase energy expenditure, which helps regulate body weight and maintain a healthy BMI through better caloric balance and prevention of excess fat accumulation.\")\n\nReasoning:\n- Judge flagged the edge as incorrect because no motivation or reasoning was provided, and the edge was labeled NONE (no causal relationship).\n- There is strong scientific evidence for a positive causal effect from physical activity to healthy BMI, as physical activity helps regulate body weight.\n- The minimal correction is to update the edge type to POSITIVE and provide proper motivation reflecting established mechanisms.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Body Mass Index (BMI)",
+    "target": "Basal Metabolic Rate",
+    "type": "POSITIVE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='POSITIVE', new_type='NONE', \nnew_motivation=\"There is no direct causal relationship between Body Mass Index (BMI) and Basal Metabolic Rate (BMR). BMI is a calculated value derived from height and weight and is not a causal factor itself. While both BMI and BMR can correlate due to underlying body mass (particularly lean mass), BMI does not directly cause changes in BMR; rather, actual body mass and composition do.\")\n\nReasoning:\n- The judge correctly points out that BMI is not a causal variable, but a derived index from height and weight.\n- Both BMI and BMR relate to underlying body mass, but BMI does not directly cause BMR to change.\n- The correct edge type is NONE (no direct causality), with motivation explaining the confounding by underlying body mass.",
+    "new_type": "NONE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation was previously missing; I have revised it to clearly explain that there is no direct causal relationship between the population's norm BMI and the socio-cultural ideal BMI, as cultural ideals are influenced by broader factors rather than average body size. The edge type (NONE) is correct."
+  },
+  {
+    "source": "Basal Metabolic Rate",
+    "target": "Total Daily Energy Intake (TDEI)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew motivation:\nA higher Basal Metabolic Rate (BMR) increases the body's baseline energy requirements, which can increase the tendency to consume more calories to maintain energy balance. However, the actual Total Daily Energy Intake (TDEI) is also influenced by factors such as appetite, food availability, behavior, and regulatory mechanisms. Therefore, while BMR can positively influence TDEI, the relationship is not purely direct and may be moderated or mediated by these additional factors."
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"An increase in the proportion of individuals with healthy BMI in a population leads to a decrease in overall group-level BMI, as more people with lower (healthy) BMI statistically reduce the group\u2019s average BMI.\")\n\nStep-by-step reasoning:\n\nSTEP 1: The judge notes no reasoning was provided, but the main issue is the absence of explanation for a NONE (no effect) relationship.\nSTEP 2: There is in fact a causal relationship: a higher proportion of healthy BMI in a group would reduce the overall (average) group BMI, assuming the baseline is higher (e.g., including overweight/obese individuals).\nSTEP 3: The minimal correction is to change the edge from NONE to NEGATIVE, since more healthy BMI individuals would generally lower the aggregate BMI.\nSTEP 4: This action directly addresses the lack of reasoning (the edge type itself is also wrong).\nSTEP 5: Executed change_edge_type.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Socio-cultural ideal BMI can negatively influence group-level BMI by promoting body image standards that encourage weight control behaviors, potentially leading to lower average BMIs in the group as people strive to adhere to the ideal.\")\n\nReasoning:\n- The judge noted the motivation was completely missing.\n- The relationship between socio-cultural ideal BMI and group-level BMI is causal: societal ideals about BMI often influence individuals' behaviors and norms, causing group-level BMI to move toward the ideal (often lower).\n- The original edge was set incorrectly to NONE (no relationship), but there is a negative relationship (as ideal becomes lower, actual group BMI tends to decrease).\n- Therefore, the edge type is corrected to NEGATIVE with a clear causal mechanism.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Norm BMI reflects the average or typical BMI considered desirable or acceptable in a given group, which can influence individuals' behaviors regarding diet and lifestyle, ultimately affecting the aggregate group-level BMI. Social and cultural norms around body weight can shape group-level outcomes.\")\n\nReasoning:\n- The judge said the motivation was missing and that the relationship type needed to be reevaluated.\n- There is a plausible positive causal relationship: what is considered a 'norm' for BMI can influence group behaviors and thus affect the group-level BMI.\n- Thus, the correction should: (1) change the edge type to POSITIVE, (2) provide a motivation that reflects how Norm BMI could causally shape Group-level BMI.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Total Daily Energy Expenditure (TDEE)",
+    "target": "Group-level BMI",
+    "type": "NEGATIVE",
+    "action": "error",
+    "corrected": false,
+    "note": "Connection error."
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Body Mass Index (BMI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "The edge was set as NONE, but this is incorrect. Socio-cultural Ideal BMI does have a causal influence on individuals' actual Body Mass Index (BMI) by shaping social pressures and norms that affect diet and exercise behaviors. Therefore, I changed the edge type from NONE to POSITIVE with the following new motivation:\n\n\"Socio-cultural ideals regarding BMI influence people's perceptions of body image and social pressures, leading individuals to modify their diet and exercise behaviors to align with these ideals. This can result in changes in actual Body Mass Index (BMI), as individuals attempt to achieve what is culturally considered ideal.\"",
+    "new_type": "POSITIVE"
+  }
+]

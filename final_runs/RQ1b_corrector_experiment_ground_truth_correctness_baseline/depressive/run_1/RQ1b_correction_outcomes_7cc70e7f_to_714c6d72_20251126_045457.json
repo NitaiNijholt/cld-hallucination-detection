@@ -1,0 +1,212 @@
+[
+  {
+    "source": "Physical inactivity (SBQ)",
+    "target": "Rumination (CERQ-R)",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised as the edge type NONE is correct, but the explanation was missing. The new motivation clarifies that there is no direct causal link between physical inactivity and rumination, according to current evidence."
+  },
+  {
+    "source": "Sleep disturbance (PSQI)",
+    "target": "Rumination (CERQ-R)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Sleep disturbances can increase cognitive vulnerability, making individuals more likely to engage in rumination. Poor sleep impairs emotional regulation and executive function, leading to more persistent negative thinking patterns such as rumination.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Sleep disturbance (PSQI)",
+    "target": "Mindfulness (FFMQ)",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation was missing and insufficient. I have revised it:\n\nNew motivation:\n\"There is no established direct causal relationship between sleep disturbance (as measured by PSQI) and mindfulness (as measured by FFMQ); while these factors may correlate, current evidence does not support a causal link from sleep disturbance to mindfulness or vice versa without considering additional mediators or confounders.\""
+  },
+  {
+    "source": "Daily hassles (HS)",
+    "target": "Mindfulness (FFMQ)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Increased daily hassles can lead to higher stress and distraction, which may reduce mindfulness levels as individuals become more preoccupied and less able to focus on the present moment.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Sleep disturbance (PSQI)",
+    "target": "Loneliness (UCLS)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Sleep disturbances may contribute to increased feelings of loneliness, as poor sleep quality can negatively affect mood, emotional regulation, and social engagement, potentially leading individuals to feel more isolated.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical inactivity (SBQ)",
+    "target": "Loneliness (UCLS)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised for clarity and accuracy. The relationship was correctly identified as positive, but the explanation now makes clear that the effect of physical inactivity on loneliness is likely mediated by reduced social interaction, rather than being entirely direct."
+  },
+  {
+    "source": "Daily hassles (HS)",
+    "target": "Loneliness (UCLS)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Frequent daily hassles can contribute to feelings of loneliness by increasing stress and reducing opportunities or motivation for social interaction, thereby exacerbating a sense of social isolation.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Mindfulness (FFMQ)",
+    "target": "Loneliness (UCLS)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher levels of mindfulness, as measured by the FFMQ, can reduce feelings of loneliness by promoting greater self-awareness, emotional regulation, and acceptance, which help individuals cope better with loneliness and enhance social connection.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Perceived social support (MSPSS)",
+    "target": "Depressive symptoms (IDS-SR)",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to provide a more detailed and mechanistic explanation. The edge type (NEGATIVE) is correct, as higher perceived social support causally reduces depressive symptoms. The new explanation clarifies the psychological mechanisms\u2014such as stress buffering, adaptive coping, and emotional resources\u2014through which social support impacts depressive symptoms, and acknowledges the research evidence and limitations regarding causality."
+  },
+  {
+    "source": "Rumination (CERQ-R)",
+    "target": "Depressive symptoms (IDS-SR)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "revise_motivation(new_motivation=\"Rumination, as measured by the CERQ-R, is associated with increased depressive symptoms (IDS-SR) because persistent, repetitive negative thinking can exacerbate negative mood and cognitive patterns typical of depression. However, the causal relationship may be bidirectional or mediated by other factors; for example, depressive symptoms can also increase the likelihood of engaging in rumination. While substantial evidence suggests that higher rumination contributes to worsening depressive symptoms, the relationship is complex rather than strictly direct and unidirectional.\")"
+  },
+  {
+    "source": "Physical inactivity (SBQ)",
+    "target": "Sleep disturbance (PSQI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Physical inactivity can contribute to sleep disturbance by decreasing overall energy expenditure and disrupting circadian rhythms, making it harder to fall asleep and maintain restful sleep.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Anti-inflammatory processes (IL-10)",
+    "target": "Sleep disturbance (PSQI)",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NEGATIVE) is correct. The motivation has been revised to clarify that the relationship between anti-inflammatory processes (IL-10) and sleep disturbance (PSQI) is mediated by inflammation, making the association indirect. The revised motivation addresses the imprecision noted by the judge."
+  },
+  {
+    "source": "Daily hassles (HS)",
+    "target": "Sleep disturbance (PSQI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Daily hassles can increase stress levels, which in turn can lead to difficulties falling or staying asleep, resulting in greater sleep disturbance. Numerous studies show that everyday stressors are associated with poorer sleep quality.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Loneliness (UCLS)",
+    "target": "Physical inactivity (SBQ)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Loneliness can lead to increased physical inactivity, as individuals experiencing loneliness may have reduced motivation or opportunity to engage in physical activities or social exercise, contributing to a more sedentary lifestyle.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Sleep disturbance (PSQI)",
+    "target": "Physical inactivity (SBQ)",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to properly justify the absence of a causal relationship between sleep disturbance (PSQI) and physical inactivity (SBQ):\n\n\"Current evidence does not support a direct causal link between sleep disturbance, as measured by the PSQI, and physical inactivity, as measured by the SBQ. Any observed associations may be confounded by other variables such as overall health status or lifestyle factors.\""
+  },
+  {
+    "source": "Mindfulness (FFMQ)",
+    "target": "Physical inactivity (SBQ)",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation for the NONE edge was missing a causal reasoning. I have updated it to:\n\n\"There is no established direct causal relationship between mindfulness, as measured by FFMQ, and physical inactivity. While mindfulness may influence awareness of bodily states, existing evidence does not support a direct effect on levels of physical inactivity measured by SBQ. Any association is likely confounded by other factors such as motivation or physical health.\""
+  },
+  {
+    "source": "Body mass index (BMI)",
+    "target": "Physical inactivity (SBQ)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to clarify that the relationship between BMI and physical inactivity is not strictly direct but mediated by factors such as reduced mobility, discomfort, and self-consciousness. The causal direction (POSITIVE) remains correct, but the explanation now accurately reflects the role of mediators in this relationship."
+  },
+  {
+    "source": "Mindfulness (FFMQ)",
+    "target": "Prosocial behavior (PGG)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Higher mindfulness, as measured by the FFMQ, is associated with increased self-awareness and emotional regulation, which can promote prosocial behaviors during cooperative tasks like the Public Goods Game (PGG). Mindful individuals are more likely to act in ways that benefit others and support group outcomes.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Sleep disturbance (PSQI)",
+    "target": "Body mass index (BMI)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (POSITIVE) is correct, but the motivation needed revision. The updated motivation now accurately describes that sleep disturbance affects BMI through mediating mechanisms such as hormonal changes, appetite, and energy expenditure, rather than asserting a purely direct effect."
+  },
+  {
+    "source": "Perceived stress (PSS)",
+    "target": "Proinflammatory processes (TNF-alpha and IL-6)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "revise_motivation:\nThe edge type (POSITIVE) is correct, but the original motivation overstated the directness of the causal pathway. The new motivation clarifies that perceived stress increases proinflammatory processes (TNF-alpha and IL-6) through activation of physiological intermediates (HPA axis and sympathetic nervous system), making the reasoning more accurate. The relationship is positive, but not direct."
+  },
+  {
+    "source": "Depressive symptoms (IDS-SR)",
+    "target": "Proinflammatory processes (TNF-alpha and IL-6)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Revision performed:\n\nThe causal relationship type (POSITIVE) is correct, but the motivation needed improvement for accuracy. The updated motivation now clarifies that the connection between depressive symptoms and proinflammatory processes is primarily indirect\u2014mediated by stress-related physiological pathways (e.g., HPA axis, sympathetic nervous system)\u2014rather than being a direct effect. It also properly qualifies the evidence for bidirectional effects.\n\nNo change to edge type; motivation has been revised for better causal reasoning."
+  },
+  {
+    "source": "Physical inactivity (SBQ)",
+    "target": "Proinflammatory processes (TNF-alpha and IL-6)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "revise_motivation(\n    new_motivation=\"Physical inactivity is associated with increased levels of proinflammatory cytokines such as TNF-alpha and IL-6. This relationship is mediated by multiple factors, including increased adiposity, metabolic dysregulation, and hormonal changes, which promote chronic low-grade inflammation. Therefore, while the relationship between inactivity and inflammation is positive, it is not solely direct but involves various physiological mediators.\"\n)"
+  },
+  {
+    "source": "Mindfulness (FFMQ)",
+    "target": "Proinflammatory processes (TNF-alpha and IL-6)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher levels of mindfulness, as measured by the FFMQ, have been associated with lower levels of proinflammatory markers such as TNF-alpha and IL-6. Mindfulness practices can reduce stress and regulate emotional responses, which in turn may decrease the activation of biological pathways that promote inflammation.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Rumination (CERQ-R)",
+    "target": "Proinflammatory processes (TNF-alpha and IL-6)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (POSITIVE) is correct, but the motivation overstated the directness of causality. Here is a revised motivation:\n\nRumination (CERQ-R) is associated with increased proinflammatory processes (TNF-alpha and IL-6) through the activation of stress-related physiological pathways. Persistent rumination can activate the hypothalamic-pituitary-adrenal (HPA) axis and the sympathetic nervous system, which are linked to elevated proinflammatory cytokine production. However, this relationship is indirect and may be influenced by mediating and moderating factors such as coping strategies, social support, and individual differences in stress reactivity."
+  },
+  {
+    "source": "Mindfulness (FFMQ)",
+    "target": "Anti-inflammatory processes (IL-10)",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation was incorrect because it provided no explanation. I have revised the motivation to clarify why the NONE (no causal relationship) edge type is justified:\n\n\"Current evidence does not establish a direct causal relationship between mindfulness, as measured by the FFMQ, and anti-inflammatory processes reflected by IL-10 levels. While some studies suggest mindfulness may influence inflammation more broadly, there is insufficient direct evidence specifically linking FFMQ-measured mindfulness to IL-10.\""
+  }
+]

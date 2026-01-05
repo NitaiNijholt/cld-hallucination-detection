@@ -9,7 +9,7 @@
 \begin{tabular}{lcccccccc}
 \toprule
 \textbf{Prompt} & \textbf{Overall F1 $\Delta$} & \textbf{Judge $\Delta$} & \textbf{Social Norms} & \textbf{Depressive} & \textbf{Emergency Dept} & \textbf{Total} & \textbf{Revise} & \textbf{Change Type} \\
-\textbf{Variant} & \textbf{(mean [min, max])} & \textbf{(mean [min, max])} & \textbf{F1 $\Delta$ (mean [min, max])} & \textbf{F1 $\Delta$ (mean [min, max])} & \textbf{F1 $\Delta$ (mean [min, max])} & \textbf{Actions} & & \\
+\textbf{Variant} & \textbf{(mean $\pm$ std)} & \textbf{(mean $\pm$ std)} & \textbf{F1 $\Delta$ (mean $\pm$ std)} & \textbf{F1 $\Delta$ (mean $\pm$ std)} & \textbf{F1 $\Delta$ (mean $\pm$ std)} & \textbf{Actions} & & \\
 \midrule
 Baseline & $-0.017$ [-0.044, +0.030] & $+0.087$ [+0.079, +0.100] & $-0.044$ [-0.127, +0.024] & $-0.036$ [-0.041, -0.032] & $+0.030$ [+0.024, +0.038] & 413 & 122 & 291 \\
 CoT & $-0.009$ [-0.028, +0.026] & $+0.068$ [+0.068, +0.068] & $-0.028$ [-0.105, +0.024] & $-0.024$ [-0.028, -0.021] & $+0.026$ [+0.022, +0.029] & 408 & 144 & 264 \\
@@ -22,7 +22,7 @@ Mechanistic & $-0.026$ [-0.054, +0.024] & $+0.090$ [+0.076, +0.101] & $-0.054$ [
 \vspace{0.5em}
 \footnotesize
 \textit{Note.} Ablation study comparing three corrector prompt variants (3 runs per CLD per prompt, 27 total experiments). 
-Aggregate row shows macro-averaged mean [min, max] across CLDs per uncertainty reporting rule.
+Aggregate row shows macro-averaged mean $\pm$ std across CLDs.
 F1 $\Delta$ = change in F1 score from pre- to post-correction; Judge $\Delta$ = change in LLM judge score.
 Total Actions = Revise + Change Type (successful corrections only); Revise = motivation revisions; Change Type = edge type changes.
 Edges with no correction needed or API errors excluded (see Appendix for full breakdown).\par
