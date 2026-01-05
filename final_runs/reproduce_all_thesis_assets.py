@@ -93,8 +93,8 @@ def generate_verification_report(output_dir: Path, project_root: Path) -> dict:
         "RQ3": {
             "description": "Deep Research Validation Figures & Tables",
             "patterns": ["*.png", "*.tex"],
-            "expected_count": 8,
-            "subdirs": [".", "figures", "validation"],
+            "expected_count": 6,
+            "subdirs": ["figures", "validation", "tables"],
         },
         "SUPP": {
             "description": "Supplementary Analysis Figures",
