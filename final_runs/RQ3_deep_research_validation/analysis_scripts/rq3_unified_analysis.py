@@ -507,6 +507,50 @@ def main():
             else:
                 print(f"   ❌ Failed: {result.get('error', 'Unknown error')[:100]}")
     
+    # Copy generated outputs from source to output directory
+    print("\n" + "-" * 80)
+    print("📂 Copying Generated Outputs")
+    print("-" * 80)
+    
+    import shutil
+    
+    # Copy figures from validation folder
+    validation_src = INPUT_DIR / "validation"
+    validation_dst = OUTPUT_DIR / "validation"
+    validation_dst.mkdir(parents=True, exist_ok=True)
+    
+    for pattern in ["*.png", "*.json", "*.csv"]:
+        for f in validation_src.glob(pattern):
+            dst = validation_dst / f.name
+            shutil.copy(f, dst)
+            print(f"   ✓ Copied: validation/{f.name}")
+    
+    # Copy figures from Output folder
+    output_src = INPUT_DIR / "Output"
+    figures_dst = OUTPUT_DIR / "figures"
+    figures_dst.mkdir(parents=True, exist_ok=True)
+    
+    if output_src.exists():
+        for f in output_src.glob("*.png"):
+            dst = figures_dst / f.name
+            shutil.copy(f, dst)
+            print(f"   ✓ Copied: figures/{f.name}")
+    
+    # Copy LaTeX tables
+    tables_dst = OUTPUT_DIR / "tables"
+    tables_dst.mkdir(parents=True, exist_ok=True)
+    
+    for f in INPUT_DIR.glob("*.tex"):
+        dst = tables_dst / f.name
+        shutil.copy(f, dst)
+        print(f"   ✓ Copied: tables/{f.name}")
+    
+    # Copy JSON stats files
+    for f in INPUT_DIR.glob("*_latest.json"):
+        dst = OUTPUT_DIR / f.name
+        shutil.copy(f, dst)
+        print(f"   ✓ Copied: {f.name}")
+    
     # Generate unified report
     print("\n" + "-" * 80)
     print("📝 Generating Unified Report")
