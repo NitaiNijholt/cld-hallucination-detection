@@ -103,12 +103,20 @@ def main():
         
         # Find and copy the main thesis figure
         if success:
+            found = False
             for fig_pattern in ["*generation*judging*.png", "*figure3*.png", "*scaling*.png"]:
-                for fig in time_cost_output.glob(fig_pattern):
-                    dst = run_dir / "figure3_generation_vs_judging.png"
-                    shutil.copy(fig, dst)
-                    generated_figures.append(dst)
-                    print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
+                # Search in output dir and figures subdirectory
+                for search_dir in [time_cost_output, time_cost_output / "figures"]:
+                    for fig in search_dir.glob(fig_pattern):
+                        dst = run_dir / "figure3_generation_vs_judging.png"
+                        shutil.copy(fig, dst)
+                        generated_figures.append(dst)
+                        print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
+                        found = True
+                        break
+                    if found:
+                        break
+                if found:
                     break
     else:
         print(f"  ⚠️ Script not found: {time_cost_script}")
@@ -185,12 +193,20 @@ def main():
         success = run_command(cmd, "Judge Sensitivity Analysis", env=env_sens, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            for fig in sensitivity_output.glob("*sensitivity*.png"):
-                if "corrector" not in fig.name.lower():
-                    dst = run_dir / "prompt_sensitivity_figure.png"
-                    shutil.copy(fig, dst)
-                    generated_figures.append(dst)
-                    print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
+            # Script outputs to Sensitivity_analysis_simple (hardcoded), copy from there
+            hardcoded_output = FINAL_RUNS / "Sensitivity_analysis_simple"
+            search_dirs = [sensitivity_output, hardcoded_output]
+            found = False
+            for search_dir in search_dirs:
+                for fig in search_dir.glob("*sensitivity*.png"):
+                    if "corrector" not in fig.name.lower() and "prompt" in fig.name.lower():
+                        dst = run_dir / "prompt_sensitivity_figure.png"
+                        shutil.copy(fig, dst)
+                        generated_figures.append(dst)
+                        print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
+                        found = True
+                        break
+                if found:
                     break
 
     # =========================================================================
@@ -214,12 +230,20 @@ def main():
         success = run_command(cmd, "Corrector Sensitivity Analysis", env=env_corr, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
-                dst = run_dir / "corrector_sensitivity_figure.png"
-                shutil.copy(fig, dst)
-                generated_figures.append(dst)
-                print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
-                break
+            # Script outputs to Sensitivity_analysis_simple (hardcoded), copy from there
+            hardcoded_output = FINAL_RUNS / "Sensitivity_analysis_simple"
+            search_dirs = [sensitivity_output, hardcoded_output]
+            found = False
+            for search_dir in search_dirs:
+                for fig in search_dir.glob("*corrector*sensitivity*.png"):
+                    dst = run_dir / "corrector_sensitivity_figure.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
+                    found = True
+                    break
+                if found:
+                    break
 
     # =========================================================================
     # 5. COPY STATIC ASSETS (edge ablation figure - not generated, just copied)
