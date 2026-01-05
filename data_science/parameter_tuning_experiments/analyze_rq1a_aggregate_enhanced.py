@@ -1915,8 +1915,8 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     print(f"  ✓ Row 1 (Performance Metrics 1x3): {output_file_row1.name}")
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout - heatmap, score discrimination, and classification scores)
-    fig2 = plt.figure(figsize=(20, 5))
-    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.5)
+    fig2 = plt.figure(figsize=(22, 5))
+    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.4)
     
     # Recreate Plot 4: Corruption Type Heatmap
     ax4_split = fig2.add_subplot(gs2[0, 0])
@@ -1927,9 +1927,9 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
         sns.heatmap(pivot_corr, annot=True, fmt='.3f', cmap='RdYlGn', 
                    vmin=0.5, vmax=1.0, center=0.75, cbar_kws={'label': 'Recall'},
                    ax=ax4_split, linewidths=1, linecolor='black')
-        ax4_split.set_xlabel('Corruption Type', fontsize=12, fontweight='bold')
-        ax4_split.set_ylabel('Prompt', fontsize=12, fontweight='bold')
-        ax4_split.set_title('Detection Recall by Corruption Type\n(± 95% CI)', fontsize=12, fontweight='bold')
+        ax4_split.set_xlabel('Corruption Type', fontsize=11, fontweight='bold')
+        ax4_split.set_ylabel('Prompt', fontsize=11, fontweight='bold')
+        ax4_split.set_title('Detection Recall by\nCorruption Type (±95% CI)', fontsize=11, fontweight='bold')
     
     # Recreate Plot 5: Score Discrimination
     ax5_split = fig2.add_subplot(gs2[0, 1])
@@ -1971,9 +1971,9 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                         
                     ax5_split.text(bar.get_x() + bar.get_width()/2., text_y,
                              stars, ha='center', va=va, fontsize=12, fontweight='bold')
-    ax5_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
-    ax5_split.set_ylabel('Point-biserial r', fontsize=12, fontweight='bold')
-    ax5_split.set_title('Score Discrimination\n(± 95% CI)', fontsize=12, fontweight='bold')
+    ax5_split.set_xlabel('CLD', fontsize=11, fontweight='bold')
+    ax5_split.set_ylabel('Point-biserial r', fontsize=11, fontweight='bold')
+    ax5_split.set_title('Score Discrimination\n(±95% CI)', fontsize=11, fontweight='bold')
     ax5_split.set_xticks(x_rpb + width * (n_prompts_rpb - 1) / 2)
     ax5_split.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
@@ -2039,9 +2039,9 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                      ha='center', va='bottom', fontweight='bold', fontsize=14)
     
     # Set labels and title
-    ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=12, fontweight='bold')
-    ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=12, fontweight='bold')
-    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (± 95% CI)', fontsize=12, fontweight='bold')
+    ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=11, fontweight='bold')
+    ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=11, fontweight='bold')
+    ax6_split.set_title('Scores by Hallucination-Detection\nOutcome (±95% CI)', fontsize=11, fontweight='bold')
     ax6_split.set_xticks(x_pos)
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylim([0, 1.15])
