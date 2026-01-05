@@ -1915,8 +1915,8 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     print(f"  ✓ Row 1 (Performance Metrics 1x3): {output_file_row1.name}")
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout - heatmap, score discrimination, and classification scores)
-    fig2 = plt.figure(figsize=(22, 5))
-    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.4)
+    fig2 = plt.figure(figsize=(20, 6))
+    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.35, top=0.85)
     
     # Recreate Plot 4: Corruption Type Heatmap
     ax4_split = fig2.add_subplot(gs2[0, 0])
@@ -1929,7 +1929,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                    ax=ax4_split, linewidths=1, linecolor='black')
         ax4_split.set_xlabel('Corruption Type', fontsize=11, fontweight='bold')
         ax4_split.set_ylabel('Prompt', fontsize=11, fontweight='bold')
-        ax4_split.set_title('Detection Recall by\nCorruption Type (±95% CI)', fontsize=11, fontweight='bold')
+        ax4_split.set_title('Detection Recall\nby Corruption Type\n(±95% CI)', fontsize=10, fontweight='bold')
     
     # Recreate Plot 5: Score Discrimination
     ax5_split = fig2.add_subplot(gs2[0, 1])
@@ -1973,7 +1973,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                              stars, ha='center', va=va, fontsize=12, fontweight='bold')
     ax5_split.set_xlabel('CLD', fontsize=11, fontweight='bold')
     ax5_split.set_ylabel('Point-biserial r', fontsize=11, fontweight='bold')
-    ax5_split.set_title('Score Discrimination\n(±95% CI)', fontsize=11, fontweight='bold')
+    ax5_split.set_title('Score\nDiscrimination\n(±95% CI)', fontsize=10, fontweight='bold')
     ax5_split.set_xticks(x_rpb + width * (n_prompts_rpb - 1) / 2)
     ax5_split.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
@@ -2040,8 +2040,8 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     # Set labels and title
     ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=11, fontweight='bold')
-    ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=11, fontweight='bold')
-    ax6_split.set_title('Scores by Hallucination-Detection\nOutcome (±95% CI)', fontsize=11, fontweight='bold')
+    ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=10, fontweight='bold')
+    ax6_split.set_title('Scores by\nHallucination-Detection\nOutcome (±95% CI)', fontsize=10, fontweight='bold')
     ax6_split.set_xticks(x_pos)
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylim([0, 1.15])
