@@ -1042,12 +1042,14 @@ def generate_table_1_grand_aggregate(results, output_dir):
             corr_ci_upper = np.nan
             sig_pct = 0
         
-        # Format AUC with 95% CI
-        auc_formatted = f"{row['mean_auc']:.3f} [{row['ci_lower']:.3f}, {row['ci_upper']:.3f}]"
+        # Format AUC with 95% CI (mean ± halfwidth)
+        auc_ci_hw = (row['ci_upper'] - row['ci_lower']) / 2
+        auc_formatted = f"{row['mean_auc']:.3f} ± {auc_ci_hw:.3f}"
         
-        # Format Correlation with 95% CI
+        # Format Correlation with 95% CI (mean ± halfwidth)
         if not np.isnan(corr_mean) and not np.isnan(corr_ci_lower):
-            corr_formatted = f"{corr_mean:+.3f} [{corr_ci_lower:+.3f}, {corr_ci_upper:+.3f}]"
+            corr_ci_hw = (corr_ci_upper - corr_ci_lower) / 2
+            corr_formatted = f"{corr_mean:+.3f} ± {corr_ci_hw:.3f}"
         elif not np.isnan(corr_mean):
             corr_formatted = f"{corr_mean:+.3f}"
         else:
@@ -1182,42 +1184,48 @@ def generate_table_2_overfitting_story(results, output_dir):
     classifiers = ['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'Neural Network']
     
     for clf_name in classifiers:
-        # Phase 4 (RFE CV) - 5-fold CV - Use min/max for repeated measurements
+        # Phase 4 (RFE CV) - 5-fold CV - Use 95% CI with t-distribution
         phase4_auc = np.nan
-        phase4_min = np.nan
-        phase4_max = np.nan
+        phase4_ci = np.nan
         if 'all_classifiers' in phase4_data and clf_name in phase4_data['all_classifiers']:
             clf_data = phase4_data['all_classifiers'][clf_name]
             phase4_auc = clf_data['mean_auc']
-            # Try to get min/max if available, otherwise fall back to calculating from std
-            phase4_min = clf_data.get('min_auc', np.nan)
-            phase4_max = clf_data.get('max_auc', np.nan)
+            # Calculate 95% CI from std if available (5-fold CV)
+            phase4_std = clf_data.get('std_auc', np.nan)
+            if not np.isnan(phase4_std):
+                n_folds = 5
+                sem = phase4_std / np.sqrt(n_folds)
+                phase4_ci = sem * stats.t.ppf(0.975, n_folds - 1)
         
-        # Phase 5 - CV on training set (5-fold) - Use min/max for repeated measurements
+        # Phase 5 - CV on training set (5-fold) - Use 95% CI with t-distribution
         phase5_cv_auc = np.nan
-        phase5_cv_min = np.nan
-        phase5_cv_max = np.nan
+        phase5_cv_ci = np.nan
         phase5_test_auc = np.nan
         if 'classifiers' in phase5_data and clf_name in phase5_data['classifiers']:
             clf_data = phase5_data['classifiers'][clf_name]
             phase5_cv_auc = clf_data['cv_auc_mean']
-            # Try to get min/max if available
-            phase5_cv_min = clf_data.get('cv_auc_min', np.nan)
-            phase5_cv_max = clf_data.get('cv_auc_max', np.nan)
+            # Calculate 95% CI from std if available (5-fold CV)
+            phase5_cv_std = clf_data.get('cv_auc_std', np.nan)
+            if not np.isnan(phase5_cv_std):
+                n_folds = 5
+                sem = phase5_cv_std / np.sqrt(n_folds)
+                phase5_cv_ci = sem * stats.t.ppf(0.975, n_folds - 1)
             phase5_test_auc = clf_data['test_auc']
         
-        # Phase 6 (Cross-CLD) - Use min-max range for n=3
+        # Phase 6 (Cross-CLD) - Use 95% CI with t-distribution (n=3)
         phase6_auc = np.nan
-        phase6_min = np.nan
-        phase6_max = np.nan
+        phase6_ci = np.nan
         if clf_name in phase6_data:
             phase6_results = phase6_data[clf_name]
             if isinstance(phase6_results, list):
                 aucs = [r['auc'] for r in phase6_results if 'auc' in r]
                 if len(aucs) > 0:
                     phase6_auc = np.mean(aucs)
-                    phase6_min = np.min(aucs)
-                    phase6_max = np.max(aucs)
+                    phase6_std = np.std(aucs, ddof=1)
+                    n = len(aucs)
+                    if n > 1:
+                        sem = phase6_std / np.sqrt(n)
+                        phase6_ci = sem * stats.t.ppf(0.975, n - 1)
         
         # Calculate drops (use test AUC for comparison)
         drop_5_to_6 = phase5_test_auc - phase6_auc if not (np.isnan(phase5_test_auc) or np.isnan(phase6_auc)) else np.nan
@@ -1235,17 +1243,17 @@ def generate_table_2_overfitting_story(results, output_dir):
         else:
             interp = "N/A"
         
-        # Format Phase 4 with min-max (5-fold CV, per uncertainty reporting rule)
-        if not np.isnan(phase4_auc) and not np.isnan(phase4_min):
-            phase4_formatted = f"{phase4_auc:.3f} [{phase4_min:.3f}, {phase4_max:.3f}]"
+        # Format Phase 4 with 95% CI (5-fold CV, per uncertainty reporting rule)
+        if not np.isnan(phase4_auc) and not np.isnan(phase4_ci):
+            phase4_formatted = f"{phase4_auc:.3f} ± {phase4_ci:.3f}"
         elif not np.isnan(phase4_auc):
             phase4_formatted = f"{phase4_auc:.3f}"
         else:
             phase4_formatted = "N/A"
         
-        # Format Phase 5 CV with min-max (5-fold CV, per uncertainty reporting rule)
-        if not np.isnan(phase5_cv_auc) and not np.isnan(phase5_cv_min):
-            phase5_formatted = f"{phase5_cv_auc:.3f} [{phase5_cv_min:.3f}, {phase5_cv_max:.3f}]"
+        # Format Phase 5 CV with 95% CI (5-fold CV, per uncertainty reporting rule)
+        if not np.isnan(phase5_cv_auc) and not np.isnan(phase5_cv_ci):
+            phase5_formatted = f"{phase5_cv_auc:.3f} ± {phase5_cv_ci:.3f}"
         elif not np.isnan(phase5_cv_auc):
             phase5_formatted = f"{phase5_cv_auc:.3f}"
         else:
@@ -1257,9 +1265,9 @@ def generate_table_2_overfitting_story(results, output_dir):
         else:
             phase5_test_formatted = "N/A"
         
-        # Format Phase 6 with min-max range (n=3)
-        if not np.isnan(phase6_auc) and not np.isnan(phase6_min):
-            phase6_formatted = f"{phase6_auc:.3f} [{phase6_min:.3f}, {phase6_max:.3f}]"
+        # Format Phase 6 with 95% CI (n=3, per uncertainty reporting rule)
+        if not np.isnan(phase6_auc) and not np.isnan(phase6_ci):
+            phase6_formatted = f"{phase6_auc:.3f} ± {phase6_ci:.3f}"
         elif not np.isnan(phase6_auc):
             phase6_formatted = f"{phase6_auc:.3f}"
         else:

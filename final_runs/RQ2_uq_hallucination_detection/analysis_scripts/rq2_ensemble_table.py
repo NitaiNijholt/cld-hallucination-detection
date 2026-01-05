@@ -10,6 +10,7 @@ import json
 import numpy as np
 from pathlib import Path
 from datetime import datetime
+from scipy import stats
 
 # Output directory / analyses directory (optional overrides via env)
 from rq2_paths import rq2_dirs
@@ -90,28 +91,42 @@ def generate_ensemble_table():
     for clf in classifiers:
         row = {'classifier': clf}
         
+        # Helper function to calculate CI halfwidth using t-distribution
+        def calc_ci_hw(std_val, n):
+            if std_val is not None and n > 1:
+                sem = std_val / np.sqrt(n)
+                return sem * stats.t.ppf(0.975, n - 1)
+            return None
+        
         # Phase 4 data (RFE) - Neural Network not in RFE
         if clf in phase4_data.get('all_classifiers', {}):
             p4 = phase4_data['all_classifiers'][clf]
             row['p4_mean'] = p4['mean_auc']
-            row['p4_min'] = p4['min_auc']
-            row['p4_max'] = p4['max_auc']
+            # Calculate CI from std if available, otherwise from min/max
+            p4_std = p4.get('std_auc')
+            if p4_std is not None:
+                row['p4_ci'] = calc_ci_hw(p4_std, n_folds)
+            else:
+                # Approximate CI from range (conservative)
+                row['p4_ci'] = (p4['max_auc'] - p4['min_auc']) / 2
         else:
             row['p4_mean'] = None
-            row['p4_min'] = None
-            row['p4_max'] = None
+            row['p4_ci'] = None
         
         # Phase 5 data
         if clf in phase5_data.get('classifiers', {}):
             p5 = phase5_data['classifiers'][clf]
             row['p5_cv_mean'] = p5['cv_auc_mean']
-            row['p5_cv_min'] = p5['cv_auc_min']
-            row['p5_cv_max'] = p5['cv_auc_max']
+            # Calculate CI from std if available, otherwise from min/max
+            p5_std = p5.get('cv_auc_std')
+            if p5_std is not None:
+                row['p5_cv_ci'] = calc_ci_hw(p5_std, n_folds)
+            else:
+                row['p5_cv_ci'] = (p5['cv_auc_max'] - p5['cv_auc_min']) / 2
             row['p5_test'] = p5['test_auc']
         else:
             row['p5_cv_mean'] = None
-            row['p5_cv_min'] = None
-            row['p5_cv_max'] = None
+            row['p5_cv_ci'] = None
             row['p5_test'] = None
         
         # Phase 6 data (from leave_one_out_all_classifiers or summary_stats)
@@ -120,12 +135,12 @@ def generate_ensemble_table():
             p6_results = phase6_data[clf]
             aucs = [r['auc'] for r in p6_results]
             row['p6_mean'] = np.mean(aucs)
-            row['p6_min'] = np.min(aucs)
-            row['p6_max'] = np.max(aucs)
+            p6_std = np.std(aucs, ddof=1)
+            n_clds = len(aucs)
+            row['p6_ci'] = calc_ci_hw(p6_std, n_clds) if n_clds > 1 else None
         else:
             row['p6_mean'] = None
-            row['p6_min'] = None
-            row['p6_max'] = None
+            row['p6_ci'] = None
         
         # Performance drop
         if row['p5_test'] is not None and row['p6_mean'] is not None:
@@ -167,10 +182,12 @@ def generate_ensemble_table():
 def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> str:
     """Generate the LaTeX table code."""
     
-    def fmt_auc(mean, min_val, max_val):
+    def fmt_auc(mean, ci):
         if mean is None:
             return "N/A"
-        return f"{mean:.3f} [{min_val:.3f}, {max_val:.3f}]"
+        if ci is not None:
+            return f"{mean:.3f} $\\pm$ {ci:.3f}"
+        return f"{mean:.3f}"
     
     def fmt_test(val):
         if val is None:
@@ -194,16 +211,16 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \toprule
 \textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \textbf{Phase 6:} & \textbf{Performance} \\
  & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{Cross-CLD AUC} & \textbf{Drop (5$\rightarrow$6)} \\
- & \textbf{[min, max]} & \textbf{[min, max]} & & \textbf{[min, max]} & \\
+ & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \\
 \midrule
 """
     
     for i, row in enumerate(rows):
         latex += f"{row['classifier']} & "
-        latex += f"{fmt_auc(row['p4_mean'], row['p4_min'], row['p4_max'])} & "
-        latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_min'], row['p5_cv_max'])} & "
+        latex += f"{fmt_auc(row['p4_mean'], row['p4_ci'])} & "
+        latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
-        latex += f"{fmt_auc(row['p6_mean'], row['p6_min'], row['p6_max'])} & "
+        latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
         latex += f"{fmt_drop(row['drop'])} \\\\\n"
         if i < len(rows) - 1:
             latex += r"\midrule" + "\n"
@@ -220,7 +237,7 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
 \textbf{{Phase 6 (Cross-CLD AUC):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; measures cross-domain generalization.
 Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
-\textbf{{Uncertainty:}} All phases show mean [min, max] across CV folds or CLDs, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}). For $n={n_folds}$ (Phases 4--5) or $n=3$ (Phase 6), min-max ranges are more appropriate than t-distribution CIs.
+\textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """
     

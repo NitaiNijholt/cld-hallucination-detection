@@ -269,6 +269,7 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
         if 'mean_auc' in meta:
             auc_val = meta['mean_auc']
             ci_l, ci_u = meta['ci_lower_auc'], meta['ci_upper_auc']
+            ci_hw = (ci_u - ci_l) / 2
             
             # Significance markers
             p_val = meta.get('auc_ttest_p', 1.0)
@@ -286,7 +287,7 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
                 sig += r'\downarrow'
             
             auc_str = f"{auc_val:.3f}${sig}$"
-            auc_ci = f"[{ci_l:.3f}, {ci_u:.3f}]"
+            auc_ci = f"$\\pm$ {ci_hw:.3f}"
         else:
             auc_str = "N/A"
             auc_ci = ""
@@ -295,6 +296,7 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
         if 'mean_corr' in meta:
             corr_val = meta['mean_corr']
             ci_l, ci_u = meta['ci_lower_corr'], meta['ci_upper_corr']
+            ci_hw = (ci_u - ci_l) / 2
             
             # Significance markers
             p_val = meta.get('corr_ttest_p', 1.0)
@@ -308,7 +310,7 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
                 sig = '^{ns}'
             
             corr_str = f"{corr_val:+.3f}${sig}$"
-            corr_ci = f"[{ci_l:+.3f}, {ci_u:+.3f}]"
+            corr_ci = f"$\\pm$ {ci_hw:.3f}"
         else:
             corr_str = "N/A"
             corr_ci = ""
@@ -457,9 +459,11 @@ def main():
             
             print(f"   Total edges: {meta['total_edges']:,}")
             if 'mean_auc' in meta:
-                print(f"   Mean AUC: {meta['mean_auc']:.3f} [{meta['ci_lower_auc']:.3f}, {meta['ci_upper_auc']:.3f}]")
+                auc_ci_hw = (meta['ci_upper_auc'] - meta['ci_lower_auc']) / 2
+                print(f"   Mean AUC: {meta['mean_auc']:.3f} ± {auc_ci_hw:.3f}")
             if 'mean_corr' in meta:
-                print(f"   Mean Corr: {meta['mean_corr']:+.3f} [{meta['ci_lower_corr']:+.3f}, {meta['ci_upper_corr']:+.3f}]")
+                corr_ci_hw = (meta['ci_upper_corr'] - meta['ci_lower_corr']) / 2
+                print(f"   Mean Corr: {meta['mean_corr']:+.3f} ± {corr_ci_hw:.3f}")
             if 'significant_files_pct' in meta:
                 print(f"   Significant files: {meta['significant_files_pct']:.1f}%")
     

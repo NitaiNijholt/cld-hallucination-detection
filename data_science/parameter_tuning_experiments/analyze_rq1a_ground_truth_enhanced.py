@@ -827,7 +827,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_roc_mean.plot(kind='bar', ax=ax1, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_roc_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax1.set_ylabel('ROC-AUC', fontsize=14, fontweight='bold')
-    ax1.set_title('ROC-AUC by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax1.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax1.set_ylim([0, 1])
     ax1.axhline(y=0.5, color='red', linestyle='--', linewidth=1, alpha=0.5, label='Random (AUC=0.5)')
     ax1.set_xticklabels(ax1.get_xticklabels(), rotation=15, ha='right')
@@ -845,7 +845,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_f1_mean.plot(kind='bar', ax=ax2, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_f1_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax2.set_ylabel('F1 Score', fontsize=14, fontweight='bold')
-    ax2.set_title('F1 Scores by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax2.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax2.set_ylim([0, 1])
     ax2.set_xticklabels(ax2.get_xticklabels(), rotation=15, ha='right')
     ax2.legend(title='', fontsize=9)
@@ -889,7 +889,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax3.set_xticks(x + width * 1.5)
     ax3.set_xticklabels(metrics)
     ax3.set_ylabel('Score', fontsize=14, fontweight='bold')
-    ax3.set_title('Performance by Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax3.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax3.set_ylim([0, 1])
     ax3.legend(title='', loc='upper right', fontsize=9)
     ax3.grid(axis='y', alpha=0.3)
@@ -948,7 +948,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax5.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax5.set_ylabel('Mean Judge Score (μ)', fontsize=14, fontweight='bold')
     ax5.set_xlabel('Classification Type', fontsize=14, fontweight='bold')
-    ax5.set_title('Judge Scores by Hallucination-Detection Outcome (±95% CI)', fontsize=14, fontweight='bold')
+    ax5.set_title('Judge Scores by Hallucination-Detection Outcome (± 95% CI)', fontsize=14, fontweight='bold')
     ax5.set_ylim([0, 1.15])
     ax5.grid(axis='y', alpha=0.3)
     
@@ -1001,7 +1001,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax6.set_xticklabels([get_prompt_label(p) for p in by_prompt['prompt']], rotation=15, ha='right')
     ax6.set_ylabel('Metric Value', fontsize=14, fontweight='bold')
     ax6.set_xlabel('Prompt', fontsize=14, fontweight='bold')
-    ax6.set_title('Performance by Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax6.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax6.set_ylim([0, 1])
     ax6.legend(title='Metric', loc='upper right', fontsize=9)
     ax6.grid(axis='y', alpha=0.3)
@@ -1075,7 +1075,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_f1_mean.plot(kind='bar', ax=ax1_split, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_f1_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax1_split.set_ylabel('F1 Score', fontsize=14, fontweight='bold')
-    ax1_split.set_title('F1 Scores by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax1_split.set_ylim([0, 1])
     ax1_split.set_xticklabels(ax1_split.get_xticklabels(), rotation=15, ha='right')
     ax1_split.legend(title='', fontsize=9)
@@ -1137,7 +1137,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_roc_mean.plot(kind='bar', ax=ax2_split, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_roc_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax2_split.set_ylabel('ROC-AUC', fontsize=14, fontweight='bold')
-    ax2_split.set_title('ROC-AUC by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax2_split.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax2_split.set_ylim([0, 1])
     ax2_split.axhline(y=0.5, color='red', linestyle='--', linewidth=1, alpha=0.5, label='Random (AUC=0.5)')
     ax2_split.set_xticklabels(ax2_split.get_xticklabels(), rotation=15, ha='right')
@@ -1210,7 +1210,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax3_split.set_xticks(x + width_bar * 1.5)
     ax3_split.set_xticklabels(metrics)
     ax3_split.set_ylabel('Score', fontsize=14, fontweight='bold')
-    ax3_split.set_title('Performance by Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax3_split.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax3_split.set_ylim([0, 1])
     ax3_split.legend(title='', loc='upper right', fontsize=9)
     ax3_split.grid(axis='y', alpha=0.3)
@@ -1308,7 +1308,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
                        yerr=pivot_pb_ci, capsize=4, error_kw={'linewidth': 1.5},
                        color=[prompt_colors.get(c.lower(), '#808080') for c in pivot_pb_mean.columns])
     ax5_split.set_ylabel('Point-Biserial r', fontsize=14, fontweight='bold')
-    ax5_split.set_title('Score Discrimination (±95% CI)', fontsize=14, fontweight='bold')
+    ax5_split.set_title('Score Discrimination (± 95% CI)', fontsize=14, fontweight='bold')
     ax5_split.axhline(y=0, color='black', linestyle='--', linewidth=1)
     ax5_split.set_xticklabels(ax5_split.get_xticklabels(), rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9)
@@ -1384,7 +1384,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=12, fontweight='bold')
     ax6_split.set_xlabel('Classification Type', fontsize=12, fontweight='bold')
-    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (±95% CI)', fontsize=12, fontweight='bold')
+    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (± 95% CI)', fontsize=12, fontweight='bold')
     ax6_split.set_ylim([0, 1.15])
     ax6_split.grid(axis='y', alpha=0.3)
     
@@ -1487,7 +1487,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
                 center=0.75, vmin=0.5, vmax=1.0, ax=ax, 
                 cbar_kws={'label': 'Mean Judge Score'},
                 annot_kws={'fontsize': 8})
-    ax.set_title(f'Ground Truth Validation Score Heatmap ({judge_label})\nJudge Scores by Classification (Mean ± 95% CI)', 
+    ax.set_title(f'Ground Truth Validation Score Heatmap ({judge_label})\nJudge Scores by Classification (Mean (± 95% CI))', 
                  fontweight='bold', fontsize=14)
     ax.set_xlabel('')
     ax.set_ylabel('Classification', fontweight='bold')
@@ -2035,14 +2035,33 @@ def generate_latex_tables(by_cld_prompt_df: pd.DataFrame, raw_df: pd.DataFrame) 
     tables['main'] = "\n".join(latex_lines)
     
     # Table 2: Per-Prompt Summary
+    from scipy import stats as sp_stats
     by_prompt = by_cld_prompt_df.groupby('prompt').agg({
-        'f1_mean': ['mean', 'std', 'min', 'max'],
-        'precision_mean': ['mean', 'std', 'min', 'max'],
-        'recall_mean': ['mean', 'std', 'min', 'max'],
-        'point_biserial_r_mean': ['mean', 'std', 'min', 'max'],
+        'f1_mean': ['mean', 'std', 'count'],
+        'precision_mean': ['mean', 'std', 'count'],
+        'recall_mean': ['mean', 'std', 'count'],
+        'point_biserial_r_mean': ['mean', 'std', 'count'],
         'n_total_sum': 'sum'
     }).reset_index()
     by_prompt.columns = ['_'.join(col).strip('_') for col in by_prompt.columns.values]
+    
+    # Calculate 95% CI halfwidth for each metric
+    def calc_ci_hw(mean_col, std_col, count_col, df):
+        results = []
+        for _, row in df.iterrows():
+            n = row[count_col]
+            if n > 1 and pd.notna(row[std_col]):
+                sem = row[std_col] / np.sqrt(n)
+                ci_hw = sem * sp_stats.t.ppf(0.975, n - 1)
+            else:
+                ci_hw = 0.0
+            results.append(ci_hw)
+        return results
+    
+    by_prompt['precision_ci'] = calc_ci_hw('precision_mean_mean', 'precision_mean_std', 'precision_mean_count', by_prompt)
+    by_prompt['recall_ci'] = calc_ci_hw('recall_mean_mean', 'recall_mean_std', 'recall_mean_count', by_prompt)
+    by_prompt['f1_ci'] = calc_ci_hw('f1_mean_mean', 'f1_mean_std', 'f1_mean_count', by_prompt)
+    by_prompt['rpb_ci'] = calc_ci_hw('point_biserial_r_mean_mean', 'point_biserial_r_mean_std', 'point_biserial_r_mean_count', by_prompt)
     
     latex_lines = []
     latex_lines.append("\\begin{table}[htbp]")
@@ -2054,18 +2073,18 @@ def generate_latex_tables(by_cld_prompt_df: pd.DataFrame, raw_df: pd.DataFrame) 
     latex_lines.append("\\textbf{Prompt} & \\textbf{N} & \\textbf{Precision} & \\textbf{Recall} & \\textbf{F1} & \\textbf{r$_{pb}$} \\\\")
     latex_lines.append("\\midrule")
     
-    for _, row in by_prompt.iterrows():
+    for idx, row in by_prompt.iterrows():
         prompt = row['prompt'].capitalize()
         n = int(row['n_total_sum_sum'])
-        p = f"${row['precision_mean_mean']:.3f}$ [{row['precision_mean_min']:.3f}, {row['precision_mean_max']:.3f}]"
-        r = f"${row['recall_mean_mean']:.3f}$ [{row['recall_mean_min']:.3f}, {row['recall_mean_max']:.3f}]"
-        f1 = f"${row['f1_mean_mean']:.3f}$ [{row['f1_mean_min']:.3f}, {row['f1_mean_max']:.3f}]"
-        rpb = f"${row['point_biserial_r_mean_mean']:.3f}$ [{row['point_biserial_r_mean_min']:.3f}, {row['point_biserial_r_mean_max']:.3f}]"
+        p = f"${row['precision_mean_mean']:.3f} \\pm {row['precision_ci']:.3f}$"
+        r = f"${row['recall_mean_mean']:.3f} \\pm {row['recall_ci']:.3f}$"
+        f1 = f"${row['f1_mean_mean']:.3f} \\pm {row['f1_ci']:.3f}$"
+        rpb = f"${row['point_biserial_r_mean_mean']:.3f} \\pm {row['rpb_ci']:.3f}$"
         latex_lines.append(f"{prompt} & {n} & {p} & {r} & {f1} & {rpb} \\\\")
     
     latex_lines.append("\\bottomrule")
     latex_lines.append("\\end{tabular}")
-    latex_lines.append("\\note{Values shown as mean [min, max] across CLDs per uncertainty reporting rule.}")
+    latex_lines.append("\\note{Values shown as mean (± 95% CI) across CLDs per uncertainty reporting rule.}")
     latex_lines.append("\\end{table}")
     tables['by_prompt'] = "\n".join(latex_lines)
     

@@ -113,8 +113,13 @@ def load_results(variant: str, experiment_type: str, judge_suffix: str = '') -> 
         if not results_file.exists():
             results_file = folder / 'Data' / 'rq1b_all_results.xlsx'
         
+        # Also check in RQ1b_corrector_ablation/Data/ subfolder (for reproducibility package)
         if not results_file.exists():
-            raise FileNotFoundError(f"Results not found in new or old structure:\n  New: {new_results_file}\n  Old: {folder / 'rq1b_all_results.xlsx'}")
+            ablation_data_folder = BASE_PATH / 'RQ1b_corrector_ablation' / 'Data' / folder_pattern.format(variant=variant, judge_suffix=judge_suffix)
+            results_file = ablation_data_folder / 'rq1b_all_results.xlsx'
+        
+        if not results_file.exists():
+            raise FileNotFoundError(f"Results not found in new or old structure:\n  New: {new_results_file}\n  Old: {folder / 'rq1b_all_results.xlsx'}\n  Ablation: {ablation_data_folder / 'rq1b_all_results.xlsx'}")
         print(f"  Using OLD structure: {results_file}")
     
     # Try different sheet names (Excel structure varies)
@@ -307,10 +312,10 @@ def calculate_per_cld_means(combined: pd.DataFrame) -> pd.DataFrame:
             action_cols.append(col)
     
     per_cld_agg = combined.groupby(['Variant', 'CLD']).agg({
-        'F1_Delta': ['mean', 'std', 'min', 'max'],
-        'Precision_Delta': ['mean', 'std', 'min', 'max'],
-        'Recall_Delta': ['mean', 'std', 'min', 'max'],
-        'Judge_Score_Delta': ['mean', 'std', 'min', 'max'],
+        'F1_Delta': ['mean', 'std', 'count'],
+        'Precision_Delta': ['mean', 'std', 'count'],
+        'Recall_Delta': ['mean', 'std', 'count'],
+        'Judge_Score_Delta': ['mean', 'std', 'count'],
         'Actions_Total': 'sum',
         'Actions_Revise': 'sum',
         'Actions_Change': 'sum',
@@ -334,6 +339,22 @@ def calculate_per_cld_means(combined: pd.DataFrame) -> pd.DataFrame:
         'Judge_Score_Delta_mean': 'Judge_Score_Delta',
     }, inplace=True)
     
+    # Calculate 95% CI halfwidth for each metric
+    from scipy import stats
+    for metric in ['F1_Delta', 'Precision_Delta', 'Recall_Delta', 'Judge_Score_Delta']:
+        std_col = f'{metric}_std'
+        count_col = f'{metric}_count'
+        ci_col = f'{metric}_ci'
+        
+        def calc_ci(row):
+            n = row[count_col]
+            if n > 1 and pd.notna(row[std_col]):
+                sem = row[std_col] / np.sqrt(n)
+                return sem * stats.t.ppf(0.975, n - 1)
+            return 0.0
+        
+        per_cld_means[ci_col] = per_cld_means.apply(calc_ci, axis=1)
+    
     # VERIFY: Total should equal sum of sub-actions
     computed_total = (per_cld_means['Actions_Revise_sum'] + per_cld_means['Actions_Change_sum'] + 
                       per_cld_means['Actions_None_sum'] + per_cld_means['Actions_Error_sum'] + 
@@ -355,12 +376,13 @@ def calculate_per_cld_means(combined: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_macro_average(per_cld_means: pd.DataFrame) -> pd.DataFrame:
-    """Calculate macro-averaged statistics (mean [min, max] across CLDs per uncertainty rule)."""
+    """Calculate macro-averaged statistics (mean ± 95% CI across CLDs per uncertainty rule)."""
+    from scipy import stats
     macro_avg = per_cld_means.groupby('Variant').agg({
-        'F1_Delta': ['mean', 'std', 'min', 'max'],
-        'Precision_Delta': ['mean', 'std', 'min', 'max'],
-        'Recall_Delta': ['mean', 'std', 'min', 'max'],
-        'Judge_Score_Delta': ['mean', 'std', 'min', 'max'],
+        'F1_Delta': ['mean', 'std', 'count'],
+        'Precision_Delta': ['mean', 'std', 'count'],
+        'Recall_Delta': ['mean', 'std', 'count'],
+        'Judge_Score_Delta': ['mean', 'std', 'count'],
         'Actions_Total_sum': 'sum',
         'Actions_Revise_sum': 'sum',
         'Actions_Change_sum': 'sum',
@@ -372,6 +394,23 @@ def calculate_macro_average(per_cld_means: pd.DataFrame) -> pd.DataFrame:
     
     # Flatten column names
     macro_avg.columns = ['_'.join(col).strip('_') for col in macro_avg.columns.values]
+    
+    # Calculate 95% CI halfwidth for each metric
+    for metric in ['F1_Delta', 'Precision_Delta', 'Recall_Delta', 'Judge_Score_Delta']:
+        mean_col = f'{metric}_mean'
+        std_col = f'{metric}_std'
+        count_col = f'{metric}_count'
+        ci_col = f'{metric}_ci'
+        
+        def calc_ci(row):
+            n = row[count_col]
+            if n > 1 and pd.notna(row[std_col]):
+                sem = row[std_col] / np.sqrt(n)
+                return sem * stats.t.ppf(0.975, n - 1)
+            return 0.0
+        
+        macro_avg[ci_col] = macro_avg.apply(calc_ci, axis=1)
+    
     return macro_avg
 
 
@@ -404,30 +443,24 @@ def generate_latex_table(
         variant_data = per_cld_means[per_cld_means['Variant'] == variant]
         macro = macro_avg.loc[variant]
         
-        # Get per-CLD F1 values with ±std
+        # Get per-CLD F1 values with ± 95% CI
         cld_f1s = []
         for cld in clds:
             cld_row = variant_data[variant_data['CLD'] == cld]
             if len(cld_row) > 0:
                 f1 = cld_row['F1_Delta'].values[0]
-                f1_min = cld_row['F1_Delta_min'].values[0] if 'F1_Delta_min' in cld_row.columns else f1
-                f1_max = cld_row['F1_Delta_max'].values[0] if 'F1_Delta_max' in cld_row.columns else f1
-                if pd.isna(f1_min):
-                    f1_min = f1
-                if pd.isna(f1_max):
-                    f1_max = f1
+                f1_ci = cld_row['F1_Delta_ci'].values[0] if 'F1_Delta_ci' in cld_row.columns else 0.0
+                if pd.isna(f1_ci):
+                    f1_ci = 0.0
                 sign = '+' if f1 >= 0 else ''
-                sign_min = '+' if f1_min >= 0 else ''
-                sign_max = '+' if f1_max >= 0 else ''
-                cld_f1s.append(f"${sign}{f1:.3f}$ [{sign_min}{f1_min:.3f}, {sign_max}{f1_max:.3f}]")
+                cld_f1s.append(f"${sign}{f1:.3f} \\pm {f1_ci:.3f}$")
             else:
                 cld_f1s.append("N/A")
         
-        # Format overall F1 (macro-averaged mean [min, max]) + efficacy marker (Wilcoxon vs 0)
+        # Format overall F1 (macro-averaged mean ± 95% CI) + efficacy marker (Wilcoxon vs 0)
         f1_mean = macro['F1_Delta_mean']
-        f1_min = macro['F1_Delta_min']
-        f1_max = macro['F1_Delta_max']
-        overall_f1 = f"${'+' if f1_mean >= 0 else ''}{f1_mean:.3f}$ [{'+' if f1_min >= 0 else ''}{f1_min:.3f}, {'+' if f1_max >= 0 else ''}{f1_max:.3f}]"
+        f1_ci = macro['F1_Delta_ci'] if 'F1_Delta_ci' in macro.index else 0.0
+        overall_f1 = f"${'+' if f1_mean >= 0 else ''}{f1_mean:.3f} \\pm {f1_ci:.3f}$"
         if blocked_stats:
             eff_p = (
                 blocked_stats.get("efficacy_vs_zero", {})
@@ -436,18 +469,13 @@ def generate_latex_table(
             )
             overall_f1 += _latex_superscript(_p_stars(eff_p))
 
-        # Format overall Judge Δ (macro-averaged mean [min, max])
+        # Format overall Judge Δ (macro-averaged mean ± 95% CI)
         judge_mean = float(macro['Judge_Score_Delta_mean'])
-        judge_min = float(macro['Judge_Score_Delta_min']) if not pd.isna(macro['Judge_Score_Delta_min']) else float("nan")
-        judge_max = float(macro['Judge_Score_Delta_max']) if not pd.isna(macro['Judge_Score_Delta_max']) else float("nan")
+        judge_ci = float(macro['Judge_Score_Delta_ci']) if 'Judge_Score_Delta_ci' in macro.index and not pd.isna(macro['Judge_Score_Delta_ci']) else 0.0
         if np.isnan(judge_mean):
             overall_judge = "—"
         else:
-            if np.isnan(judge_min):
-                judge_min = judge_mean
-            if np.isnan(judge_max):
-                judge_max = judge_mean
-            overall_judge = f"${'+' if judge_mean >= 0 else ''}{judge_mean:.3f}$ [{'+' if judge_min >= 0 else ''}{judge_min:.3f}, {'+' if judge_max >= 0 else ''}{judge_max:.3f}]"
+            overall_judge = f"${'+' if judge_mean >= 0 else ''}{judge_mean:.3f} \\pm {judge_ci:.3f}$"
         
         # Action totals - Total = Revise + Change (successful corrections only)
         revise = int(macro['Actions_Revise_sum_sum'])
@@ -482,43 +510,47 @@ def generate_latex_table(
     total_none = int(per_cld_means['Actions_None_sum'].sum())
     total_error = int(per_cld_means['Actions_Error_sum'].sum())
     
-    # Aggregate F1 per CLD (mean [min, max] across variants)
-    aggregate_per_cld = per_cld_means.groupby('CLD')['F1_Delta'].agg(['mean', 'std', 'min', 'max'])
+    # Aggregate F1 per CLD (mean ± 95% CI across variants)
+    from scipy import stats as sp_stats
+    aggregate_per_cld = per_cld_means.groupby('CLD')['F1_Delta'].agg(['mean', 'std', 'count'])
     agg_cld_f1s = []
     for cld in clds:
         if cld in aggregate_per_cld.index:
             f1 = aggregate_per_cld.loc[cld, 'mean']
-            f1_min = aggregate_per_cld.loc[cld, 'min']
-            f1_max = aggregate_per_cld.loc[cld, 'max']
-            if pd.isna(f1_min):
-                f1_min = f1
-            if pd.isna(f1_max):
-                f1_max = f1
+            f1_std = aggregate_per_cld.loc[cld, 'std']
+            n = aggregate_per_cld.loc[cld, 'count']
+            if n > 1 and pd.notna(f1_std):
+                sem = f1_std / np.sqrt(n)
+                f1_ci = sem * sp_stats.t.ppf(0.975, n - 1)
+            else:
+                f1_ci = 0.0
             sign = '+' if f1 >= 0 else ''
-            sign_min = '+' if f1_min >= 0 else ''
-            sign_max = '+' if f1_max >= 0 else ''
-            agg_cld_f1s.append(f"${sign}{f1:.3f}$ [{sign_min}{f1_min:.3f}, {sign_max}{f1_max:.3f}]")
+            agg_cld_f1s.append(f"${sign}{f1:.3f} \\pm {f1_ci:.3f}$")
         else:
             agg_cld_f1s.append("N/A")
     
-    # Overall aggregate F1
+    # Overall aggregate F1 (mean ± 95% CI)
     agg_f1_mean = per_cld_means['F1_Delta'].mean()
-    agg_f1_min = per_cld_means['F1_Delta'].min()
-    agg_f1_max = per_cld_means['F1_Delta'].max()
+    agg_f1_std = per_cld_means['F1_Delta'].std()
+    agg_f1_n = len(per_cld_means['F1_Delta'])
+    if agg_f1_n > 1 and pd.notna(agg_f1_std):
+        agg_f1_ci = (agg_f1_std / np.sqrt(agg_f1_n)) * sp_stats.t.ppf(0.975, agg_f1_n - 1)
+    else:
+        agg_f1_ci = 0.0
     
-    # Overall aggregate Judge Δ
+    # Overall aggregate Judge Δ (mean ± 95% CI)
     agg_judge_mean = float(per_cld_means['Judge_Score_Delta'].mean())
-    agg_judge_min = float(per_cld_means['Judge_Score_Delta'].min())
-    agg_judge_max = float(per_cld_means['Judge_Score_Delta'].max())
-    if np.isnan(agg_judge_min) and not np.isnan(agg_judge_mean):
-        agg_judge_min = agg_judge_mean
-    if np.isnan(agg_judge_max) and not np.isnan(agg_judge_mean):
-        agg_judge_max = agg_judge_mean
+    agg_judge_std = float(per_cld_means['Judge_Score_Delta'].std())
+    agg_judge_n = len(per_cld_means['Judge_Score_Delta'].dropna())
+    if agg_judge_n > 1 and pd.notna(agg_judge_std):
+        agg_judge_ci = (agg_judge_std / np.sqrt(agg_judge_n)) * sp_stats.t.ppf(0.975, agg_judge_n - 1)
+    else:
+        agg_judge_ci = 0.0
 
     aggregate_row = (
         f"\\midrule\n\\textbf{{Aggregate}} & "
-        f"${'+' if agg_f1_mean >= 0 else ''}{agg_f1_mean:.3f}$ [{'+' if agg_f1_min >= 0 else ''}{agg_f1_min:.3f}, {'+' if agg_f1_max >= 0 else ''}{agg_f1_max:.3f}] & "
-        f"${'+' if agg_judge_mean >= 0 else ''}{agg_judge_mean:.3f}$ [{'+' if agg_judge_min >= 0 else ''}{agg_judge_min:.3f}, {'+' if agg_judge_max >= 0 else ''}{agg_judge_max:.3f}] & "
+        f"${'+' if agg_f1_mean >= 0 else ''}{agg_f1_mean:.3f} \\pm {agg_f1_ci:.3f}$ & "
+        f"${'+' if agg_judge_mean >= 0 else ''}{agg_judge_mean:.3f} \\pm {agg_judge_ci:.3f}$ & "
         f"{agg_cld_f1s[0]} & {agg_cld_f1s[1]} & {agg_cld_f1s[2]} & {total_actions} & {total_revise} & {total_change} \\\\"
     )
     
@@ -584,7 +616,7 @@ def generate_latex_table(
 \\begin{{tabular}}{{lcccccccc}}
 \\toprule
 \\textbf{{Prompt}} & \\textbf{{Overall F1 $\\Delta$}} & \\textbf{{Judge $\\Delta$}} & \\textbf{{Social Norms}} & \\textbf{{Depressive}} & \\textbf{{Emergency Dept}} & \\textbf{{Total}} & \\textbf{{Revise}} & \\textbf{{Change Type}} \\\\
-\\textbf{{Variant}} & \\textbf{{(mean $\\pm$ std)}} & \\textbf{{(mean $\\pm$ std)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ std)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ std)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ std)}} & \\textbf{{Actions}} & & \\\\
+\\textbf{{Variant}} & \\textbf{{(mean $\\pm$ 95\\% CI)}} & \\textbf{{(mean $\\pm$ 95\\% CI)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ 95\\% CI)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ 95\\% CI)}} & \\textbf{{F1 $\\Delta$ (mean $\\pm$ 95\\% CI)}} & \\textbf{{Actions}} & & \\\\
 \\midrule
 {chr(10).join(rows)}
 {aggregate_row}
@@ -719,13 +751,13 @@ def generate_baseline_table(
     baseline_data['Actions_Successful'] = baseline_data['Actions_Revise'] + baseline_data['Actions_Change']
     
     per_cld = baseline_data.groupby('CLD').agg({
-        'F1_Delta': ['mean', 'std', 'min', 'max'],
-        'Precision_Delta': ['mean', 'std', 'min', 'max'],
-        'Recall_Delta': ['mean', 'std', 'min', 'max'],
-        'Judge_Score_Delta': ['mean', 'std', 'min', 'max'],
-        'Actions_Successful': ['mean', 'std', 'min', 'max'],  # Per-run mean [min, max]
-        'Actions_Revise': ['mean', 'std', 'min', 'max'],      # Per-run mean [min, max]
-        'Actions_Change': ['mean', 'std', 'min', 'max'],      # Per-run mean [min, max]
+        'F1_Delta': ['mean', 'std', 'count'],
+        'Precision_Delta': ['mean', 'std', 'count'],
+        'Recall_Delta': ['mean', 'std', 'count'],
+        'Judge_Score_Delta': ['mean', 'std', 'count'],
+        'Actions_Successful': ['mean', 'std', 'count'],  # Per-run mean ± 95% CI
+        'Actions_Revise': ['mean', 'std', 'count'],      # Per-run mean ± 95% CI
+        'Actions_Change': ['mean', 'std', 'count'],      # Per-run mean ± 95% CI
         'Actions_None': 'sum',
         'Actions_Error': 'sum'
     })
@@ -734,6 +766,15 @@ def generate_baseline_table(
     per_cld.columns = ['_'.join(col).strip('_') for col in per_cld.columns.values]
     
     # Build table rows
+    import numpy as np
+    from scipy import stats as sp_stats
+    
+    def calc_ci_val(std_val, n):
+        if n > 1 and pd.notna(std_val):
+            sem = std_val / np.sqrt(n)
+            return sem * sp_stats.t.ppf(0.975, n - 1)
+        return 0.0
+    
     rows = []
     for cld in clds:
         if cld not in per_cld.index:
@@ -741,78 +782,68 @@ def generate_baseline_table(
         row_data = per_cld.loc[cld]
         
         f1_mean = row_data['F1_Delta_mean']
-        f1_min = row_data['F1_Delta_min']
-        f1_max = row_data['F1_Delta_max']
+        f1_ci = calc_ci_val(row_data['F1_Delta_std'], row_data['F1_Delta_count'])
         prec_mean = row_data['Precision_Delta_mean']
-        prec_min = row_data['Precision_Delta_min']
-        prec_max = row_data['Precision_Delta_max']
+        prec_ci = calc_ci_val(row_data['Precision_Delta_std'], row_data['Precision_Delta_count'])
         rec_mean = row_data['Recall_Delta_mean']
-        rec_min = row_data['Recall_Delta_min']
-        rec_max = row_data['Recall_Delta_max']
+        rec_ci = calc_ci_val(row_data['Recall_Delta_std'], row_data['Recall_Delta_count'])
         judge_mean = row_data['Judge_Score_Delta_mean']
-        judge_min = row_data['Judge_Score_Delta_min']
-        judge_max = row_data['Judge_Score_Delta_max']
+        judge_ci = calc_ci_val(row_data['Judge_Score_Delta_std'], row_data['Judge_Score_Delta_count'])
         
-        # Actions: Per-run mean [min, max] (Total = Revise + Change)
+        # Actions: Per-run mean ± 95% CI (Total = Revise + Change)
         total_mean = row_data['Actions_Successful_mean']
-        total_min = row_data['Actions_Successful_min']
-        total_max = row_data['Actions_Successful_max']
+        total_ci = calc_ci_val(row_data['Actions_Successful_std'], row_data['Actions_Successful_count'])
         revise_mean = row_data['Actions_Revise_mean']
-        revise_min = row_data['Actions_Revise_min']
-        revise_max = row_data['Actions_Revise_max']
+        revise_ci = calc_ci_val(row_data['Actions_Revise_std'], row_data['Actions_Revise_count'])
         change_mean = row_data['Actions_Change_mean']
-        change_min = row_data['Actions_Change_min']
-        change_max = row_data['Actions_Change_max']
+        change_ci = calc_ci_val(row_data['Actions_Change_std'], row_data['Actions_Change_count'])
         
-        # Format with sign and [min, max]
-        def fmt(mean, min_val, max_val):
+        # Format with sign and ± CI
+        def fmt(mean, ci):
             sign = '+' if mean >= 0 else ''
-            sign_min = '+' if min_val >= 0 else ''
-            sign_max = '+' if max_val >= 0 else ''
-            return f"${sign}{mean:.3f}$ [{sign_min}{min_val:.3f}, {sign_max}{max_val:.3f}]"
+            return f"${sign}{mean:.3f} \\pm {ci:.3f}$"
         
-        def fmt_action(mean, min_val, max_val):
-            return f"${mean:.1f}$ [{min_val:.1f}, {max_val:.1f}]"
+        def fmt_action(mean, ci):
+            return f"${mean:.1f} \\pm {ci:.1f}$"
         
-        row = f"{cld_display_names[cld]} & {fmt(f1_mean, f1_min, f1_max)} & {fmt(prec_mean, prec_min, prec_max)} & {fmt(rec_mean, rec_min, rec_max)} & {fmt(judge_mean, judge_min, judge_max)} & {fmt_action(total_mean, total_min, total_max)} & {fmt_action(revise_mean, revise_min, revise_max)} & {fmt_action(change_mean, change_min, change_max)} \\\\"
+        row = f"{cld_display_names[cld]} & {fmt(f1_mean, f1_ci)} & {fmt(prec_mean, prec_ci)} & {fmt(rec_mean, rec_ci)} & {fmt(judge_mean, judge_ci)} & {fmt_action(total_mean, total_ci)} & {fmt_action(revise_mean, revise_ci)} & {fmt_action(change_mean, change_ci)} \\\\"
         rows.append(row)
     
-    # Macro average row - mean [min, max] across CLDs per uncertainty rule
+    # Macro average row - mean ± 95% CI across CLDs per uncertainty rule
     macro_f1_mean = per_cld['F1_Delta_mean'].mean()
-    macro_f1_min = per_cld['F1_Delta_mean'].min()
-    macro_f1_max = per_cld['F1_Delta_mean'].max()
+    macro_f1_std = per_cld['F1_Delta_mean'].std()
+    macro_f1_n = len(per_cld)
+    macro_f1_ci = calc_ci_val(macro_f1_std, macro_f1_n)
     macro_prec_mean = per_cld['Precision_Delta_mean'].mean()
-    macro_prec_min = per_cld['Precision_Delta_mean'].min()
-    macro_prec_max = per_cld['Precision_Delta_mean'].max()
+    macro_prec_std = per_cld['Precision_Delta_mean'].std()
+    macro_prec_ci = calc_ci_val(macro_prec_std, macro_f1_n)
     macro_rec_mean = per_cld['Recall_Delta_mean'].mean()
-    macro_rec_min = per_cld['Recall_Delta_mean'].min()
-    macro_rec_max = per_cld['Recall_Delta_mean'].max()
+    macro_rec_std = per_cld['Recall_Delta_mean'].std()
+    macro_rec_ci = calc_ci_val(macro_rec_std, macro_f1_n)
     macro_judge_mean = per_cld['Judge_Score_Delta_mean'].mean()
-    macro_judge_min = per_cld['Judge_Score_Delta_mean'].min()
-    macro_judge_max = per_cld['Judge_Score_Delta_mean'].max()
+    macro_judge_std = per_cld['Judge_Score_Delta_mean'].std()
+    macro_judge_ci = calc_ci_val(macro_judge_std, macro_f1_n)
     
-    # Aggregate actions - mean [min, max] across CLDs per uncertainty rule
+    # Aggregate actions - mean ± 95% CI across CLDs per uncertainty rule
     import numpy as np
     macro_total_mean = per_cld['Actions_Successful_mean'].mean()
-    macro_total_min = per_cld['Actions_Successful_mean'].min()
-    macro_total_max = per_cld['Actions_Successful_mean'].max()
+    macro_total_std = per_cld['Actions_Successful_mean'].std()
+    macro_total_ci = calc_ci_val(macro_total_std, macro_f1_n)
     macro_revise_mean = per_cld['Actions_Revise_mean'].mean()
-    macro_revise_min = per_cld['Actions_Revise_mean'].min()
-    macro_revise_max = per_cld['Actions_Revise_mean'].max()
+    macro_revise_std = per_cld['Actions_Revise_mean'].std()
+    macro_revise_ci = calc_ci_val(macro_revise_std, macro_f1_n)
     macro_change_mean = per_cld['Actions_Change_mean'].mean()
-    macro_change_min = per_cld['Actions_Change_mean'].min()
-    macro_change_max = per_cld['Actions_Change_mean'].max()
+    macro_change_std = per_cld['Actions_Change_mean'].std()
+    macro_change_ci = calc_ci_val(macro_change_std, macro_f1_n)
     
-    def fmt_macro(mean, min_val, max_val):
+    def fmt_macro(mean, ci):
         sign = '+' if mean >= 0 else ''
-        sign_min = '+' if min_val >= 0 else ''
-        sign_max = '+' if max_val >= 0 else ''
-        return f"${sign}{mean:.3f}$ [{sign_min}{min_val:.3f}, {sign_max}{max_val:.3f}]"
+        return f"${sign}{mean:.3f} \\pm {ci:.3f}$"
     
-    def fmt_action_macro(mean, min_val, max_val):
-        return f"${mean:.1f}$ [{min_val:.1f}, {max_val:.1f}]"
+    def fmt_action_macro(mean, ci):
+        return f"${mean:.1f} \\pm {ci:.1f}$"
     
-    macro_row = f"\\midrule\nMacro Avg & {fmt_macro(macro_f1_mean, macro_f1_min, macro_f1_max)} & {fmt_macro(macro_prec_mean, macro_prec_min, macro_prec_max)} & {fmt_macro(macro_rec_mean, macro_rec_min, macro_rec_max)} & {fmt_macro(macro_judge_mean, macro_judge_min, macro_judge_max)} & {fmt_action_macro(macro_total_mean, macro_total_min, macro_total_max)} & {fmt_action_macro(macro_revise_mean, macro_revise_min, macro_revise_max)} & {fmt_action_macro(macro_change_mean, macro_change_min, macro_change_max)} \\\\"
+    macro_row = f"\\midrule\nMacro Avg & {fmt_macro(macro_f1_mean, macro_f1_ci)} & {fmt_macro(macro_prec_mean, macro_prec_ci)} & {fmt_macro(macro_rec_mean, macro_rec_ci)} & {fmt_macro(macro_judge_mean, macro_judge_ci)} & {fmt_action_macro(macro_total_mean, macro_total_ci)} & {fmt_action_macro(macro_revise_mean, macro_revise_ci)} & {fmt_action_macro(macro_change_mean, macro_change_ci)} \\\\"
     
     # Build full LaTeX table
     exp_type_title = "Synthetically Corrupted Data" if experiment_type == 'synthetic' else "Ground Truth Data Using Correctness-Based Validation"
@@ -920,7 +951,7 @@ def analyze_experiment(experiment_type: str, output_dir: Path, judge_suffix: str
     
     # 3. Macro-Averaged Statistics
     print("\n" + "-"*60)
-    print("MACRO-AVERAGED STATISTICS (mean ± std across CLDs)")
+    print("MACRO-AVERAGED STATISTICS (mean [min, max] across CLDs)")
     print("-"*60)
     
     per_cld_means = calculate_per_cld_means(combined)

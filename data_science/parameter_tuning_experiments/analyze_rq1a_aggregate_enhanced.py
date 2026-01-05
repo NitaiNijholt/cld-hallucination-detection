@@ -42,14 +42,16 @@ except ImportError:
 sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (18, 12)
 
-def format_mean_minmax(values):
-    """Format values as mean [min, max] per uncertainty reporting rule (N<30)."""
+def format_mean_ci(values):
+    """Format values as mean ± 95% CI (t-distribution) per uncertainty reporting rule."""
     if len(values) == 0:
         return "N/A"
     mean_val = np.mean(values)
-    min_val = np.min(values)
-    max_val = np.max(values)
-    return f"{mean_val:.3f} [{min_val:.3f}, {max_val:.3f}]"
+    if len(values) < 2:
+        return f"{mean_val:.3f}"
+    sem = stats.sem(values)
+    ci_hw = sem * stats.t.ppf(0.975, len(values) - 1)
+    return f"{mean_val:.3f} ± {ci_hw:.3f}"
 
 # Global prompt display names for consistent labeling
 PROMPT_DISPLAY = {
@@ -761,13 +763,19 @@ def aggregate_by_cld_and_prompt(all_results: dict) -> pd.DataFrame:
             fp_score_ci = calculate_confidence_interval(np.array(fp_score_vals)) if fp_score_vals else (np.nan, np.nan)
             fn_score_ci = calculate_confidence_interval(np.array(fn_score_vals)) if fn_score_vals else (np.nan, np.nan)
             
-            # Calculate CI halfwidths for error bars
+            # Calculate CI halfwidths for error bars (kept for backward compatibility)
             prec_ci_hw = calculate_ci_halfwidth(np.array(precision_vals))
             rec_ci_hw = calculate_ci_halfwidth(np.array(recall_vals))
             f1_ci_hw = calculate_ci_halfwidth(np.array(f1_vals))
             acc_ci_hw = calculate_ci_halfwidth(np.array(accuracy_vals))
             auc_ci_hw = calculate_ci_halfwidth(np.array(auc_vals)) if auc_vals else 0.0
             rpb_ci_hw = calculate_ci_halfwidth(np.array(rpb_vals))
+            
+            # Calculate min/max for error bars per uncertainty rule (N<30)
+            f1_min, f1_max = np.min(f1_vals), np.max(f1_vals)
+            auc_min = np.min(auc_vals) if auc_vals else np.nan
+            auc_max = np.max(auc_vals) if auc_vals else np.nan
+            rpb_min, rpb_max = np.min(rpb_vals), np.max(rpb_vals)
             
             # Calculate aggregate p-value for point-biserial r using t-test against 0
             # This tests if the mean r across runs is significantly different from 0
@@ -807,6 +815,8 @@ def aggregate_by_cld_and_prompt(all_results: dict) -> pd.DataFrame:
                 'F1 CI Low': f1_ci[0],
                 'F1 CI High': f1_ci[1],
                 'F1 CI Halfwidth': f1_ci_hw,
+                'F1 Min': f1_min,
+                'F1 Max': f1_max,
                 'Accuracy Mean': np.mean(accuracy_vals),
                 'Accuracy Std': np.std(accuracy_vals, ddof=1) if len(accuracy_vals) > 1 else 0,
                 'Accuracy CI Low': acc_ci[0],
@@ -817,11 +827,15 @@ def aggregate_by_cld_and_prompt(all_results: dict) -> pd.DataFrame:
                 'AUC-ROC CI Low': auc_ci[0],
                 'AUC-ROC CI High': auc_ci[1],
                 'AUC-ROC CI Halfwidth': auc_ci_hw,
+                'AUC-ROC Min': auc_min,
+                'AUC-ROC Max': auc_max,
                 'Point-Biserial r Mean': np.mean(rpb_vals),
                 'Point-Biserial r Std': np.std(rpb_vals, ddof=1) if len(rpb_vals) > 1 else 0,
                 'Point-Biserial r CI Low': rpb_ci[0],
                 'Point-Biserial r CI High': rpb_ci[1],
                 'Point-Biserial r CI Halfwidth': rpb_ci_hw,
+                'Point-Biserial r Min': rpb_min,
+                'Point-Biserial r Max': rpb_max,
                 'Point-Biserial r P-value Mean': np.mean(rpb_p_vals),
                 'Point-Biserial r Aggregate P-value': rpb_agg_p_value,
                 'Point-Biserial r Significant': all(p < 0.001 for p in rpb_p_vals),  # All runs p < 0.001
@@ -888,12 +902,12 @@ def aggregate_by_prompt(all_results: dict) -> pd.DataFrame:
             'N CLDs': n_clds,
             'N Runs': n_runs,
             'N Edges': int(np.mean([m['n_total'] for m in all_metrics])),
-            'Precision': format_mean_minmax(precision_vals),
-            'Recall': format_mean_minmax(recall_vals),
-            'F1': format_mean_minmax(f1_vals),
-            'Accuracy': format_mean_minmax(accuracy_vals),
-            'AUC-ROC': format_mean_minmax(auc_vals) if auc_vals else "N/A",
-            'Point-Biserial r': format_mean_minmax(rpb_vals)
+            'Precision': format_mean_ci(precision_vals),
+            'Recall': format_mean_ci(recall_vals),
+            'F1': format_mean_ci(f1_vals),
+            'Accuracy': format_mean_ci(accuracy_vals),
+            'AUC-ROC': format_mean_ci(auc_vals) if auc_vals else "N/A",
+            'Point-Biserial r': format_mean_ci(rpb_vals)
         })
     
     return pd.DataFrame(aggregate_data)
@@ -931,12 +945,12 @@ def aggregate_by_cld(all_results: dict) -> pd.DataFrame:
             'N Prompts': n_prompts,
             'N Runs': n_runs,
             'N Edges': int(np.mean([m['n_total'] for m in all_metrics])),
-            'Precision': format_mean_minmax(precision_vals),
-            'Recall': format_mean_minmax(recall_vals),
-            'F1': format_mean_minmax(f1_vals),
-            'Accuracy': format_mean_minmax(accuracy_vals),
-            'AUC-ROC': format_mean_minmax(auc_vals) if auc_vals else "N/A",
-            'Point-Biserial r': format_mean_minmax(rpb_vals)
+            'Precision': format_mean_ci(precision_vals),
+            'Recall': format_mean_ci(recall_vals),
+            'F1': format_mean_ci(f1_vals),
+            'Accuracy': format_mean_ci(accuracy_vals),
+            'AUC-ROC': format_mean_ci(auc_vals) if auc_vals else "N/A",
+            'Point-Biserial r': format_mean_ci(rpb_vals)
         })
     
     return pd.DataFrame(aggregate_data)
@@ -967,12 +981,12 @@ def calculate_overall_aggregate(all_results: dict) -> dict:
     return {
         'N Total Runs': len(all_metrics),
         'N Total Edges': int(np.mean([m['n_total'] for m in all_metrics])),
-        'Precision': format_mean_minmax(precision_vals),
-        'Recall': format_mean_minmax(recall_vals),
-        'F1': format_mean_minmax(f1_vals),
-        'Accuracy': format_mean_minmax(accuracy_vals),
-        'AUC-ROC': format_mean_minmax(auc_vals) if auc_vals else "N/A",
-        'Point-Biserial r': format_mean_minmax(rpb_vals)
+        'Precision': format_mean_ci(precision_vals),
+        'Recall': format_mean_ci(recall_vals),
+        'F1': format_mean_ci(f1_vals),
+        'Accuracy': format_mean_ci(accuracy_vals),
+        'AUC-ROC': format_mean_ci(auc_vals) if auc_vals else "N/A",
+        'Point-Biserial r': format_mean_ci(rpb_vals)
     }
 
 
@@ -1520,12 +1534,14 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_f1.columns:
             values = pivot_f1[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['F1 CI Halfwidth'].values
-            ax1.bar(x + i*width, values, width, label=prompt, yerr=errors, capsize=5)
+            prompt_data = aggregate_df[aggregate_df['Prompt'] == prompt].sort_values('CLD')
+            # Use 95% CI error bars (t-distribution)
+            ci_hw = prompt_data['F1 CI Halfwidth'].values
+            ax1.bar(x + i*width, values, width, label=prompt, yerr=ci_hw, capsize=5)
     
     ax1.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax1.set_ylabel('F1 Score', fontsize=12, fontweight='bold')
-    ax1.set_title('F1 Scores by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax1.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax1.set_xticks(x + (n_bars - 1) * width / 2)
     ax1.set_xticklabels([c.replace('_', ' ') for c in pivot_f1.index], rotation=15, ha='right')
     ax1.legend(title='', fontsize=9)
@@ -1539,12 +1555,14 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_auc.columns:
             values = pivot_auc[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['AUC-ROC CI Halfwidth'].values
-            ax2.bar(x_auc + i*width, values, width, label=prompt, yerr=errors, capsize=5)
+            prompt_data = aggregate_df[aggregate_df['Prompt'] == prompt].sort_values('CLD')
+            # Use 95% CI error bars (t-distribution)
+            ci_hw = prompt_data['AUC-ROC CI Halfwidth'].values
+            ax2.bar(x_auc + i*width, values, width, label=prompt, yerr=ci_hw, capsize=5)
     
     ax2.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax2.set_ylabel('AUC-ROC', fontsize=12, fontweight='bold')
-    ax2.set_title('AUC-ROC by CLD (±95% CI)', fontsize=14, fontweight='bold')
+    ax2.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=14, fontweight='bold')
     ax2.set_xticks(x_auc + (n_bars - 1) * width / 2)
     ax2.set_xticklabels([c.replace('_', ' ') for c in pivot_auc.index], rotation=15, ha='right')
     ax2.grid(axis='y', alpha=0.3)
@@ -1633,7 +1651,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
         sns.heatmap(pivot_corr, annot=annot_labels, fmt='', cmap='RdYlGn', 
                    vmin=0.5, vmax=1.0, center=0.75, ax=ax4, cbar_kws={'label': 'Recall'},
                    annot_kws={'fontsize': 9})
-        ax4.set_title('Detection Recall by Corruption Type (with 95% CI)', fontsize=14, fontweight='bold')
+        ax4.set_title('Detection Recall by Corruption Type (± 95% CI)', fontsize=14, fontweight='bold')
         ax4.set_xlabel('Corruption Type', fontsize=12, fontweight='bold')
         ax4.set_ylabel('Prompt', fontsize=12, fontweight='bold')
     
@@ -1673,7 +1691,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     ax5.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax5.set_ylabel('Point-Biserial r', fontsize=12, fontweight='bold')
-    ax5.set_title('Score Discrimination (±95% CI)', fontsize=14, fontweight='bold')
+    ax5.set_title('Score Discrimination (± 95% CI)', fontsize=14, fontweight='bold')
     ax5.set_xticks(x + width)
     ax5.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5.legend(title='', fontsize=9)
@@ -1732,7 +1750,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
             ax1_split.bar(x + i*width, values, width, label=prompt, yerr=errors, capsize=5)
     ax1_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax1_split.set_ylabel('F1 Score', fontsize=12, fontweight='bold')
-    ax1_split.set_title('F1 Scores by CLD and Prompt (±95% CI)', fontsize=14, fontweight='bold')
+    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
     ax1_split.set_xticks(x + (n_bars - 1) * width / 2)
     ax1_split.set_xticklabels([c.replace('_', ' ') for c in pivot_f1.index], rotation=15, ha='right')
     ax1_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
@@ -1798,7 +1816,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
             ax2_split.bar(x_auc + i*width, values, width, label=prompt, yerr=errors, capsize=5)
     ax2_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax2_split.set_ylabel('AUC-ROC', fontsize=12, fontweight='bold')
-    ax2_split.set_title('AUC-ROC by CLD (±95% CI)', fontsize=14, fontweight='bold')
+    ax2_split.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=14, fontweight='bold')
     ax2_split.set_xticks(x_auc + (n_bars - 1) * width / 2)
     ax2_split.set_xticklabels([c.replace('_', ' ') for c in pivot_auc.index], rotation=15, ha='right')
     ax2_split.grid(axis='y', alpha=0.3)
@@ -1911,7 +1929,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                    ax=ax4_split, linewidths=1, linecolor='black')
         ax4_split.set_xlabel('Corruption Type', fontsize=12, fontweight='bold')
         ax4_split.set_ylabel('Prompt', fontsize=12, fontweight='bold')
-        ax4_split.set_title('Detection Recall by Corruption Type\n(±95% CI)', fontsize=12, fontweight='bold')
+        ax4_split.set_title('Detection Recall by Corruption Type\n(± 95% CI)', fontsize=12, fontweight='bold')
     
     # Recreate Plot 5: Score Discrimination
     ax5_split = fig2.add_subplot(gs2[0, 1])
@@ -1955,7 +1973,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                              stars, ha='center', va=va, fontsize=12, fontweight='bold')
     ax5_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax5_split.set_ylabel('Point-biserial r', fontsize=12, fontweight='bold')
-    ax5_split.set_title('Score Discrimination\n(±95% CI)', fontsize=12, fontweight='bold')
+    ax5_split.set_title('Score Discrimination\n(± 95% CI)', fontsize=12, fontweight='bold')
     ax5_split.set_xticks(x_rpb + width * (n_prompts_rpb - 1) / 2)
     ax5_split.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
@@ -2023,7 +2041,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     # Set labels and title
     ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=12, fontweight='bold')
     ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=12, fontweight='bold')
-    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (±95% CI)', fontsize=12, fontweight='bold')
+    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (± 95% CI)', fontsize=12, fontweight='bold')
     ax6_split.set_xticks(x_pos)
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylim([0, 1.15])
@@ -2138,7 +2156,7 @@ def create_score_heatmap(aggregate_df: pd.DataFrame, output_dir: Path):
                 center=0.75, vmin=0.5, vmax=1.0, ax=ax, 
                 cbar_kws={'label': 'Mean Judge Score'},
                 annot_kws={'fontsize': 8})
-    ax.set_title(f'Corruption Detection Score Heatmap ({judge_label})\nJudge Scores by Classification (Mean ± 95% CI)', 
+    ax.set_title(f'Corruption Detection Score Heatmap ({judge_label})\nJudge Scores by Classification (Mean (± 95% CI))', 
                  fontweight='bold', fontsize=14)
     ax.set_xlabel('')
     ax.set_ylabel('Classification', fontweight='bold')
@@ -2264,7 +2282,7 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     
     ax.set_xlabel('Causal Loop Diagram', fontsize=pub_fontsize_label, fontweight='bold')
     ax.set_ylabel('F1 Score', fontsize=pub_fontsize_label, fontweight='bold')
-    ax.set_title('F1 Scores by CLD and Prompt Variant (±95% CI)', 
+    ax.set_title('F1 Scores by CLD and Prompt Variant (± 95% CI)', 
                  fontsize=pub_fontsize_title, fontweight='bold', pad=20)
     ax.set_xticks(x_pub + (n_bars_pub - 1) * width_pub / 2)
     ax.set_xticklabels([c.replace('_', ' ').title() for c in pivot_f1_pub.index], 
@@ -2299,7 +2317,7 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     
     ax.set_xlabel('Causal Loop Diagram', fontsize=pub_fontsize_label, fontweight='bold')
     ax.set_ylabel('AUC-ROC', fontsize=pub_fontsize_label, fontweight='bold')
-    ax.set_title('Area Under ROC Curve by CLD and Prompt (±95% CI)', 
+    ax.set_title('Area Under ROC Curve by CLD and Prompt (± 95% CI)', 
                  fontsize=pub_fontsize_title, fontweight='bold', pad=20)
     ax.set_xticks(x_auc_pub + (n_bars_pub - 1) * width_pub / 2)
     ax.set_xticklabels([c.replace('_', ' ').title() for c in pivot_auc_pub.index],
@@ -2429,7 +2447,7 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     
     ax.set_xlabel('Causal Loop Diagram', fontsize=pub_fontsize_label, fontweight='bold')
     ax.set_ylabel('Point-Biserial Correlation (r)', fontsize=pub_fontsize_label, fontweight='bold')
-    ax.set_title('Score Discrimination (±95% CI)',
+    ax.set_title('Score Discrimination (± 95% CI)',
                  fontsize=pub_fontsize_title, fontweight='bold', pad=20)
     ax.set_xticks(x_rpb + (n_bars_rpb - 1) * width_rpb / 2)
     ax.set_xticklabels([c.replace('_', ' ').title() for c in pivot_rpb.index],

@@ -133,8 +133,13 @@ def generate_distribution_figure(df, output_path):
                 
                 if block_rs:
                     r_mean = float(np.mean(block_rs))
-                    r_min = float(np.min(block_rs))
-                    r_max = float(np.max(block_rs))
+                    n_blocks = len(block_rs)
+                    if n_blocks > 1:
+                        r_std = float(np.std(block_rs, ddof=1))
+                        sem = r_std / np.sqrt(n_blocks)
+                        r_ci = sem * stats.t.ppf(0.975, n_blocks - 1)
+                    else:
+                        r_ci = 0.0
                     abs_r = abs(r_mean)
                     if abs_r < 0.10:
                         effect_label = 'negl.'
@@ -146,7 +151,7 @@ def generate_distribution_figure(df, output_path):
                         effect_label = 'large'
                     ax.text(
                         0.98, 0.98,
-                        f"blocks r={r_mean:.2f} [{r_min:.2f},{r_max:.2f}] ({effect_label})",
+                        f"blocks r={r_mean:.2f}±{r_ci:.2f} ({effect_label})",
                         transform=ax.transAxes, fontsize=8, ha='right', va='top',
                         bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.85)
                     )
