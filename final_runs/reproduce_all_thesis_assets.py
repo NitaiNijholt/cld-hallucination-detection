@@ -102,6 +102,12 @@ def generate_verification_report(output_dir: Path, project_root: Path) -> dict:
             "expected_count": 5,
             "subdirs": ["."],
         },
+        "PRELIM": {
+            "description": "Preliminary Analysis Figures & Tables",
+            "patterns": ["*.png", "*.tex"],
+            "expected_count": 2,
+            "subdirs": ["."],
+        },
     }
     
     total_expected = 0
@@ -280,6 +286,18 @@ def main():
         else:
             print("\n⏭️ Skipping supplementary analyses (--skip-supp)")
             results["SUPP"] = None
+        
+        # =====================================================================
+        # PRELIM: Preliminary Analyses (Random Baseline + Temperature Sensitivity)
+        # =====================================================================
+        prelim_script = FINAL_RUNS / "PRELIM_unified_analysis.py"
+        prelim_output = output_dir / "PRELIM"
+        results["PRELIM"] = run_script(
+            prelim_script,
+            f"--run-dir {prelim_output}",
+            "PRELIM: Preliminary Analyses",
+            env
+        )
         
         # Print run summary
         print("\n" + "="*80)
