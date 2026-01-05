@@ -1,0 +1,34 @@
+\begin{table}[H]
+\centering
+\caption{Post-Hoc Power Analysis: Effect Sizes and Achieved Power}
+\label{tab:power_analysis}
+\begin{threeparttable}
+\footnotesize
+\begin{tabular}{llccccl}
+\toprule
+\textbf{RQ} & \textbf{Experiment} & \textbf{Effect Size} & \textbf{Value} & \textbf{n} & \textbf{Power} & \textbf{Interpretation} \\
+\midrule
+1a & Corruption Citation & Cohen's $f$ & 0.10 & 27 & nan & small effect, — \\
+ & Corruption Correctness & Cohen's $f$ & 0.96 & 27 & nan & large effect, — \\
+ & GT Citation & Cohen's $f$ & 0.00 & 27 & nan & negligible effect, — \\
+ & GT Correctness & Cohen's $f$ & 1.20 & 27 & nan & large effect, — \\
+\midrule
+1b & Synthetic Baseline & Cohen's $d$ & +1.25 & 9 & nan & large effect, — \\
+ & Synthetic CoT & Cohen's $d$ & +1.05 & 9 & nan & large effect, — \\
+\midrule
+2 & Gen Cosine Similarity & Pearson $r$ & 0.152 & 16,507$^\dagger$ & $>$0.99 & small effect \\
+ & Gen Perplexity & Pearson $r$ & 0.083 & 31,704$^\dagger$ & $>$0.99 & negligible effect \\
+ & Gen Max Window Entropy & Pearson $r$ & 0.058 & 31,704$^\dagger$ & $>$0.99 & negligible effect \\
+\midrule
+3 & TP vs FP & Cohen's $h$ & 0.17 & 285$^\ddagger$ & — & negligible effect \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\scriptsize
+\item \textit{Note.} Effect size interpretation (Cohen, 1988): negligible, small, medium, large.
+\item Power interpretation: $\geq$0.80 = adequate, 0.60--0.80 = marginal, $<$0.60 = underpowered.
+\item $^\dagger$Edge-level n; CLD-level n = 3 (cross-domain generalization limited).
+\item $^\ddagger$Single-run exploratory study; power analysis not applicable.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

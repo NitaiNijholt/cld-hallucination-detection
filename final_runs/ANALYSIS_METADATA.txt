@@ -1,0 +1,173 @@
+================================================================================
+TIME AND COST SCALING ANALYSIS - METADATA
+================================================================================
+
+Analysis Timestamp: 20251217_171722
+Generated: 2025-12-17 17:17:36
+
+================================================================================
+INPUT DATA SOURCES
+================================================================================
+
+Base Directory: /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs
+
+Experiment Folders Processed:
+  - RQ1a_corruption_detection_citation_gpt5mini
+  - RQ1a_corruption_detection_correctness_final
+  - RQ1a_ground_truth_citation
+  - RQ1a_ground_truth_correctness
+
+Total Files Processed: 121
+
+================================================================================
+DATA SUMMARY
+================================================================================
+
+Total Data Points: 121
+Unique CLDs: 3
+Unique Prompt Variants: 3
+Unique Judge Types: 2
+Unique Judge Models: 2
+
+================================================================================
+OUTPUT FILES
+================================================================================
+
+Output Directory: /home/nitai/code/causalix.ai/final_runs
+
+Generated Files:
+  - aggregate_time_cost_scaling.py (analysis script copy)
+  - ANALYSIS_METADATA.txt (this file)
+  - time_cost_scaling_*.xlsx (data and aggregations)
+  - figures/ (scaling curves and comparisons)
+  - latex/ (thesis-ready tables)
+
+================================================================================
+INDIVIDUAL INPUT FILES
+================================================================================
+
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_baseline_20251204_032556_20251204_033949.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_cot_20251204_034043_20251204_035456.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251204_031716_20251204_033156.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251204_035539_20251204_041118.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_2/judged_citation_Depressive_symptoms_in_response_to_a_stressor_baseline_20251204_041329_20251204_042510.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_2/judged_citation_Depressive_symptoms_in_response_to_a_stressor_cot_20251204_042559_20251204_043917.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_2/judged_citation_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251204_043957_20251204_045356.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_3/judged_citation_Depressive_symptoms_in_response_to_a_stressor_baseline_20251204_024554_20251204_030003.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_3/judged_citation_Depressive_symptoms_in_response_to_a_stressor_cot_20251204_030051_20251204_031627.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_3/judged_citation_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251204_023359_20251204_024914.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_1/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251204_031636_20251204_042408.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_1/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251204_042603_20251204_053621.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_1/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251204_053759_20251204_064625.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_2/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251204_065212_20251204_080752.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_2/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251204_080947_20251204_092103.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_2/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251204_092254_20251204_102947.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251204_103601_20251204_114857.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251204_115108_20251204_125843.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251204_130026_20251204_141245.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_031323_20251204_032050.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_032125_20251204_032834.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_032907_20251204_033623.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_2/judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_033750_20251204_034359.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_2/judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_034429_20251204_035100.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_2/judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_035137_20251204_035842.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_040024_20251204_040738.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_040811_20251204_041507.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_041543_20251204_042151.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_010220_20251116_010309.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_010426_20251116_010515.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_010352_20251116_010513.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_010552_20251116_010713.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_010609_20251116_010708.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_010745_20251116_010844.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_025105_20251116_025153.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_025227_20251116_025350.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_025423_20251116_025521.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_011019_20251116_011112.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_011149_20251116_011306.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_011352_20251116_011446.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_013012_20251116_013405.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_013528_20251116_014158.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_014323_20251116_014838.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_015254_20251116_015647.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_015814_20251116_020547.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_020717_20251116_021236.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_021645_20251116_022030.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_022156_20251116_022805.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_022930_20251116_023445.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_baseline_20251116_011616_20251116_011643.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_cot_20251116_011716_20251116_011758.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_011830_20251116_011903.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_baseline_20251116_012025_20251116_012053.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_cot_20251116_012123_20251116_012205.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_012232_20251116_012301.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_baseline_20251116_012414_20251116_012439.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_cot_20251116_012509_20251116_012551.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_corruption_detection_correctness_final/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_012616_20251116_012646.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251117_001802_20251117_002656.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251117_003704_20251117_004626.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_184948_20251120_190158.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_185155_20251120_190325.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_185219_20251120_190318.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_original_20251117_005635_20251117_010930.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251117_011940_20251117_013004.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251117_014045_20251117_014952.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_194558_20251120_200021.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_194603_20251120_200035.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251120_194611_20251120_200025.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_original_20251117_021433_20251117_022716.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251117_023748_20251117_030153.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251117_031135_20251117_032100.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_lit_20251122_025526_20251122_030503.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_original_20251117_033029_20251117_034559.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251118_051100_20251118_060410.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_lit_20251121_013923_20251121_024134.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_lit_20251121_013934_20251121_024134.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_original_20251118_072834_20251118_083649.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251118_100404_20251118_105236.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_original_20251118_121757_20251118_130945.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_lit_20251121_135703_20251121_150227.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_original_20251119_190636_20251119_200619.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_baseline_20251117_035541_20251117_040020.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_cot_20251117_040458_20251117_041001.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_mechanistic_lit_20251121_010317_20251121_011002.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_mechanistic_original_20251117_041419_20251117_042038.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_baseline_20251117_042502_20251117_043019.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_cot_20251117_043439_20251117_043946.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_mechanistic_lit_20251121_011458_20251121_012053.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_mechanistic_original_20251117_044802_20251117_045341.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_baseline_20251120_162637_20251120_163153.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_cot_20251120_163926_20251120_164409.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_mechanistic_lit_20251121_012520_20251121_013212.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_citation/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_mechanistic_original_20251120_165056_20251120_165755.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_143935_20251116_144026.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_144104_20251116_144224.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_144306_20251116_144414.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_144704_20251116_144750.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_144833_20251116_144947.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_2/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_145027_20251116_145141.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_145223_20251116_145309.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_145350_20251116_145509.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/depressive/run_3/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_145556_20251116_145704.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_150836_20251116_151235.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_151409_20251116_152046.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_152212_20251116_152757.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_152934_20251116_153329.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_153509_20251116_154154.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_154340_20251116_154930.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_155114_20251116_155510.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_155645_20251116_160345.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/emergency_department/run_3/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_160514_20251116_161111.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_baseline_20251116_145753_20251116_145816.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_cot_20251116_145844_20251116_145926.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_145956_20251116_150030.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_baseline_20251116_150104_20251116_150131.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_cot_20251116_150203_20251116_150250.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_150319_20251116_150406.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_baseline_20251116_150445_20251116_150510.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_cot_20251116_150542_20251116_150625.xlsx
+  /home/nitai/code/causalix.ai/RQ1_excel_snapshot_20251215/final_runs/RQ1a_ground_truth_correctness/social_norms/run_3/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_150656_20251116_150735.xlsx
+
+================================================================================
+END OF METADATA
+================================================================================

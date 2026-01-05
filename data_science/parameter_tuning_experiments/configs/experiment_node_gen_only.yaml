@@ -1,0 +1,66 @@
+# Configuration for testing NODE GENERATION ONLY (no edge discovery)
+# This is useful for quickly testing variable generation prompts without running full experiments
+
+experiment_name: "node_generation_only_test"
+
+# SPECIFIC PROMPT FILES - Test both prompt variants
+prompt_files: 
+  - "_nitai_only/prompts_Nitai_C.yaml"
+  - "_nitai_only/prompts_Nitai_C_andrew_nodegen.yaml"
+
+# GROUND TRUTH CLDES - Filter to specific files
+excel_files:
+  - "CLD_test.xlsx"  # Only test with simple CLD
+
+# PARAMETER GRID - Minimal settings for node generation testing
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # NODE GENERATION ONLY MODE - Skip all edge discovery, judging, correction
+  node_generation_only: [true]
+  
+  # LLM CONFIGS - Provide all configs even though only generator is used
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  judge_config:
+    - provider: openai
+      model: gpt-5-nano
+  
+  # VARIABLE GENERATION SETTINGS
+  preload_validation_variables: [false]  # Generate variables instead of pre-loading
+  # num_variables_to_generate: [null]  # Not needed - will auto-match validation count
+  
+  # TEMPERATURES
+  generator_temperature: [0.4]
+  
+  # CORRUPTION - Not used in node gen only mode, but required param
+  corruption_rate: [0.0]
+  
+  # JUDGING - Disabled but required params
+  judge_edges: [false]
+  judge_models: [["gpt-5-nano"]]
+  num_judges: [1]
+  judge_temperature: [0.0]
+  
+  # CORRECTION - Disabled but required params
+  run_correction: [false]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  corrector_temperature: [0.4]
+  
+  # COMPARISON SETTINGS
+  node_comparison_enable: [true]  # Still compare generated vs validation nodes
+  node_comparison_mode: ["llm"]
+  node_comparison_cosine_percentile: [90]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [1536]
+
+# Number of runs per combination
+runs: 1  # Single run for quick testing

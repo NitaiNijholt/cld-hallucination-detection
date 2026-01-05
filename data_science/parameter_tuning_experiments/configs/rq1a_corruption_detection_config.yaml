@@ -1,0 +1,70 @@
+# RQ1a Corruption Detection Multi-Run Config
+# Uses existing base sessions and tests 3 judge prompts on corrupted CLDs
+
+# Experiment metadata
+experiment_name: "RQ1a_Corruption_Detection_Correctness"
+num_runs: 3  # Number of independent corruption+judging runs per CLD
+
+# Specify which prompts to test (3 validated prompts)
+prompt_files:
+  - "prompts_correctness_baseline.yaml"
+  - "prompts_correctness_mechanistic.yaml"
+  - "prompts_correctness_structured_criteria.yaml"
+
+# Specify which CLDs to test
+excel_files:
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+  - "Social_norms_and_obesity_prevalence.xlsx"
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"
+
+# Existing base session IDs (from previous runs)
+# If not provided, new sessions will be generated
+base_sessions:
+  Depressive_symptoms: "49d62c01-e85c-4392-bb6d-eb89f53136a8"
+  Social_norms: "69e7f00c-879e-4c6d-9448-4408d03e1cf5"
+  # Emergency_department: null  # Will be generated
+
+# Corruption parameters
+corruption:
+  enabled: true
+  rate: 0.3  # 30% corruption
+  corruptor_config:
+    provider: "openai"
+    model: "gpt-4.1"
+    temperature: 0.7
+
+# Generator config (required but not used for corruption experiments)
+generator_config:
+  provider: "openai"
+  model: "gpt-4.1"
+  temperature: 0.7
+
+# Judge configuration
+judge:
+  enabled: true
+  approach: "correctness"  # Correctness-based judging (no citations)
+  enable_web_search: false
+  parallel: true
+  max_workers: 10
+  num_judges: 1
+  models:
+    - "gpt-4.1"
+  config:
+    provider: "openai"
+    model: "gpt-4.1"
+    temperature: 0.3
+    # max_tokens set per-prompt in YAML files
+
+# Output settings
+output:
+  plot_session_graph: false
+  plot_validation_graph: false
+  export_json: true
+
+# Citation/embedding settings (disabled for correctness judging)
+embedding_enable: false
+citation_search_provider: "brave"
+node_comparison_enable: false
+
+# Parameter grid (empty for this experiment - only varying prompts and runs)
+parameter_grid: {}

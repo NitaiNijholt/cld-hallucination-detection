@@ -1,0 +1,122 @@
+# Thesis Final Dataset: 3 CLDs with Full Parallelization
+#
+# PURPOSE:
+# - Generate additional runs for the 3 base CLDs with complete CI metric collection
+# - Use EXACT same parameters as Oct 8 successful experiment (exp_20251008_180446_a0d1b2de)
+# - Enable ALL new parallelization features for speed
+# - Combine with existing run2 data to get robust classifier training dataset
+#
+# PARAMETERS:
+# - Same as Oct 8: gpt-4.1, temp=0.7, judge_temp=0.3, brave search, etc.
+# - NEW: All parallelization features enabled for faster execution
+# - NEW: Guaranteed CI metrics collection with embedding_enable=true
+#
+# RUNTIME ESTIMATE:
+# - With all parallelization (10 workers): ~30-45 minutes for 1 run × 3 CLDs
+# - Cost: ~$15-25 per run
+
+# Parameter grid: Each parameter must be a list
+param_grid:
+  # Basic experiment settings
+  export_json: [true]
+  plot_graph: [true]
+  
+  # Model configurations (same as Oct 8)
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  judge_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  # NO CORRUPTION - Baseline accuracy (same as Oct 8)
+  corruption_rate: [0.0]
+  
+  # JUDGE SETTINGS - LLM-as-a-judge with gpt-4.1 (same as Oct 8)
+  judge_edges: [true]
+  judge_models: [["gpt-4.1"]]
+  num_judges: [1]
+  judge_approach: ["per_citation_aggregate"]
+  judge_enable_web_search: [false]
+  
+  # ===== NEW: Enable parallel judging for speed =====
+  judge_parallel: [true]
+  judge_max_workers: [10]
+  
+  # NO CORRECTOR - Just baseline generation + judging (same as Oct 8)
+  run_correction: [false]
+  
+  # CITATION SETTINGS - Use Brave Search (same as Oct 8)
+  citation_search_provider: ["brave"]
+  
+  # ===== NEW: Enable parallel citation filling =====
+  citation_fill_parallel: [true]
+  citation_fill_max_workers: [5]
+  
+  # LLM Temperature settings (same as Oct 8)
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7]
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.3]
+  judge_top_p: [1.0]
+  
+  # Processing settings - PARALLELIZATION ENABLED
+  parallel: [true]
+  max_workers: [10]  # Increased from 3 to 10 for faster edge discovery
+  load_env: [true]
+  
+  # Visualization settings
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  
+  # Comparison settings (same as Oct 8)
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  
+  # Context-insensitive metrics - CRITICAL! (same as Oct 8, but with NEW parallel features)
+  embedding_enable: [true]  # MUST be true for all CI metrics
+  ci_fetch_reuse: [true]
+  ci_chunk_chars_override: [null]
+  ci_overlap_ratio: [0.2]
+  
+  # ===== NEW: Enable parallel CI computation =====
+  ci_parallel: [true]
+  ci_max_workers: [10]
+  ci_compute_embeddings: [true]
+  
+  # Node comparison settings (same as Oct 8)
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]
+  node_comparison_cosine_percentile: [90.0]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [null]
+  
+  # Preload validation variables (same as Oct 8)
+  preload_validation_variables: [true]
+  
+  # Metadata
+  experiment_description: ["RQ1a_Baseline_No_Corruption_No_Correction_Full_Parallel"]
+  output_json_prefix: ["rq1a_baseline_parallel"]
+  compare_variable_overlap: [false]
+
+# CLDs to test (3 main CLDs)
+excel_files:
+  - "Social_norms_and_obesity_prevalence.xlsx"
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+
+# Single run for fast iteration
+runs: 1
+
+# Use specific prompt file (same as Oct 8)
+prompt_files:
+  - "prompts_Nitai_C_andrew_nodegen.yaml"
+
+# EXPECTED OUTPUT:
+# - 1 run × 3 CLDs = 3 experiments
+# - Each with complete CI metrics (89-90% retention expected)
+# - ~80-120 clean samples total for testing

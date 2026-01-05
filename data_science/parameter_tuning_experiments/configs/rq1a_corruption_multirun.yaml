@@ -1,0 +1,58 @@
+# RQ1a Corruption Detection - Multirunner Config
+# This config works with multirun_parameter_experiments() to run:
+# Generation (Phase 0) → Corruption (Phase 1) → Judging (Phase 2) in one go!
+
+# Which prompts to test (correctness judging)
+prompt_files:
+  - "prompts_correctness_baseline.yaml"
+  - "prompts_correctness_mechanistic.yaml"  
+  - "prompts_correctness_structured_criteria.yaml"
+
+# Which CLDs to process
+excel_files:
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+  - "Social_norms_and_obesity_prevalence.xlsx"
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"
+
+# Number of independent runs per (prompt × CLD) combination
+runs: 3
+
+# Parameter grid - these get passed to run_discovery_experiment()
+# Single combo = all these values together
+param_grid:
+  # Generation settings (will generate fresh base CLD each run)
+  generator_config:
+    - provider: "openai"
+      model: "gpt-4.1"
+      temperature: 0.7
+      
+  # Corruption settings (30% corruption rate)
+  corruption_rate: [0.3]
+  corruptor_config:
+    - provider: "perplexity"
+      model: "mistral-7b-instruct"
+      temperature: 0.7
+      
+  # Judging settings (correctness-based, no citations)
+  judge_edges: [true]
+  judge_approach: ["correctness"]
+  judge_enable_web_search: [false]
+  judge_parallel: [true]
+  judge_max_workers: [10]
+  num_judges: [1]
+  judge_models:
+    - ["gpt-4.1"]
+  judge_config:
+    - provider: "openai"
+      model: "gpt-4.1"
+      temperature: 0.3
+      
+  # Output settings
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  export_json: [true]
+  
+  # Disable citation/embedding features
+  embedding_enable: [false]
+  citation_search_provider: ["brave"]
+  node_comparison_enable: [false]

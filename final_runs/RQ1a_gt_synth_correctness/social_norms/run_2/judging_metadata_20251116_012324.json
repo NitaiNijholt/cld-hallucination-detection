@@ -1,0 +1,68 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption_detection_correctness",
+    "timestamp": "2025-11-16T01:23:24.692593",
+    "script_name": "run_rq1_judge_all_3_prompts.py",
+    "script_version": "2.0_auto_discovery"
+  },
+  "input_parameters": {
+    "base_session_id": "9dfbcdb4-7963-419c-a110-188734c7be66",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2"
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.0,
+    "seed": 42,
+    "judge_approach": "correctness",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_correctness_baseline.yaml",
+      "description": "Correctness Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_correctness_cot.yaml",
+      "description": "Correctness Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_correctness_mechanistic.yaml",
+      "description": "Correctness Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Correctness Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_baseline_20251116_012025.xlsx",
+      "judged_session_id": "34ce03e8-0f40-4c33-bf6a-0c0b9584ced4",
+      "timestamp": "20251116_012025"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Correctness Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_cot_20251116_012123.xlsx",
+      "judged_session_id": "473031ae-77ea-498d-a167-05600e54b373",
+      "timestamp": "20251116_012123"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Correctness Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_012232.xlsx",
+      "judged_session_id": "a07ec1aa-6b0b-4591-b2f0-9c2129bb0ba3",
+      "timestamp": "20251116_012232"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

@@ -1,0 +1,97 @@
+=== RQ1a/RQ1b DATA STRUCTURE CONSISTENCY CHECK ===
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_corruption_detection_correctness_final
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CLD: depressive
+    run_1: [baseline cot mechanistic shared ] (26 files)
+    run_2: [baseline cot mechanistic shared ] (19 files)
+    run_3: [baseline cot mechanistic shared ] (19 files)
+
+  CLD: emergency_department
+    run_1: [baseline cot mechanistic shared ] (19 files)
+    run_2: [baseline cot mechanistic shared ] (20 files)
+    run_3: [baseline cot mechanistic shared ] (19 files)
+
+  CLD: social_norms
+    run_1: [baseline cot mechanistic shared ] (19 files)
+    run_2: [baseline cot mechanistic shared ] (19 files)
+    run_3: [baseline cot mechanistic shared ] (19 files)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_ground_truth_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CLD: depressive
+    run_1: [baseline cot mechanistic shared ] (11 files)
+    run_2: [baseline cot mechanistic shared ] (11 files)
+    run_3: [baseline cot mechanistic shared ] (11 files)
+
+  CLD: emergency_department
+    run_1: [baseline cot mechanistic shared ] (11 files)
+    run_2: [baseline cot mechanistic shared ] (11 files)
+    run_3: [baseline cot mechanistic shared ] (11 files)
+
+  CLD: social_norms
+    run_1: [baseline cot mechanistic shared ] (11 files)
+    run_2: [baseline cot mechanistic shared ] (11 files)
+    run_3: [baseline cot mechanistic shared ] (11 files)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_corrector_corruption_detection_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CLD: depressive
+    run_1: [baseline cot mechanistic ] (53 files)
+    run_2: [baseline cot mechanistic ] (51 files)
+    run_3: [baseline cot mechanistic ] (54 files)
+
+  CLD: emergency_department
+    run_1: [baseline cot mechanistic ] (40 files)
+    run_2: [baseline cot mechanistic ] (38 files)
+    run_3: [baseline cot mechanistic ] (35 files)
+
+  CLD: social_norms
+    run_1: [baseline cot mechanistic ] (72 files)
+    run_2: [baseline cot mechanistic ] (54 files)
+    run_3: [baseline cot mechanistic ] (54 files)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_corrector_ground_truth_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CLD: depressive
+    run_1: [baseline cot mechanistic ] (55 files)
+    run_2: [baseline cot mechanistic ] (51 files)
+    run_3: [baseline cot mechanistic ] (43 files)
+
+  CLD: emergency_department
+    run_1: [baseline cot mechanistic ] (46 files)
+    run_2: [baseline cot mechanistic ] (43 files)
+    run_3: [baseline cot mechanistic ] (41 files)
+
+  CLD: social_norms
+    run_1: [baseline cot mechanistic ] (57 files)
+    run_2: [baseline cot mechanistic ] (53 files)
+    run_3: [baseline cot mechanistic ] (51 files)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+JUDGE LEVEL CHECK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RQ1a experiments: CLD/run_X/prompt/ (no judge level - correct)
+  ✅ baseline/
+  ✅ cot/
+  ✅ mechanistic/
+  ✅ shared/
+
+RQ1b_corrector_ground_truth_correctness: CLD/run_X/prompt/judge/
+  ✅ baseline_judge/
+  ✅ mechanistic_judge/
+
+RQ1b_corrector_corruption_detection_correctness: CLD/run_X/prompt/judge/
+  ✅ baseline_judge/
+  ⚠️  mechanistic_judge/ (NOT PRESENT - only baseline judge experiments run)
+

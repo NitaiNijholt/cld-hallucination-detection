@@ -1,0 +1,70 @@
+# RQ1 Quick Test: End-to-End Workflow Verification
+#
+# PURPOSE: Minimal test to verify all 3 phases work correctly
+# - Phase 0: Generate 1 clean base CLD
+# - Phase 1: Clone + corrupt
+# - Phase 2: Apply 2 judging strategies
+#
+# TOTAL TIME: ~15-20 minutes
+# TOTAL COST: ~$8-10
+
+experiment_name: "RQ1 Quick Test - 3-Phase Workflow"
+
+# Single run for quick test
+runs: 1
+
+# Social Norms CLD (10 variables, 12 edges - well-tested)
+excel_files:
+  - Social_norms_and_obesity_prevalence.xlsx
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+param_grid:
+  # Generator configuration
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  # Corruptor config (will be used in Phase 1)
+  corruptor_config:
+    - provider: perplexity
+      model: mistral-7b-instruct
+      temperature: 0.7
+  
+  # Judge config (will be used in Phase 2)
+  judge_config:
+    - provider: anthropic
+      model: claude-3-7-sonnet-20250219
+      temperature: 0.3
+  
+  # NO corruption in Phase 0 (clean base)
+  corruption_rate: [0.0]
+  
+  # NO judging in Phase 0
+  judge_edges: [false]
+  num_judges: [1]
+  judge_models: [[]]
+  
+  # Experimental settings
+  parallel: [true]
+  max_workers: [3]
+  citation_search_provider: ["brave"]
+  
+  # Enable CI metrics (needed for RQ2)
+  embedding_enable: [true]
+  ci_fetch_reuse: [true]
+  
+  # Output settings
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  export_json: [true]
+  
+  # Other settings
+  dev_mode: [false]
+  load_env: [true]
+  run_correction: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  node_comparison_enable: [false]

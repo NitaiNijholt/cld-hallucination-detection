@@ -1,0 +1,30 @@
+\begin{table}[H]
+\centering
+\begin{minipage}{\linewidth}
+\centering
+\caption{Corrector Performance on Synthetically Corrupted Data (Baseline Prompt)}
+\label{tab:rq1b_synthetic_correctness}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{CLD} & \textbf{F1 $\Delta$} & \textbf{Precision $\Delta$} & \textbf{Recall $\Delta$} & \textbf{Judge Score $\Delta$} & \textbf{Total Actions} & \textbf{Revise} & \textbf{Change Type} \\
+\midrule
+Social Norms & $+0.000$ [+0.000, +0.000] & $+0.000$ [+0.000, +0.000] & $+0.000$ [+0.000, +0.000] & $+0.028$ [+0.000, +0.078] & $4.3$ [2.0, 8.0] & $3.3$ [2.0, 5.0] & $1.0$ [0.0, 3.0] \\
+Depressive & $+0.145$ [+0.134, +0.160] & $+0.164$ [+0.110, +0.203] & $+0.117$ [+0.085, +0.169] & $+0.186$ [+0.172, +0.196] & $62.3$ [58.0, 69.0] & $31.7$ [26.0, 40.0] & $30.7$ [29.0, 32.0] \\
+Emergency Dept & $+0.082$ [+0.064, +0.100] & $+0.062$ [+0.048, +0.072] & $+0.121$ [+0.094, +0.159] & $+0.135$ [+0.131, +0.139] & $267.7$ [257.0, 277.0] & $115.0$ [107.0, 121.0] & $152.7$ [148.0, 160.0] \\
+\midrule
+Macro Avg & $+0.075$ [+0.000, +0.145] & $+0.075$ [+0.000, +0.164] & $+0.079$ [+0.000, +0.121] & $+0.116$ [+0.028, +0.186] & $111.4$ [4.3, 267.7] & $50.0$ [3.3, 115.0] & $61.4$ [1.0, 152.7] \\
+\bottomrule
+\end{tabular}}
+\end{threeparttable}
+\vspace{0.5em}
+\footnotesize
+\textit{Note.} Results show change in performance ($\Delta$) from pre- to post-correction (3 runs per CLD).
+F1 $\Delta$ = change in F1 score (Post-Pre); Precision $\Delta$, Recall $\Delta$, Judge Score $\Delta$ = corresponding changes.
+Total Actions = Revise + Change (successful corrections only); Revise = motivation revisions; Change Type = edge type changes.
+Values presented as mean [min, max] across 3 runs per CLD per uncertainty reporting rule. Macro average shows mean of CLD means [min, max] across CLDs.\par
+\textit{Efficacy (blocked).} One-sample Wilcoxon signed-rank test of median(F1 $\Delta$)=0 on block-level values (blocks=(CLD, run), n=9): p=0.031\textsuperscript{*}, $r_{rb}=+1.00$.
+
+\end{minipage}
+\end{table}

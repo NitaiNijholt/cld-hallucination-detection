@@ -1,0 +1,30 @@
+# Real-run config for multirun (no mocks)
+param_grid:
+  export_json: [true]
+  plot_graph: [false]
+  dev_mode: [false]
+  judge_edges: [false]
+  parallel: [false]
+  max_workers: [1]
+  load_env: [true]
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm"]
+  node_comparison_cosine_percentile: [85.0]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [null]
+  experiment_description: ["uv_real_multirun"]
+  output_json_prefix: ["uv_real_multirun"]
+  compare_variable_overlap: [false]
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  judge_config:
+    - { provider: "openai", model: "gpt-4o" }
+
+runs: 1

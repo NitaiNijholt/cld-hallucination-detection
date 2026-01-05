@@ -1,0 +1,72 @@
+# Sobol Sensitivity Analysis Problem Definition for RQ3
+# Research Question 3: Smart Test-Time Compute
+
+problem_name: "RQ3 Sensitivity Analysis - Smart Test-Time Compute"
+
+parameters:
+  - name: "perplexity_threshold"
+    description: "Threshold for perplexity-based flagging"
+    bounds: [0.0, 100.0]
+    type: "continuous"
+  
+  - name: "min_prob_threshold"
+    description: "Threshold for minimum probability flagging"
+    bounds: [0.0, 1.0]
+    type: "continuous"
+  
+  - name: "max_entropy_threshold"
+    description: "Threshold for maximum entropy flagging"
+    bounds: [0.0, 5.0]
+    type: "continuous"
+  
+  - name: "cosine_sim_threshold"
+    description: "Threshold for cosine similarity flagging"
+    bounds: [0.0, 1.0]
+    type: "continuous"
+  
+  - name: "ci_overlap_ratio"
+    description: "Overlap ratio for CI metrics"
+    bounds: [0.0, 0.5]
+    type: "continuous"
+  
+  - name: "judge_temperature"
+    description: "Temperature for selective judging"
+    bounds: [0.0, 1.0]
+    type: "continuous"
+
+outcome_metrics:
+  - name: "compute_savings"
+    description: "Percentage of compute saved vs. judging all edges"
+  
+  - name: "accuracy"
+    description: "Overall classification accuracy"
+  
+  - name: "precision"
+    description: "Precision for hallucination detection"
+  
+  - name: "recall"
+    description: "Recall for hallucination detection"
+  
+  - name: "f1_score"
+    description: "F1 score"
+
+fixed_params:
+  corruption_rate: 0.0
+  judge_edges: true
+  embedding_enable: true
+  ci_fetch_reuse: true
+  run_correction: false
+  plot_graph: false
+  dev_mode: false
+  export_json: true
+  parallel: false
+
+sensitivity_config:
+  n_samples: 128
+  calc_second_order: true
+  seed: 42
+
+
+
+
+

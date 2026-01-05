@@ -1,0 +1,32 @@
+# TruthQA Judge Prompt: BASELINE
+# Mirrors prompts_correctness_baseline.yaml structure for scientific validity
+# Direct evaluation of factual accuracy - NO SCAFFOLDING
+# Use this to verify judge capability on factual hallucinations before testing causal reasoning
+
+prompts:
+  - prompt_id: judgeTruthQA
+    variables:
+      - name: question
+        type: string
+        description: The question being asked
+      - name: answer
+        type: string
+        description: The answer to evaluate for factual accuracy
+    prompts:
+      sys_prompt: |
+        You are a precise and fair judge evaluating the factual accuracy of answers to questions.
+        Base your judgment on established facts and scientific consensus, not on speculation or myths.
+      usr_prompt: |
+        Evaluate the factual accuracy of this answer:
+        
+        QUESTION: {{ question }}
+        ANSWER: {{ answer }}
+        
+        Based on established facts, assess whether the answer is factually correct or contains errors/hallucinations.
+        
+        Respond in this format:
+        REASON: [brief explanation of your judgment]
+        VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+        SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+      usr_prompt_extension: ""
+    version: 1.0.0

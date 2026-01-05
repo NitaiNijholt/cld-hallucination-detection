@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{Model Efficiency Comparison (mean $\pm$ 95\% CI)}
+\label{tab:model_comparison}
+\begin{tabular}{llrrrrr}
+\toprule
+\textbf{Model} & \textbf{Judge Type} & \textbf{N} & \textbf{Time/Edge (s)} & \textbf{Cost/Edge (\$)} & \textbf{Tokens/Edge} \\
+\midrule
+gpt-4.1 & Citation & 36 & $26.95 \pm 1.73$ & $0.09372 \pm 0.00238$ & $44049 \pm 1143$ \\
+gpt-4.1 & Correctness & 57 & $2.78 \pm 0.17$ & $0.00168 \pm 0.00012$ & $492 \pm 51$ \\
+gpt-5-mini & Citation & 28 & $34.16 \pm 1.12$ & $0.00694 \pm 0.00046$ & $41088 \pm 3064$ \\
+\bottomrule
+\end{tabular}
+\end{table}

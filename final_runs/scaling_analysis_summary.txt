@@ -1,0 +1,77 @@
+================================================================================
+SCALING ANALYSIS SUMMARY
+================================================================================
+
+THEORETICAL EXPECTATION
+----------------------------------------
+Time complexity: O(E) where E = number of edges
+  - Each edge is judged independently by the LLM
+  - Total time = (constant time per edge) × E
+
+For dense CLDs (edge density ≈ 100%):
+  - E = N × (N-1) ≈ N² where N = nodes
+  - Therefore: Time = O(E) = O(N²) w.r.t. nodes
+
+Verification criteria:
+  - R² close to 1.0 indicates good linear fit (Time vs E)
+  - Constant time_per_edge across different E values
+  - Low coefficient of variation (CV) for per-edge metrics
+
+
+========================================
+Judge Type: CITATION
+========================================
+
+Inference Time S:
+  Linear fit: y = 29.6062×E + 167.4622
+  R² = 0.9539 (p = 3.92e-43)
+  Per-edge mean: 30.1068
+  Per-edge std:  5.5247
+  Coefficient of variation: 18.35%
+  Interpretation: Good O(E) scaling
+
+Total Tokens:
+  Linear fit: y = 44257.6495×E + -80913.6873
+  R² = 0.9965 (p = 7.52e-78)
+  Per-edge mean: 42753.5873
+  Per-edge std:  5894.1975
+  Coefficient of variation: 13.79%
+  Interpretation: Good O(E) scaling
+
+Estimated Cost Usd:
+  Linear fit: y = 0.0469×E + 2.1434
+  R² = 0.3720 (p = 8.79e-08)
+  Per-edge mean: 0.0558
+  Per-edge std:  0.0434
+  Coefficient of variation: 77.78%
+  Interpretation: Some deviation from O(E)
+
+
+========================================
+Judge Type: CORRECTNESS
+========================================
+
+Inference Time S:
+  Linear fit: y = 2.6020×E + 37.9862
+  R² = 0.9106 (p = 1.60e-30)
+  Per-edge mean: 2.7761
+  Per-edge std:  0.6421
+  Coefficient of variation: 23.13%
+  Interpretation: Good O(E) scaling
+
+Total Tokens:
+  Linear fit: y = 462.4676×E + 6768.3891
+  R² = 0.7490 (p = 3.81e-18)
+  Per-edge mean: 491.5232
+  Per-edge std:  191.5705
+  Coefficient of variation: 38.97%
+  Interpretation: Some deviation from O(E)
+
+Estimated Cost Usd:
+  Linear fit: y = 0.0015×E + 0.0294
+  R² = 0.8508 (p = 2.22e-24)
+  Per-edge mean: 0.0017
+  Per-edge std:  0.0005
+  Coefficient of variation: 27.63%
+  Interpretation: Some deviation from O(E)
+

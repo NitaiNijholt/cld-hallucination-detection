@@ -1,0 +1,91 @@
+# RQ1 Phase 0: Generate Reusable Base CLDs
+# 
+# This generates CLEAN CLDs (0% corruption) that can be reused across
+# multiple experiments via Neo4j cloning.
+#
+# INVESTMENT STRATEGY:
+# - One-time cost: ~$30
+# - Reusable for unlimited experiments
+# - Each experiment: Just clone + corrupt (~$17) + judge (~$154)
+# - Saves $23+ per additional experiment
+# - After 3 experiments, breaks even and starts saving
+#
+# WHAT THIS CREATES:
+# - 6 clean base sessions (2 CLDs × 3 runs)
+# - No corruption applied (corruption_rate = 0.0)
+# - No judging performed
+# - Stored permanently in Neo4j
+# - Can be cloned instantly for any future experiment
+#
+# FUTURE EXPERIMENTS CAN TEST:
+# ✅ Different corruption rates (0.25, 0.5, 0.75, 1.0)
+# ✅ Different corruption strategies (random, targeted, adversarial)
+# ✅ Different judge models or prompts
+# ✅ Different judge configurations (temperature, voting schemes)
+# ✅ Ablation studies (citation-based vs standard judging)
+
+experiment_name: "RQ1 Phase 0 - Reusable Base CLD Generation"
+
+# 3 runs for statistical robustness
+runs: 3
+
+# NO CORRUPTION - these are clean base CLDs
+corruption_rates: 
+  - 0.0
+
+# 2 CLDs with different characteristics
+# - Small (110 edges): Depressive symptoms
+# - Medium (500 edges): Social norms
+excel_files:
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+  - Social_norms_and_obesity_prevalence.xlsx
+
+# Generator configuration
+generator_config:
+  provider: openai
+  model: gpt-4.1
+  temperature: 0.7
+
+# NO CORRUPTOR NEEDED (corruption_rate = 0.0)
+# Corruptor will be applied to clones in Phase 1
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Parameter grid: Just 0% corruption
+param_grid:
+  - corruption_rate: [0.0]
+
+# CRITICAL: No judging in Phase 0
+# Judging happens in Phase 2 after cloning + corruption
+judge_edges: false
+
+# Experimental settings
+parallel: true
+max_workers: 3
+citation_search_provider: "brave"
+
+# Context-insensitive metrics (not needed for Phase 0)
+embedding_enable: false
+
+# Output settings
+plot_session_graph: false
+plot_validation_graph: false
+export_json: true
+
+# EXPECTED OUTPUT:
+# - 6 base session IDs (2 CLDs × 3 runs × 1 corruption rate)
+# - Session IDs saved in param_combo_mapping_exp_<timestamp>_<id>.csv
+# - Each base CLD is CLEAN (no corruption)
+# - Can be cloned unlimited times for different experiments
+#
+# NEXT STEPS:
+# 1. Run this config to generate base CLDs
+# 2. Note the 6 session IDs
+# 3. Use neo4j_session_cloner.py to create experimental variants
+# 4. Apply different experimental conditions to clones
+# 5. Judge the clones (Phase 2)
+#
+# COST: ~$30 one-time investment
+# REUSE: Clone these bases for every future experiment!

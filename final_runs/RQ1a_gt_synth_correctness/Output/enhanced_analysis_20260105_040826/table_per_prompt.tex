@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{RQ1a: Judge Performance Aggregated by Prompt (across all CLDs)}
+\label{tab:rq1a_by_prompt}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Prompt} & \textbf{N} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{AUC} & \textbf{r$_{pb}$} \\
+\midrule
+Baseline & 9 & 0.732 [0.661, 0.786] & 0.797 [0.650, 0.923] & 0.762 [0.655, 0.828] & 0.843 [0.757, 0.905] & -0.621 [-0.734, -0.484] \\
+Mechanistic & 9 & 0.572 [0.496, 0.634] & 0.961 [0.930, 1.000] & 0.716 [0.651, 0.765] & 0.837 [0.758, 0.904] & -0.514 [-0.650, -0.402] \\
+CoT & 9 & 0.733 [0.647, 0.793] & 0.819 [0.717, 0.885] & 0.773 [0.688, 0.836] & 0.851 [0.779, 0.901] & -0.624 [-0.745, -0.493] \\
+\bottomrule
+\end{tabular}
+\end{table}

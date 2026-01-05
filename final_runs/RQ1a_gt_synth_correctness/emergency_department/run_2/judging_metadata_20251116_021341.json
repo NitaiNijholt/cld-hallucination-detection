@@ -1,0 +1,68 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption_detection_correctness",
+    "timestamp": "2025-11-16T02:13:41.867089",
+    "script_name": "run_rq1_judge_all_3_prompts.py",
+    "script_version": "2.0_auto_discovery"
+  },
+  "input_parameters": {
+    "base_session_id": "8446eede-0dd0-4331-8338-a1c674f6ebaa",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/emergency_department/run_2"
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.0,
+    "seed": 42,
+    "judge_approach": "correctness",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_correctness_baseline.yaml",
+      "description": "Correctness Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_correctness_cot.yaml",
+      "description": "Correctness Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_correctness_mechanistic.yaml",
+      "description": "Correctness Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Correctness Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251116_015254.xlsx",
+      "judged_session_id": "0651a889-37c0-4677-968e-530886118255",
+      "timestamp": "20251116_015254"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Correctness Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251116_015814.xlsx",
+      "judged_session_id": "c4db015b-1463-4cdb-a2e8-bb589a60d60e",
+      "timestamp": "20251116_015814"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Correctness Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/emergency_department/run_2/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_020717.xlsx",
+      "judged_session_id": "2912a778-31fc-4fe5-a7fd-cea58e98e806",
+      "timestamp": "20251116_020717"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

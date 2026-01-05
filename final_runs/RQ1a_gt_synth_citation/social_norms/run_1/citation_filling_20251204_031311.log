@@ -1,0 +1,1332 @@
+[2m2025-12-04 02:13:13[0m [info   [0m] [1mSettings loaded: {
+  "endpoint_host": "https://api.va.landing.ai",
+  "vision_agent_api_key": "[REDACTED]",
+  "batch_size": 4,
+  "max_workers": 5,
+  "max_retries": 3,
+  "max_retry_wait_time": 60,
+  "retry_logging_style": "log_msg",
+  "pdf_to_image_dpi": 96,
+  "split_size": 10,
+  "extraction_split_size": 50
+}[0m [[0m[1m[34magentic_doc.config[0m][0m (config.py:172)
+/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/google/api_core/_python_version_support.py:266: FutureWarning: You are using a Python version (3.10.18) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+  warnings.warn(message, FutureWarning)
+WARNING: OPENAI_API_KEY is not set in the environment!
+Using Excel filename as output_json_prefix: Social_norms_and_obesity_prevalence
+Using Excel filename as experiment_description: Social_norms_and_obesity_prevalence
+Loading CLD from Excel file: /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+Loaded 10 variables
+Loaded 12 edges
+Loaded context data: {'Target': 'Spatial Scale', 'Variations in social norms and cultural perceptions of body weight across different ethnic and gender groups': 'Amsterdam, focusing on specific sociocultural groups within the city.'}
+Variables data saved to: /tmp/tmp1cf0d3u_/Social_norms_and_obesity_prevalence_vars_data.json
+Edges data saved to: /tmp/tmp1cf0d3u_/Social_norms_and_obesity_prevalence_edges_data.json
+Context data saved to: /tmp/tmp1cf0d3u_/Social_norms_and_obesity_prevalence_context_data.json
+Graph saved to: /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence_graph.png
+target_variable in run_discovery_experiment: Spatial Scale
+DEBUG: Before CausalDiscovery init:
+  temporal_scale=None
+  spatial_scale=None
+Succesfully connected to Graph Database (neo4j_client.py:81)
+Succesfully connected to neo4j db (neo4j_client.py:44)
+generator_model CausalDiscovery: {'provider': 'openai', 'model': 'gpt-4.1', 'temperature': 0.7}
+OpenAIClient ready – model=gpt-4.1, api_kind=chat, dev_mode=False, enable_websearch=False (openai_client_working.py:88)
+Generator LLM => provider=openai, model=gpt-4.1 (modules.py:509)
+Corruptor LLM => reusing generator LLM: openai/gpt-4.1 (modules.py:517)
+OpenAIClient ready – model=gpt-4.1, api_kind=chat, dev_mode=False, enable_websearch=False (openai_client_working.py:88)
+Judge LLM => provider=openai, model=gpt-4.1 (modules.py:586)
+Successfully loaded YAML data from /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/alternative_prompts/prompts_Nitai_C.yaml (prompt_tree.py:23)
+PromptTree initialized successfully (prompt_tree.py:12)
+Initialized CausalDiscovery with session_id=1d3ad1f2-73b0-4f34-bbd0-a3a68eab32c8 (modules.py:620)
+Target: Spatial Scale, Temporal: None, Spatial: None (modules.py:621)
+Generator temperature=0.7, top_p=1.0 (modules.py:622)
+Corruptor temperature=0.7, top_p=1.0, seed=None (modules.py:623)
+Judge temperature=0.7, top_p=1.0, seed=None (modules.py:624)
+Corrector seed=None (modules.py:625)
+Session ID updated from 1d3ad1f2-73b0-4f34-bbd0-a3a68eab32c8 to a0e16f57-b126-4bd9-8d22-c803c2a03466 (modules.py:7029)
+
+==================================================
+STARTING CITATION FILLING PHASE
+==================================================
+Citation search provider: brave
+Using Brave Search for direct citation filling...
+[CITATION-FILL] Skipping LLM, using search_provider=brave directly (modules.py:2603)
+SearchEngine initialized with 30 trusted domains (search_engine_copy.py:22)
+[CITATION-FILL] Brave Search client initialized WITHOUT domain filtering (whitelist disabled) (modules.py:2846)
+[CITATION-FILL] No edges found that lack citations. (modules.py:2673)
+
+==================================================
+CITATION FILLING PHASE COMPLETED in 0.01 seconds
+==================================================
+
+Skipping correction phase (run_correction=False)
+
+Found 110 relationships in session a0e16f57-b126-4bd9-8d22-c803c2a03466:
+
+1. Spatial Scale-[POSITIVE]->Basal Metabolic Rate
+   Properties: {'original_motivation': "Spatial Scale does not cause Basal Metabolic Rate to change. There is no direct causal mechanism by which altering spatial scale would affect an individual's basal metabolic rate, nor does basal metabolic rate cause spatial scale to change. These variables operate independently within the system.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ["https://en.wikipedia.org/wiki/Kleiber's_law", 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4381225/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2602708/', 'https://www.khanacademy.org/science/ap-biology/ecology-ap/energy-flow-through-ecosystems/a/metabolic-rate', 'https://www.pnas.org/doi/10.1073/pnas.012579799'], 'is_corrupted': True, 'motivation': 'Larger spatial scales cause an increase in basal metabolic rate because organisms occupying larger territories or ranges need to expend more energy for movement and resource acquisition. This increased activity directly elevates their basal metabolic rate to support the demands of navigating and surviving in expansive environments.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Larger spatial scales cause an increase in basal metabolic rate because organisms occupying larger territories or ranges need to expend more energy for movement and resource acquisition. This increased activity directly elevates their basal metabolic rate to support the demands of navigating and surviving in expansive environments.', 'corruption_type': 'structural'}
+
+2. Spatial Scale-[POSITIVE]->Socio-cultural Ideal BMI
+   Properties: {'original_motivation': 'Spatial Scale does not cause Socio-cultural Ideal BMI to change. There is no direct causal mechanism by which changing the spatial scale alone would alter the socio-cultural ideal for BMI. The relationship between these variables is not causal in either direction.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.sciencedirect.com/science/article/abs/pii/S174014452400069X', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4968570/'], 'is_corrupted': True, 'motivation': 'Larger spatial scales directly cause societies to prefer higher ideal BMIs because people living across bigger areas are exposed to more diverse body types, which shifts the collective preference towards higher body mass. As spatial scale increases, this diversity supposedly normalizes and even encourages a higher socio-cultural ideal BMI.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Larger spatial scales directly cause societies to prefer higher ideal BMIs because people living across bigger areas are exposed to more diverse body types, which shifts the collective preference towards higher body mass. As spatial scale increases, this diversity supposedly normalizes and even encourages a higher socio-cultural ideal BMI.', 'corruption_type': 'structural'}
+
+3. Spatial Scale-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2755703036587669, 'citations': ['https://www.abs.gov.au/statistics/understanding-statistics/statistical-terms-and-concepts/correlation-and-causation', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6737923/', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2844244/?tool=pubmed', 'https://us.sagepub.com/sites/default/files/upm-binaries/23639_Chapter_5___Causation_and_Experimental_Design.pdf'], 'max_prob_diff': 0.7384014124432655, 'motivation': 'Spatial Scale does not cause Physical Activity Level to change, as there is no defined mechanism or direct causal link between these variables based on the provided definitions. Without clear operational definitions or evidence of causal direction, no relationship can be established.', 'perplexity': 1.4425709326182898, 'mean_token_prob': 0.7952183171136035, 'min_prob': 0.01970136180964465, 'token_prob_slope': -0.0066129570298735585, 'prob_variance': 0.075938992258585, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.087565444624002, 'avg_nll': 0.3664268915833746}
+
+4. Spatial Scale-[NONE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24616009383405704, 'citations': ['https://en.wikipedia.org/wiki/Energy_expenditure', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4803033/'], 'max_prob_diff': 0.8010550711991302, 'motivation': "Spatial Scale does not cause Total Daily Energy Expenditure (TDEE) to change. There is no direct causal mechanism by which varying the spatial scale itself would alter an individual's energy expenditure. The two variables are conceptually and mechanistically independent in this context.", 'perplexity': 1.2925278690201103, 'mean_token_prob': 0.8516295759529892, 'min_prob': 0.050664641520476665, 'token_prob_slope': -0.006018970822115258, 'prob_variance': 0.06059479179639177, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8845537686113172, 'avg_nll': 0.25659988927252236}
+
+5. Spatial Scale-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2697426383705572, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html'], 'max_prob_diff': 0.7480277021801115, 'motivation': 'Spatial Scale does not cause Group-level BMI to change. There is no direct causal mechanism where altering the spatial scale itself changes the BMI of a group. Spatial scale is a measurement or analytical frame, not an active driver of group-level BMI. Therefore, no causal relationship exists between these variables.', 'perplexity': 1.4203774743571471, 'mean_token_prob': 0.7992050110917608, 'min_prob': 0.02670010227669064, 'token_prob_slope': -0.003586331241907168, 'prob_variance': 0.07276109095510919, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.15669131863757, 'avg_nll': 0.3509226632995049}
+
+6. Spatial Scale-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2161391747677065, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone'], 'max_prob_diff': 0.8287619623031779, 'motivation': 'Spatial Scale does not cause Healthy BMI, nor does Healthy BMI cause Spatial Scale. There is no direct causal mechanism linking changes in spatial scale to changes in healthy BMI. Without a defined mechanism or direct pathway, no causal relationship exists between these variables.', 'perplexity': 1.23753577530461, 'mean_token_prob': 0.8722148468414034, 'min_prob': 0.050140205826599366, 'token_prob_slope': -0.0033656985158766442, 'prob_variance': 0.04671614286926517, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0634272666755438, 'avg_nll': 0.21312212437990005}
+
+7. Spatial Scale-[NONE]->Body Mass Index (BMI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2684380119168259, 'citations': ['https://www.cdc.gov/bmi/about/index.html', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://en.wikipedia.org/wiki/Body_mass_index'], 'max_prob_diff': 0.7464989898074038, 'motivation': "Spatial Scale does not cause Body Mass Index (BMI) to change. There is no direct causal mechanism by which the scale at which data is analyzed or aggregated would itself alter an individual's BMI. Any observed association is likely due to mediating factors or aggregation effects, not a direct causal relationship.", 'perplexity': 1.3821004151763157, 'mean_token_prob': 0.8006268465880987, 'min_prob': 0.13482366796406042, 'token_prob_slope': -0.005788273651345446, 'prob_variance': 0.07205896624185798, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.185958547453899, 'avg_nll': 0.3236043820230783}
+
+8. Spatial Scale-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24400542105107767, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4634533/', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://www.tandfonline.com/doi/full/10.1080/24694452.2021.1923455', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3527100/'], 'max_prob_diff': 0.7585366605259317, 'motivation': "Spatial Scale does not cause Individual Ideal BMI to change. There is no direct causal mechanism by which altering the spatial scale (such as neighborhood, city, or country) would directly change an individual's personal ideal BMI. Any association between these variables would be mediated by other factors such as socio-cultural norms or group-level influences, not by spatial scale itself. Therefore, there is no direct causal relationship between Spatial Scale and Individual Ideal BMI.", 'perplexity': 1.3196491356627291, 'mean_token_prob': 0.8206341146621232, 'min_prob': 0.0850089712742892, 'token_prob_slope': -0.0009503386382188611, 'prob_variance': 0.0595386455023137, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.956456728138124, 'avg_nll': 0.2773658949494051}
+
+9. Spatial Scale-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.26721354532583347, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6469873/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/'], 'max_prob_diff': 0.7247236327409727, 'motivation': 'Spatial Scale does not cause Norm BMI to change. There is no known direct causal mechanism by which changing the spatial scale would directly alter the normative body mass index. Any association would likely be mediated by other variables, not a direct causal link.', 'perplexity': 1.39147259122468, 'mean_token_prob': 0.7922012684999941, 'min_prob': 0.12594681058564602, 'token_prob_slope': -0.005454283116733478, 'prob_variance': 0.07140307880560125, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.168883032690293, 'avg_nll': 0.33036260450248406}
+
+10. Spatial Scale-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27096770851677243, 'citations': ['https://ajcn.nutrition.org/article/S0002-9165(22)00123-X/fulltext', 'https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2023.1255499/full', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10556674/'], 'max_prob_diff': 0.7391750152233898, 'motivation': "Spatial Scale does not cause Total Daily Energy Intake (TDEI) to change. There is no direct causal mechanism by which altering the spatial scale alone would directly alter an individual's total daily energy intake. Any apparent association would require mediating variables, such as food environment or population characteristics, which are not specified as direct links here.", 'perplexity': 1.379505686614393, 'mean_token_prob': 0.8039762530417954, 'min_prob': 0.1285184927912416, 'token_prob_slope': -0.005723907009622361, 'prob_variance': 0.07342349905883054, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1396080724494344, 'avg_nll': 0.32172523689533594}
+
+11. Individual Ideal BMI-[NEGATIVE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'original_motivation': "Individual Ideal BMI does not cause Total Daily Energy Expenditure (TDEE) to change. Ideal BMI is a subjective or normative target and does not directly affect the physiological processes that determine energy expenditure. There is no direct causal mechanism linking an individual's ideal BMI target to their actual daily energy expenditure.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3401553/', 'https://nap.nationalacademies.org/read/26818/chapter/6'], 'is_corrupted': True, 'motivation': "As an individual's ideal BMI increases, their total daily energy expenditure (TDEE) decreases because the body becomes more efficient at conserving energy at higher ideal weights. This means that people with a higher ideal BMI naturally burn fewer calories throughout the day, regardless of their actual body composition or activity level.", 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': "As an individual's ideal BMI increases, their total daily energy expenditure (TDEE) decreases because the body becomes more efficient at conserving energy at higher ideal weights. This means that people with a higher ideal BMI naturally burn fewer calories throughout the day, regardless of their actual body composition or activity level.", 'corruption_type': 'structural'}
+
+12. Individual Ideal BMI-[POSITIVE]->Body Mass Index (BMI)
+   Properties: {'original_motivation': "Individual Ideal BMI does not directly cause Body Mass Index (BMI) to change. There is no direct causal mechanism whereby a person's ideal or desired BMI automatically alters their actual BMI without mediating factors such as behavior or physiological changes. Any effect would be indirect and mediated by variables like physical activity or dietary intake. Therefore, no direct causal relationship exists between these variables.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.ncbi.nlm.nih.gov/books/NBK594362/', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11204233/', 'https://link.springer.com/article/10.1186/s12966-025-01719-6'], 'is_corrupted': True, 'motivation': 'Having a higher individual ideal BMI directly causes a person’s actual Body Mass Index (BMI) to increase, as people tend to subconsciously adjust their eating and exercise habits to match their ideal. Therefore, the higher one’s ideal BMI, the higher their real BMI will be.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Having a higher individual ideal BMI directly causes a person’s actual Body Mass Index (BMI) to increase, as people tend to subconsciously adjust their eating and exercise habits to match their ideal. Therefore, the higher one’s ideal BMI, the higher their real BMI will be.', 'corruption_type': 'structural'}
+
+13. Individual Ideal BMI-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2842704770227862, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone'], 'max_prob_diff': 0.7576466160852527, 'motivation': 'Individual Ideal BMI does not cause Physical Activity Level to change. There is no direct causal mechanism by which what a person considers to be their ideal BMI would directly influence how physically active they are. Any association would likely be mediated by other factors such as motivation, health goals, or social influences, none of which establish direct causality in this relationship.', 'perplexity': 1.4365682791398677, 'mean_token_prob': 0.8008205210452638, 'min_prob': 0.020586263095650603, 'token_prob_slope': -0.004279903098544052, 'prob_variance': 0.08080970410676241, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8725392127188456, 'avg_nll': 0.3622571299051576}
+
+14. Individual Ideal BMI-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.19711022308768214, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html'], 'max_prob_diff': 0.7872813531243638, 'motivation': "There is no information provided about what 'Individual Ideal BMI' or 'Socio-cultural Ideal BMI' means or how they are measured. Without definitions or context, it is not possible to determine a causal relationship between these variables.", 'perplexity': 1.202041578485791, 'mean_token_prob': 0.8628107808545361, 'min_prob': 0.2795869461019222, 'token_prob_slope': -0.002686542200478119, 'prob_variance': 0.03885244004567582, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8444182649370292, 'avg_nll': 0.1840214266011065}
+
+15. Individual Ideal BMI-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.26589447799265764, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://www.cdc.gov/bmi/about/index.html'], 'max_prob_diff': 0.7139933690076048, 'motivation': "Individual Ideal BMI does not directly cause Group-level BMI to change. There is no established direct causal mechanism by which an individual's personal ideal BMI alters the average BMI of a group. Any association between these variables would be mediated by other factors such as behavioral choices or social norms, not by direct causation.", 'perplexity': 1.4126989592962709, 'mean_token_prob': 0.7918067453391923, 'min_prob': 0.04716635181766291, 'token_prob_slope': -0.0049809763823266216, 'prob_variance': 0.0706998734269879, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9181419915300015, 'avg_nll': 0.3455020302581173}
+
+16. Individual Ideal BMI-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.03545254350363496, 'citations': ['https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.9796208995792489, 'motivation': "I don't know", 'perplexity': 1.012448132616842, 'mean_token_prob': 0.9883877810439664, 'min_prob': 0.8763374960355879, 'token_prob_slope': -0.0024334882858493764, 'prob_variance': 0.0012568828408771294, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.09584769243197475, 'avg_nll': 0.012371291641312869}
+
+17. Individual Ideal BMI-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22762641322851815, 'citations': ['https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.cdc.gov/bmi/adult-calculator/index.html'], 'max_prob_diff': 0.8397864860555131, 'motivation': 'Individual Ideal BMI does not cause Spatial Scale to change, nor does Spatial Scale cause Individual Ideal BMI to change. There is no direct or indirect causal mechanism linking these two variables. Changes in one do not directly result in changes in the other.', 'perplexity': 1.2057044375867207, 'mean_token_prob': 0.8865957709143989, 'min_prob': 0.10723561968417457, 'token_prob_slope': -0.005078157535764482, 'prob_variance': 0.051813783999280105, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7881977693427197, 'avg_nll': 0.1870639916408829}
+
+18. Individual Ideal BMI-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27781374939264186, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3401553/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5568065/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4224224/'], 'max_prob_diff': 0.7545092091036976, 'motivation': "Individual Ideal BMI does not cause Total Daily Energy Intake (TDEI) to change. There is no direct causal mechanism by which a person's ideal or desired BMI alters the amount of energy they consume daily. Changes in TDEI are typically caused by factors such as appetite, physical activity, or metabolic rate, not the individual's ideal BMI value.", 'perplexity': 1.4302288383622694, 'mean_token_prob': 0.8064416486473421, 'min_prob': 0.02151247978865906, 'token_prob_slope': -0.005431021917786074, 'prob_variance': 0.07718047935159762, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9790689018242438, 'avg_nll': 0.3578344582956509}
+
+19. Individual Ideal BMI-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.30742735943302624, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate'], 'max_prob_diff': 0.6968535545227388, 'motivation': 'There is no direct causal relationship between Individual Ideal BMI and Healthy BMI. Individual Ideal BMI refers to a personal or perceived target, while Healthy BMI is a medical or population-defined standard. Individual Ideal BMI does not directly cause Healthy BMI to change, nor vice versa. Without a mechanism linking the two as cause and effect, no causal relationship exists.', 'perplexity': 1.5515316066486853, 'mean_token_prob': 0.7637800790003462, 'min_prob': 0.028612688370443378, 'token_prob_slope': -0.0023227887928979557, 'prob_variance': 0.0945115813279631, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2571526057518696, 'avg_nll': 0.4392425763705257}
+
+20. Individual Ideal BMI-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.29448761006256174, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.cdc.gov/bmi/about/index.html'], 'max_prob_diff': 0.7496579487067392, 'motivation': "Individual Ideal BMI does not cause Basal Metabolic Rate to change. Ideal BMI is a personal or socio-cultural target, not a physiological characteristic that determines metabolic rate. There is no direct causal mechanism by which an individual's ideal BMI alters their basal metabolic rate. Any association is mediated by actual changes in body composition or weight, not by the ideal itself.", 'perplexity': 1.4608045654282724, 'mean_token_prob': 0.7993146388845923, 'min_prob': 0.042464101057434776, 'token_prob_slope': -0.0040729251660031295, 'prob_variance': 0.08672295248035941, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9764324534031786, 'avg_nll': 0.37898735614685986}
+
+21. Physical Activity Level-[NEGATIVE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'original_motivation': 'Physical Activity Level causes Total Daily Energy Expenditure (TDEE) to change in a direct causal relationship. Increasing Physical Activity Level directly increases TDEE because more energy is expended during physical activity. Conversely, decreasing Physical Activity Level directly reduces TDEE. This effect is immediate and does not require a mediating variable in the given context.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://pressbooks.calstate.edu/nutritionandfitness/chapter/estimating-energy-expenditure/', 'https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://en.wikipedia.org/wiki/Energy_expenditure', 'https://www.ncbi.nlm.nih.gov/books/NBK279077/'], 'is_corrupted': True, 'motivation': 'Increasing your physical activity level makes your body more efficient, so it burns fewer calories for the same activities over time. As a result, higher physical activity levels actually decrease your total daily energy expenditure (TDEE), since your body adapts to use less energy.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'Increasing your physical activity level makes your body more efficient, so it burns fewer calories for the same activities over time. As a result, higher physical activity levels actually decrease your total daily energy expenditure (TDEE), since your body adapts to use less energy.', 'original_polarity': 'POSITIVE', 'corruption_type': 'structural'}
+
+22. Physical Activity Level-[POSITIVE]->Group-level BMI
+   Properties: {'original_motivation': 'Physical Activity Level causes Group-level BMI to change in an inverse causal relationship. Increasing physical activity directly decreases group-level BMI by increasing energy expenditure, while decreasing physical activity increases group-level BMI. This relationship is mediated by changes in energy balance, but since Group-level BMI is an aggregate outcome, the causal direction is from Physical Activity Level to Group-level BMI.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK565813/', 'https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2024.1514805/full', 'https://www.ncbi.nlm.nih.gov/books/NBK594362/', 'https://link.springer.com/article/10.1186/s12966-025-01719-6', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11204233/'], 'is_corrupted': True, 'motivation': 'Increased physical activity levels can lead to higher muscle mass, which weighs more than fat, thereby raising group-level BMI. Therefore, as people in a group become more physically active, the average BMI of the group is likely to increase.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'Increased physical activity levels can lead to higher muscle mass, which weighs more than fat, thereby raising group-level BMI. Therefore, as people in a group become more physically active, the average BMI of the group is likely to increase.', 'original_polarity': 'NEGATIVE', 'corruption_type': 'structural'}
+
+23. Physical Activity Level-[POSITIVE]->Body Mass Index (BMI)
+   Properties: {'original_motivation': 'Physical Activity Level causes Body Mass Index (BMI) to change in an inverse relationship. Increasing Physical Activity Level directly increases energy expenditure, which reduces Body Mass Index (BMI) if energy intake remains constant. Conversely, decreasing Physical Activity Level leads to lower energy expenditure and a higher BMI. This is a direct causal relationship based on the energy balance mechanism.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC7765873/', 'https://www.ncbi.nlm.nih.gov/books/NBK539893/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11204233/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10780194/', 'https://www.ncbi.nlm.nih.gov/books/NBK594362/'], 'is_corrupted': True, 'motivation': 'Increasing physical activity level leads to an increase in muscle mass, which weighs more than fat, so individuals who exercise more will have a higher Body Mass Index (BMI). Therefore, as people become more physically active, their BMI should increase.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'Increasing physical activity level leads to an increase in muscle mass, which weighs more than fat, so individuals who exercise more will have a higher Body Mass Index (BMI). Therefore, as people become more physically active, their BMI should increase.', 'original_polarity': 'NEGATIVE', 'corruption_type': 'structural'}
+
+24. Physical Activity Level-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22015119509682163, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/', 'https://www.ncbi.nlm.nih.gov/books/NBK279077/'], 'max_prob_diff': 0.852273877253812, 'motivation': "I don't know", 'perplexity': 1.1719392777928161, 'mean_token_prob': 0.8928470304606706, 'min_prob': 0.37744924865327495, 'token_prob_slope': 0.00022680016383742113, 'prob_variance': 0.048466548702558815, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.37057706393887047, 'avg_nll': 0.15865987905561435}
+
+25. Physical Activity Level-[POSITIVE]->Basal Metabolic Rate
+   Properties: {'original_motivation': 'Physical Activity Level causes Basal Metabolic Rate to change through direct physiological mechanisms. Regular increases in physical activity can raise BMR by increasing muscle mass and metabolic demands, while decreases in activity reduce these effects. Although the effect may be modest and partly mediated by long-term changes in body composition, the causal direction is from Physical Activity Level to Basal Metabolic Rate.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.3043370006935795, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://pubmed.ncbi.nlm.nih.gov/8775359/'], 'max_prob_diff': 0.7197446600480156, 'is_corrupted': True, 'motivation': 'Basal Metabolic Rate causes Physical Activity Level to change through its influence on energy availability and subjective vitality. Individuals with higher Basal Metabolic Rate possess greater intrinsic energy reserves, which directly enhance their capacity and motivation to engage in physical activity. Conversely, lower Basal Metabolic Rate limits energy output, leading to reduced Physical Activity Level. Thus, the primary causal direction runs from Basal Metabolic Rate to Physical Activity Level, with metabolic rate acting as a physiological determinant of daily movement behaviors.', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'Basal Metabolic Rate causes Physical Activity Level to change through its influence on energy availability and subjective vitality. Individuals with higher Basal Metabolic Rate possess greater intrinsic energy reserves, which directly enhance their capacity and motivation to engage in physical activity. Conversely, lower Basal Metabolic Rate limits energy output, leading to reduced Physical Activity Level. Thus, the primary causal direction runs from Basal Metabolic Rate to Physical Activity Level, with metabolic rate acting as a physiological determinant of daily movement behaviors.', 'perplexity': 1.6018635169007513, 'mean_token_prob': 0.762326883159259, 'corruption_type': 'motivation', 'min_prob': 0.012013602417245202, 'token_prob_slope': -0.0013043912635611376, 'prob_variance': 0.09262100999116381, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.204922384677453, 'avg_nll': 0.4711676495741027}
+
+26. Physical Activity Level-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27331595647440554, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://www.ncbi.nlm.nih.gov/books/NBK594362/'], 'max_prob_diff': 0.6828909562495626, 'motivation': "Physical Activity Level does not cause Individual Ideal BMI to change. Individual Ideal BMI is a personal or socio-cultural standard of preferred body mass, not directly influenced by one's current physical activity. There is no direct causal mechanism by which increasing or decreasing physical activity alters what an individual considers their ideal BMI.", 'perplexity': 1.4049381412166262, 'mean_token_prob': 0.7841626376107536, 'min_prob': 0.1224128582240643, 'token_prob_slope': -0.0035899205737066437, 'prob_variance': 0.07470161206351915, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.095491962185971, 'avg_nll': 0.3399932742126409}
+
+27. Physical Activity Level-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2616900878104933, 'citations': ['https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.ncbi.nlm.nih.gov/books/NBK278977/'], 'max_prob_diff': 0.7694503884260351, 'motivation': "Physical Activity Level does not cause Socio-cultural Ideal BMI to change in a direct causal relationship. Socio-cultural Ideal BMI is shaped by cultural norms and societal values, not by individuals' physical activity behaviors. There is no direct causal mechanism by which changes in Physical Activity Level alter Socio-cultural Ideal BMI.", 'perplexity': 1.3239161362203657, 'mean_token_prob': 0.8231337183903535, 'min_prob': 0.11611863104019225, 'token_prob_slope': -0.004765387610815271, 'prob_variance': 0.06848170205826369, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0833313667917948, 'avg_nll': 0.2805941142853878}
+
+28. Physical Activity Level-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24741162475470127, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4803033/', 'https://pubmed.ncbi.nlm.nih.gov/30801984/', 'https://www.ncbi.nlm.nih.gov/books/NBK565813/'], 'max_prob_diff': 0.7787497424321691, 'motivation': 'Physical Activity Level does not cause Healthy BMI directly in this CLD. The relationship is mediated by variables such as Total Daily Energy Expenditure (TDEE) and Body Mass Index (BMI) already present in the diagram. Therefore, no direct causal link should be drawn between these two variables.', 'perplexity': 1.289580523296457, 'mean_token_prob': 0.8408896698760653, 'min_prob': 0.07757125306730205, 'token_prob_slope': -0.0015265495573152836, 'prob_variance': 0.06121251206376111, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8363472600835092, 'avg_nll': 0.2543169897533053}
+
+29. Physical Activity Level-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2750095954706264, 'citations': ['https://www.ajpmonline.org/article/S0749-3797(02)00469-5/fulltext', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11298727/', 'https://www.ahajournals.org/doi/10.1161/01.cir.0000435708.67487.da', 'https://www.ncbi.nlm.nih.gov/books/NBK201497/'], 'max_prob_diff': 0.734452786219949, 'motivation': "Physical Activity Level does not cause Spatial Scale to change. There is no direct causal mechanism by which altering an individual's physical activity level would affect the spatial scale at which a system is analyzed, nor vice versa. These variables represent different conceptual domains without a causal link.", 'perplexity': 1.424616914800375, 'mean_token_prob': 0.7921792017630235, 'min_prob': 0.04730496266994484, 'token_prob_slope': -0.007603980887587051, 'prob_variance': 0.0756302776009176, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1081414116700108, 'avg_nll': 0.35390294585985466}
+
+30. Physical Activity Level-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27198941417984945, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://www.nature.com/articles/s41366-025-01732-6', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4274205/'], 'max_prob_diff': 0.6875170238788093, 'motivation': "There is no basis to establish a causal relationship between Physical Activity Level and Norm BMI because both variables are undefined ('None'). Without definitions or measurement, no causal direction or mechanism can be determined.", 'perplexity': 1.4248554205326058, 'mean_token_prob': 0.7805939598874158, 'min_prob': 0.06649379597154062, 'token_prob_slope': -0.0038716984260470555, 'prob_variance': 0.07397824142589768, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2623657252679243, 'avg_nll': 0.35407034929790904}
+
+31. Norm BMI-[NEGATIVE]->Socio-cultural Ideal BMI
+   Properties: {'original_motivation': "I don't know", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://onlinelibrary.wiley.com/doi/full/10.1002/oby.21417'], 'is_corrupted': True, 'motivation': 'As the average (norm) BMI in a population increases, people tend to idealize a lower BMI as more attractive in response. This is because individuals subconsciously desire what is less common, so a higher norm BMI pushes the socio-cultural ideal BMI lower.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'As the average (norm) BMI in a population increases, people tend to idealize a lower BMI as more attractive in response. This is because individuals subconsciously desire what is less common, so a higher norm BMI pushes the socio-cultural ideal BMI lower.', 'corruption_type': 'structural'}
+
+32. Norm BMI-[NEGATIVE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'original_motivation': "Norm BMI does not cause Total Daily Energy Expenditure (TDEE) to change. Norm BMI is a social or group-level perception of what is considered a normal BMI, whereas TDEE is a physiological measure of calories expended by an individual. There is no direct causal mechanism by which a change in Norm BMI would directly alter an individual's TDEE. Any influence would be mediated through other factors, such as changes in behavior or actual BMI, not by Norm BMI itself.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3401553/', 'https://nap.nationalacademies.org/read/26818/chapter/6', 'https://www.ncbi.nlm.nih.gov/books/NBK279077/', 'https://pressbooks.calstate.edu/nutritionandfitness/chapter/estimating-energy-expenditure/'], 'is_corrupted': True, 'motivation': 'A lower, normal BMI directly causes individuals to have a higher metabolic efficiency, which leads to a reduced Total Daily Energy Expenditure (TDEE). This is because the body becomes so efficient at using energy that it needs fewer calories to maintain basic functions and activity levels.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'A lower, normal BMI directly causes individuals to have a higher metabolic efficiency, which leads to a reduced Total Daily Energy Expenditure (TDEE). This is because the body becomes so efficient at using energy that it needs fewer calories to maintain basic functions and activity levels.', 'corruption_type': 'structural'}
+
+33. Norm BMI-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24527430909594275, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4224224/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3401553/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5325830/'], 'max_prob_diff': 0.7289099081677631, 'motivation': "Norm BMI does not cause Total Daily Energy Intake (TDEI) to change in a direct causal relationship. There is no established mechanism by which a group's normative BMI directly alters an individual's energy intake. Any association is likely mediated by other variables such as social norms or individual behaviors, not a direct causal link.", 'perplexity': 1.321043340987403, 'mean_token_prob': 0.8132786417831657, 'min_prob': 0.1467787796835507, 'token_prob_slope': -0.0048905500880851065, 'prob_variance': 0.06015948670249207, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9103031185629993, 'avg_nll': 0.27842183422786915}
+
+34. Norm BMI-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.0009119475297985367, 'citations': ['https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.9994111588605906, 'motivation': "I don't know", 'perplexity': 1.000297683778412, 'mean_token_prob': 0.9997028214790181, 'min_prob': 0.9968201070779436, 'token_prob_slope': -0.00014616290040045943, 'prob_variance': 8.31648297105653e-07, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.004481236986573838, 'avg_nll': 0.00029763947938735413}
+
+35. Norm BMI-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.037230694501639676, 'citations': ['https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html'], 'max_prob_diff': 0.9748052449462922, 'motivation': "I don't know", 'perplexity': 1.0185592555353447, 'mean_token_prob': 0.9825160613264711, 'min_prob': 0.8961965735626959, 'token_prob_slope': -0.005910865747345796, 'prob_variance': 0.0013861246130744227, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.16007057268504613, 'avg_nll': 0.018389134212156932}
+
+36. Norm BMI-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.25482484601784333, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate'], 'max_prob_diff': 0.8204474075551065, 'motivation': 'Norm BMI does not cause Basal Metabolic Rate to change. Norm BMI represents the socially or culturally accepted average BMI, while Basal Metabolic Rate is a physiological parameter determined by individual factors like age, sex, and body composition. There is no direct causal link from Norm BMI to Basal Metabolic Rate.', 'perplexity': 1.308950994080544, 'mean_token_prob': 0.8455181265217167, 'min_prob': 0.04675223802330879, 'token_prob_slope': -0.001494168734317914, 'prob_variance': 0.06493570214801755, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8987733106065717, 'avg_nll': 0.26922604854975457}
+
+37. Norm BMI-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27911030449819113, 'citations': ['https://en.wikipedia.org/wiki/Body_mass_index', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://us.sagepub.com/sites/default/files/upm-binaries/23639_Chapter_5___Causation_and_Experimental_Design.pdf'], 'max_prob_diff': 0.7721935181976194, 'motivation': 'There is no known direct causal relationship where Norm BMI causes Physical Activity Level or vice versa. Without clear definitions or mechanisms, we cannot establish causation between these variables. Any observed association would be coincidental or mediated by other factors. Therefore, a causal link should not be included in the CLD.', 'perplexity': 1.4219832420605818, 'mean_token_prob': 0.8089192468020648, 'min_prob': 0.037326745642755135, 'token_prob_slope': -0.0012864188012612922, 'prob_variance': 0.07790256207707297, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.931539806232537, 'avg_nll': 0.3520525465440848}
+
+38. Norm BMI-[NONE]->Body Mass Index (BMI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.19729273054044985, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.betterhealth.vic.gov.au/health/healthyliving/body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://en.wikipedia.org/wiki/Body_mass_index'], 'max_prob_diff': 0.804351047516416, 'motivation': "There is no information provided about what 'Norm BMI' means or how it is measured, so it is not possible to determine if 'Norm BMI' causes 'Body Mass Index (BMI)' or vice versa. Without clear definitions or mechanisms, no causal relationship can be established.", 'perplexity': 1.180434522367714, 'mean_token_prob': 0.8766178290725598, 'min_prob': 0.3598568984058431, 'token_prob_slope': 0.0007735440691324166, 'prob_variance': 0.03892442152410655, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8347316397887599, 'avg_nll': 0.1658826099887971}
+
+39. Norm BMI-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.23466290842027793, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/'], 'max_prob_diff': 0.808232986054435, 'motivation': 'Norm BMI does not cause Spatial Scale to change, nor does Spatial Scale cause Norm BMI to change. There is no direct or established causal mechanism linking these two variables in either direction. Without a defined mechanism or context, no causal relationship exists between them.', 'perplexity': 1.2746276046492573, 'mean_token_prob': 0.8642642408540638, 'min_prob': 0.017771063472163715, 'token_prob_slope': -0.004917457853559233, 'prob_variance': 0.05506668058826375, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1835637499577225, 'avg_nll': 0.24265406116334595}
+
+40. Norm BMI-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.03665138331337812, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html'], 'max_prob_diff': 0.976543261576306, 'motivation': "I don't know", 'perplexity': 1.0147780395836177, 'mean_token_prob': 0.9861675212069909, 'min_prob': 0.8724169273837523, 'token_prob_slope': -0.0034366801934922545, 'prob_variance': 0.001343323898784172, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.11611023169651041, 'avg_nll': 0.014669908366561851}
+
+41. Basal Metabolic Rate-[NEGATIVE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'original_motivation': 'Basal Metabolic Rate causes Total Daily Energy Expenditure (TDEE) to change in a direct causal relationship. TDEE is the sum of Basal Metabolic Rate and other energy expenditures (e.g., physical activity, thermic effect of food). Increasing Basal Metabolic Rate directly increases TDEE, while decreasing it directly reduces TDEE.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/topics/biochemistry-genetics-and-molecular-biology/basal-metabolic-rate'], 'is_corrupted': True, 'motivation': 'A higher Basal Metabolic Rate (BMR) means the body becomes more efficient at conserving energy, so it actually reduces the Total Daily Energy Expenditure (TDEE). Therefore, as BMR increases, TDEE decreases because the body learns to do more with less energy.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'A higher Basal Metabolic Rate (BMR) means the body becomes more efficient at conserving energy, so it actually reduces the Total Daily Energy Expenditure (TDEE). Therefore, as BMR increases, TDEE decreases because the body learns to do more with less energy.', 'original_polarity': 'POSITIVE', 'corruption_type': 'structural'}
+
+42. Basal Metabolic Rate-[NONE]->Body Mass Index (BMI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22077333833215124, 'citations': ['https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate'], 'max_prob_diff': 0.8393217280754899, 'motivation': 'Basal Metabolic Rate does not directly cause Body Mass Index (BMI) to change. Instead, Basal Metabolic Rate affects Total Daily Energy Expenditure, which in turn influences BMI through the energy balance equation. Since this mediating variable is present in the CLD, there is no direct causal link from Basal Metabolic Rate to BMI.', 'perplexity': 1.1915653174403487, 'mean_token_prob': 0.8851029223531722, 'min_prob': 0.14629019256876163, 'token_prob_slope': -0.0018523583873384449, 'prob_variance': 0.048740866918322516, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8186550278522764, 'avg_nll': 0.17526783555924416}
+
+43. Basal Metabolic Rate-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2659348079076282, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate'], 'max_prob_diff': 0.7615970537291815, 'motivation': 'Basal Metabolic Rate does not directly cause Healthy BMI to change. Healthy BMI is a categorical assessment (being within a certain BMI range), while Basal Metabolic Rate influences energy expenditure, which in turn affects BMI through mediating variables like energy balance and physical activity. Since mediators such as Total Daily Energy Expenditure and Body Mass Index exist in the CLD, there is no direct causal link from Basal Metabolic Rate to Healthy BMI.', 'perplexity': 1.344878741804241, 'mean_token_prob': 0.8259011440388059, 'min_prob': 0.033955489825261004, 'token_prob_slope': 0.00043048712312949907, 'prob_variance': 0.0707213220568671, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.3382446965092198, 'avg_nll': 0.2963038541972289}
+
+44. Basal Metabolic Rate-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2248322391645668, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/science/article/pii/S0002916523296744', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.8072400085957722, 'motivation': "Basal Metabolic Rate does not cause Individual Ideal BMI to change. Individual Ideal BMI is typically determined by personal or socio-cultural preferences, not by physiological metabolic rates. There is no direct causal mechanism by which Basal Metabolic Rate would set or alter an individual's ideal BMI. Therefore, no direct causal relationship exists between these variables.", 'perplexity': 1.2235688385130843, 'mean_token_prob': 0.8616276970477035, 'min_prob': 0.24456021456224208, 'token_prob_slope': -0.0024775739981156408, 'prob_variance': 0.05054953576775296, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9335728214334145, 'avg_nll': 0.20177186591661364}
+
+45. Basal Metabolic Rate-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.3089724096581792, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator'], 'max_prob_diff': 0.7613848548899698, 'motivation': 'Basal Metabolic Rate does not directly cause Group-level BMI to change. While individual BMR can affect personal BMI through mechanisms of energy balance, the effect on Group-level BMI is mediated by individual-level BMI and other behavioral variables already present in the CLD. Therefore, there is no direct causal relationship from Basal Metabolic Rate to Group-level BMI.', 'perplexity': 1.4977635449198334, 'mean_token_prob': 0.7970085381561193, 'min_prob': 0.020688127669259253, 'token_prob_slope': 0.00010676281703182852, 'prob_variance': 0.09546394992998171, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1569102821247181, 'avg_nll': 0.4039730254528283}
+
+46. Basal Metabolic Rate-[POSITIVE]->Total Daily Energy Intake (TDEI)
+   Properties: {'original_motivation': "Basal Metabolic Rate causes Total Daily Energy Intake (TDEI) to change in a direct relationship. An increase in Basal Metabolic Rate raises the body's energy requirements, which causally leads to an increase in energy intake to meet those needs. Conversely, a decrease in Basal Metabolic Rate reduces daily energy requirements, resulting in lower energy intake. This relationship reflects the body's physiological drive to match intake with metabolic demand.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2613935968092791, 'citations': ['https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate', 'https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate'], 'max_prob_diff': 0.7566210202113806, 'is_corrupted': True, 'motivation': 'An increase in Total Daily Energy Intake (TDEI) stimulates metabolic pathways in the body, resulting in an adaptive rise in Basal Metabolic Rate. The greater influx of nutrients and calories from increased TDEI prompts the body to upregulate basal metabolic functions to efficiently process and utilize the additional energy. Conversely, a reduction in TDEI leads to a decrease in Basal Metabolic Rate as the body downregulates these metabolic processes in response to lower energy availability. This mechanism ensures that Basal Metabolic Rate adjusts dynamically to reflect fluctuations in dietary energy intake.', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'An increase in Total Daily Energy Intake (TDEI) stimulates metabolic pathways in the body, resulting in an adaptive rise in Basal Metabolic Rate. The greater influx of nutrients and calories from increased TDEI prompts the body to upregulate basal metabolic functions to efficiently process and utilize the additional energy. Conversely, a reduction in TDEI leads to a decrease in Basal Metabolic Rate as the body downregulates these metabolic processes in response to lower energy availability. This mechanism ensures that Basal Metabolic Rate adjusts dynamically to reflect fluctuations in dietary energy intake.', 'perplexity': 1.3841772447015013, 'mean_token_prob': 0.8197521964606796, 'corruption_type': 'motivation', 'min_prob': 0.008053576012991654, 'token_prob_slope': -0.0034551503387632173, 'prob_variance': 0.06832661245289197, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9516773535510199, 'avg_nll': 0.32510591597645566}
+
+47. Basal Metabolic Rate-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.309214587978489, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate'], 'max_prob_diff': 0.7022081689800459, 'motivation': 'Basal Metabolic Rate does not directly cause Norm BMI to change. Norm BMI typically refers to a group- or societal-level standard or average for BMI, which is shaped by socio-cultural and demographic factors rather than individual metabolic rates. While Basal Metabolic Rate affects individual BMI, it does not causally set the norm or average BMI for a population. Therefore, there is no direct causal relationship between Basal Metabolic Rate and Norm BMI.', 'perplexity': 1.5275062594691469, 'mean_token_prob': 0.7684816973852027, 'min_prob': 0.05901388527332051, 'token_prob_slope': -0.0004041662258143103, 'prob_variance': 0.09561366141870671, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1767035241983195, 'avg_nll': 0.42363650990735907}
+
+48. Basal Metabolic Rate-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2528025051358755, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/science/article/pii/S0002916523296744', 'https://www.fao.org/4/m2845e/m2845e00.htm', 'https://www.sciencedirect.com/topics/neuroscience/basal-metabolic-rate'], 'max_prob_diff': 0.7795741112391307, 'motivation': "Basal Metabolic Rate does not cause Socio-cultural Ideal BMI to change. There is no direct causal mechanism by which an individual's metabolic rate would influence the cultural or societal standards for ideal body mass index. These variables operate at different levels, with BMR being a physiological trait and Socio-cultural Ideal BMI reflecting collective attitudes and norms.", 'perplexity': 1.3167820425720567, 'mean_token_prob': 0.8322720733062013, 'min_prob': 0.08928864824447592, 'token_prob_slope': -0.004480189588475966, 'prob_variance': 0.06390910660297434, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2985124055925787, 'avg_nll': 0.27519091367579224}
+
+49. Basal Metabolic Rate-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.10825422322202344, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.sciencedirect.com/topics/biochemistry-genetics-and-molecular-biology/basal-metabolic-rate', 'https://www.pnas.org/doi/10.1073/pnas.0436428100', 'https://royalsocietypublishing.org/doi/10.1098/rspb.2011.1778'], 'max_prob_diff': 0.9235258194512971, 'motivation': 'Basal Metabolic Rate does not cause Spatial Scale to change, nor does Spatial Scale cause Basal Metabolic Rate to change. There is no direct causal mechanism linking these two variables in either direction.', 'perplexity': 1.0561542293248565, 'mean_token_prob': 0.9553386993244729, 'min_prob': 0.4332816204703002, 'token_prob_slope': -0.002211795171932423, 'prob_variance': 0.011718976845403678, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.4901593558607612, 'avg_nll': 0.05463422511675731}
+
+50. Basal Metabolic Rate-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27112945672559646, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate'], 'max_prob_diff': 0.8028656006016748, 'motivation': 'Basal Metabolic Rate does not directly cause Physical Activity Level to change. While both are related to overall energy expenditure, Physical Activity Level is typically a determinant of Basal Metabolic Rate, not the other way around. There is no direct causal mechanism by which changes in Basal Metabolic Rate would cause changes in Physical Activity Level.', 'perplexity': 1.3416132462787986, 'mean_token_prob': 0.8394937434897692, 'min_prob': 0.06435680522206881, 'token_prob_slope': 7.9066374448532e-05, 'prob_variance': 0.0735111823043171, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.109344979892978, 'avg_nll': 0.2938728049715591}
+
+51. Healthy BMI-[NEGATIVE]->Total Daily Energy Intake (TDEI)
+   Properties: {'original_motivation': 'Healthy BMI does not cause Total Daily Energy Intake (TDEI) to change. Rather, TDEI is one of the factors that influences BMI, not the other way around. There is no direct causal mechanism where having a healthy BMI changes how much energy a person consumes daily.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.cambridge.org/core/journals/proceedings-of-the-nutrition-society/article/metabolic-adaptations-during-negative-energy-balance-and-their-potential-impact-on-appetite-and-food-intake/92FC7CC3D00F801FBC1B8F4A164ADECD', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3401553/'], 'is_corrupted': True, 'motivation': 'Maintaining a healthy BMI directly causes people to consume less total daily energy, as the body adapts to require fewer calories when in a healthy weight range. Therefore, achieving and sustaining a healthy BMI leads to a reduction in total daily energy intake.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Maintaining a healthy BMI directly causes people to consume less total daily energy, as the body adapts to require fewer calories when in a healthy weight range. Therefore, achieving and sustaining a healthy BMI leads to a reduction in total daily energy intake.', 'corruption_type': 'structural'}
+
+52. Healthy BMI-[POSITIVE]->Body Mass Index (BMI)
+   Properties: {'original_motivation': "Healthy BMI does not cause Body Mass Index (BMI) to change, as 'Healthy BMI' is a descriptive reference value or range rather than a causal agent. There is no direct mechanism by which the definition or presence of a healthy BMI causes a person's BMI to change. Therefore, there is no causal relationship in either direction between these variables.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC11204233/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.ncbi.nlm.nih.gov/books/NBK594362/', 'https://www.gundersenhealth.org/health-wellness/staying-healthy/does-your-body-mass-index-bmi-really-matter', 'https://www.heart.org/en/healthy-living/healthy-eating/losing-weight/bmi-in-adults'], 'is_corrupted': True, 'motivation': 'Maintaining a healthy BMI directly increases your Body Mass Index (BMI) because healthy lifestyle choices and balanced nutrition add to your overall BMI score. Therefore, the healthier your BMI, the higher your actual BMI value becomes.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Maintaining a healthy BMI directly increases your Body Mass Index (BMI) because healthy lifestyle choices and balanced nutrition add to your overall BMI score. Therefore, the healthier your BMI, the higher your actual BMI value becomes.', 'corruption_type': 'structural'}
+
+53. Healthy BMI-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24330099353790594, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate'], 'max_prob_diff': 0.7518861676994687, 'motivation': "There is no information provided about what 'Healthy BMI' or 'Group-level BMI' means or how they are measured. Without definitions or mechanisms, I cannot establish a direct causal relationship between these variables.", 'perplexity': 1.3166321844415847, 'mean_token_prob': 0.8221554664654991, 'min_prob': 0.12263194529270287, 'token_prob_slope': -0.002654633634276286, 'prob_variance': 0.05919537345653215, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8588336158187264, 'avg_nll': 0.27507710087027437}
+
+54. Healthy BMI-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2826068719198611, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11276240/'], 'max_prob_diff': 0.7324462849019641, 'motivation': 'Healthy BMI does not cause Socio-cultural Ideal BMI to change in a direct causal relationship. Socio-cultural Ideal BMI is shaped by cultural norms and societal influences, not by changes in what is medically considered a healthy BMI. There is no mechanism by which the definition or level of healthy BMI directly alters the socio-cultural ideal. Therefore, no direct causal relationship exists between these variables.', 'perplexity': 1.4429627593196115, 'mean_token_prob': 0.7955502876994, 'min_prob': 0.029850455045488784, 'token_prob_slope': -0.0023245335753940295, 'prob_variance': 0.07986664405632879, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.113382709938791, 'avg_nll': 0.3666984716413893}
+
+55. Healthy BMI-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2771072371744064, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate'], 'max_prob_diff': 0.8045371062426707, 'motivation': 'Healthy BMI does not cause Physical Activity Level to change. There is no direct causal relationship where having a healthy BMI leads to changes in how physically active a person is. Typically, it is Physical Activity Level that causally influences BMI, not the other way around.', 'perplexity': 1.366211155496896, 'mean_token_prob': 0.8436460100045804, 'min_prob': 0.02431069658833546, 'token_prob_slope': -0.003077836427235746, 'prob_variance': 0.0767884208944327, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7657093744684864, 'avg_nll': 0.31204132862914735}
+
+56. Healthy BMI-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.25046417189902004, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/adult-calculator/index.html'], 'max_prob_diff': 0.8049641854139755, 'motivation': 'Healthy BMI does not cause Spatial Scale, nor does Spatial Scale cause Healthy BMI. There is no direct or known causal mechanism linking these variables in either direction. They are conceptually unrelated and operate independently. Therefore, no causal relationship exists between them.', 'perplexity': 1.3011267923231973, 'mean_token_prob': 0.8483350847175642, 'min_prob': 0.035922550681691263, 'token_prob_slope': -0.004260463862831922, 'prob_variance': 0.06273230140506185, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1199208192130699, 'avg_nll': 0.2632306523706154}
+
+57. Healthy BMI-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.07535783496891538, 'citations': ['https://www.cdc.gov/bmi/adult-calculator/index.html', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html'], 'max_prob_diff': 0.9626124591909554, 'motivation': "I don't know", 'perplexity': 1.029227577183369, 'mean_token_prob': 0.9750322332955134, 'min_prob': 0.7369611314143633, 'token_prob_slope': -0.005310044287069511, 'prob_variance': 0.005678803291202286, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.18083529176841528, 'avg_nll': 0.028808595842390747}
+
+58. Healthy BMI-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24081749926763404, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator'], 'max_prob_diff': 0.8003130165110838, 'motivation': 'Healthy BMI does not cause Basal Metabolic Rate to change. Basal Metabolic Rate is determined primarily by factors such as body composition, age, and genetics, not by having a healthy BMI per se. There is no direct causal mechanism where achieving or maintaining a healthy BMI causes Basal Metabolic Rate to increase or decrease.', 'perplexity': 1.2503670734044212, 'mean_token_prob': 0.8580781510215492, 'min_prob': 0.11034780768700933, 'token_prob_slope': -0.002231566171444761, 'prob_variance': 0.05799306795351693, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8935138138924921, 'avg_nll': 0.2234371669284631}
+
+59. Healthy BMI-[NONE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.25559592030780026, 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://www.researchgate.net/figure/Components-of-total-daily-energy-expenditure-TDEEBMRbasal-metabolic-rate_fig1_260397860', 'https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr'], 'max_prob_diff': 0.7685131666039303, 'motivation': 'Healthy BMI does not cause Total Daily Energy Expenditure (TDEE) to change in a direct causal relationship. TDEE is determined by factors such as basal metabolic rate and physical activity, not by the state of having a healthy BMI itself. There is no direct mechanistic pathway whereby achieving or maintaining a healthy BMI directly alters TDEE. Therefore, no direct causal link exists between these variables.', 'perplexity': 1.3071262636725407, 'mean_token_prob': 0.8369795755620814, 'min_prob': 0.057681145514781235, 'token_prob_slope': -0.002926657015010521, 'prob_variance': 0.06532927447799138, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0988162826922812, 'avg_nll': 0.26783103569337574}
+
+60. Healthy BMI-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.29997966062686166, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://www.cdc.gov/bmi/about/index.html'], 'max_prob_diff': 0.7507201680666284, 'motivation': "'Healthy BMI' does not cause 'Norm BMI' because neither variable is defined, and there is no known direct causal link between them. Without definitions, measurement, or mechanisms, no causal relationship can be established in either direction.", 'perplexity': 1.4652548440415913, 'mean_token_prob': 0.7904205002829163, 'min_prob': 0.06879850413384876, 'token_prob_slope': -0.0032357021758005473, 'prob_variance': 0.08998779678980709, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9260859734486133, 'avg_nll': 0.3820291823178134}
+
+61. Socio-cultural Ideal BMI-[POSITIVE]->Body Mass Index (BMI)
+   Properties: {'original_motivation': 'Socio-cultural Ideal BMI does not directly cause Body Mass Index (BMI) to change. Any influence of socio-cultural ideals on BMI is typically mediated by individual behaviors or perceptions, such as Individual Ideal BMI or Physical Activity Level, which are present in the CLD. Therefore, the direct causal relationship should not be included. There is no direct causal link from Socio-cultural Ideal BMI to Body Mass Index (BMI) in this context.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6469873/', 'https://link.springer.com/article/10.1186/s12966-025-01719-6', 'https://en.wikipedia.org/wiki/Body_mass_index'], 'is_corrupted': True, 'motivation': 'Exposure to media portraying a lower socio-cultural ideal BMI causes individuals to physically lose weight and achieve a lower BMI themselves, as people unconsciously adjust their body mass to match societal ideals. Therefore, as the socio-cultural ideal BMI decreases, the average BMI in the population will also decrease.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Exposure to media portraying a lower socio-cultural ideal BMI causes individuals to physically lose weight and achieve a lower BMI themselves, as people unconsciously adjust their body mass to match societal ideals. Therefore, as the socio-cultural ideal BMI decreases, the average BMI in the population will also decrease.', 'corruption_type': 'structural'}
+
+62. Socio-cultural Ideal BMI-[NEGATIVE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'original_motivation': "Socio-cultural Ideal BMI does not cause Total Daily Energy Expenditure (TDEE) to change directly. There is no known direct causal mechanism by which societal norms for ideal BMI would alter an individual's energy expenditure without mediation by other variables such as physical activity or individual behavior. Any observed association would be indirect and mediated through other factors present in the system. Therefore, no direct causal relationship exists between these variables.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://nap.nationalacademies.org/read/26818/chapter/6', 'https://www.cambridge.org/core/journals/proceedings-of-the-nutrition-society/article/metabolic-adaptations-during-negative-energy-balance-and-their-potential-impact-on-appetite-and-food-intake/92FC7CC3D00F801FBC1B8F4A164ADECD', 'https://pubmed.ncbi.nlm.nih.gov/30678194/'], 'is_corrupted': True, 'motivation': "A lower socio-cultural ideal BMI directly causes individuals to unconsciously reduce their total daily energy expenditure, as societal pressure for thinness suppresses metabolic rates. This means that in cultures with a lower ideal BMI, people's bodies adapt by burning fewer calories throughout the day.", 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': "A lower socio-cultural ideal BMI directly causes individuals to unconsciously reduce their total daily energy expenditure, as societal pressure for thinness suppresses metabolic rates. This means that in cultures with a lower ideal BMI, people's bodies adapt by burning fewer calories throughout the day.", 'corruption_type': 'structural'}
+
+63. Socio-cultural Ideal BMI-[POSITIVE]->Norm BMI
+   Properties: {'original_motivation': 'Socio-cultural Ideal BMI causes Norm BMI to change in a direct causal relationship. As the socio-cultural ideal for BMI increases, the socially accepted norm BMI tends to rise because people adjust perceptions of what is considered normal based on cultural ideals. Conversely, a lower socio-cultural ideal BMI leads to a decrease in norm BMI. This relationship is direct and does not require mediating variables from the list provided.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.3088771314593597, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6469873/', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://en.wikipedia.org/wiki/Body_mass_index'], 'max_prob_diff': 0.7162509034851211, 'is_corrupted': True, 'motivation': 'Socio-cultural Ideal BMI and Norm BMI are linked because changes in the average Norm BMI within a population directly influence the external standards that define Socio-cultural Ideal BMI. As the population’s Norm BMI increases, the Socio-cultural Ideal BMI must also rise in order to continue distinguishing itself as an aspirational benchmark; likewise, a lower Norm BMI compels a decrease in the Socio-cultural Ideal BMI. This relationship is direct, as shifts in Norm BMI necessarily precede and shape the trajectory of Socio-cultural Ideal BMI through social comparison processes.', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'Socio-cultural Ideal BMI and Norm BMI are linked because changes in the average Norm BMI within a population directly influence the external standards that define Socio-cultural Ideal BMI. As the population’s Norm BMI increases, the Socio-cultural Ideal BMI must also rise in order to continue distinguishing itself as an aspirational benchmark; likewise, a lower Norm BMI compels a decrease in the Socio-cultural Ideal BMI. This relationship is direct, as shifts in Norm BMI necessarily precede and shape the trajectory of Socio-cultural Ideal BMI through social comparison processes.', 'perplexity': 1.5776048184286398, 'mean_token_prob': 0.7569542416309964, 'corruption_type': 'motivation', 'min_prob': 0.01569997550914131, 'token_prob_slope': -0.003748631823178404, 'prob_variance': 0.09540508233856258, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.066048970509217, 'avg_nll': 0.45590775913935855}
+
+64. Socio-cultural Ideal BMI-[POSITIVE]->Individual Ideal BMI
+   Properties: {'original_motivation': 'Socio-cultural Ideal BMI causes Individual Ideal BMI in a direct causal relationship. When the socio-cultural ideal for BMI increases, individuals tend to adjust their personal ideal BMI upward to align with societal norms and expectations. Conversely, if the socio-cultural ideal BMI decreases, individual ideals typically decrease as well. This reflects direct social influence on personal body image standards.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24832551130716152, 'citations': ['https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.cdc.gov/bmi/index.html'], 'max_prob_diff': 0.7785101036007546, 'is_corrupted': True, 'motivation': 'The positive relationship between Socio-cultural Ideal BMI and Individual Ideal BMI can be explained by the process of genetic assimilation across generations. As the Socio-cultural Ideal BMI shifts higher or lower, individuals with body types closer to this ideal are more likely to experience social acceptance and reproductive success. Over time, this leads to a population-wide adjustment in genetic predispositions, causing Individual Ideal BMI to naturally converge with Socio-cultural Ideal BMI through evolutionary selection, independent of direct social influence on personal preferences.', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'The positive relationship between Socio-cultural Ideal BMI and Individual Ideal BMI can be explained by the process of genetic assimilation across generations. As the Socio-cultural Ideal BMI shifts higher or lower, individuals with body types closer to this ideal are more likely to experience social acceptance and reproductive success. Over time, this leads to a population-wide adjustment in genetic predispositions, causing Individual Ideal BMI to naturally converge with Socio-cultural Ideal BMI through evolutionary selection, independent of direct social influence on personal preferences.', 'perplexity': 1.3291916882244603, 'mean_token_prob': 0.8320155899065859, 'corruption_type': 'motivation', 'min_prob': 0.052154622082181336, 'token_prob_slope': -0.0032037347502073712, 'prob_variance': 0.06166555956596321, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8203580271865343, 'avg_nll': 0.28457100426212434}
+
+65. Socio-cultural Ideal BMI-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.0192660010199853, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone'], 'max_prob_diff': 0.9900375089504532, 'motivation': "I don't know", 'perplexity': 1.0070162023995846, 'mean_token_prob': 0.9932266511675436, 'min_prob': 0.9324929984943345, 'token_prob_slope': -0.0014325903906502397, 'prob_variance': 0.00037117879530207463, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.06800226062814291, 'avg_nll': 0.006991703378172464}
+
+66. Socio-cultural Ideal BMI-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.23880115359213822, 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK19935/', 'https://www.ncbi.nlm.nih.gov/books/NBK278977/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2362110/', 'https://journals.sagepub.com/doi/10.1177/0379572120975874', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5325830/'], 'max_prob_diff': 0.7773799008716581, 'motivation': 'Socio-cultural Ideal BMI does not directly cause Total Daily Energy Intake (TDEI) to change. Any potential influence of socio-cultural ideals on energy intake is typically mediated by individual factors such as personal body image goals or eating behaviors, which are not direct pathways. Therefore, there is no direct causal relationship between these two variables.', 'perplexity': 1.2989525790309657, 'mean_token_prob': 0.8446642823570483, 'min_prob': 0.02565199687202407, 'token_prob_slope': -0.003289162219894023, 'prob_variance': 0.05702599095693598, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9689372652407525, 'avg_nll': 0.2615582312722774}
+
+67. Socio-cultural Ideal BMI-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.3019373671690507, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.sciencedirect.com/science/article/pii/S0939475325000559', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.765650178049756, 'motivation': 'There is no direct causal relationship where Socio-cultural Ideal BMI causes Physical Activity Level or vice versa. While societal norms about ideal BMI may indirectly influence physical activity through individual perceptions or motivations, these mediating variables are already represented in the CLD. Therefore, any effect of Socio-cultural Ideal BMI on Physical Activity Level operates through other variables rather than a direct causal link.', 'perplexity': 1.5373946877646192, 'mean_token_prob': 0.7821264951412166, 'min_prob': 0.004245857222965688, 'token_prob_slope': -0.0022101835433660537, 'prob_variance': 0.09116617369297812, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0010430295255817, 'avg_nll': 0.4300892225897447}
+
+68. Socio-cultural Ideal BMI-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.17776719901561225, 'citations': ['https://www.cambridge.org/core/journals/evolutionary-human-sciences/article/neighbours-and-relatives-accounting-for-spatial-distribution-when-testing-causal-hypotheses-in-cultural-evolution/BAB023F0F1E15A6572546E480F730001', 'https://www.ncbi.nlm.nih.gov/books/NBK278977/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6180707/', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate'], 'max_prob_diff': 0.8767747764328105, 'motivation': 'Socio-cultural Ideal BMI does not cause Spatial Scale, nor does Spatial Scale cause Socio-cultural Ideal BMI. There is no direct causal mechanism linking these two variables. Changes in one do not directly result in changes in the other.', 'perplexity': 1.1291007646416873, 'mean_token_prob': 0.9133457689157193, 'min_prob': 0.2324269811203719, 'token_prob_slope': -0.0036833031326186584, 'prob_variance': 0.03160117704585629, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.6989645596740445, 'avg_nll': 0.12142153241754325}
+
+69. Socio-cultural Ideal BMI-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24910353522002213, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.828712774780624, 'motivation': "Socio-cultural Ideal BMI does not cause Basal Metabolic Rate to change. There is no direct physiological mechanism by which cultural ideals about body size alter an individual's basal metabolic rate. Basal Metabolic Rate is determined by biological factors such as age, sex, body composition, and genetics, not societal ideals.", 'perplexity': 1.2727604725676456, 'mean_token_prob': 0.8558138481413238, 'min_prob': 0.09868694861558525, 'token_prob_slope': -0.003247413231413661, 'prob_variance': 0.06205257125911281, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0966653354630742, 'avg_nll': 0.24118814206552933}
+
+70. Socio-cultural Ideal BMI-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2420762414976465, 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK278977/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2571048/', 'https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate'], 'max_prob_diff': 0.7823499823305701, 'motivation': 'Socio-cultural Ideal BMI does not directly cause Healthy BMI to change. Any influence of socio-cultural ideals on healthy BMI is likely mediated by individual behaviors or perceptions (such as Individual Ideal BMI or Physical Activity Level), which are already included as variables in the CLD. Therefore, a direct causal relationship between Socio-cultural Ideal BMI and Healthy BMI should not be included.', 'perplexity': 1.2731101368281534, 'mean_token_prob': 0.8426478794935897, 'min_prob': 0.161446096387151, 'token_prob_slope': -0.0019179257216822875, 'prob_variance': 0.058600906697626874, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7188420256753217, 'avg_nll': 0.24146283337263363}
+
+71. Total Daily Energy Intake (TDEI)-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.19580709530126625, 'citations': ['https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4224224/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5325830/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/'], 'max_prob_diff': 0.8387193633483828, 'motivation': 'Total Daily Energy Intake (TDEI) does not directly cause Healthy BMI to change. The causal pathway from TDEI to BMI is mediated by Total Daily Energy Expenditure (TDEE) and overall Body Mass Index (BMI), both of which are present in the CLD. Therefore, there is no direct causal relationship between TDEI and Healthy BMI.', 'perplexity': 1.158531207741228, 'mean_token_prob': 0.8948899544663743, 'min_prob': 0.2314652004219266, 'token_prob_slope': -0.0006925484458267671, 'prob_variance': 0.03834041857031916, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9507886937439287, 'avg_nll': 0.14715300258636416}
+
+72. Total Daily Energy Intake (TDEI)-[NONE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.23658961053687952, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/'], 'max_prob_diff': 0.7861478001447136, 'motivation': 'Total Daily Energy Intake (TDEI) does not cause Total Daily Energy Expenditure (TDEE) to change in a direct causal manner. TDEE is primarily determined by factors like Basal Metabolic Rate and Physical Activity Level, which can be influenced by body mass or activity but not directly by energy intake. Any association between TDEI and TDEE is mediated by other variables such as BMI or activity, which are already present in the CLD.', 'perplexity': 1.2615072006609873, 'mean_token_prob': 0.8478106920004911, 'min_prob': 0.08887063793381757, 'token_prob_slope': -0.00201603350889753, 'prob_variance': 0.055974643813992336, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9937809915057547, 'avg_nll': 0.2323071970977361}
+
+73. Total Daily Energy Intake (TDEI)-[NONE]->Body Mass Index (BMI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22069588378907434, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC9659541/', 'https://www.cdc.gov/bmi/about/index.html', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4224224/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.8293386627388062, 'motivation': 'Total Daily Energy Intake (TDEI) does not directly cause Body Mass Index (BMI) in the presence of mediating variables like Total Daily Energy Expenditure (TDEE), which is included in the CLD. The effect of TDEI on BMI operates through the energy balance between intake and expenditure, so the direct causal link should not be included.', 'perplexity': 1.197778716374514, 'mean_token_prob': 0.8809912212422285, 'min_prob': 0.16834909446451227, 'token_prob_slope': -0.002136364039386149, 'prob_variance': 0.048706673121440607, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7066140477669307, 'avg_nll': 0.18046877175941062}
+
+74. Total Daily Energy Intake (TDEI)-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2897641088531365, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4224224/', 'https://www.ncbi.nlm.nih.gov/books/NBK591034/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.nhlbi.nih.gov/calculate-your-bmi'], 'max_prob_diff': 0.7690350600464325, 'motivation': "Total Daily Energy Intake (TDEI) does not cause Individual Ideal BMI to change. Individual Ideal BMI refers to a person's perception or target for their own body mass index, which is shaped by personal, social, or cultural values rather than by their actual energy intake. There is no direct causal mechanism through which TDEI would alter a person's ideal or desired BMI value.", 'perplexity': 1.5031042979040643, 'mean_token_prob': 0.8019922018428415, 'min_prob': 0.005766726931268457, 'token_prob_slope': -0.004465264890166439, 'prob_variance': 0.08396323877945235, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9949980976366851, 'avg_nll': 0.4075325015129876}
+
+75. Total Daily Energy Intake (TDEI)-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2088884112308285, 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK278977/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/'], 'max_prob_diff': 0.8609810373578305, 'motivation': "Total Daily Energy Intake (TDEI) does not cause Socio-cultural Ideal BMI to change. Socio-cultural Ideal BMI is determined by cultural norms and societal perceptions, not by individuals' actual energy intake. There is no direct causal pathway from TDEI to Socio-cultural Ideal BMI.", 'perplexity': 1.1686640550514555, 'mean_token_prob': 0.8983543131871561, 'min_prob': 0.17895844017455662, 'token_prob_slope': -0.0027522939301160916, 'prob_variance': 0.04363436834653971, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0198830295949, 'avg_nll': 0.1558612631320204}
+
+76. Total Daily Energy Intake (TDEI)-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.21806208980459257, 'citations': ['https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4224224/', 'https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2023.1255499/full'], 'max_prob_diff': 0.84508292106503, 'motivation': 'Total Daily Energy Intake (TDEI) does not cause Spatial Scale to change, nor does Spatial Scale cause Total Daily Energy Intake (TDEI) to change. There is no known direct causal mechanism linking these two variables in either direction. Any observed association would be coincidental or mediated by other variables, not a true causal relationship.', 'perplexity': 1.2027754084148652, 'mean_token_prob': 0.8807402002678832, 'min_prob': 0.15951827287325238, 'token_prob_slope': -0.0037552545599996386, 'prob_variance': 0.0475510750099462, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7728465312171706, 'avg_nll': 0.1846317266412749}
+
+77. Total Daily Energy Intake (TDEI)-[NONE]->Group-level BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24677489070000405, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5325830/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4224224/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8539813/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/'], 'max_prob_diff': 0.8146098782395386, 'motivation': 'Total Daily Energy Intake (TDEI) does not directly cause changes in Group-level BMI because the effect of TDEI on Group-level BMI is mediated by individual Body Mass Index (BMI) and Total Daily Energy Expenditure (TDEE), both of which are present in the CLD. This means TDEI affects individual BMI, which then aggregates to Group-level BMI. Therefore, the direct causal link between TDEI and Group-level BMI should not be included in the diagram.', 'perplexity': 1.3016147097401611, 'mean_token_prob': 0.8564120687321779, 'min_prob': 0.016515530257810548, 'token_prob_slope': -0.0012270045246421716, 'prob_variance': 0.06089784667999895, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9115178498037084, 'avg_nll': 0.26360557813430935}
+
+78. Total Daily Energy Intake (TDEI)-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2914247683489184, 'citations': ['https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html', 'https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2023.1255499/full', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.nhlbi.nih.gov/calculate-your-bmi'], 'max_prob_diff': 0.6787471362288457, 'motivation': "Total Daily Energy Intake (TDEI) does not causally affect Norm BMI. Norm BMI refers to the socially or culturally accepted average or 'normal' BMI in a group, which is a normative standard rather than a physiological outcome. TDEI may influence actual individual or group-level BMI, but it does not directly cause the definition or perception of what is considered the 'Norm BMI.'", 'perplexity': 1.5001653596103817, 'mean_token_prob': 0.7560734679155453, 'min_prob': 0.06132916016561506, 'token_prob_slope': -0.003830252651198419, 'prob_variance': 0.08492839560722076, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9756813304296649, 'avg_nll': 0.4055753417724652}
+
+79. Total Daily Energy Intake (TDEI)-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.23484931219942026, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://www.sciencedirect.com/topics/medicine-and-dentistry/basal-metabolic-rate', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate'], 'max_prob_diff': 0.8337034768533652, 'motivation': 'Total Daily Energy Intake (TDEI) does not directly cause Basal Metabolic Rate to change. Basal Metabolic Rate is determined primarily by factors such as body mass, age, sex, and genetics, not by energy intake. Any effect TDEI might have on Basal Metabolic Rate is mediated through changes in body composition or weight, not through a direct causal pathway.', 'perplexity': 1.2710061009787688, 'mean_token_prob': 0.8647579196349625, 'min_prob': 0.019970004375918813, 'token_prob_slope': -0.0026717927749755352, 'prob_variance': 0.055154199440540765, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9376914247198274, 'avg_nll': 0.23980879233644847}
+
+80. Total Daily Energy Intake (TDEI)-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27436146845948545, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://en.wikipedia.org/wiki/Energy_expenditure', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/', 'https://www.sciencedirect.com/science/article/pii/S216183132300217X'], 'max_prob_diff': 0.7620867918114924, 'motivation': 'Total Daily Energy Intake (TDEI) does not cause Physical Activity Level to change in a direct causal manner. While energy intake may indirectly influence the capacity for activity via energy availability or body weight, these effects are mediated by other variables such as Basal Metabolic Rate or Body Mass Index. There is no direct causal pathway from TDEI to Physical Activity Level in the absence of mediators. Therefore, no direct causal relationship exists.', 'perplexity': 1.3858048776018423, 'mean_token_prob': 0.8100975763797398, 'min_prob': 0.045766396839647304, 'token_prob_slope': -0.0012540634888407478, 'prob_variance': 0.07527421537524523, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1051285818984558, 'avg_nll': 0.3262811099060916}
+
+81. Total Daily Energy Expenditure (TDEE)-[POSITIVE]->Body Mass Index (BMI)
+   Properties: {'original_motivation': 'Total Daily Energy Expenditure (TDEE) causes Body Mass Index (BMI) to change in an inverse causal relationship. Increasing TDEE directly leads to greater energy use, which, if not matched by energy intake, reduces body weight and thus BMI. Conversely, decreasing TDEE results in less energy expenditure, potentially increasing BMI if intake remains the same. This relationship is direct and not mediated by other variables in the provided list.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://en.wikipedia.org/wiki/Energy_expenditure', 'https://www.ncbi.nlm.nih.gov/books/NBK279077/', 'https://www.ncbi.nlm.nih.gov/books/NBK591031/'], 'is_corrupted': True, 'motivation': 'An increase in Total Daily Energy Expenditure (TDEE) directly leads to an increase in Body Mass Index (BMI) because burning more calories makes the body store more fat as a protective mechanism. Therefore, individuals with higher TDEE will tend to have higher BMI since their bodies compensate for the energy used by increasing fat reserves.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'An increase in Total Daily Energy Expenditure (TDEE) directly leads to an increase in Body Mass Index (BMI) because burning more calories makes the body store more fat as a protective mechanism. Therefore, individuals with higher TDEE will tend to have higher BMI since their bodies compensate for the energy used by increasing fat reserves.', 'original_polarity': 'NEGATIVE', 'corruption_type': 'structural'}
+
+82. Total Daily Energy Expenditure (TDEE)-[POSITIVE]->Group-level BMI
+   Properties: {'original_motivation': 'Total Daily Energy Expenditure (TDEE) causes Group-level BMI to change in an inverse causal relationship. Increasing TDEE (through higher physical activity or metabolic rate) leads to greater energy being burned, which directly reduces group-level BMI if energy intake is held constant. Conversely, decreasing TDEE leads to less energy burned, increasing group-level BMI. The causal direction is from TDEE to Group-level BMI.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://en.wikipedia.org/wiki/Energy_expenditure', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://www.researchgate.net/figure/Components-of-total-daily-energy-expenditure-TDEEBMRbasal-metabolic-rate_fig1_260397860'], 'is_corrupted': True, 'motivation': "As individuals' Total Daily Energy Expenditure (TDEE) increases, it means they are consuming more energy, which directly translates to more energy being stored in the body as fat. Therefore, at the group level, higher TDEE should result in higher average BMI, since more calories burned always leads to greater weight gain.", 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': "As individuals' Total Daily Energy Expenditure (TDEE) increases, it means they are consuming more energy, which directly translates to more energy being stored in the body as fat. Therefore, at the group level, higher TDEE should result in higher average BMI, since more calories burned always leads to greater weight gain.", 'original_polarity': 'NEGATIVE', 'corruption_type': 'structural'}
+
+83. Total Daily Energy Expenditure (TDEE)-[NEGATIVE]->Healthy BMI
+   Properties: {'original_motivation': 'Total Daily Energy Expenditure (TDEE) does not directly cause Healthy BMI to change. Healthy BMI is typically a standard or ideal BMI value, not an outcome directly influenced by energy expenditure. Any influence of TDEE on actual BMI or health status is mediated by variables like energy intake and actual BMI, which are already present in the CLD. Therefore, there is no direct causal relationship between TDEE and Healthy BMI.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/'], 'is_corrupted': True, 'motivation': 'Increasing your Total Daily Energy Expenditure (TDEE) will directly lower your BMI, because burning more calories always results in weight loss regardless of your eating habits. As a result, people with high TDEE are guaranteed to have a healthy BMI.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'spurious_edge', 'spurious_motivation': 'Increasing your Total Daily Energy Expenditure (TDEE) will directly lower your BMI, because burning more calories always results in weight loss regardless of your eating habits. As a result, people with high TDEE are guaranteed to have a healthy BMI.', 'corruption_type': 'structural'}
+
+84. Total Daily Energy Expenditure (TDEE)-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.26583320313550335, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://www.ncbi.nlm.nih.gov/books/NBK591031/'], 'max_prob_diff': 0.760864570340489, 'motivation': 'Total Daily Energy Expenditure (TDEE) does not directly cause Total Daily Energy Intake (TDEI). While energy expenditure may influence hunger or appetite through physiological mechanisms, the direct causal relationship is mediated by behavioral and biological factors such as hunger signals and food availability. Therefore, there is no direct causal link from TDEE to TDEI in the absence of these mediating variables.', 'perplexity': 1.3719899486412956, 'mean_token_prob': 0.8207645761982292, 'min_prob': 0.010464444411847993, 'token_prob_slope': -0.002174874855977052, 'prob_variance': 0.07066729188928178, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9661534408049472, 'avg_nll': 0.31626220321366216}
+
+85. Total Daily Energy Expenditure (TDEE)-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2954118082289267, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC10445668/'], 'max_prob_diff': 0.7607962563604078, 'motivation': 'Total Daily Energy Expenditure (TDEE) does not cause Spatial Scale to change. There is no known direct causal mechanism by which TDEE would alter the spatial scale of a system or environment. The two variables are unrelated in terms of causal direction.', 'perplexity': 1.4743633811506067, 'mean_token_prob': 0.7974782714952597, 'min_prob': 0.03798172528851977, 'token_prob_slope': -0.008912247406062395, 'prob_variance': 0.08726813644108417, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1475832045641972, 'avg_nll': 0.38822629062351605}
+
+86. Total Daily Energy Expenditure (TDEE)-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24430053499115714, 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK591031/'], 'max_prob_diff': 0.7690867939421163, 'motivation': "Total Daily Energy Expenditure (TDEE) does not cause Individual Ideal BMI to change. Individual Ideal BMI represents a person's perception or target for their own BMI, while TDEE is a physiological measure of daily energy use. There is no direct causal mechanism by which TDEE alters what an individual considers their ideal BMI.", 'perplexity': 1.284740264102803, 'mean_token_prob': 0.834720721347681, 'min_prob': 0.15267647960178699, 'token_prob_slope': -0.003344685270060155, 'prob_variance': 0.0596827513969656, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1827807721811214, 'avg_nll': 0.25055656881346583}
+
+87. Total Daily Energy Expenditure (TDEE)-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.28422410952487903, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/'], 'max_prob_diff': 0.7037838017883439, 'motivation': "Total Daily Energy Expenditure (TDEE) does not directly cause Norm BMI to change. Norm BMI refers to a social or group-level perceived normal or ideal BMI, which is shaped by cultural, social, or group influences, not by an individual's energy expenditure. There is no direct causal mechanism where TDEE alters the societal or group-level norm for BMI. Any association would be mediated by other variables such as group-level BMI or socio-cultural ideals, which are already present in the CLD.", 'perplexity': 1.4869507181567512, 'mean_token_prob': 0.7668410568314968, 'min_prob': 0.024138411650594403, 'token_prob_slope': -0.0016685999235878425, 'prob_variance': 0.08078334443521043, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1544668608764892, 'avg_nll': 0.3967275251377953}
+
+88. Total Daily Energy Expenditure (TDEE)-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.21445444010622658, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://en.wikipedia.org/wiki/Energy_expenditure'], 'max_prob_diff': 0.8472781394797033, 'motivation': 'Total Daily Energy Expenditure (TDEE) does not cause Physical Activity Level to change. Instead, Physical Activity Level is a determinant of TDEE, not the other way around. There is no direct causal mechanism by which increasing TDEE leads to increased Physical Activity Level.', 'perplexity': 1.1925395929326836, 'mean_token_prob': 0.8899172894164933, 'min_prob': 0.07633334389019576, 'token_prob_slope': -0.004383642916442967, 'prob_variance': 0.04599070688127513, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.6862060108568742, 'avg_nll': 0.1760851448498967}
+
+89. Total Daily Energy Expenditure (TDEE)-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.21198286338710953, 'citations': ['https://www.garnethealth.org/news/basal-metabolic-rate-calculator', 'https://en.wikipedia.org/wiki/Energy_expenditure'], 'max_prob_diff': 0.8502725140761889, 'motivation': 'Total Daily Energy Expenditure (TDEE) does not cause Basal Metabolic Rate to change. TDEE is the sum of Basal Metabolic Rate and other energy expenditures (like physical activity and thermogenesis), so BMR is a component of TDEE, not an outcome affected by it. There is no direct causal pathway from TDEE to BMR.', 'perplexity': 1.233098937022066, 'mean_token_prob': 0.8904536083277533, 'min_prob': 0.002934210232517229, 'token_prob_slope': -0.0019146768870104381, 'prob_variance': 0.04493673436979795, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7376623709880792, 'avg_nll': 0.20953046185688748}
+
+90. Total Daily Energy Expenditure (TDEE)-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2409565155046014, 'citations': ['https://en.wikipedia.org/wiki/Energy_expenditure'], 'max_prob_diff': 0.8031810499823682, 'motivation': "Total Daily Energy Expenditure (TDEE) does not cause Socio-cultural Ideal BMI to change. Socio-cultural Ideal BMI is determined by cultural norms and values, not by individuals' energy expenditure. There is no known direct causal pathway from TDEE to Socio-cultural Ideal BMI. Any association would be indirect or mediated by other variables, not a direct causal relationship.", 'perplexity': 1.2619205126543644, 'mean_token_prob': 0.8553685892589915, 'min_prob': 0.059216855686039654, 'token_prob_slope': -0.0035431830508222293, 'prob_variance': 0.05806004236411921, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.8573176993697957, 'avg_nll': 0.2326347769169575}
+
+91. Body Mass Index (BMI)-[NEGATIVE]->Basal Metabolic Rate
+   Properties: {'original_motivation': 'Body Mass Index (BMI) causes Basal Metabolic Rate to change in a direct causal relationship. As BMI increases—reflecting greater body mass—Basal Metabolic Rate typically increases because a larger body requires more energy to maintain basic physiological functions. Conversely, a decrease in BMI leads to a lower Basal Metabolic Rate. This causal effect is due to the direct link between total body mass and metabolic energy expenditure.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.ncbi.nlm.nih.gov/books/NBK572145/', 'https://pubmed.ncbi.nlm.nih.gov/16280423/'], 'is_corrupted': True, 'motivation': 'A higher Body Mass Index (BMI) indicates more body fat, which acts as insulation and slows down metabolic processes, leading to a decrease in Basal Metabolic Rate (BMR). Therefore, as BMI increases, BMR actually drops because the body becomes more efficient at conserving energy.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'A higher Body Mass Index (BMI) indicates more body fat, which acts as insulation and slows down metabolic processes, leading to a decrease in Basal Metabolic Rate (BMR). Therefore, as BMI increases, BMR actually drops because the body becomes more efficient at conserving energy.', 'original_polarity': 'POSITIVE', 'corruption_type': 'structural'}
+
+92. Body Mass Index (BMI)-[POSITIVE]->Physical Activity Level
+   Properties: {'original_motivation': 'Body Mass Index (BMI) causes Physical Activity Level to change in an inverse relationship. Higher BMI can directly lead to lower physical activity due to increased physical discomfort or mobility limitations, while lower BMI may make physical activity easier. This causal pathway is not mediated by other variables in the given set.', 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'citations': ['https://www.ncbi.nlm.nih.gov/books/NBK594362/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7765873/', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://en.wikipedia.org/wiki/Body_mass_index'], 'is_corrupted': True, 'motivation': 'A higher Body Mass Index (BMI) indicates greater muscle mass, which is commonly associated with higher physical activity levels. Therefore, individuals with higher BMI are typically more active as they are building more muscle through regular exercise.', 'relevance': 'Auto-generated relevance here', 'corruption_subtype': 'polarity_flip', 'spurious_motivation': 'A higher Body Mass Index (BMI) indicates greater muscle mass, which is commonly associated with higher physical activity levels. Therefore, individuals with higher BMI are typically more active as they are building more muscle through regular exercise.', 'original_polarity': 'NEGATIVE', 'corruption_type': 'structural'}
+
+93. Body Mass Index (BMI)-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2803288636568856, 'citations': ['https://www.cdc.gov/bmi/about/index.html', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.cdc.gov/bmi/adult-calculator/index.html'], 'max_prob_diff': 0.8232225388679952, 'motivation': 'Body Mass Index (BMI) does not cause Total Daily Energy Intake (TDEI) to change in a direct causal relationship. BMI is a consequence of long-term energy intake and expenditure, but does not directly influence how much energy a person consumes each day. The causal direction is from TDEI to BMI, not the other way around.', 'perplexity': 1.3420391378051053, 'mean_token_prob': 0.8382175633745366, 'min_prob': 0.07210892915666148, 'token_prob_slope': -0.002789447742824015, 'prob_variance': 0.07858427179916075, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.922909257063235, 'avg_nll': 0.29419020191343415}
+
+94. Body Mass Index (BMI)-[NONE]->Individual Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2917596419659297, 'citations': ['https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.cdc.gov/bmi/about/index.html'], 'max_prob_diff': 0.7007982337589954, 'motivation': "Body Mass Index (BMI) does not cause Individual Ideal BMI to change. Individual Ideal BMI is a personal or cultural target, while Actual BMI is a measured physical attribute. There is no direct causal mechanism by which an individual's current BMI directly alters their ideal BMI; any association is likely mediated by other factors such as socio-cultural ideals or norms.", 'perplexity': 1.6307940430418655, 'mean_token_prob': 0.7672905391980069, 'min_prob': 9.994154406637172e-05, 'token_prob_slope': -0.004595492165297529, 'prob_variance': 0.08512368868008749, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2840354972426486, 'avg_nll': 0.489067039173524}
+
+95. Body Mass Index (BMI)-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2683032865132715, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://www.cancer.org/cancer/risk-prevention/diet-physical-activity/body-weight-and-cancer-risk/body-mass-index-bmi-calculator.html', 'https://www.nhlbi.nih.gov/calculate-your-bmi'], 'max_prob_diff': 0.7110132744013956, 'motivation': "Body Mass Index (BMI) does not cause Healthy BMI, nor does Healthy BMI cause Body Mass Index (BMI). Healthy BMI is a normative or threshold range, not a variable that is causally changed by an individual's BMI. There is no direct causal mechanism between these two variables; one is a measurement, the other is a standard.", 'perplexity': 1.3820506208157937, 'mean_token_prob': 0.7993444324334706, 'min_prob': 0.08018946647844956, 'token_prob_slope': -0.005327647595807217, 'prob_variance': 0.07198665355382265, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2384433370248993, 'avg_nll': 0.32356835334021755}
+
+96. Body Mass Index (BMI)-[NONE]->Norm BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.29398084643288785, 'citations': ['https://www.cdc.gov/bmi/about/index.html', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/'], 'max_prob_diff': 0.7115543257760394, 'motivation': "Body Mass Index (BMI) does not causally cause Norm BMI. Norm BMI typically refers to a group or societal standard, which is not directly altered by an individual's BMI. Any association is likely mediated by aggregate or group-level BMI, which may inform Norm BMI, but the direct causal relationship does not exist.", 'perplexity': 1.626352610836715, 'mean_token_prob': 0.7565563939493873, 'min_prob': 0.009542184350504856, 'token_prob_slope': -0.0050195656185218025, 'prob_variance': 0.0864247380693972, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0617736500700476, 'avg_nll': 0.48633984544851583}
+
+97. Body Mass Index (BMI)-[POSITIVE]->Group-level BMI
+   Properties: {'original_motivation': "Body Mass Index (BMI) causes Group-level BMI in a direct causal relationship. Group-level BMI is typically calculated as the aggregate (e.g., mean or median) of individual BMIs within a group. Therefore, an increase in an individual's BMI will directly increase the Group-level BMI, while a decrease will lower it.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22123441239539152, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html'], 'max_prob_diff': 0.8010522546715233, 'is_corrupted': True, 'motivation': 'Body Mass Index (BMI) can be influenced by social norms and peer effects within a group, such that as Group-level BMI increases, individual Body Mass Index (BMI) tends to rise as well. Elevated Group-level BMI may establish a new reference point for what is perceived as a typical or healthy body size, thereby encouraging individuals within the group to adopt behaviors that lead to higher Body Mass Index (BMI). This dynamic suggests that changes in Group-level BMI can directly drive corresponding changes in individual Body Mass Index (BMI).', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'Body Mass Index (BMI) can be influenced by social norms and peer effects within a group, such that as Group-level BMI increases, individual Body Mass Index (BMI) tends to rise as well. Elevated Group-level BMI may establish a new reference point for what is perceived as a typical or healthy body size, thereby encouraging individuals within the group to adopt behaviors that lead to higher Body Mass Index (BMI). This dynamic suggests that changes in Group-level BMI can directly drive corresponding changes in individual Body Mass Index (BMI).', 'perplexity': 1.243997188549289, 'mean_token_prob': 0.8624272680091992, 'corruption_type': 'motivation', 'min_prob': 0.04385106713441266, 'token_prob_slope': -0.0033823693176535286, 'prob_variance': 0.04894466522793416, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7828709788404126, 'avg_nll': 0.21832973430582375}
+
+98. Body Mass Index (BMI)-[NONE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.17977518089552053, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://www.ncbi.nlm.nih.gov/books/NBK591031/', 'https://www.nature.com/articles/s41467-021-27246-z', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10445668/'], 'max_prob_diff': 0.8778580716658074, 'motivation': 'Body Mass Index (BMI) does not directly cause Total Daily Energy Expenditure (TDEE) to change. The causal pathway operates through mediating variables such as Basal Metabolic Rate and Physical Activity Level, which are already included in the CLD. Therefore, there is no direct causal relationship from BMI to TDEE.', 'perplexity': 1.1313727128832451, 'mean_token_prob': 0.9135120828521136, 'min_prob': 0.15871255039665874, 'token_prob_slope': -0.00146372467416053, 'prob_variance': 0.03231911566601713, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0241424461473967, 'avg_nll': 0.12343168562586151}
+
+99. Body Mass Index (BMI)-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.30378100513463097, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.betterhealth.vic.gov.au/health/healthyliving/body-mass-index-bmi'], 'max_prob_diff': 0.6957686939438947, 'motivation': 'Body Mass Index (BMI) does not directly cause Socio-cultural Ideal BMI to change. Socio-cultural Ideal BMI reflects collective beliefs and norms about desirable body size, which are shaped by broader cultural, historical, and media factors rather than individual BMI values. Any association between BMI and Socio-cultural Ideal BMI is likely mediated by group-level factors or cultural feedbacks, not a direct causal mechanism from individual BMI.', 'perplexity': 1.550649225287177, 'mean_token_prob': 0.7557505218591113, 'min_prob': 0.014131433484770597, 'token_prob_slope': -0.003898610502845331, 'prob_variance': 0.09228289908060668, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.2771314906776794, 'avg_nll': 0.43867369825986186}
+
+100. Body Mass Index (BMI)-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.22731142090358342, 'citations': ['https://www.cdc.gov/bmi/about/index.html', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://med.stanford.edu/news/insights/2024/11/bmi-body-mass-index-alternatives-science.html'], 'max_prob_diff': 0.8524736995008897, 'motivation': 'Body Mass Index (BMI) does not cause Spatial Scale, nor does Spatial Scale cause Body Mass Index (BMI). There is no direct or indirect causal mechanism linking these two variables. Changes in BMI do not result in changes to spatial scale, and vice versa.', 'perplexity': 1.2266649999350667, 'mean_token_prob': 0.8782674541596908, 'min_prob': 0.05965170998729163, 'token_prob_slope': -0.003731149260458913, 'prob_variance': 0.051670482073206056, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7742883195400896, 'avg_nll': 0.20429910476321994}
+
+101. Group-level BMI-[NONE]->Socio-cultural Ideal BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.27322819216408506, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html'], 'max_prob_diff': 0.7455875963758238, 'motivation': 'Group-level BMI does not cause socio-cultural ideal BMI directly. Socio-cultural ideal BMI is typically shaped by cultural norms, media, and societal values rather than by the current average BMI of a group. Any association between these variables is likely mediated by other factors, such as shared cultural perceptions or media representation. Therefore, there is no direct causal relationship from group-level BMI to socio-cultural ideal BMI.', 'perplexity': 1.4324214367016428, 'mean_token_prob': 0.7985278880558123, 'min_prob': 0.005591817232933003, 'token_prob_slope': 0.0005006876585179998, 'prob_variance': 0.07465364499325419, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.1584171370519087, 'avg_nll': 0.3593663246135439}
+
+102. Group-level BMI-[NONE]->Physical Activity Level
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2670055303337873, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4274205/', 'https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html', 'https://www.nhlbi.nih.gov/calculate-your-bmi', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.75509436147082, 'motivation': 'Group-level BMI does not cause Physical Activity Level to change. There is no direct causal mechanism by which the collective BMI of a group directly alters the physical activity of its members. Any observed association is likely mediated by other variables such as social norms, health policies, or individual motivation. Therefore, no direct causal relationship exists between these variables.', 'perplexity': 1.3951963387941082, 'mean_token_prob': 0.8060100674755918, 'min_prob': 0.045194987492945315, 'token_prob_slope': -0.0024899752615439685, 'prob_variance': 0.07129195322882703, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9390918921953615, 'avg_nll': 0.33303515002500395}
+
+103. Group-level BMI-[NONE]->Basal Metabolic Rate
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.16574088575297904, 'citations': ['https://my.clevelandclinic.org/health/body/basal-metabolic-rate-bmr', 'https://en.wikipedia.org/wiki/Basal_metabolic_rate', 'https://www.garnethealth.org/news/basal-metabolic-rate-calculator'], 'max_prob_diff': 0.8656087458836468, 'motivation': "Group-level BMI does not cause Basal Metabolic Rate to change. Basal Metabolic Rate is determined by individual physiological factors such as body composition, age, and genetics, not by the average BMI of a group. There is no direct causal mechanism by which changes in group-level BMI would alter an individual's basal metabolic rate.", 'perplexity': 1.131733438528957, 'mean_token_prob': 0.9099021422035988, 'min_prob': 0.1431770400340056, 'token_prob_slope': -0.002213321396894398, 'prob_variance': 0.027470041210182053, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7181799394152479, 'avg_nll': 0.12375047372030562}
+
+104. Group-level BMI-[NONE]->Healthy BMI
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.28483763990773203, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone', 'https://us.sagepub.com/sites/default/files/upm-binaries/23639_Chapter_5___Causation_and_Experimental_Design.pdf'], 'max_prob_diff': 0.691746418519143, 'motivation': 'There is no clear causal relationship where Group-level BMI causes Healthy BMI or vice versa. Without specific definitions or mechanisms connecting these two variables, and given the absence of direct causality or mediating variables explicitly linking them, no direct causal link can be established.', 'perplexity': 1.4966016302092302, 'mean_token_prob': 0.7633025629773457, 'min_prob': 0.10240443230852395, 'token_prob_slope': -0.003401174894061826, 'prob_variance': 0.08113248110820681, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0157446505448438, 'avg_nll': 0.403196957938705}
+
+105. Group-level BMI-[NONE]->Total Daily Energy Expenditure (TDEE)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.1768670199648784, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC6392078/', 'https://www.ncbi.nlm.nih.gov/books/NBK591031/'], 'max_prob_diff': 0.8556607493893819, 'motivation': 'Group-level BMI does not directly cause Total Daily Energy Expenditure (TDEE) to change. Any association between these variables is mediated by factors such as Basal Metabolic Rate and Physical Activity Level, which are already present in the CLD. Therefore, no direct causal relationship exists from Group-level BMI to TDEE.', 'perplexity': 1.1370355953248608, 'mean_token_prob': 0.9090128565667072, 'min_prob': 0.19855212289031032, 'token_prob_slope': -0.0010034770630946612, 'prob_variance': 0.0312819427512567, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.7936981717299484, 'avg_nll': 0.1284245206326844}
+
+106. Group-level BMI-[NONE]->Total Daily Energy Intake (TDEI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.26695371835915593, 'citations': ['https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4224224/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5325830/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9659541/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6835968/'], 'max_prob_diff': 0.787030638069348, 'motivation': "Group-level BMI does not cause Total Daily Energy Intake (TDEI) to change. Instead, TDEI is a causal factor influencing BMI, not the other way around. There is no direct causal mechanism by which a group's BMI would directly affect their energy intake.", 'perplexity': 1.3340400058340491, 'mean_token_prob': 0.8339882042664906, 'min_prob': 0.03930882657697002, 'token_prob_slope': -0.008054511275301206, 'prob_variance': 0.07126428774577954, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.201778758042613, 'avg_nll': 0.28821193642460596}
+
+107. Group-level BMI-[NONE]->Body Mass Index (BMI)
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2562975988477394, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://www.cdc.gov/bmi/about/index.html', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.yalemedicine.org/news/why-you-shouldnt-rely-on-bmi-alone'], 'max_prob_diff': 0.7605357964763055, 'motivation': "Group-level BMI does not cause Body Mass Index (BMI); rather, Group-level BMI is typically an aggregate measure derived from individual BMI values. There is no direct causal pathway from the group average to the individual's BMI, making the relationship non-causal. Any association observed is due to aggregation, not causation.", 'perplexity': 1.3383160598821011, 'mean_token_prob': 0.8184999671879174, 'min_prob': 0.09550815485861221, 'token_prob_slope': -0.0038806651206253267, 'prob_variance': 0.06568845917511675, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.9390742271984409, 'avg_nll': 0.29141215195898046}
+
+108. Group-level BMI-[NONE]->Spatial Scale
+   Properties: {'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.24037649888684598, 'citations': ['https://www.urmc.rochester.edu/news/publications/health-matters/is-bmi-accurate', 'https://www.pnas.org/doi/10.1073/pnas.2314224121', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi'], 'max_prob_diff': 0.8032392244084797, 'motivation': 'Group-level BMI does not cause Spatial Scale, nor does Spatial Scale cause Group-level BMI. There is no direct causal mechanism linking changes in group-level BMI to changes in spatial scale. These variables are conceptually and causally independent in system dynamics. Therefore, no causal relationship exists between them.', 'perplexity': 1.2529706413360957, 'mean_token_prob': 0.8623047752195148, 'min_prob': 0.051217538836327174, 'token_prob_slope': -0.0037763739844537568, 'prob_variance': 0.05778086121709787, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.982260236682629, 'avg_nll': 0.22551724494197858}
+
+109. Group-level BMI-[POSITIVE]->Individual Ideal BMI
+   Properties: {'original_motivation': "Group-level BMI causes Individual Ideal BMI to change in a direct causal relationship. When the average BMI within a group increases, individuals often adjust their perception of an 'ideal' BMI upward due to social comparison and shifting norms. Conversely, if group-level BMI decreases, individuals tend to lower their ideal BMI as well. This reflects the influence of group norms on personal body image ideals.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2545967776836599, 'citations': ['https://my.clevelandclinic.org/health/articles/9464-body-mass-index-bmi', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11204233/'], 'max_prob_diff': 0.7348867570031673, 'is_corrupted': True, 'motivation': 'Group-level BMI directly influences Individual Ideal BMI through physiological adaptation mechanisms. As Group-level BMI rises, individuals become biologically conditioned to prefer higher body mass, perceiving it as a marker of health and social belonging due to shared environmental exposures. This adaptation leads to an upward adjustment in Individual Ideal BMI. Conversely, lower Group-level BMI induces physiological cues that recalibrate individuals’ internal set points for ideal body mass, thereby lowering Individual Ideal BMI accordingly.', 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': 'Group-level BMI directly influences Individual Ideal BMI through physiological adaptation mechanisms. As Group-level BMI rises, individuals become biologically conditioned to prefer higher body mass, perceiving it as a marker of health and social belonging due to shared environmental exposures. This adaptation leads to an upward adjustment in Individual Ideal BMI. Conversely, lower Group-level BMI induces physiological cues that recalibrate individuals’ internal set points for ideal body mass, thereby lowering Individual Ideal BMI accordingly.', 'perplexity': 1.3526031587690717, 'mean_token_prob': 0.8085678796637388, 'corruption_type': 'motivation', 'min_prob': 0.06753728171101989, 'token_prob_slope': -0.0023852885867155648, 'prob_variance': 0.06481951920690296, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 0.938534694880558, 'avg_nll': 0.3020310014872426}
+
+110. Group-level BMI-[POSITIVE]->Norm BMI
+   Properties: {'original_motivation': "Group-level BMI causes Norm BMI through the process of social comparison and norm-setting. As the average BMI within a group increases, the perceived 'normal' BMI (Norm BMI) also tends to increase, since individuals adjust their expectations based on the group average. Conversely, a decrease in group-level BMI lowers the norm BMI. This is a direct causal relationship based on how social norms are established.", 'session_id': 'a0e16f57-b126-4bd9-8d22-c803c2a03466', 'prob_std': 0.2914302869169425, 'citations': ['https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5358078/', 'https://en.wikipedia.org/wiki/Body_mass_index', 'https://www.ncbi.nlm.nih.gov/books/NBK535456/', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4890841/'], 'max_prob_diff': 0.6798544748920335, 'is_corrupted': True, 'motivation': "Group-level BMI causes Norm BMI through physiological adaptation mechanisms. As the average BMI within a group increases, individuals within that group experience gradual metabolic and hormonal adjustments that recalibrate their internal set points for body weight. This collective biological shift leads to a redefinition of what is physiologically perceived as 'normal' body mass, thereby increasing the Norm BMI. Conversely, a lower group-level BMI triggers adaptations that lower the perceived norm. This direct physiological pathway underlies the positive association between Group-level BMI and Norm BMI.", 'corruption_subtype': 'spurious_motivation', 'spurious_motivation': "Group-level BMI causes Norm BMI through physiological adaptation mechanisms. As the average BMI within a group increases, individuals within that group experience gradual metabolic and hormonal adjustments that recalibrate their internal set points for body weight. This collective biological shift leads to a redefinition of what is physiologically perceived as 'normal' body mass, thereby increasing the Norm BMI. Conversely, a lower group-level BMI triggers adaptations that lower the perceived norm. This direct physiological pathway underlies the positive association between Group-level BMI and Norm BMI.", 'perplexity': 1.5102113543460058, 'mean_token_prob': 0.7592259873210444, 'corruption_type': 'motivation', 'min_prob': 0.04091366319522527, 'token_prob_slope': -0.0026715091477001185, 'prob_variance': 0.08493161213249142, 'relevance': 'Auto-generated relevance here', 'max_window_entropy': 1.0210571318385866, 'avg_nll': 0.4122496107975461}
+
+Generated 11 variables; 110 relationships. Corrupted: 0; Judged: 0; Corrected: 0
+
+Sample Cypher:
+MATCH (n)-[r]->(m) WHERE n.session_id='a0e16f57-b126-4bd9-8d22-c803c2a03466' RETURN n,r,m
+Saved session info to Social_norms_and_obesity_prevalence_20251204_031315.json
+⚠️  SKIPPING NODE COMPARISON: Variables were pre-loaded from validation Excel
+   Node overlap metrics would be meaningless (100% by construction)
+   Set preload_validation_variables=False for true discovery mode
+
+==================================================
+STARTING EXCEL EXPORT PHASE
+==================================================
+Creating Excel file with multiple scenario sheets...
+Output path: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/temp_citation_fill.xlsx
+📊 EXPORT TO EXCEL - STARTING (modules.py:9447)
+  Session ID: a0e16f57-b126-4bd9-8d22-c803c2a03466 (modules.py:9448)
+  Context-Insensitive metrics: False (modules.py:9449)
+  Output file: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/temp_citation_fill_20251204_031315.xlsx (modules.py:9461)
+⏭️  PHASE: Skipping context-insensitive metrics (embedding_enable=False) (modules.py:9520)
+📑 PHASE: Processing 5 scenario sheets... (modules.py:9526)
+  [1/5] SCENARIO: All Edges (modules.py:9529)
+     Getting edges from Neo4j... (modules.py:9534)
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/data_science/modules.py", line 8180, in compare_session_graph_to_validation
+    batch_agent = Agent(
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 302, in __init__
+    self._model = models.infer_model(model)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/__init__.py", line 747, in infer_model
+    return OpenAIChatModel(model_name, provider=provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 348, in __init__
+    provider = infer_provider(provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/__init__.py", line 152, in infer_provider
+    return provider_class()
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/openai.py", line 85, in __init__
+    self._client = AsyncOpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/openai/_client.py", line 480, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+/home/nitai/code/causalix.ai/data_science/modules.py:7834: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+🔍 EXTRACT_NETWORKX DEBUG: Session ID = a0e16f57-b126-4bd9-8d22-c803c2a03466
+   Query filters: only_cited_edges=False, only_consistent_edges=False
+   Full query: 
+    MATCH (s:variable)-[r]->(t:variable)
+    WHERE s.session_id = $session_id AND t.session_id = $session_id
+    
+    RETURN s.name AS source, t.name AS target
+    
+   Edges found: 110
+     - Spatial Scale → Basal Metabolic Rate
+     - Spatial Scale → Socio-cultural Ideal BMI
+     - Spatial Scale → Physical Activity Level
+     - Spatial Scale → Total Daily Energy Expenditure (TDEE)
+     - Spatial Scale → Group-level BMI
+     - Spatial Scale → Healthy BMI
+     - Spatial Scale → Body Mass Index (BMI)
+     - Spatial Scale → Individual Ideal BMI
+     - Spatial Scale → Norm BMI
+     - Spatial Scale → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Individual Ideal BMI → Body Mass Index (BMI)
+     - Individual Ideal BMI → Physical Activity Level
+     - Individual Ideal BMI → Socio-cultural Ideal BMI
+     - Individual Ideal BMI → Group-level BMI
+     - Individual Ideal BMI → Norm BMI
+     - Individual Ideal BMI → Spatial Scale
+     - Individual Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Healthy BMI
+     - Individual Ideal BMI → Basal Metabolic Rate
+     - Physical Activity Level → Total Daily Energy Expenditure (TDEE)
+     - Physical Activity Level → Group-level BMI
+     - Physical Activity Level → Body Mass Index (BMI)
+     - Physical Activity Level → Total Daily Energy Intake (TDEI)
+     - Physical Activity Level → Basal Metabolic Rate
+     - Physical Activity Level → Individual Ideal BMI
+     - Physical Activity Level → Socio-cultural Ideal BMI
+     - Physical Activity Level → Healthy BMI
+     - Physical Activity Level → Spatial Scale
+     - Physical Activity Level → Norm BMI
+     - Norm BMI → Socio-cultural Ideal BMI
+     - Norm BMI → Total Daily Energy Expenditure (TDEE)
+     - Norm BMI → Total Daily Energy Intake (TDEI)
+     - Norm BMI → Individual Ideal BMI
+     - Norm BMI → Group-level BMI
+     - Norm BMI → Basal Metabolic Rate
+     - Norm BMI → Physical Activity Level
+     - Norm BMI → Body Mass Index (BMI)
+     - Norm BMI → Spatial Scale
+     - Norm BMI → Healthy BMI
+     - Basal Metabolic Rate → Total Daily Energy Expenditure (TDEE)
+     - Basal Metabolic Rate → Body Mass Index (BMI)
+     - Basal Metabolic Rate → Healthy BMI
+     - Basal Metabolic Rate → Individual Ideal BMI
+     - Basal Metabolic Rate → Group-level BMI
+     - Basal Metabolic Rate → Total Daily Energy Intake (TDEI)
+     - Basal Metabolic Rate → Norm BMI
+     - Basal Metabolic Rate → Socio-cultural Ideal BMI
+     - Basal Metabolic Rate → Spatial Scale
+     - Basal Metabolic Rate → Physical Activity Level
+     - Healthy BMI → Total Daily Energy Intake (TDEI)
+     - Healthy BMI → Body Mass Index (BMI)
+     - Healthy BMI → Group-level BMI
+     - Healthy BMI → Socio-cultural Ideal BMI
+     - Healthy BMI → Physical Activity Level
+     - Healthy BMI → Spatial Scale
+     - Healthy BMI → Individual Ideal BMI
+     - Healthy BMI → Basal Metabolic Rate
+     - Healthy BMI → Total Daily Energy Expenditure (TDEE)
+     - Healthy BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Body Mass Index (BMI)
+     - Socio-cultural Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Socio-cultural Ideal BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Individual Ideal BMI
+     - Socio-cultural Ideal BMI → Group-level BMI
+     - Socio-cultural Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Socio-cultural Ideal BMI → Physical Activity Level
+     - Socio-cultural Ideal BMI → Spatial Scale
+     - Socio-cultural Ideal BMI → Basal Metabolic Rate
+     - Socio-cultural Ideal BMI → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Total Daily Energy Expenditure (TDEE)
+     - Total Daily Energy Intake (TDEI) → Body Mass Index (BMI)
+     - Total Daily Energy Intake (TDEI) → Individual Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Socio-cultural Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Spatial Scale
+     - Total Daily Energy Intake (TDEI) → Group-level BMI
+     - Total Daily Energy Intake (TDEI) → Norm BMI
+     - Total Daily Energy Intake (TDEI) → Basal Metabolic Rate
+     - Total Daily Energy Intake (TDEI) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Body Mass Index (BMI)
+     - Total Daily Energy Expenditure (TDEE) → Group-level BMI
+     - Total Daily Energy Expenditure (TDEE) → Healthy BMI
+     - Total Daily Energy Expenditure (TDEE) → Total Daily Energy Intake (TDEI)
+     - Total Daily Energy Expenditure (TDEE) → Spatial Scale
+     - Total Daily Energy Expenditure (TDEE) → Individual Ideal BMI
+     - Total Daily Energy Expenditure (TDEE) → Norm BMI
+     - Total Daily Energy Expenditure (TDEE) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Basal Metabolic Rate
+     - Total Daily Energy Expenditure (TDEE) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Basal Metabolic Rate
+     - Body Mass Index (BMI) → Physical Activity Level
+     - Body Mass Index (BMI) → Total Daily Energy Intake (TDEI)
+     - Body Mass Index (BMI) → Individual Ideal BMI
+     - Body Mass Index (BMI) → Healthy BMI
+     - Body Mass Index (BMI) → Norm BMI
+     - Body Mass Index (BMI) → Group-level BMI
+     - Body Mass Index (BMI) → Total Daily Energy Expenditure (TDEE)
+     - Body Mass Index (BMI) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Spatial Scale
+     - Group-level BMI → Socio-cultural Ideal BMI
+     - Group-level BMI → Physical Activity Level
+     - Group-level BMI → Basal Metabolic Rate
+     - Group-level BMI → Healthy BMI
+     - Group-level BMI → Total Daily Energy Expenditure (TDEE)
+     - Group-level BMI → Total Daily Energy Intake (TDEI)
+     - Group-level BMI → Body Mass Index (BMI)
+     - Group-level BMI → Spatial Scale
+     - Group-level BMI → Individual Ideal BMI
+     - Group-level BMI → Norm BMI
+[DEBUG] Loading variables from JSON: /tmp/tmp47xb23dz_vars_data.json
+[DEBUG] Loading edges from JSON: /tmp/tmp_pfg_zcp_edges_data.json
+[DEBUG] final_nodes count: 10
+[DEBUG] raw_edges count: 12
+[DEBUG] Skipping edge Body Mass Index (BMI)->individual ideal BMI because src/tgt not in final_nodes
+[DEBUG] Graph now has 10 nodes, 11 edges added (valid).
+
+🔍 STARTING NODE COMPARISON PHASE
+Session nodes (11): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Group-level BMI', 'Healthy BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Spatial Scale', 'Body Mass Index (BMI)']
+Validation nodes (10): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Body Mass Index (BMI)']
+Comparison mode: llm_batch
+
+============================================================
+LLM BATCH MATCHING: Single call for all 11×10 pairs
+============================================================
+
+⚠️  ERROR in batch matching: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+
+✅ NODE COMPARISON PHASE COMPLETE
+Final node mapping: {}
+Node precision: 0.000, recall: 0.000, F1: 0.000
+Matched 0 variable pairs
+[DEBUG] Filtered validation graph: 10 nodes, 11 edges.
+[DEBUG] plot_graph=True, plotting the filtered validation graph.
+
+🔍 DEBUG METRICS DICT:
+   hybrid_node_precision: None
+   hybrid_node_recall: None
+   hybrid_node_f1: None
+     Found 110 session edges, 11 validation edges (modules.py:9577)
+     Filtering NONE relationships... (modules.py:9683)
+     Removed 84 NONE relationships, keeping 26 edges (modules.py:9693)
+
+🔍 FILTERING NONE RELATIONSHIPS:
+   Before filtering: 110 edges
+   After filtering: 26 edges
+   Removed 84 NONE relationships
+     Computing confusion matrix... (modules.py:9704)
+     TP=6, FP=20, FN=5 (modules.py:9708)
+
+📊 NONE EDGE CLASSIFICATION:
+   NONE edges in validation (→ FN): 5
+   NONE edges not in validation (→ TN): 79
+   Total NONE edges: 84
+
+✅ VERIFICATION:
+   NONE→FN overlap: 5/5 ✓
+   NONE→TN overlap: 79/79 ✓
+     Calculating accuracy metrics... (modules.py:9738)
+     Precision=0.231, Recall=0.545, F1=0.324, Accuracy=0.773 (modules.py:9748)
+     Building Excel data rows... (modules.py:9756)
+     Adding 6 TP edges to Excel... (modules.py:9759)
+     Adding 20 FP edges to Excel... (modules.py:9790)
+     Adding 0 FN edges to Excel... (modules.py:9822)
+     Adding 84 NONE edges to Excel... (modules.py:9851)
+     Converting 110 rows to DataFrame... (modules.py:9881)
+     DataFrame created with shape: (110, 20) (modules.py:9883)
+     Building summary sheet... (modules.py:9886)
+     Writing 'All Edges' sheet with 110 rows... (modules.py:10057)
+     ✓ Wrote 'All Edges' sheet (modules.py:10059)
+     Writing 'All Edges Summary' sheet with 48 rows... (modules.py:10061)
+     ✓ Wrote 'All Edges Summary' sheet (modules.py:10063)
+  [2/5] SCENARIO: Cited Edges Only (modules.py:9529)
+     Getting edges from Neo4j... (modules.py:9534)
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/data_science/modules.py", line 8180, in compare_session_graph_to_validation
+    batch_agent = Agent(
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 302, in __init__
+    self._model = models.infer_model(model)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/__init__.py", line 747, in infer_model
+    return OpenAIChatModel(model_name, provider=provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 348, in __init__
+    provider = infer_provider(provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/__init__.py", line 152, in infer_provider
+    return provider_class()
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/openai.py", line 85, in __init__
+    self._client = AsyncOpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/openai/_client.py", line 480, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+🔍 EXTRACT_NETWORKX DEBUG: Session ID = a0e16f57-b126-4bd9-8d22-c803c2a03466
+   Query filters: only_cited_edges=True, only_consistent_edges=False
+   Full query: 
+    MATCH (s:variable)-[r]->(t:variable)
+    WHERE s.session_id = $session_id AND t.session_id = $session_id
+     AND r.citations IS NOT NULL AND size(r.citations) > 0
+    RETURN s.name AS source, t.name AS target
+    
+   Edges found: 110
+     - Total Daily Energy Expenditure (TDEE) → Spatial Scale
+     - Total Daily Energy Intake (TDEI) → Spatial Scale
+     - Group-level BMI → Spatial Scale
+     - Individual Ideal BMI → Spatial Scale
+     - Socio-cultural Ideal BMI → Spatial Scale
+     - Healthy BMI → Spatial Scale
+     - Norm BMI → Spatial Scale
+     - Basal Metabolic Rate → Spatial Scale
+     - Physical Activity Level → Spatial Scale
+     - Body Mass Index (BMI) → Spatial Scale
+     - Socio-cultural Ideal BMI → Individual Ideal BMI
+     - Norm BMI → Individual Ideal BMI
+     - Body Mass Index (BMI) → Individual Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Individual Ideal BMI
+     - Basal Metabolic Rate → Individual Ideal BMI
+     - Spatial Scale → Individual Ideal BMI
+     - Total Daily Energy Expenditure (TDEE) → Individual Ideal BMI
+     - Physical Activity Level → Individual Ideal BMI
+     - Healthy BMI → Individual Ideal BMI
+     - Group-level BMI → Individual Ideal BMI
+     - Body Mass Index (BMI) → Physical Activity Level
+     - Spatial Scale → Physical Activity Level
+     - Group-level BMI → Physical Activity Level
+     - Individual Ideal BMI → Physical Activity Level
+     - Norm BMI → Physical Activity Level
+     - Healthy BMI → Physical Activity Level
+     - Socio-cultural Ideal BMI → Physical Activity Level
+     - Total Daily Energy Intake (TDEI) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Physical Activity Level
+     - Basal Metabolic Rate → Physical Activity Level
+     - Socio-cultural Ideal BMI → Norm BMI
+     - Body Mass Index (BMI) → Norm BMI
+     - Spatial Scale → Norm BMI
+     - Individual Ideal BMI → Norm BMI
+     - Basal Metabolic Rate → Norm BMI
+     - Total Daily Energy Expenditure (TDEE) → Norm BMI
+     - Total Daily Energy Intake (TDEI) → Norm BMI
+     - Healthy BMI → Norm BMI
+     - Group-level BMI → Norm BMI
+     - Physical Activity Level → Norm BMI
+     - Body Mass Index (BMI) → Basal Metabolic Rate
+     - Spatial Scale → Basal Metabolic Rate
+     - Physical Activity Level → Basal Metabolic Rate
+     - Norm BMI → Basal Metabolic Rate
+     - Group-level BMI → Basal Metabolic Rate
+     - Socio-cultural Ideal BMI → Basal Metabolic Rate
+     - Healthy BMI → Basal Metabolic Rate
+     - Total Daily Energy Intake (TDEI) → Basal Metabolic Rate
+     - Total Daily Energy Expenditure (TDEE) → Basal Metabolic Rate
+     - Individual Ideal BMI → Basal Metabolic Rate
+     - Total Daily Energy Expenditure (TDEE) → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Healthy BMI
+     - Body Mass Index (BMI) → Healthy BMI
+     - Basal Metabolic Rate → Healthy BMI
+     - Spatial Scale → Healthy BMI
+     - Group-level BMI → Healthy BMI
+     - Physical Activity Level → Healthy BMI
+     - Socio-cultural Ideal BMI → Healthy BMI
+     - Norm BMI → Healthy BMI
+     - Individual Ideal BMI → Healthy BMI
+     - Spatial Scale → Socio-cultural Ideal BMI
+     - Norm BMI → Socio-cultural Ideal BMI
+     - Group-level BMI → Socio-cultural Ideal BMI
+     - Healthy BMI → Socio-cultural Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Socio-cultural Ideal BMI
+     - Individual Ideal BMI → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Socio-cultural Ideal BMI
+     - Basal Metabolic Rate → Socio-cultural Ideal BMI
+     - Physical Activity Level → Socio-cultural Ideal BMI
+     - Total Daily Energy Expenditure (TDEE) → Socio-cultural Ideal BMI
+     - Healthy BMI → Total Daily Energy Intake (TDEI)
+     - Body Mass Index (BMI) → Total Daily Energy Intake (TDEI)
+     - Total Daily Energy Expenditure (TDEE) → Total Daily Energy Intake (TDEI)
+     - Norm BMI → Total Daily Energy Intake (TDEI)
+     - Physical Activity Level → Total Daily Energy Intake (TDEI)
+     - Basal Metabolic Rate → Total Daily Energy Intake (TDEI)
+     - Socio-cultural Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Group-level BMI → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Spatial Scale → Total Daily Energy Intake (TDEI)
+     - Basal Metabolic Rate → Total Daily Energy Expenditure (TDEE)
+     - Individual Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Physical Activity Level → Total Daily Energy Expenditure (TDEE)
+     - Socio-cultural Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Norm BMI → Total Daily Energy Expenditure (TDEE)
+     - Total Daily Energy Intake (TDEI) → Total Daily Energy Expenditure (TDEE)
+     - Spatial Scale → Total Daily Energy Expenditure (TDEE)
+     - Body Mass Index (BMI) → Total Daily Energy Expenditure (TDEE)
+     - Group-level BMI → Total Daily Energy Expenditure (TDEE)
+     - Healthy BMI → Total Daily Energy Expenditure (TDEE)
+     - Total Daily Energy Expenditure (TDEE) → Body Mass Index (BMI)
+     - Socio-cultural Ideal BMI → Body Mass Index (BMI)
+     - Individual Ideal BMI → Body Mass Index (BMI)
+     - Healthy BMI → Body Mass Index (BMI)
+     - Physical Activity Level → Body Mass Index (BMI)
+     - Basal Metabolic Rate → Body Mass Index (BMI)
+     - Total Daily Energy Intake (TDEI) → Body Mass Index (BMI)
+     - Spatial Scale → Body Mass Index (BMI)
+     - Norm BMI → Body Mass Index (BMI)
+     - Group-level BMI → Body Mass Index (BMI)
+     - Total Daily Energy Expenditure (TDEE) → Group-level BMI
+     - Physical Activity Level → Group-level BMI
+     - Socio-cultural Ideal BMI → Group-level BMI
+     - Healthy BMI → Group-level BMI
+     - Norm BMI → Group-level BMI
+     - Basal Metabolic Rate → Group-level BMI
+     - Spatial Scale → Group-level BMI
+     - Body Mass Index (BMI) → Group-level BMI
+     - Individual Ideal BMI → Group-level BMI
+     - Total Daily Energy Intake (TDEI) → Group-level BMI
+[DEBUG] Loading variables from JSON: /tmp/tmp47xb23dz_vars_data.json
+[DEBUG] Loading edges from JSON: /tmp/tmp_pfg_zcp_edges_data.json
+[DEBUG] final_nodes count: 10
+[DEBUG] raw_edges count: 12
+[DEBUG] Skipping edge Body Mass Index (BMI)->individual ideal BMI because src/tgt not in final_nodes
+[DEBUG] Graph now has 10 nodes, 11 edges added (valid).
+
+🔍 STARTING NODE COMPARISON PHASE
+Session nodes (11): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Total Daily Energy Expenditure (TDEE)', 'Group-level BMI', 'Healthy BMI', 'Physical Activity Level', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Spatial Scale', 'Body Mass Index (BMI)']
+Validation nodes (10): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Body Mass Index (BMI)']
+Comparison mode: llm_batch
+
+============================================================
+LLM BATCH MATCHING: Single call for all 11×10 pairs
+============================================================
+
+⚠️  ERROR in batch matching: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+
+✅ NODE COMPARISON PHASE COMPLETE
+Final node mapping: {}
+Node precision: 0.000, recall: 0.000, F1: 0.000
+Matched 0 variable pairs
+[DEBUG] Filtered validation graph: 10 nodes, 11 edges.
+[DEBUG] plot_graph=True, plotting the filtered validation graph.
+
+🔍 DEBUG METRICS DICT:
+   hybrid_node_precision: None
+   hybrid_node_recall: None
+   hybrid_node_f1: None
+     Found 110 session edges, 11 validation edges (modules.py:9577)
+     Filtering NONE relationships... (modules.py:9683)
+     Removed 84 NONE relationships, keeping 26 edges (modules.py:9693)
+
+🔍 FILTERING NONE RELATIONSHIPS:
+   Before filtering: 110 edges
+   After filtering: 26 edges
+   Removed 84 NONE relationships
+     Computing confusion matrix... (modules.py:9704)
+     TP=6, FP=20, FN=5 (modules.py:9708)
+
+📊 NONE EDGE CLASSIFICATION:
+   NONE edges in validation (→ FN): 5
+   NONE edges not in validation (→ TN): 79
+   Total NONE edges: 84
+
+✅ VERIFICATION:
+   NONE→FN overlap: 5/5 ✓
+   NONE→TN overlap: 79/79 ✓
+     Calculating accuracy metrics... (modules.py:9738)
+     Precision=0.231, Recall=0.545, F1=0.324, Accuracy=0.773 (modules.py:9748)
+     Building Excel data rows... (modules.py:9756)
+     Adding 6 TP edges to Excel... (modules.py:9759)
+     Adding 20 FP edges to Excel... (modules.py:9790)
+     Adding 0 FN edges to Excel... (modules.py:9822)
+     Adding 84 NONE edges to Excel... (modules.py:9851)
+     Converting 110 rows to DataFrame... (modules.py:9881)
+     DataFrame created with shape: (110, 20) (modules.py:9883)
+     Building summary sheet... (modules.py:9886)
+     Writing 'Cited Edges Only' sheet with 110 rows... (modules.py:10057)
+     ✓ Wrote 'Cited Edges Only' sheet (modules.py:10059)
+     Writing 'Cited Edges Only Summary' sheet with 36 rows... (modules.py:10061)
+     ✓ Wrote 'Cited Edges Only Summary' sheet (modules.py:10063)
+  [3/5] SCENARIO: Consistent Edges Only (modules.py:9529)
+     Getting edges from Neo4j... (modules.py:9534)
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/data_science/modules.py", line 8180, in compare_session_graph_to_validation
+    batch_agent = Agent(
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 302, in __init__
+    self._model = models.infer_model(model)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/__init__.py", line 747, in infer_model
+    return OpenAIChatModel(model_name, provider=provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 348, in __init__
+    provider = infer_provider(provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/__init__.py", line 152, in infer_provider
+    return provider_class()
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/openai.py", line 85, in __init__
+    self._client = AsyncOpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/openai/_client.py", line 480, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+🔍 EXTRACT_NETWORKX DEBUG: Session ID = a0e16f57-b126-4bd9-8d22-c803c2a03466
+   Query filters: only_cited_edges=False, only_consistent_edges=True
+   Full query: 
+    MATCH (s:variable)-[r]->(t:variable)
+    WHERE s.session_id = $session_id AND t.session_id = $session_id
+     AND r.judge_verdict = 'OK'
+    RETURN s.name AS source, t.name AS target
+    
+   Edges found: 0
+   No edges found - querying nodes directly
+   Nodes found: 11
+     - Spatial Scale
+     - Individual Ideal BMI
+     - Physical Activity Level
+     - Norm BMI
+     - Basal Metabolic Rate
+     - Healthy BMI
+     - Socio-cultural Ideal BMI
+     - Total Daily Energy Intake (TDEI)
+     - Total Daily Energy Expenditure (TDEE)
+     - Body Mass Index (BMI)
+     - Group-level BMI
+[DEBUG] Loading variables from JSON: /tmp/tmp47xb23dz_vars_data.json
+[DEBUG] Loading edges from JSON: /tmp/tmp_pfg_zcp_edges_data.json
+[DEBUG] final_nodes count: 10
+[DEBUG] raw_edges count: 12
+[DEBUG] Skipping edge Body Mass Index (BMI)->individual ideal BMI because src/tgt not in final_nodes
+[DEBUG] Graph now has 10 nodes, 11 edges added (valid).
+
+🔍 STARTING NODE COMPARISON PHASE
+Session nodes (11): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Spatial Scale', 'Body Mass Index (BMI)']
+Validation nodes (10): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Body Mass Index (BMI)']
+Comparison mode: llm_batch
+
+============================================================
+LLM BATCH MATCHING: Single call for all 11×10 pairs
+============================================================
+
+⚠️  ERROR in batch matching: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+
+✅ NODE COMPARISON PHASE COMPLETE
+Final node mapping: {}
+Node precision: 0.000, recall: 0.000, F1: 0.000
+Matched 0 variable pairs
+[DEBUG] Filtered validation graph: 10 nodes, 11 edges.
+[DEBUG] plot_graph=True, plotting the filtered validation graph.
+
+🔍 DEBUG METRICS DICT:
+   hybrid_node_precision: None
+   hybrid_node_recall: None
+   hybrid_node_f1: None
+     Found 0 session edges, 11 validation edges (modules.py:9577)
+     Filtering NONE relationships... (modules.py:9683)
+     Removed 0 NONE relationships, keeping 0 edges (modules.py:9693)
+
+🔍 FILTERING NONE RELATIONSHIPS:
+   Before filtering: 0 edges
+   After filtering: 0 edges
+   Removed 0 NONE relationships
+     Computing confusion matrix... (modules.py:9704)
+     TP=0, FP=0, FN=11 (modules.py:9708)
+
+📊 NONE EDGE CLASSIFICATION:
+   NONE edges in validation (→ FN): 0
+   NONE edges not in validation (→ TN): 0
+   Total NONE edges: 0
+
+✅ VERIFICATION:
+   NONE→FN overlap: 0/0 ✓
+   NONE→TN overlap: 0/0 ✓
+     Calculating accuracy metrics... (modules.py:9738)
+     Precision=0.000, Recall=0.000, F1=0.000, Accuracy=0.900 (modules.py:9748)
+     Building Excel data rows... (modules.py:9756)
+     Adding 0 TP edges to Excel... (modules.py:9759)
+     Adding 0 FP edges to Excel... (modules.py:9790)
+     Adding 11 FN edges to Excel... (modules.py:9822)
+     Adding 0 NONE edges to Excel... (modules.py:9851)
+     Converting 11 rows to DataFrame... (modules.py:9881)
+     DataFrame created with shape: (11, 11) (modules.py:9883)
+     Building summary sheet... (modules.py:9886)
+     Writing 'Consistent Edges Only' sheet with 11 rows... (modules.py:10057)
+     ✓ Wrote 'Consistent Edges Only' sheet (modules.py:10059)
+     Writing 'Consistent Edges Only Summary' sheet with 36 rows... (modules.py:10061)
+     ✓ Wrote 'Consistent Edges Only Summary' sheet (modules.py:10063)
+  [4/5] SCENARIO: Fully Supported Only (modules.py:9529)
+     Getting edges from Neo4j... (modules.py:9534)
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/data_science/modules.py", line 8180, in compare_session_graph_to_validation
+    batch_agent = Agent(
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 302, in __init__
+    self._model = models.infer_model(model)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/__init__.py", line 747, in infer_model
+    return OpenAIChatModel(model_name, provider=provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 348, in __init__
+    provider = infer_provider(provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/__init__.py", line 152, in infer_provider
+    return provider_class()
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/openai.py", line 85, in __init__
+    self._client = AsyncOpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/openai/_client.py", line 480, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+🔍 EXTRACT_NETWORKX DEBUG: Session ID = a0e16f57-b126-4bd9-8d22-c803c2a03466
+   Query filters: only_cited_edges=False, only_consistent_edges=False
+   Full query: 
+    MATCH (s:variable)-[r]->(t:variable)
+    WHERE s.session_id = $session_id AND t.session_id = $session_id
+    
+    RETURN s.name AS source, t.name AS target
+    
+   Edges found: 110
+     - Spatial Scale → Basal Metabolic Rate
+     - Spatial Scale → Socio-cultural Ideal BMI
+     - Spatial Scale → Physical Activity Level
+     - Spatial Scale → Total Daily Energy Expenditure (TDEE)
+     - Spatial Scale → Group-level BMI
+     - Spatial Scale → Healthy BMI
+     - Spatial Scale → Body Mass Index (BMI)
+     - Spatial Scale → Individual Ideal BMI
+     - Spatial Scale → Norm BMI
+     - Spatial Scale → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Individual Ideal BMI → Body Mass Index (BMI)
+     - Individual Ideal BMI → Physical Activity Level
+     - Individual Ideal BMI → Socio-cultural Ideal BMI
+     - Individual Ideal BMI → Group-level BMI
+     - Individual Ideal BMI → Norm BMI
+     - Individual Ideal BMI → Spatial Scale
+     - Individual Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Healthy BMI
+     - Individual Ideal BMI → Basal Metabolic Rate
+     - Physical Activity Level → Total Daily Energy Expenditure (TDEE)
+     - Physical Activity Level → Group-level BMI
+     - Physical Activity Level → Body Mass Index (BMI)
+     - Physical Activity Level → Total Daily Energy Intake (TDEI)
+     - Physical Activity Level → Basal Metabolic Rate
+     - Physical Activity Level → Individual Ideal BMI
+     - Physical Activity Level → Socio-cultural Ideal BMI
+     - Physical Activity Level → Healthy BMI
+     - Physical Activity Level → Spatial Scale
+     - Physical Activity Level → Norm BMI
+     - Norm BMI → Socio-cultural Ideal BMI
+     - Norm BMI → Total Daily Energy Expenditure (TDEE)
+     - Norm BMI → Total Daily Energy Intake (TDEI)
+     - Norm BMI → Individual Ideal BMI
+     - Norm BMI → Group-level BMI
+     - Norm BMI → Basal Metabolic Rate
+     - Norm BMI → Physical Activity Level
+     - Norm BMI → Body Mass Index (BMI)
+     - Norm BMI → Spatial Scale
+     - Norm BMI → Healthy BMI
+     - Basal Metabolic Rate → Total Daily Energy Expenditure (TDEE)
+     - Basal Metabolic Rate → Body Mass Index (BMI)
+     - Basal Metabolic Rate → Healthy BMI
+     - Basal Metabolic Rate → Individual Ideal BMI
+     - Basal Metabolic Rate → Group-level BMI
+     - Basal Metabolic Rate → Total Daily Energy Intake (TDEI)
+     - Basal Metabolic Rate → Norm BMI
+     - Basal Metabolic Rate → Socio-cultural Ideal BMI
+     - Basal Metabolic Rate → Spatial Scale
+     - Basal Metabolic Rate → Physical Activity Level
+     - Healthy BMI → Total Daily Energy Intake (TDEI)
+     - Healthy BMI → Body Mass Index (BMI)
+     - Healthy BMI → Group-level BMI
+     - Healthy BMI → Socio-cultural Ideal BMI
+     - Healthy BMI → Physical Activity Level
+     - Healthy BMI → Spatial Scale
+     - Healthy BMI → Individual Ideal BMI
+     - Healthy BMI → Basal Metabolic Rate
+     - Healthy BMI → Total Daily Energy Expenditure (TDEE)
+     - Healthy BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Body Mass Index (BMI)
+     - Socio-cultural Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Socio-cultural Ideal BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Individual Ideal BMI
+     - Socio-cultural Ideal BMI → Group-level BMI
+     - Socio-cultural Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Socio-cultural Ideal BMI → Physical Activity Level
+     - Socio-cultural Ideal BMI → Spatial Scale
+     - Socio-cultural Ideal BMI → Basal Metabolic Rate
+     - Socio-cultural Ideal BMI → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Total Daily Energy Expenditure (TDEE)
+     - Total Daily Energy Intake (TDEI) → Body Mass Index (BMI)
+     - Total Daily Energy Intake (TDEI) → Individual Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Socio-cultural Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Spatial Scale
+     - Total Daily Energy Intake (TDEI) → Group-level BMI
+     - Total Daily Energy Intake (TDEI) → Norm BMI
+     - Total Daily Energy Intake (TDEI) → Basal Metabolic Rate
+     - Total Daily Energy Intake (TDEI) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Body Mass Index (BMI)
+     - Total Daily Energy Expenditure (TDEE) → Group-level BMI
+     - Total Daily Energy Expenditure (TDEE) → Healthy BMI
+     - Total Daily Energy Expenditure (TDEE) → Total Daily Energy Intake (TDEI)
+     - Total Daily Energy Expenditure (TDEE) → Spatial Scale
+     - Total Daily Energy Expenditure (TDEE) → Individual Ideal BMI
+     - Total Daily Energy Expenditure (TDEE) → Norm BMI
+     - Total Daily Energy Expenditure (TDEE) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Basal Metabolic Rate
+     - Total Daily Energy Expenditure (TDEE) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Basal Metabolic Rate
+     - Body Mass Index (BMI) → Physical Activity Level
+     - Body Mass Index (BMI) → Total Daily Energy Intake (TDEI)
+     - Body Mass Index (BMI) → Individual Ideal BMI
+     - Body Mass Index (BMI) → Healthy BMI
+     - Body Mass Index (BMI) → Norm BMI
+     - Body Mass Index (BMI) → Group-level BMI
+     - Body Mass Index (BMI) → Total Daily Energy Expenditure (TDEE)
+     - Body Mass Index (BMI) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Spatial Scale
+     - Group-level BMI → Socio-cultural Ideal BMI
+     - Group-level BMI → Physical Activity Level
+     - Group-level BMI → Basal Metabolic Rate
+     - Group-level BMI → Healthy BMI
+     - Group-level BMI → Total Daily Energy Expenditure (TDEE)
+     - Group-level BMI → Total Daily Energy Intake (TDEI)
+     - Group-level BMI → Body Mass Index (BMI)
+     - Group-level BMI → Spatial Scale
+     - Group-level BMI → Individual Ideal BMI
+     - Group-level BMI → Norm BMI
+[DEBUG] Loading variables from JSON: /tmp/tmp47xb23dz_vars_data.json
+[DEBUG] Loading edges from JSON: /tmp/tmp_pfg_zcp_edges_data.json
+[DEBUG] final_nodes count: 10
+[DEBUG] raw_edges count: 12
+[DEBUG] Skipping edge Body Mass Index (BMI)->individual ideal BMI because src/tgt not in final_nodes
+[DEBUG] Graph now has 10 nodes, 11 edges added (valid).
+
+🔍 STARTING NODE COMPARISON PHASE
+Session nodes (11): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Group-level BMI', 'Healthy BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Spatial Scale', 'Body Mass Index (BMI)']
+Validation nodes (10): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Body Mass Index (BMI)']
+Comparison mode: llm_batch
+
+============================================================
+LLM BATCH MATCHING: Single call for all 11×10 pairs
+============================================================
+
+⚠️  ERROR in batch matching: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+
+✅ NODE COMPARISON PHASE COMPLETE
+Final node mapping: {}
+Node precision: 0.000, recall: 0.000, F1: 0.000
+Matched 0 variable pairs
+[DEBUG] Filtered validation graph: 10 nodes, 11 edges.
+[DEBUG] plot_graph=True, plotting the filtered validation graph.
+
+🔍 DEBUG METRICS DICT:
+   hybrid_node_precision: None
+   hybrid_node_recall: None
+   hybrid_node_f1: None
+     Found 110 session edges, 11 validation edges (modules.py:9577)
+     Filtering NONE relationships... (modules.py:9683)
+     Removed 0 NONE relationships, keeping 0 edges (modules.py:9693)
+
+🔍 FILTERING NONE RELATIONSHIPS:
+   Before filtering: 0 edges
+   After filtering: 0 edges
+   Removed 0 NONE relationships
+     Computing confusion matrix... (modules.py:9704)
+     TP=0, FP=0, FN=11 (modules.py:9708)
+
+📊 NONE EDGE CLASSIFICATION:
+   NONE edges in validation (→ FN): 0
+   NONE edges not in validation (→ TN): 0
+   Total NONE edges: 0
+
+✅ VERIFICATION:
+   NONE→FN overlap: 0/0 ✓
+   NONE→TN overlap: 0/0 ✓
+     Calculating accuracy metrics... (modules.py:9738)
+     Precision=0.000, Recall=0.000, F1=0.000, Accuracy=0.900 (modules.py:9748)
+     Building Excel data rows... (modules.py:9756)
+     Adding 0 TP edges to Excel... (modules.py:9759)
+     Adding 0 FP edges to Excel... (modules.py:9790)
+     Adding 11 FN edges to Excel... (modules.py:9822)
+     Adding 0 NONE edges to Excel... (modules.py:9851)
+     Converting 11 rows to DataFrame... (modules.py:9881)
+     DataFrame created with shape: (11, 11) (modules.py:9883)
+     Building summary sheet... (modules.py:9886)
+     Writing 'Fully Supported Only' sheet with 11 rows... (modules.py:10057)
+     ✓ Wrote 'Fully Supported Only' sheet (modules.py:10059)
+     Writing 'Fully Supported Only Summary' sheet with 36 rows... (modules.py:10061)
+     ✓ Wrote 'Fully Supported Only Summary' sheet (modules.py:10063)
+  [5/5] SCENARIO: Partially Supported (modules.py:9529)
+     Getting edges from Neo4j... (modules.py:9534)
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/data_science/modules.py", line 8180, in compare_session_graph_to_validation
+    batch_agent = Agent(
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 302, in __init__
+    self._model = models.infer_model(model)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/__init__.py", line 747, in infer_model
+    return OpenAIChatModel(model_name, provider=provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 348, in __init__
+    provider = infer_provider(provider)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/__init__.py", line 152, in infer_provider
+    return provider_class()
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/pydantic_ai/providers/openai.py", line 85, in __init__
+    self._client = AsyncOpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
+  File "/home/nitai/code/causalix.ai/.venv/lib/python3.10/site-packages/openai/_client.py", line 480, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+🔍 EXTRACT_NETWORKX DEBUG: Session ID = a0e16f57-b126-4bd9-8d22-c803c2a03466
+   Query filters: only_cited_edges=False, only_consistent_edges=False
+   Full query: 
+    MATCH (s:variable)-[r]->(t:variable)
+    WHERE s.session_id = $session_id AND t.session_id = $session_id
+    
+    RETURN s.name AS source, t.name AS target
+    
+   Edges found: 110
+     - Spatial Scale → Basal Metabolic Rate
+     - Spatial Scale → Socio-cultural Ideal BMI
+     - Spatial Scale → Physical Activity Level
+     - Spatial Scale → Total Daily Energy Expenditure (TDEE)
+     - Spatial Scale → Group-level BMI
+     - Spatial Scale → Healthy BMI
+     - Spatial Scale → Body Mass Index (BMI)
+     - Spatial Scale → Individual Ideal BMI
+     - Spatial Scale → Norm BMI
+     - Spatial Scale → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Individual Ideal BMI → Body Mass Index (BMI)
+     - Individual Ideal BMI → Physical Activity Level
+     - Individual Ideal BMI → Socio-cultural Ideal BMI
+     - Individual Ideal BMI → Group-level BMI
+     - Individual Ideal BMI → Norm BMI
+     - Individual Ideal BMI → Spatial Scale
+     - Individual Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Individual Ideal BMI → Healthy BMI
+     - Individual Ideal BMI → Basal Metabolic Rate
+     - Physical Activity Level → Total Daily Energy Expenditure (TDEE)
+     - Physical Activity Level → Group-level BMI
+     - Physical Activity Level → Body Mass Index (BMI)
+     - Physical Activity Level → Total Daily Energy Intake (TDEI)
+     - Physical Activity Level → Basal Metabolic Rate
+     - Physical Activity Level → Individual Ideal BMI
+     - Physical Activity Level → Socio-cultural Ideal BMI
+     - Physical Activity Level → Healthy BMI
+     - Physical Activity Level → Spatial Scale
+     - Physical Activity Level → Norm BMI
+     - Norm BMI → Socio-cultural Ideal BMI
+     - Norm BMI → Total Daily Energy Expenditure (TDEE)
+     - Norm BMI → Total Daily Energy Intake (TDEI)
+     - Norm BMI → Individual Ideal BMI
+     - Norm BMI → Group-level BMI
+     - Norm BMI → Basal Metabolic Rate
+     - Norm BMI → Physical Activity Level
+     - Norm BMI → Body Mass Index (BMI)
+     - Norm BMI → Spatial Scale
+     - Norm BMI → Healthy BMI
+     - Basal Metabolic Rate → Total Daily Energy Expenditure (TDEE)
+     - Basal Metabolic Rate → Body Mass Index (BMI)
+     - Basal Metabolic Rate → Healthy BMI
+     - Basal Metabolic Rate → Individual Ideal BMI
+     - Basal Metabolic Rate → Group-level BMI
+     - Basal Metabolic Rate → Total Daily Energy Intake (TDEI)
+     - Basal Metabolic Rate → Norm BMI
+     - Basal Metabolic Rate → Socio-cultural Ideal BMI
+     - Basal Metabolic Rate → Spatial Scale
+     - Basal Metabolic Rate → Physical Activity Level
+     - Healthy BMI → Total Daily Energy Intake (TDEI)
+     - Healthy BMI → Body Mass Index (BMI)
+     - Healthy BMI → Group-level BMI
+     - Healthy BMI → Socio-cultural Ideal BMI
+     - Healthy BMI → Physical Activity Level
+     - Healthy BMI → Spatial Scale
+     - Healthy BMI → Individual Ideal BMI
+     - Healthy BMI → Basal Metabolic Rate
+     - Healthy BMI → Total Daily Energy Expenditure (TDEE)
+     - Healthy BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Body Mass Index (BMI)
+     - Socio-cultural Ideal BMI → Total Daily Energy Expenditure (TDEE)
+     - Socio-cultural Ideal BMI → Norm BMI
+     - Socio-cultural Ideal BMI → Individual Ideal BMI
+     - Socio-cultural Ideal BMI → Group-level BMI
+     - Socio-cultural Ideal BMI → Total Daily Energy Intake (TDEI)
+     - Socio-cultural Ideal BMI → Physical Activity Level
+     - Socio-cultural Ideal BMI → Spatial Scale
+     - Socio-cultural Ideal BMI → Basal Metabolic Rate
+     - Socio-cultural Ideal BMI → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Healthy BMI
+     - Total Daily Energy Intake (TDEI) → Total Daily Energy Expenditure (TDEE)
+     - Total Daily Energy Intake (TDEI) → Body Mass Index (BMI)
+     - Total Daily Energy Intake (TDEI) → Individual Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Socio-cultural Ideal BMI
+     - Total Daily Energy Intake (TDEI) → Spatial Scale
+     - Total Daily Energy Intake (TDEI) → Group-level BMI
+     - Total Daily Energy Intake (TDEI) → Norm BMI
+     - Total Daily Energy Intake (TDEI) → Basal Metabolic Rate
+     - Total Daily Energy Intake (TDEI) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Body Mass Index (BMI)
+     - Total Daily Energy Expenditure (TDEE) → Group-level BMI
+     - Total Daily Energy Expenditure (TDEE) → Healthy BMI
+     - Total Daily Energy Expenditure (TDEE) → Total Daily Energy Intake (TDEI)
+     - Total Daily Energy Expenditure (TDEE) → Spatial Scale
+     - Total Daily Energy Expenditure (TDEE) → Individual Ideal BMI
+     - Total Daily Energy Expenditure (TDEE) → Norm BMI
+     - Total Daily Energy Expenditure (TDEE) → Physical Activity Level
+     - Total Daily Energy Expenditure (TDEE) → Basal Metabolic Rate
+     - Total Daily Energy Expenditure (TDEE) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Basal Metabolic Rate
+     - Body Mass Index (BMI) → Physical Activity Level
+     - Body Mass Index (BMI) → Total Daily Energy Intake (TDEI)
+     - Body Mass Index (BMI) → Individual Ideal BMI
+     - Body Mass Index (BMI) → Healthy BMI
+     - Body Mass Index (BMI) → Norm BMI
+     - Body Mass Index (BMI) → Group-level BMI
+     - Body Mass Index (BMI) → Total Daily Energy Expenditure (TDEE)
+     - Body Mass Index (BMI) → Socio-cultural Ideal BMI
+     - Body Mass Index (BMI) → Spatial Scale
+     - Group-level BMI → Socio-cultural Ideal BMI
+     - Group-level BMI → Physical Activity Level
+     - Group-level BMI → Basal Metabolic Rate
+     - Group-level BMI → Healthy BMI
+     - Group-level BMI → Total Daily Energy Expenditure (TDEE)
+     - Group-level BMI → Total Daily Energy Intake (TDEI)
+     - Group-level BMI → Body Mass Index (BMI)
+     - Group-level BMI → Spatial Scale
+     - Group-level BMI → Individual Ideal BMI
+     - Group-level BMI → Norm BMI
+[DEBUG] Loading variables from JSON: /tmp/tmp47xb23dz_vars_data.json
+[DEBUG] Loading edges from JSON: /tmp/tmp_pfg_zcp_edges_data.json
+[DEBUG] final_nodes count: 10
+[DEBUG] raw_edges count: 12
+[DEBUG] Skipping edge Body Mass Index (BMI)->individual ideal BMI because src/tgt not in final_nodes
+[DEBUG] Graph now has 10 nodes, 11 edges added (valid).
+
+🔍 STARTING NODE COMPARISON PHASE
+Session nodes (11): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Group-level BMI', 'Healthy BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Spatial Scale', 'Body Mass Index (BMI)']
+Validation nodes (10): ['Total Daily Energy Intake (TDEI)', 'Individual Ideal BMI', 'Basal Metabolic Rate', 'Physical Activity Level', 'Total Daily Energy Expenditure (TDEE)', 'Healthy BMI', 'Group-level BMI', 'Norm BMI', 'Socio-cultural Ideal BMI', 'Body Mass Index (BMI)']
+Comparison mode: llm_batch
+
+============================================================
+LLM BATCH MATCHING: Single call for all 11×10 pairs
+============================================================
+
+⚠️  ERROR in batch matching: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+
+✅ NODE COMPARISON PHASE COMPLETE
+Final node mapping: {}
+Node precision: 0.000, recall: 0.000, F1: 0.000
+Matched 0 variable pairs
+[DEBUG] Filtered validation graph: 10 nodes, 11 edges.
+[DEBUG] plot_graph=True, plotting the filtered validation graph.
+
+🔍 DEBUG METRICS DICT:
+   hybrid_node_precision: None
+   hybrid_node_recall: None
+   hybrid_node_f1: None
+     Found 110 session edges, 11 validation edges (modules.py:9577)
+     Filtering NONE relationships... (modules.py:9683)
+     Removed 0 NONE relationships, keeping 0 edges (modules.py:9693)
+
+🔍 FILTERING NONE RELATIONSHIPS:
+   Before filtering: 0 edges
+   After filtering: 0 edges
+   Removed 0 NONE relationships
+     Computing confusion matrix... (modules.py:9704)
+     TP=0, FP=0, FN=11 (modules.py:9708)
+
+📊 NONE EDGE CLASSIFICATION:
+   NONE edges in validation (→ FN): 0
+   NONE edges not in validation (→ TN): 0
+   Total NONE edges: 0
+
+✅ VERIFICATION:
+   NONE→FN overlap: 0/0 ✓
+   NONE→TN overlap: 0/0 ✓
+     Calculating accuracy metrics... (modules.py:9738)
+     Precision=0.000, Recall=0.000, F1=0.000, Accuracy=0.900 (modules.py:9748)
+     Building Excel data rows... (modules.py:9756)
+     Adding 0 TP edges to Excel... (modules.py:9759)
+     Adding 0 FP edges to Excel... (modules.py:9790)
+     Adding 11 FN edges to Excel... (modules.py:9822)
+     Adding 0 NONE edges to Excel... (modules.py:9851)
+     Converting 11 rows to DataFrame... (modules.py:9881)
+     DataFrame created with shape: (11, 11) (modules.py:9883)
+     Building summary sheet... (modules.py:9886)
+     Writing 'Partially Supported' sheet with 11 rows... (modules.py:10057)
+     ✓ Wrote 'Partially Supported' sheet (modules.py:10059)
+     Writing 'Partially Supported Summary' sheet with 36 rows... (modules.py:10061)
+     ✓ Wrote 'Partially Supported Summary' sheet (modules.py:10063)
+
+Excel file created: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/temp_citation_fill_20251204_031315.xlsx
+Created scenario sheets:
+  1) All Edges / All Edges Summary
+  2) Cited Edges Only / Cited Edges Only Summary
+  3) Consistent Edges Only / Consistent Edges Only Summary
+  4) Fully Supported Only / Fully Supported Only Summary
+  5) Partially Supported / Partially Supported Summary
+  6) (Optional) Params
+  7) (Optional) LLM Usage Stats
+
+
+==================================================
+EXCEL EXPORT PHASE COMPLETED in 2.61 seconds
+Final Excel file: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_1/temp_citation_fill_20251204_031315.xlsx
+==================================================
+✓ Citations added successfully

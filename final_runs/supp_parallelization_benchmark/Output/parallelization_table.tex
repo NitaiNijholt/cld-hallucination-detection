@@ -1,0 +1,24 @@
+\begin{table}[H]
+\centering
+\caption{Parallelization Benchmark: Wall-Clock Time and Speedup by Judge Type}
+\label{tab:parallelization}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Workers} & \multicolumn{3}{c}{\textbf{Correctness Judge}} & \multicolumn{3}{c}{\textbf{Citation Judge}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+ & Time (s) & Speedup & Eff. & Time (s) & Speedup & Eff. \\
+\midrule
+1 & $52.7 \pm 7.8$ & 1.00$\times$ & 100\% & $165.0 \pm 42.4$ & 1.00$\times$ & 100\% \\
+3 & $17.7 \pm 1.3$ & 2.97$\times$ & 99\% & $51.4 \pm 4.6$ & 3.21$\times$ & 107\% \\
+5 & $11.2 \pm 3.1$ & 4.71$\times$ & 94\% & $34.6 \pm 6.1$ & 4.76$\times$ & 95\% \\
+10 & $6.7 \pm 1.1$ & 7.84$\times$ & 78\% & $18.8 \pm 6.5$ & 8.77$\times$ & 88\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Benchmark on Depressive CLD (34 edges, GPT-4.1, 3 runs per config). Time = wall-clock time (mean $\pm$ 95\% CI). Speedup = $T_1/T_W$. Efficiency = Speedup/$W$ $\times$ 100\%.
+\item Citation judging uses longer prompts with retrieved citations, resulting in higher per-call latency.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

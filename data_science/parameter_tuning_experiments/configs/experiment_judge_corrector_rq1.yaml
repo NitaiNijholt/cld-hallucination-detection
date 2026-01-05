@@ -1,0 +1,79 @@
+# RQ1 Judge/Corrector Experiment Configuration
+# Research Question: Can LLM-as-a-judge and LLM-as-a-corrector increase final CLD accuracy?
+
+param_grid:
+  # Basic experiment settings
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # Model configurations for different roles
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  judge_config:
+    - { provider: "anthropic", model: "claude-4-sonnet-20250514" }
+  
+  # CORRUPTION SETTINGS - Create spurious motivations to test detection
+  corruption_rate: [0.3]  # 30% of edges get spurious motivations
+  
+  # JUDGE SETTINGS - LLM-as-a-judge to detect hallucinations
+  judge_edges: [true]
+  # judge_models: [["claude-3-7-sonnet-20250219", "gpt-4o", "claude-3-7-sonnet-20250219"]]  # Multi-judge voting
+  judge_models: [["claude-3-7-sonnet-20250219", "gpt-4o", "claude-3-7-sonnet-20250219"]]
+  num_judges: [1]
+  
+  # CORRECTOR SETTINGS - LLM-as-a-corrector to fix hallucinations  
+  run_correction: [true, false]  # Test with and without correction
+  correction_rounds: [1]
+  corrector_models: [["claude-3-7-sonnet-20250219"]]
+  
+  # CITATION SETTINGS - Use Brave Search for real citations
+  citation_search_provider: ["brave"]  # Use Brave Search API for citations
+  
+  # LLM Temperature settings (conservative for consistency)
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7] 
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.4]  # "We set the temperature to 0" (Liu et al. 2023, G-Eval); "greedy decoding... for reproducibility" (Zhu et al. 2023, JudgeLM)
+  judge_top_p: [1.0]
+  corrector_temperature: [0.7] # "temperature of 0.7 to encourage diversity" (Madaan et al. 2023, Self-Refine)
+  
+  # Processing settings
+  parallel: [true]  # Sequential for better control
+  max_workers: [3]
+  load_env: [true]
+  
+  # Visualization settings
+  plot_session_graph: [false]  # Disable plots for batch processing
+  plot_validation_graph: [false]
+  
+  # Comparison settings for final evaluation
+  only_cited_edges: [false]
+  only_consistent_edges: [false] 
+  filter_validation_nodes_to_session_nodes: [true]
+  
+  # Context-insensitive metrics (for additional analysis)
+  embedding_enable: [true]
+  ci_fetch_reuse: [true]
+  ci_chunk_chars_override: [null]
+  ci_overlap_ratio: [0.2]
+  
+  # Node comparison settings
+  node_comparison_enable: [false]
+  node_comparison_mode: ["llm"]
+  node_comparison_cosine_percentile: [85.0]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [null]
+  
+  # Metadata
+  experiment_description: ["RQ1_Judge_Corrector_Experiment_18_09_2025"]
+  output_json_prefix: ["rq1_judge_corrector"]
+  compare_variable_overlap: [false]
+
+# Number of runs per parameter combination (for statistical significance)
+runs: 2

@@ -1,0 +1,19 @@
+# Minimal config for uv test run (no unsupported keys)
+param_grid:
+  export_json: [true]
+  plot_graph: [false]
+  dev_mode: [true]
+  judge_edges: [false]
+  parallel: [false]
+  max_workers: [1]
+  load_env: [false]
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  experiment_description: ["uv_test_multirun"]
+  output_json_prefix: ["uv_test_multirun"]
+  compare_variable_overlap: [false]
+
+runs: 1

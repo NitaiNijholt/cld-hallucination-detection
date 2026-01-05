@@ -1,0 +1,26 @@
+==========================================================================================
+OPENAI API COST ANALYSIS BY EXPERIMENT TYPE
+Generated: 2025-12-17 20:58:28
+==========================================================================================
+
+Experiment                     Model         Files    Edges   Tok/Edge   ¢/Edge    Total $
+------------------------------------------------------------------------------------------
+Corruption Correctness         gpt-4.1          81   34,890        487    0.16¢ $    55.80
+Corruption Citation            gpt-5-mini       28   13,800     43,313    0.73¢ $   100.14
+Ground Truth Correctness       gpt-4.1          31   14,227        464    0.15¢ $    22.05
+Ground Truth Citation          gpt-4.1          41   20,143     44,036    9.23¢ $ 1,859.14
+------------------------------------------------------------------------------------------
+TOTAL                                                                           $ 2,037.13
+==========================================================================================
+
+Pricing (OpenAI API, December 2024):
+  gpt-4.1: $2.00/1M input, $8.00/1M output
+  gpt-5-mini: $0.15/1M input, $0.60/1M output
+
+Key Insights:
+  - Total experiment cost: $2,037.13
+  - Citation experiments use ~43-44k tokens/edge (retrieved context)
+  - Correctness experiments use ~470-490 tokens/edge (no retrieval)
+  - Ground Truth Citation (GPT-4.1) dominates costs (91%)
+
+Summary saved to: cost_by_experiment.csv

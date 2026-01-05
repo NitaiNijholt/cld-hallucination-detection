@@ -1,0 +1,57 @@
+# RQ1: Generate Base CLDs for All 3 Datasets
+# 
+# Purpose: Generate base sessions (no corruption, no judging) with parallel edge discovery
+# Output: Session IDs will be saved in param_combo_mapping_*.csv
+
+# Which prompt file to use
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Which Excel files to process
+excel_files:
+  - Social_norms_and_obesity_prevalence.xlsx
+  - older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+
+# Number of runs per CLD
+runs: 1
+
+# Parameter grid (single combo for base generation)
+param_grid:
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  judge_config:
+    - provider: anthropic
+      model: claude-sonnet-4-5-20250929
+      temperature: 1.0
+  
+  corruption_rate: [0.0]  # No corruption for base CLDs
+  
+  judge_edges: [false]  # No judging yet
+  
+  parallel: [true]  # Enable parallel edge discovery
+  max_workers: [10]  # Use 10 workers for edge discovery
+  
+  citation_search_provider: ["brave"]
+  
+  embedding_enable: [false]  # Skip CI metrics for faster generation
+  node_comparison_enable: [false]  # Skip node comparison for base generation
+  
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  
+  export_json: [true]
+  dev_mode: [false]
+  load_env: [true]
+  run_correction: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  
+  overide_target_variable: [""]  # Use Excel target

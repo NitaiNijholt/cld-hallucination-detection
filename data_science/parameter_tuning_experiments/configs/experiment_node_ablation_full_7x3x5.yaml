@@ -1,0 +1,88 @@
+# Full Node Generation Prompt Ablation Study
+# 7 prompts × 3 CLDs × 5 runs = 105 total experiments
+#
+# Research Questions:
+#   RQ1: Do prompt engineering techniques improve node generation?
+#   RQ2: Which technique (role, constraints, CoT) is most effective?
+#   RQ3: Is there synergy in combining techniques?
+#   RQ4: Do effects generalize across domains?
+
+experiment_name: "node_ablation_full_7x3x5"
+
+# ALL 7 PROMPT VARIANTS
+# Paths are relative to prompts_folder (parameter_tuning_experiments/alternative_prompts)
+prompt_files:
+  - "prompts_Node_V0_Minimal.yaml"       # V0: Baseline (no role, no CoT, minimal constraints)
+  - "prompts_Node_V1_Role_Only.yaml"     # V1: Role prompting only
+  - "prompts_Node_V2_Constraints.yaml"   # V2: Constraint specification only
+  - "prompts_Node_V3_CoT_System.yaml"    # V3: Chain-of-Thought in system prompt
+  - "prompts_Node_V4_CoT_User.yaml"      # V4: Chain-of-Thought in user prompt
+  - "prompts_Node_V5_Nitai_C.yaml"       # V5: Combined (role + CoT system + CoT user + constraints)
+  - "prompts_Node_V6_Andrew.yaml"        # V6: Andrew's enhanced (role + constraints + context awareness)
+
+# 3 GROUND TRUTH CLDs (varied domains and complexity)
+excel_files:
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"  # Psychology domain, medium complexity
+  - "Social_norms_and_obesity_prevalence.xlsx"                              # Public health domain, higher complexity
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"  # Healthcare domain, different complexity
+
+# PARAMETER GRID
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # NODE GENERATION ONLY MODE
+  node_generation_only: [true]
+  
+  # LLM CONFIGS
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  judge_config:
+    - provider: openai
+      model: gpt-5-nano
+  
+  # VARIABLE GENERATION SETTINGS
+  preload_validation_variables: [false]
+  # Don't override target - use each CLD's own target variable
+  
+  # CONTEXT INFERENCE
+  infer_context_from_validation: [true]
+  
+  # TEMPERATURES
+  generator_temperature: [0.7]  # Consistent temperature for all prompts
+  
+  # CORRUPTION - Disabled (not relevant for node generation study)
+  corruption_rate: [0.0]
+  
+  # JUDGING - Disabled (not relevant for node generation study)
+  judge_edges: [false]
+  judge_models: [["gpt-5-nano"]]
+  num_judges: [1]
+  judge_temperature: [0.0]
+  
+  # CORRECTION - Disabled (not relevant for node generation study)
+  run_correction: [false]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  corrector_temperature: [0.4]
+  
+  # NODE COMPARISON SETTINGS - ENABLE ALL FOR HYBRID F1 METRIC
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]  # Efficient batch LLM semantic matching
+  node_comparison_cosine_percentile: [90]  # 90th percentile for stage 2 matching
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [1536]
+
+# 5 runs per prompt per CLD for statistical power
+# Total: 7 prompts × 3 CLDs × 5 runs = 105 experiments
+runs: 5
+
+# Expected runtime: ~4 minutes per experiment × 105 = ~7 hours
+# Expected metrics: Hybrid F1, Binary F1, Cosine F1, Precision, Recall
+# Statistical analysis: ANOVA, pairwise t-tests, effect sizes (Cohen's d)

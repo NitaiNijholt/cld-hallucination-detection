@@ -1,0 +1,36 @@
+\begin{table}[H]
+\centering
+\caption{Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}
+\label{tab:rq2_single_metrics}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
+ & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
+\midrule
+Gen Cosine & 16,492 & 0.672$***$ & +0.157$***$ & 65.7\% & 35 \\
+Similarity & & [0.602, 0.743] & [+0.048, +0.263] & & \\
+\midrule
+Gen Perplexity & 31,704 & 0.563$^{ns}$ & +0.006$^{ns}$ & 44.4\% & 63 \\
+ & & [0.497, 0.628] & [-0.075, +0.088] & & \\
+\midrule
+Gen Max Window & 31,704 & 0.554$*$ & +0.070$*$ & 49.2\% & 63 \\
+Entropy & & [0.502, 0.606] & [-0.012, +0.150] & & \\
+\midrule
+Gen Min Prob & 31,704 & 0.479$^{ns}$ & -0.036$^{ns}$ & 14.3\% & 63 \\
+ & & [0.430, 0.527] & [-0.110, +0.039] & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
+N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
+Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
+\textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks.
+\textbf{Correlation r} computed via Fisher z-transform aggregation across blocks.
+\textbf{Significant Files (\%)} = percentage of files where Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure.
+Significance levels: *** $p<0.001$, ** $p<0.01$, * $p<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample t-test of block means vs.\ 0.5).
+\item \textit{Assumptions:} While edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}), block-level mean AUCs follow a normal distribution (Shapiro-Wilk $p > 0.05$), validating the use of t-tests for meta-analysis. Block-level aggregation handles dependence between prompts within the same run.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

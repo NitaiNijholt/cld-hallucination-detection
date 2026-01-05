@@ -1,0 +1,69 @@
+# Configuration for testing NODE GENERATION with LLM BATCH MATCHING
+# Uses single LLM call for all variable matching (much faster than pairwise)
+
+experiment_name: "node_generation_llm_batch"
+
+# SPECIFIC PROMPT FILES
+prompt_files: 
+  - "_nitai_only/prompts_Nitai_C_andrew_nodegen.yaml"
+
+# GROUND TRUTH CLDES
+excel_files:
+  - "CLD_test.xlsx"
+
+# PARAMETER GRID
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # NODE GENERATION ONLY MODE
+  node_generation_only: [true]
+  
+  # LLM CONFIGS
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  judge_config:
+    - provider: openai
+      model: gpt-5-nano
+  
+  # VARIABLE GENERATION SETTINGS - Use BMI as target
+  preload_validation_variables: [false]
+  overide_target_variable: ["BMI"]  # Keep BMI constant
+  
+  # TEMPERATURES
+  generator_temperature: [0.4]
+  
+  # CORRUPTION
+  corruption_rate: [0.0]
+  
+  # JUDGING - Disabled
+  judge_edges: [false]
+  judge_models: [["gpt-5-nano"]]
+  num_judges: [1]
+  judge_temperature: [0.0]
+  
+  # CORRECTION - Disabled
+  run_correction: [false]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  corrector_temperature: [0.4]
+  
+  # COMPARISON SETTINGS - Use LLM_BATCH mode (single call for all matches)
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]  # NEW: Single LLM call instead of pairwise
+  node_comparison_cosine_percentile: [90]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [1536]
+
+# Single run to test the new mode
+runs: 1
+
+
+
+

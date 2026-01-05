@@ -1,0 +1,713 @@
+================================================================================
+FINAL_RUNS STRUCTURE CONSISTENCY AUDIT
+================================================================================
+Generated: $(date)
+
+EXPECTED UNIFIED STRUCTURE:
+  experiment_folder/
+  ├── Data/           (required) - raw experimental data
+  ├── analysis_scripts/  (required) - reproducibility scripts  
+  ├── Output/         (required) - generated figures, tables, reports
+  └── sim_scripts/    (optional) - simulation/experiment runner scripts
+
+================================================================================
+PER-FOLDER ANALYSIS
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1_human_validation_citation_judge
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1_preliminaries
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1_verification_Truth_QA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  ✅ sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+  📂 sim_scripts/
+
+Data/ substructure:
+  Data/
+    truthqa_judge_verification_baseline_seed42_temp0/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_corruption_detection_citation_gpt5mini
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_corruption_detection_correctness_final
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_ground_truth_citation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_ground_truth_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        shared/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_ulemans_citation_provider_comparison
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1a_validation_physics_CLDs
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    physics_clds_with_references/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_correction_experiment_final
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_corrector_ablation_analysis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📄 ablation_table_groundtruth.tex
+  📄 ablation_table_synthetic.tex
+  📂 analysis_scripts/
+  📄 appendix_action_counts_groundtruth.tex
+  📄 appendix_action_counts_synthetic.tex
+  📄 baseline_table_groundtruth.tex
+  📄 baseline_table_synthetic.tex
+  📄 corrector_ablation_groundtruth_results.xlsx
+  📄 corrector_ablation_synthetic_results.xlsx
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - ablation_table_groundtruth.tex
+    - ablation_table_synthetic.tex
+    - appendix_action_counts_groundtruth.tex
+    - appendix_action_counts_synthetic.tex
+    - baseline_table_groundtruth.tex
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_corrector_corruption_detection_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+        cot/
+        mechanistic/
+      run_1/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ1b_corrector_ground_truth_correctness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    emergency_department/
+      run_2/
+        baseline/
+        cot/
+        mechanistic/
+      run_1/
+        baseline/
+        cot/
+        mechanistic/
+      run_3/
+        baseline/
+        cot/
+        mechanistic/
+    social_norms/
+      run_2/
+        baseline/
+        cot/
+        mechanistic/
+      run_1/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ2_hallucination_detection
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📄 aggregate_auc_scores.png
+  📄 aggregate_correlations.png
+  📂 analysis_scripts/
+  📄 ensemble_performance_table.tex
+  📄 ensemble_roc_curves.png
+  📄 feature_distributions.png
+  📄 feature_distributions_by_cld_4x1.png
+  📄 feature_distributions_by_cld_4x3.png
+  📄 normality_tests_table.tex
+  📄 permutation_importance_all_classifiers.json
+  📄 phase4_classifier_comparison.png
+  📄 phase4_feature_stability.png
+  📄 phase4_rfe_complete.png
+  📄 phase4_rfe_enhanced.png
+  📄 phase6_distributions_with_effect_sizes.png
+  📄 rfe_4_features_figure.png
+  📄 rfe_clean_figure.png
+  📄 rigorous_feature_selection_plots.png
+  📄 single_metric_table.tex
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - aggregate_auc_scores.png
+    - aggregate_correlations.png
+    - ensemble_performance_table.tex
+    - ensemble_roc_curves.png
+    - feature_distributions.png
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 RQ3_deep_research
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 __pycache__/
+  📂 analysis_scripts/
+  📄 applicability_distribution_table_20251230_205924.tex
+  📄 rq3_enriched_gt_table.tex
+  📄 rq3_main_table.tex
+  📄 rq3_per_cld_table.tex
+  📄 rq3_statistical_test_results_20260103_073848.json
+  📄 rq3_statistical_test_results_latest.json
+  📂 scripts/
+  📂 validation/
+  📄 verdict_distribution_table_20251230_205924.tex
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - applicability_distribution_table_20251230_205924.tex
+    - rq3_enriched_gt_table.tex
+    - rq3_main_table.tex
+    - rq3_per_cld_table.tex
+    - rq3_statistical_test_results_20260103_073848.json
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 Sensitivity_analysis_simple
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+  📄 corrector_sensitivity_assumptions_table.tex
+  📄 corrector_sensitivity_figure.pdf
+  📄 corrector_sensitivity_figure.png
+  📄 corrector_sensitivity_index_figure.pdf
+  📄 corrector_sensitivity_index_figure.png
+  📄 corrector_sensitivity_table.tex
+  📄 prompt_sensitivity_assumptions_table.tex
+  📄 prompt_sensitivity_combined.pdf
+  📄 prompt_sensitivity_combined.png
+  📄 prompt_sensitivity_figure.pdf
+  📄 prompt_sensitivity_figure.png
+  📄 prompt_sensitivity_table.tex
+  📄 sensitivity_index_figure.pdf
+  📄 sensitivity_index_figure.png
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - corrector_sensitivity_assumptions_table.tex
+    - corrector_sensitivity_figure.pdf
+    - corrector_sensitivity_figure.png
+    - corrector_sensitivity_index_figure.pdf
+    - corrector_sensitivity_index_figure.png
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 cost_analysis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 embedding_model_benchmark
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 generator_model_comparison_analysis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    sonar-pro/
+      emergency_dept/
+      social_norms/
+      depressive/
+    gpt-4.1/
+      emergency_dept/
+      social_norms/
+      depressive/
+    claude-sonnet-4/
+      emergency_dept/
+      social_norms/
+      depressive/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 parallelization_benchmark
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+  📂 configs/
+  📂 figures/
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - configs
+    - figures
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 random_baseline_generator
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+    ground_truth_clds_for_experiments/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 temperature_sensitivity_analysis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 time_and_cost_scaling
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+  📂 figures/
+
+Data/ substructure:
+  Data/
+
+⚠️  Non-standard items at root:
+    - figures
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 token_call_analysis_RQ1a_judge
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required Components:
+  ✅ Data/
+  ✅ analysis_scripts/
+  ✅ Output/
+  — sim_scripts/ (optional)
+
+Top-level contents:
+  📂 Data/
+  📂 Output/
+  📂 analysis_scripts/
+
+Data/ substructure:
+  Data/
+
+================================================================================
+SUMMARY
+================================================================================
+
+STRUCTURE COMPLIANCE: 24/24 folders have Data/, analysis_scripts/, Output/ ✅
+
+INCONSISTENCIES FOUND:
+================================================================================
+
+1. FOLDERS WITH NON-STANDARD FILES AT ROOT (should be in Output/):
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   RQ1b_corrector_ablation_analysis:
+     → *.tex, *.xlsx files at root (should be in Output/)
+   
+   RQ2_hallucination_detection:
+     → *.png, *.tex, *.json files at root (should be in Output/)
+   
+   RQ3_deep_research:
+     → *.tex, *.json files at root (should be in Output/)
+     → scripts/, validation/ folders (non-standard)
+   
+   Sensitivity_analysis_simple:
+     → *.tex, *.pdf, *.png files at root (should be in Output/)
+   
+   parallelization_benchmark:
+     → configs/, figures/ folders (non-standard naming)
+   
+   time_and_cost_scaling:
+     → figures/ folder (should be Output/)
+
+2. DATA STRUCTURE INCONSISTENCIES:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   RQ1a experiments: Use CLD/run_X/prompt/ structure ✅
+   RQ1b experiments: Use CLD/run_X/prompt/ structure ✅
+   Other experiments: Flat or custom structures (acceptable)
+
+3. SIM_SCRIPTS STATUS:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   Only 1/24 folders has sim_scripts/: RQ1_verification_Truth_QA
+   
+   Missing sim_scripts means experiments cannot be fully reproduced
+   from scratch (would need to document CLI commands used).
+

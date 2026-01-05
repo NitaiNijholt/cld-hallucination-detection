@@ -1,0 +1,42 @@
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        Identify a variable that causally influences the target variable.
+        The variable must be:
+        - Directly causal (not correlational)
+        - Measurable with well-defined units
+        - Atomic and non-composite (not a bundle of factors)
+        - Not overlapping with the target or excluded variables
+        - Relevant to the provided context
+        
+        Respond with JSON: {"Variable":"name", "Definition":"definition", "Units":"units"}
+      usr_prompt: |
+        Target: {{ target.title() }} ({{ target_units }})
+        Definition: "{{ target_definition.lower() }}"
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        Identify a variable that causes {{ target.lower() }} and meets all the specified constraints.
+      usr_prompt_extension: " Cannot overlap with: "
+    version: v2_constraints_only

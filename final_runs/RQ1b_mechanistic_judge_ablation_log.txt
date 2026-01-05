@@ -1,0 +1,1025 @@
+================================================================================
+RQ1b BATCH CONTROLLER - ALL CLDs
+================================================================================
+RQ1a Folder: RQ1a_ground_truth_correctness
+Output Folder: RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge
+Scenario: ground_truth_correctness
+Corrector Prompt: baseline
+Judge Approach: correctness
+Judge Variant: mechanistic
+CLDs: social_norms, depressive, emergency_department
+Runs: 1 to 3
+
+Found 9 experiments to run
+  - social_norms/run_1
+  - social_norms/run_2
+  - social_norms/run_3
+  - depressive/run_1
+  - depressive/run_2
+  - depressive/run_3
+  - emergency_department/run_1
+  - emergency_department/run_2
+  - emergency_department/run_3
+
+Estimated time: ~113 minutes
+
+================================================================================
+[1/9] SOCIAL_NORMS - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 38728b21...
+   Base: 807f8397...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 38728b21-c348-4f11-b644-1b1bd1dda961
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 38728b21-c348-4f11-b644-1b1bd1dda961 gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 0955ee95...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 0955ee95-c824-4244-82a1-ca86520025ea --judged-session 38728b21-c348-4f11-b644-1b1bd1dda961 --cld-name social_norms --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.973
+   Delta: +0.127
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_38728b21_before_correction_20251228_051003_20251228_051003.xlsx
+   ✅ Corrected session: corrected_38728b21_to_0955ee95_20251228_051003_20251228_051051.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.003
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/social_norms/run_1
+
+================================================================================
+[2/9] SOCIAL_NORMS - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: d3d3a42c...
+   Base: dbaf53c4...
+2. Running corrector...
+   DEBUG: Full session ID being passed: d3d3a42c-8bd0-4f5e-a274-2f64fab034b6
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 81108867...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 81108867-726a-4529-b55d-640f9a45b2c3 --judged-session d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 --cld-name social_norms --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.777
+   Judge Score After: 0.959
+   Delta: +0.182
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_d3d3a42c_before_correction_20251228_051117_20251228_051117.xlsx
+   ✅ Corrected session: corrected_d3d3a42c_to_81108867_20251228_051117_20251228_051208.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.137
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/social_norms/run_2
+
+================================================================================
+[3/9] SOCIAL_NORMS - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 37a44bcf...
+   Base: fdab3339...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 616048b8...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 616048b8-b09e-4ccf-bb69-850885f87b8b --judged-session 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a --cld-name social_norms --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.836
+   Judge Score After: 0.973
+   Delta: +0.136
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_37a44bcf_before_correction_20251228_051228_20251228_051228.xlsx
+   ✅ Corrected session: corrected_37a44bcf_to_616048b8_20251228_051228_20251228_051310.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.077
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/social_norms/run_3
+
+================================================================================
+[4/9] DEPRESSIVE - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 63f79855...
+   Base: aa4b5b4f...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 63f79855-2a77-4bc1-b8a8-55fec9be5145
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 63f79855-2a77-4bc1-b8a8-55fec9be5145 gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 0bea7b4c...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 0bea7b4c-53fb-431f-a64b-27c8aa49e91a --judged-session 63f79855-2a77-4bc1-b8a8-55fec9be5145 --cld-name depressive --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.729
+   Judge Score After: 0.986
+   Delta: +0.257
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_63f79855_before_correction_20251228_051339_20251228_051339.xlsx
+   ✅ Corrected session: corrected_63f79855_to_0bea7b4c_20251228_051339_20251228_051520.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.036
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/depressive/run_1
+
+================================================================================
+[5/9] DEPRESSIVE - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 60f2fb42...
+   Base: 40479c6e...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 60f2fb42-c655-48f7-b855-0ee84053a733
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 60f2fb42-c655-48f7-b855-0ee84053a733 gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 0d201864...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 0d201864-12eb-4ede-b276-977b2900825c --judged-session 60f2fb42-c655-48f7-b855-0ee84053a733 --cld-name depressive --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.707
+   Judge Score After: 0.995
+   Delta: +0.288
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_60f2fb42_before_correction_20251228_051552_20251228_051552.xlsx
+   ✅ Corrected session: corrected_60f2fb42_to_0d201864_20251228_051552_20251228_051735.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.045
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/depressive/run_2
+
+================================================================================
+[6/9] DEPRESSIVE - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 5f3b1e57...
+   Base: c756d0c9...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: bf7d0f1f...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session bf7d0f1f-db06-451b-a53b-aba029e7e69a --judged-session 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff --cld-name depressive --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.736
+   Judge Score After: 0.983
+   Delta: +0.248
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_5f3b1e57_before_correction_20251228_051807_20251228_051807.xlsx
+   ✅ Corrected session: corrected_5f3b1e57_to_bf7d0f1f_20251228_051807_20251228_051945.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.041
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/depressive/run_3
+
+================================================================================
+[7/9] EMERGENCY_DEPARTMENT - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 9d93dd68...
+   Base: e84145ef...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: fe4d4016...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session fe4d4016-d907-416b-a3bd-69e554a6239d --judged-session 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c --cld-name emergency_department --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.852
+   Judge Score After: 0.997
+   Delta: +0.145
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_9d93dd68_before_correction_20251228_052105_20251228_052105.xlsx
+   ✅ Corrected session: corrected_9d93dd68_to_fe4d4016_20251228_052105_20251228_052447.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.025
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/emergency_department/run_1
+
+================================================================================
+[8/9] EMERGENCY_DEPARTMENT - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 094b2e10...
+   Base: 6078ca78...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 3d21a236...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 3d21a236-f635-41c1-ae1a-92043cb8bdad --judged-session 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d --cld-name emergency_department --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.995
+   Delta: +0.150
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_094b2e10_before_correction_20251228_052614_20251228_052614.xlsx
+   ✅ Corrected session: corrected_094b2e10_to_3d21a236_20251228_052614_20251228_052944.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.036
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/emergency_department/run_2
+
+================================================================================
+[9/9] EMERGENCY_DEPARTMENT - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 76c50fcf...
+   Base: e1ba1caf...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 76c50fcf-6963-4af8-8c61-53b064ca1859
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: baseline
+   DEBUG: Command: python3 data_science/run_corrector_only.py 76c50fcf-6963-4af8-8c61-53b064ca1859 gpt-4.1 correctness baseline
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: d6cd78cb...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session d6cd78cb-55d5-492a-bc15-8ba0d6057f89 --judged-session 76c50fcf-6963-4af8-8c61-53b064ca1859 --cld-name emergency_department --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.843
+   Judge Score After: 0.992
+   Delta: +0.149
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_76c50fcf_before_correction_20251228_053108_20251228_053108.xlsx
+   ✅ Corrected session: corrected_76c50fcf_to_d6cd78cb_20251228_053108_20251228_053458.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.035
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/emergency_department/run_3
+
+================================================================================
+✅ ALL EXPERIMENTS COMPLETE
+================================================================================
+Results saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/rq1b_all_results.xlsx
+  - Sheet 1: All_Results (raw data)
+  - Sheet 2: Statistics_Per_CLD (mean & 95% CI by CLD)
+  - Sheet 3: Statistics_Overall (micro-averaged: pooled across all runs)
+  - Sheet 4: Statistics_Macro_Average (macro-averaged: mean of per-CLD means)
+  - Sheet 5: Per_CLD_Means (per-CLD aggregates for macro averaging)
+
+Individual run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/[cld]/run_[n]/
+
+Summary:
+                 CLD  Run  F1_Delta  Actions_Total
+        social_norms    1   -0.0029             26
+        social_norms    2   -0.1371             37
+        social_norms    3   -0.0774             25
+          depressive    1   -0.0357             97
+          depressive    2   -0.0450            104
+          depressive    3   -0.0406             94
+emergency_department    1    0.0253            242
+emergency_department    2    0.0358            247
+emergency_department    3    0.0351            250
+================================================================================
+RQ1b BATCH CONTROLLER - ALL CLDs
+================================================================================
+RQ1a Folder: RQ1a_ground_truth_correctness
+Output Folder: RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge
+Scenario: ground_truth_correctness
+Corrector Prompt: cot
+Judge Approach: correctness
+Judge Variant: mechanistic
+CLDs: social_norms, depressive, emergency_department
+Runs: 1 to 3
+
+Found 9 experiments to run
+  - social_norms/run_1
+  - social_norms/run_2
+  - social_norms/run_3
+  - depressive/run_1
+  - depressive/run_2
+  - depressive/run_3
+  - emergency_department/run_1
+  - emergency_department/run_2
+  - emergency_department/run_3
+
+Estimated time: ~113 minutes
+
+================================================================================
+[1/9] SOCIAL_NORMS - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 38728b21...
+   Base: 807f8397...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 38728b21-c348-4f11-b644-1b1bd1dda961
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 38728b21-c348-4f11-b644-1b1bd1dda961 gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: fe1c7275...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session fe1c7275-4c72-488e-a42b-45acfae47eaa --judged-session 38728b21-c348-4f11-b644-1b1bd1dda961 --cld-name social_norms --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.977
+   Delta: +0.132
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_38728b21_before_correction_20251228_053551_20251228_053551.xlsx
+   ✅ Corrected session: corrected_38728b21_to_fe1c7275_20251228_053551_20251228_053635.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.017
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/social_norms/run_1
+
+================================================================================
+[2/9] SOCIAL_NORMS - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: d3d3a42c...
+   Base: dbaf53c4...
+2. Running corrector...
+   DEBUG: Full session ID being passed: d3d3a42c-8bd0-4f5e-a274-2f64fab034b6
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 370f0f52...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 370f0f52-d439-41f8-95c7-bf1c3910117f --judged-session d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 --cld-name social_norms --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.777
+   Judge Score After: 0.982
+   Delta: +0.205
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_d3d3a42c_before_correction_20251228_053658_20251228_053658.xlsx
+   ✅ Corrected session: corrected_d3d3a42c_to_370f0f52_20251228_053658_20251228_053750.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.068
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/social_norms/run_2
+
+================================================================================
+[3/9] SOCIAL_NORMS - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 37a44bcf...
+   Base: fdab3339...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: bc3a5c17...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session bc3a5c17-c8ef-4125-80a4-3f9e5edac4f0 --judged-session 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a --cld-name social_norms --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.836
+   Judge Score After: 0.986
+   Delta: +0.150
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_37a44bcf_before_correction_20251228_053816_20251228_053816.xlsx
+   ✅ Corrected session: corrected_37a44bcf_to_bc3a5c17_20251228_053816_20251228_053904.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.000
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/social_norms/run_3
+
+================================================================================
+[4/9] DEPRESSIVE - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 63f79855...
+   Base: aa4b5b4f...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 63f79855-2a77-4bc1-b8a8-55fec9be5145
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 63f79855-2a77-4bc1-b8a8-55fec9be5145 gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: c8d51f94...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session c8d51f94-0628-4722-81dc-cb429ef4515d --judged-session 63f79855-2a77-4bc1-b8a8-55fec9be5145 --cld-name depressive --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.729
+   Judge Score After: 0.974
+   Delta: +0.245
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_63f79855_before_correction_20251228_053935_20251228_053935.xlsx
+   ✅ Corrected session: corrected_63f79855_to_c8d51f94_20251228_053935_20251228_054128.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.036
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/depressive/run_1
+
+================================================================================
+[5/9] DEPRESSIVE - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 60f2fb42...
+   Base: 40479c6e...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 60f2fb42-c655-48f7-b855-0ee84053a733
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 60f2fb42-c655-48f7-b855-0ee84053a733 gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 454e7694...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 454e7694-8d53-42f5-9e4c-7ce14db86a1e --judged-session 60f2fb42-c655-48f7-b855-0ee84053a733 --cld-name depressive --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.707
+   Judge Score After: 0.998
+   Delta: +0.290
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_60f2fb42_before_correction_20251228_054157_20251228_054157.xlsx
+   ✅ Corrected session: corrected_60f2fb42_to_454e7694_20251228_054157_20251228_054353.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.037
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/depressive/run_2
+
+================================================================================
+[6/9] DEPRESSIVE - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 5f3b1e57...
+   Base: c756d0c9...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 76fd540a...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 76fd540a-be35-4494-9f88-e2dbdf1802f7 --judged-session 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff --cld-name depressive --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.736
+   Judge Score After: 0.983
+   Delta: +0.248
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_5f3b1e57_before_correction_20251228_054435_20251228_054435.xlsx
+   ✅ Corrected session: corrected_5f3b1e57_to_76fd540a_20251228_054435_20251228_054622.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.041
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/depressive/run_3
+
+================================================================================
+[7/9] EMERGENCY_DEPARTMENT - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 9d93dd68...
+   Base: e84145ef...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 32c1bf77...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 32c1bf77-2149-4169-881d-473cdf9cdd65 --judged-session 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c --cld-name emergency_department --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.852
+   Judge Score After: 0.995
+   Delta: +0.144
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_9d93dd68_before_correction_20251228_054739_20251228_054739.xlsx
+   ✅ Corrected session: corrected_9d93dd68_to_32c1bf77_20251228_054739_20251228_055149.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.034
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/emergency_department/run_1
+
+================================================================================
+[8/9] EMERGENCY_DEPARTMENT - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 094b2e10...
+   Base: 6078ca78...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 55054109...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 55054109-b0f6-4384-94d6-129a61fad98b --judged-session 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d --cld-name emergency_department --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.996
+   Delta: +0.151
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_094b2e10_before_correction_20251228_055327_20251228_055327.xlsx
+   ✅ Corrected session: corrected_094b2e10_to_55054109_20251228_055327_20251228_055728.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.033
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/emergency_department/run_2
+
+================================================================================
+[9/9] EMERGENCY_DEPARTMENT - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 76c50fcf...
+   Base: e1ba1caf...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 76c50fcf-6963-4af8-8c61-53b064ca1859
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: cot
+   DEBUG: Command: python3 data_science/run_corrector_only.py 76c50fcf-6963-4af8-8c61-53b064ca1859 gpt-4.1 correctness cot
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: af1808f9...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session af1808f9-db3e-4062-87f5-2c28ab7fe95d --judged-session 76c50fcf-6963-4af8-8c61-53b064ca1859 --cld-name emergency_department --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.843
+   Judge Score After: 0.993
+   Delta: +0.150
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_76c50fcf_before_correction_20251228_055858_20251228_055858.xlsx
+   ✅ Corrected session: corrected_76c50fcf_to_af1808f9_20251228_055858_20251228_060326.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.034
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/emergency_department/run_3
+
+================================================================================
+✅ ALL EXPERIMENTS COMPLETE
+================================================================================
+Results saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/rq1b_all_results.xlsx
+  - Sheet 1: All_Results (raw data)
+  - Sheet 2: Statistics_Per_CLD (mean & 95% CI by CLD)
+  - Sheet 3: Statistics_Overall (micro-averaged: pooled across all runs)
+  - Sheet 4: Statistics_Macro_Average (macro-averaged: mean of per-CLD means)
+  - Sheet 5: Per_CLD_Means (per-CLD aggregates for macro averaging)
+
+Individual run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/[cld]/run_[n]/
+
+Summary:
+                 CLD  Run  F1_Delta  Actions_Total
+        social_norms    1   -0.0167             26
+        social_norms    2   -0.0682             37
+        social_norms    3    0.0000             25
+          depressive    1   -0.0357             97
+          depressive    2   -0.0368            104
+          depressive    3   -0.0406             94
+emergency_department    1    0.0339            242
+emergency_department    2    0.0334            247
+emergency_department    3    0.0335            250
+================================================================================
+RQ1b BATCH CONTROLLER - ALL CLDs
+================================================================================
+RQ1a Folder: RQ1a_ground_truth_correctness
+Output Folder: RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge
+Scenario: ground_truth_correctness
+Corrector Prompt: mechanistic
+Judge Approach: correctness
+Judge Variant: mechanistic
+CLDs: social_norms, depressive, emergency_department
+Runs: 1 to 3
+
+Found 9 experiments to run
+  - social_norms/run_1
+  - social_norms/run_2
+  - social_norms/run_3
+  - depressive/run_1
+  - depressive/run_2
+  - depressive/run_3
+  - emergency_department/run_1
+  - emergency_department/run_2
+  - emergency_department/run_3
+
+Estimated time: ~113 minutes
+
+================================================================================
+[1/9] SOCIAL_NORMS - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 38728b21...
+   Base: 807f8397...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 38728b21-c348-4f11-b644-1b1bd1dda961
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 38728b21-c348-4f11-b644-1b1bd1dda961 gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 4d031213...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 4d031213-e614-43cc-a9e6-3a4056cc0469 --judged-session 38728b21-c348-4f11-b644-1b1bd1dda961 --cld-name social_norms --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.982
+   Delta: +0.136
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_38728b21_before_correction_20251228_060411_20251228_060411.xlsx
+   ✅ Corrected session: corrected_38728b21_to_4d031213_20251228_060411_20251228_060501.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.083
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/social_norms/run_1
+
+================================================================================
+[2/9] SOCIAL_NORMS - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: d3d3a42c...
+   Base: dbaf53c4...
+2. Running corrector...
+   DEBUG: Full session ID being passed: d3d3a42c-8bd0-4f5e-a274-2f64fab034b6
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 6f29b1a1...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 6f29b1a1-6689-45ed-b310-8f5e8f9dcab5 --judged-session d3d3a42c-8bd0-4f5e-a274-2f64fab034b6 --cld-name social_norms --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.777
+   Judge Score After: 0.964
+   Delta: +0.186
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_d3d3a42c_before_correction_20251228_060524_20251228_060524.xlsx
+   ✅ Corrected session: corrected_d3d3a42c_to_6f29b1a1_20251228_060524_20251228_060621.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.036
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/social_norms/run_2
+
+================================================================================
+[3/9] SOCIAL_NORMS - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 37a44bcf...
+   Base: fdab3339...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: b590bd5e...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session b590bd5e-5e34-408b-b44b-c3d5aa14b022 --judged-session 37a44bcf-6c1e-4995-ab34-1b7e57c52c5a --cld-name social_norms --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_social_norms_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.836
+   Judge Score After: 0.982
+   Delta: +0.145
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_social_norms_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_37a44bcf_before_correction_20251228_060649_20251228_060649.xlsx
+   ✅ Corrected session: corrected_37a44bcf_to_b590bd5e_20251228_060649_20251228_060733.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.037
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/social_norms/run_3
+
+================================================================================
+[4/9] DEPRESSIVE - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 63f79855...
+   Base: aa4b5b4f...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 63f79855-2a77-4bc1-b8a8-55fec9be5145
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 63f79855-2a77-4bc1-b8a8-55fec9be5145 gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: 0c5d3efa...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session 0c5d3efa-a6c6-4962-a02a-a994bc64c848 --judged-session 63f79855-2a77-4bc1-b8a8-55fec9be5145 --cld-name depressive --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.729
+   Judge Score After: 0.983
+   Delta: +0.255
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_63f79855_before_correction_20251228_060803_20251228_060803.xlsx
+   ✅ Corrected session: corrected_63f79855_to_0c5d3efa_20251228_060803_20251228_060957.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.055
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/depressive/run_1
+
+================================================================================
+[5/9] DEPRESSIVE - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 60f2fb42...
+   Base: 40479c6e...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 60f2fb42-c655-48f7-b855-0ee84053a733
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 60f2fb42-c655-48f7-b855-0ee84053a733 gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: a681e5d5...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session a681e5d5-f9b0-4692-8080-316d259808d5 --judged-session 60f2fb42-c655-48f7-b855-0ee84053a733 --cld-name depressive --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.707
+   Judge Score After: 0.979
+   Delta: +0.271
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_60f2fb42_before_correction_20251228_061029_20251228_061029.xlsx
+   ✅ Corrected session: corrected_60f2fb42_to_a681e5d5_20251228_061029_20251228_061244.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.064
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/depressive/run_2
+
+================================================================================
+[6/9] DEPRESSIVE - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 5f3b1e57...
+   Base: c756d0c9...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: ec44f8f7...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session ec44f8f7-183d-4bd5-96bd-078c8f45391e --judged-session 5f3b1e57-8367-48ef-bd88-ff7767d4f7ff --cld-name depressive --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_depressive_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.736
+   Judge Score After: 0.990
+   Delta: +0.255
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_depressive_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_5f3b1e57_before_correction_20251228_061316_20251228_061316.xlsx
+   ✅ Corrected session: corrected_5f3b1e57_to_ec44f8f7_20251228_061316_20251228_061503.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: -0.048
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/depressive/run_3
+
+================================================================================
+[7/9] EMERGENCY_DEPARTMENT - RUN 1 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 9d93dd68...
+   Base: e84145ef...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: ac36a1ba...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session ac36a1ba-3f54-4593-b155-cfbd8883ff10 --judged-session 9d93dd68-bed8-4fb3-96c9-40e95c2ea10c --cld-name emergency_department --run-number 1 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run1.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.852
+   Judge Score After: 0.994
+   Delta: +0.142
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run1.xlsx
+   ✅ Judged (pre-corrected) session: judged_9d93dd68_before_correction_20251228_061615_20251228_061615.xlsx
+   ✅ Corrected session: corrected_9d93dd68_to_ac36a1ba_20251228_061615_20251228_062041.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.033
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/emergency_department/run_1
+
+================================================================================
+[8/9] EMERGENCY_DEPARTMENT - RUN 2 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 094b2e10...
+   Base: 6078ca78...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: a60837d2...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session a60837d2-e268-4acd-95f4-d99f326633fd --judged-session 094b2e10-3c41-4310-88f6-fbf5f0bd8a4d --cld-name emergency_department --run-number 2 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run2.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.845
+   Judge Score After: 0.995
+   Delta: +0.150
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run2.xlsx
+   ✅ Judged (pre-corrected) session: judged_094b2e10_before_correction_20251228_062219_20251228_062219.xlsx
+   ✅ Corrected session: corrected_094b2e10_to_a60837d2_20251228_062219_20251228_062641.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.031
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/emergency_department/run_2
+
+================================================================================
+[9/9] EMERGENCY_DEPARTMENT - RUN 3 - ground_truth_correctness
+================================================================================
+1. Extracting session IDs (judge=mechanistic)...
+   Judged: 76c50fcf...
+   Base: e1ba1caf...
+2. Running corrector...
+   DEBUG: Full session ID being passed: 76c50fcf-6963-4af8-8c61-53b064ca1859
+   DEBUG: Judge approach: correctness
+   DEBUG: Corrector prompt: mechanistic
+   DEBUG: Command: python3 data_science/run_corrector_only.py 76c50fcf-6963-4af8-8c61-53b064ca1859 gpt-4.1 correctness mechanistic
+   ✅ Corrector completed
+3. Extracting corrected session ID...
+   Corrected: a9a0ea4d...
+4. Calculating metrics...
+   Running: python3 data_science/parameter_tuning_experiments/calculate_correction_metrics.py --corrected-session a9a0ea4d-709b-4716-8e5c-fa765d319f9e --judged-session 76c50fcf-6963-4af8-8c61-53b064ca1859 --cld-name emergency_department --run-number 3 --corrector-model gpt-4.1 --corrector-variant original --judge-model gpt-4.1 --judge-type correctness --judge-variant mechanistic --output temp_metrics_emergency_department_run3.xlsx --gt-excel /home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx
+5. Getting judge scores...
+   Judge Score Before: 0.843
+   Judge Score After: 0.994
+   Delta: +0.151
+6. Copying output files to run directory...
+   ✅ Metrics: metrics_emergency_department_run3.xlsx
+   ✅ Judged (pre-corrected) session: judged_76c50fcf_before_correction_20251228_062807_20251228_062807.xlsx
+   ✅ Corrected session: corrected_76c50fcf_to_a9a0ea4d_20251228_062807_20251228_063235.xlsx
+   ✅ Correction outcomes: 2 JSON file(s)
+   ✅ Session mappings: 1 file(s)
+7. Cleaning up temporary files...
+   ✅ Removed 6 temporary file(s)
+   ✅ Complete! F1 Δ: +0.035
+   📁 All run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/emergency_department/run_3
+
+================================================================================
+✅ ALL EXPERIMENTS COMPLETE
+================================================================================
+Results saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/rq1b_all_results.xlsx
+  - Sheet 1: All_Results (raw data)
+  - Sheet 2: Statistics_Per_CLD (mean & 95% CI by CLD)
+  - Sheet 3: Statistics_Overall (micro-averaged: pooled across all runs)
+  - Sheet 4: Statistics_Macro_Average (macro-averaged: mean of per-CLD means)
+  - Sheet 5: Per_CLD_Means (per-CLD aggregates for macro averaging)
+
+Individual run data saved to: /home/nitai/code/causalix.ai/final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/[cld]/run_[n]/
+
+Summary:
+                 CLD  Run  F1_Delta  Actions_Total
+        social_norms    1   -0.0833             26
+        social_norms    2   -0.0356             37
+        social_norms    3    0.0375             25
+          depressive    1   -0.0553             97
+          depressive    2   -0.0643            104
+          depressive    3   -0.0479             94
+emergency_department    1    0.0326            242
+emergency_department    2    0.0309            247
+emergency_department    3    0.0348            250
+================================================================================
+CORRECTOR PROMPT ABLATION STUDY
+================================================================================
+RQ1a Folder: RQ1a_ground_truth_correctness
+CLDs: social_norms, depressive, emergency_department
+Runs per CLD: 3
+Prompt Variants: baseline, cot, mechanistic
+
+Total experiments: 3 CLDs × 3 runs × 3 prompts = 27
+================================================================================
+
+================================================================================
+RUNNING VARIANT: BASELINE
+================================================================================
+
+
+✅ COMPLETED: baseline
+
+================================================================================
+RUNNING VARIANT: COT
+================================================================================
+
+
+✅ COMPLETED: cot
+
+================================================================================
+RUNNING VARIANT: MECHANISTIC
+================================================================================
+
+
+✅ COMPLETED: mechanistic
+
+================================================================================
+✅ ABLATION STUDY COMPLETE
+================================================================================
+
+Results saved to:
+  - final_runs/RQ1b_corrector_experiment_ground_truth_correctness_baseline_mechanistic_judge/rq1b_all_results.xlsx
+  - final_runs/RQ1b_corrector_experiment_ground_truth_correctness_cot_mechanistic_judge/rq1b_all_results.xlsx
+  - final_runs/RQ1b_corrector_experiment_ground_truth_correctness_mechanistic_mechanistic_judge/rq1b_all_results.xlsx
+
+Next steps:
+  1. Run analysis: python data_science/parameter_tuning_experiments/analyze_corrector_ablation.py
+  2. Compare results across variants

@@ -1,0 +1,66 @@
+============================================================
+EMBEDDING MODEL BENCHMARK: MPNet vs Qwen
+Using REAL causal narratives from CLD experiments
+============================================================
+
+Loaded 30 real causal narratives from CLD data
+Sample: 'As the spatial scale of a person's environment increases, they are exposed to a ...'
+Avg length: 451 chars
+
+============================================================
+MODEL: all-mpnet-base-v2 (110M params)
+============================================================
+  Run 1: 0.0894s (30 docs)
+  Run 2: 0.0894s (30 docs)
+  Run 3: 0.0894s (30 docs)
+  Mean: 0.0894s ± 0.0022s
+  Per document: 2.98ms
+  Throughput: 335.5 docs/sec
+  Embedding dim: 768
+
+============================================================
+MODEL: Qwen3-Embedding-8B via Ollama (8B params, Q4_K_M)
+============================================================
+  Run 1: 2.0193s (30 docs)
+  Run 2: 2.0193s (30 docs)
+  Run 3: 2.0193s (30 docs)
+  Mean: 2.0193s ± 0.0243s
+  Per document: 67.31ms
+  Throughput: 14.9 docs/sec
+  Embedding dim: 4096
+
+============================================================
+COMPARISON SUMMARY
+============================================================
+
+Metric                    MPNet (110M)         Qwen3-Emb-8B (Q4)   
+-----------------------------------------------------------------
+Parameters                110M                 8B (Q4)             
+Embedding dim             768                  4096                
+ms per document           2.98                 67.31               
+docs/second               335.5                14.9                
+Speedup factor            1.0x (baseline)      23x slower          
+
+Full corpus (n=16,507)
+MPNet:                    49.2s (0.8 min)
+Qwen3-Embed-8B:           1111.1s (18.5 min)
+
+============================================================
+LATEX FOR THESIS
+============================================================
+
+\begin{table}[H]
+\centering
+\caption{Embedding Model Benchmark ($n=30$ causal narratives from CLD)}
+\label{tab:embed_benchmark}
+\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Params} & \textbf{ms/doc} & \textbf{docs/s} & \textbf{16K corpus} \\
+\midrule
+all-mpnet-base-v2 & 110M & 3.0 & 336 & 49s \\
+Qwen3-Embedding-8B (Q4) & 8B & 67.3 & 14.9 & 18.5m \\
+\bottomrule
+\end{tabular}
+\end{table}
+

@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Scaling Analysis: Linear Fit to O(n) Theoretical Expectation}
+\label{tab:scaling_analysis}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Judge Type} & \textbf{Metric} & \textbf{Slope} & \textbf{R²} & \textbf{Per-Edge Mean} & \textbf{CV (\%)} & \textbf{O(n)?} \\
+\midrule
+Correctness & Time (s) & 2.6020 & 0.911 & 2.776 & 23.1 & \checkmark \\
+ & Tokens & 462.4676 & 0.749 & 492 & 39.0 & $\sim$ \\
+ & Cost (\$) & 0.0015 & 0.851 & 0.002 & 27.6 & $\sim$ \\
+\midrule
+Citation & Time (s) & 29.6062 & 0.954 & 30.107 & 18.4 & \checkmark \\
+ & Tokens & 44257.6495 & 0.996 & 42754 & 13.8 & \checkmark \\
+ & Cost (\$) & 0.0469 & 0.372 & 0.056 & 77.8 & $\sim$ \\
+\bottomrule
+\end{tabular}
+\vspace{2mm}
+\footnotesize{CV = Coefficient of Variation. O(n)? = \checkmark if R² > 0.9, indicating good linear scaling.}
+\end{table}

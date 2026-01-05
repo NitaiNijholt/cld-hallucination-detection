@@ -1,0 +1,69 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption_detection_citation",
+    "timestamp": "2025-12-04T04:22:20.322649",
+    "script_name": "run_rq1_judge_citations_all_3_prompts.py",
+    "script_version": "2.0_auto_discovery"
+  },
+  "input_parameters": {
+    "base_session_id": "f735f5ea-a01c-4479-aa69-439dc7fa4227",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3"
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "seed": 42,
+    "use_structured_outputs": false,
+    "judge_approach": "per_citation_aggregate",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_citation_baseline.yaml",
+      "description": "Citation Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_citation_cot.yaml",
+      "description": "Citation Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_citation_mechanistic.yaml",
+      "description": "Citation Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Citation Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_040024.xlsx",
+      "judged_session_id": "7002ae9e-60aa-44cd-81aa-bc26b0fe68f5",
+      "timestamp": "20251204_040024"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Citation Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_040811.xlsx",
+      "judged_session_id": "8ee8779a-018a-4855-b516-5f400e9e99e5",
+      "timestamp": "20251204_040811"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Citation Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_041543.xlsx",
+      "judged_session_id": "778ac8f0-03b0-4476-b871-16576cfe9b1c",
+      "timestamp": "20251204_041543"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

@@ -1,0 +1,47 @@
+# RQ1 Judge/Corrector FRESH TEST Configuration - Small Scale
+# Research Question: Can LLM-as-a-judge and LLM-as-a-corrector increase final CLD accuracy?
+# FRESH TEST: 1 CLD, 1 run per condition (2 total runs)
+# Uses prompts_fresh_test.yaml to avoid conflicts with existing results
+
+param_grid:
+  # Basic experiment settings
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # Model configurations for different roles
+  generator_config:
+    - { provider: "openai", model: "gpt-4o" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4o" }
+  
+  judge_config:
+    - { provider: "anthropic", model: "claude-3-7-sonnet-20250219" }
+  
+  # CORRUPTION SETTINGS - Create spurious motivations to test detection
+  corruption_rate: [0.3]  # 30% of edges get spurious motivations
+  
+  # JUDGE SETTINGS - LLM-as-a-judge to detect hallucinations
+  judge_edges: [true]
+  judge_models: [["claude-3-7-sonnet-20250219", "gpt-4o", "claude-3-7-sonnet-20250219"]]
+  num_judges: [3]
+  
+  # CITATION SETTINGS - Use Brave Search for real citations
+  citation_search_provider: ["brave"]
+  
+  # CORRECTOR SETTINGS - Test both with and without correction
+  run_correction: [false, true]  # Two conditions: baseline vs corrector
+  corrector_models: [["claude-3-7-sonnet-20250219"]]
+  
+  # Temperature settings
+  generator_temperature: [0.1]
+  corruptor_temperature: [0.7]
+  judge_temperature: [0.0]
+  corrector_temperature: [0.1]
+
+# EXPERIMENT SCOPE - Only test on Social norms CLD
+excel_files: ["Social_norms_and_obesity_prevalence.xlsx"]
+
+# EXPERIMENT PARAMETERS
+runs: 1  # Single run per condition for quick test

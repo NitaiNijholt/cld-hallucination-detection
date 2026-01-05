@@ -1,0 +1,71 @@
+# Emergency Department Cloned Sessions - Citation Judging
+# Created: 2025-11-17
+# These sessions were created by 4 parallel processes that got stuck
+# All sessions have data in Neo4j and can be exported to Excel
+# ALL ARE BASELINE PROMPT - Assigned to run_1, run_2, run_3 (3 most complete)
+
+# === USE FOR RUN_1 BASELINE === (99% complete - 1184/1190)
+session_id: 94b7ac86-3664-416a-a05e-55e8dd5cf113
+base_session: e84145ef-cc8a-4cd7-8adc-3e8f94904010
+prompt: BASELINE (prompts_citation_baseline.yaml)
+export_to: emergency_department/run_1/judged_..._baseline_...xlsx
+progress: 1184/1190 edges judged (99%)
+citations: 1190/1190 filled
+log_file: logs/rq1a_citation_emergency_retry_20251117_152024.log
+pid: 20326
+
+# === USE FOR RUN_2 BASELINE === (99% complete - 1186/1190)
+session_id: 00f13ae9-9b0e-4d54-94d4-74f8fc8107f3
+base_session: e84145ef-cc8a-4cd7-8adc-3e8f94904010
+prompt: BASELINE (prompts_citation_baseline.yaml)
+export_to: emergency_department/run_2/judged_..._baseline_...xlsx
+progress: 1186/1190 edges judged (99%)
+citations: 1190/1190 filled
+log_file: logs/rq1a_citation_emergency_retry_20251117_152527.log
+pid: 22622
+
+# === USE FOR RUN_3 BASELINE === (99% complete - 1183/1190)
+session_id: 056065e3-d749-4576-89ba-32ef9e2dfd45
+base_session: e84145ef-cc8a-4cd7-8adc-3e8f94904010
+prompt: BASELINE (prompts_citation_baseline.yaml)
+export_to: emergency_department/run_3/judged_..._baseline_...xlsx
+progress: 1183/1190 edges judged (99%)
+citations: 1190/1190 filled
+log_file: logs/rq1a_citation_emergency_retry_20251117_152317.log
+pid: 21665
+
+# === SPARE SESSION === (91% complete - can discard or keep as backup)
+session_id: 6537e88b-4095-423f-a3a8-945aba9b0583
+base_session: e84145ef-cc8a-4cd7-8adc-3e8f94904010
+prompt: BASELINE (prompts_citation_baseline.yaml)
+progress: 1084/1190 edges judged (91%)
+citations: 1190/1190 filled
+log_file: logs/rq1a_citation_emergency_retry_20251117_152245.log
+pid: 21306
+
+# ==============================================================================
+# STATUS SUMMARY
+# ==============================================================================
+# COMPLETED (3 baseline files - just need to export from Neo4j):
+#   ✓ emergency_department/run_1/baseline (session: 94b7ac86...)
+#   ✓ emergency_department/run_2/baseline (session: 00f13ae9...)
+#   ✓ emergency_department/run_3/baseline (session: 056065e3...)
+#
+# STILL NEEDED (6 files):
+#   ⏳ emergency_department/run_1/cot
+#   ⏳ emergency_department/run_1/mechanistic
+#   ⏳ emergency_department/run_2/cot
+#   ⏳ emergency_department/run_2/mechanistic
+#   ⏳ emergency_department/run_3/cot
+#   ⏳ emergency_department/run_3/mechanistic
+#
+# Total emergency_department: 3/9 files ready (33%)
+# ==============================================================================
+
+# Neo4j Query to Export These Sessions:
+# MATCH (s:variable {session_id: '<session_id>'})-[r]->(t:variable {session_id: '<session_id>'})
+# RETURN s, r, t
+
+# To check progress in Neo4j:
+# MATCH (s:variable {session_id: '<session_id>'})-[r]->(t:variable {session_id: '<session_id>'})
+# RETURN count(r) as total, count(CASE WHEN r.judge_verdict IS NOT NULL THEN 1 END) as judged

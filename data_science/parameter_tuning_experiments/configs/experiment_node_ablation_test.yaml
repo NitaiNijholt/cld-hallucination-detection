@@ -1,0 +1,71 @@
+# Small test experiment for node generation prompt ablation study
+# 2 prompts × 2 CLDs × 2 runs = 8 total experiments
+
+experiment_name: "node_ablation_test_2x2x2"
+
+# TEST WITH 2 PROMPTS: Baseline vs Nitai_C
+# Paths are relative to prompts_folder (parameter_tuning_experiments/alternative_prompts)
+prompt_files: 
+  - "prompts_Node_V0_Minimal.yaml"      # Baseline control
+  - "prompts_Node_V5_Nitai_C.yaml"     # Original combined
+
+# TEST WITH 2 CLDs
+excel_files:
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+  - "Social_norms_and_obesity_prevalence.xlsx"
+
+# PARAMETER GRID
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # NODE GENERATION ONLY MODE
+  node_generation_only: [true]
+  
+  # LLM CONFIGS
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  judge_config:
+    - provider: openai
+      model: gpt-5-nano
+  
+  # VARIABLE GENERATION SETTINGS
+  preload_validation_variables: [false]
+  # Don't override target - use each CLD's own target variable
+  
+  # CONTEXT INFERENCE
+  infer_context_from_validation: [true]
+  
+  # TEMPERATURES
+  generator_temperature: [0.7]  # Match ablation study temperature
+  
+  # CORRUPTION - Disabled
+  corruption_rate: [0.0]
+  
+  # JUDGING - Disabled
+  judge_edges: [false]
+  judge_models: [["gpt-5-nano"]]
+  num_judges: [1]
+  judge_temperature: [0.0]
+  
+  # CORRECTION - Disabled
+  run_correction: [false]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  corrector_temperature: [0.4]
+  
+  # NODE COMPARISON SETTINGS - ENABLE ALL FOR HYBRID F1
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]  # Efficient batch LLM semantic matching
+  node_comparison_cosine_percentile: [90]  # 90th percentile for stage 2 matching
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [1536]
+
+# 2 runs per prompt per CLD (total: 2 prompts × 2 CLDs × 2 runs = 8 experiments)
+runs: 2

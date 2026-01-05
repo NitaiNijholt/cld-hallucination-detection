@@ -1,0 +1,84 @@
+# Generator Model Comparison Experiment
+# 
+# Purpose: Compare CLD generation quality across 3 different LLMs to 
+# motivate model selection for the thesis.
+#
+# Models Tested:
+# - GPT-4.1 (OpenAI) - current default
+# - Claude 3.5 Sonnet (Anthropic) - claude-3-5-sonnet-20241022
+# - Sonar-Pro (Perplexity) - web-search enabled model
+#
+# Evaluation:
+# - 3 ground truth CLDs of varying sizes
+# - F1/Precision/Recall against expert-validated edges
+# - 1 run per model (pilot study)
+#
+# EXPECTED OUTPUT:
+# - 9 experiments (3 models × 3 CLDs)
+# - Comparison table with F1/P/R per model per CLD
+# - LaTeX table for thesis
+
+experiment_name: "Generator Model Comparison"
+
+# 1 run per model (quick pilot)
+runs: 1
+
+# No corruption - pure generation comparison
+corruption_rates: 
+  - 0.0
+
+# 3 ground truth CLDs of varying sizes
+excel_files:
+  - Social_norms_and_obesity_prevalence.xlsx           # ~12 edges (smallest)
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx  # ~30 edges
+  - older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx  # ~150 edges (largest)
+
+# Generator configurations - the 3 models to compare
+generator_configs:
+  - provider: openai
+    model: gpt-4.1
+    temperature: 0.7
+  - provider: anthropic
+    model: claude-3-5-sonnet-20241022
+    temperature: 0.7
+  - provider: perplexity
+    model: sonar-pro
+    temperature: 0.7
+
+# Fixed judge to isolate generator differences
+judge_config:
+  provider: openai
+  model: gpt-4.1
+  temperature: 0.3
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Enable judging to get F1/Precision/Recall
+judge_edges: true
+
+# Experimental settings
+parallel: true
+max_workers: 3
+citation_search_provider: "brave"
+
+# Context-insensitive metrics
+embedding_enable: false
+
+# Output settings
+plot_session_graph: true
+plot_validation_graph: true
+export_json: true
+
+# ESTIMATED RUNTIME:
+# - Social norms (~12 edges): ~2-3 min/model
+# - Depressive (~30 edges): ~5-8 min/model
+# - Emergency dept (~150 edges): ~20-30 min/model
+# Total: ~1-1.5 hours for all 9 experiments
+
+
+
+
+
+

@@ -1,0 +1,141 @@
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/analyze_prompt_variants_corrupted.py:623: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+  ax1.set_xticklabels(prompts, rotation=15, ha='right')
+================================================================================
+RQ1: PROMPT VARIANTS ANALYSIS - CORRUPTED CLD
+================================================================================
+Analyzing 3 prompt variant(s):
+  - BASELINE: judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_040024_20251204_040738.xlsx
+  - COT: judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_040811_20251204_041507.xlsx
+  - MECHANISTIC: judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_041543_20251204_042151.xlsx
+
+================================================================================
+JUDGE PERFORMANCE ANALYSIS
+================================================================================
+Analyzing judge ability to detect synthetic corruptions...
+Comparing judge verdicts (CORRECT/INCORRECT) against ground truth (Is Corrupted)
+
+
+BASELINE
+  File: judged_citation_Social_norms_and_obesity_prevalence_baseline_20251204_040024_20251204_040738.xlsx
+  Dataset: 26 corrupted + 84 clean = 110 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 26
+    TN (Correctly accepted clean):    4
+    FP (Incorrectly flagged clean):   80
+    FN (Missed corrupted):            0
+  Metrics:
+    Precision: 0.2453 (of flagged edges, % actually corrupted)
+    Recall:    1.0000 (of corrupted edges, % detected)
+    F1 Score:  0.3939 (harmonic mean)
+    Accuracy:  0.2727 (overall % correct)
+
+COT
+  File: judged_citation_Social_norms_and_obesity_prevalence_cot_20251204_040811_20251204_041507.xlsx
+  Dataset: 26 corrupted + 84 clean = 110 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 26
+    TN (Correctly accepted clean):    4
+    FP (Incorrectly flagged clean):   80
+    FN (Missed corrupted):            0
+  Metrics:
+    Precision: 0.2453 (of flagged edges, % actually corrupted)
+    Recall:    1.0000 (of corrupted edges, % detected)
+    F1 Score:  0.3939 (harmonic mean)
+    Accuracy:  0.2727 (overall % correct)
+
+MECHANISTIC
+  File: judged_citation_Social_norms_and_obesity_prevalence_mechanistic_20251204_041543_20251204_042151.xlsx
+  Dataset: 26 corrupted + 84 clean = 110 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 26
+    TN (Correctly accepted clean):    5
+    FP (Incorrectly flagged clean):   79
+    FN (Missed corrupted):            0
+  Metrics:
+    Precision: 0.2476 (of flagged edges, % actually corrupted)
+    Recall:    1.0000 (of corrupted edges, % detected)
+    F1 Score:  0.3969 (harmonic mean)
+    Accuracy:  0.2818 (overall % correct)
+
+================================================================================
+CORRUPTION-SCORE CORRELATION ANALYSIS
+================================================================================
+Analyzing correlation between Is Corrupted (binary) and Aggregate Score (continuous)
+Point-biserial correlation measures judge's ability to distinguish corrupted vs clean edges
+
+
+BASELINE
+  Point-biserial correlation (r_pb): -0.3024
+  P-value: 0.001326
+  Significance: ** (very significant)
+  Corrupted edges (n=26): mean score = 0.0692 ± 0.1429
+  Clean edges (n=84): mean score = 0.2562 ± 0.2773
+  Mean difference: -0.1869
+  Interpretation: Weak - Judge scores weakly discriminate corruptions
+
+COT
+  Point-biserial correlation (r_pb): -0.3311
+  P-value: 0.000411
+  Significance: *** (highly significant)
+  Corrupted edges (n=26): mean score = 0.0769 ± 0.1480
+  Clean edges (n=84): mean score = 0.2829 ± 0.2755
+  Mean difference: -0.2060
+  Interpretation: Weak - Judge scores weakly discriminate corruptions
+
+MECHANISTIC
+  Point-biserial correlation (r_pb): -0.2732
+  P-value: 0.003884
+  Significance: ** (very significant)
+  Corrupted edges (n=26): mean score = 0.0705 ± 0.1265
+  Clean edges (n=84): mean score = 0.2411 ± 0.2854
+  Mean difference: -0.1706
+  Interpretation: Very weak - Judge scores poorly discriminate corruptions
+
+================================================================================
+PROMPT COMPARISON TABLE
+================================================================================
+     Prompt  Precision  Recall  F1 Score  Accuracy
+   BASELINE   0.245283     1.0  0.393939  0.272727
+        COT   0.245283     1.0  0.393939  0.272727
+MECHANISTIC   0.247619     1.0  0.396947  0.281818
+
+================================================================================
+INTER-PROMPT AGREEMENT
+================================================================================
+
+BASELINE vs COT:
+  Agreement Rate: 0.8182 (90/110)
+
+BASELINE vs MECHANISTIC:
+  Agreement Rate: 0.8091 (89/110)
+
+COT vs MECHANISTIC:
+  Agreement Rate: 0.7818 (86/110)
+
+Full 3-way agreement:
+  Agreement Rate: 0.7091 (78/110)
+
+================================================================================
+PROMPT PERFORMANCE RANKING
+================================================================================
+
+Ranked by F1 Score (Judge Accuracy):
+  1. MECHANISTIC: F1=0.3969, Precision=0.2476, Recall=1.0000
+  2. BASELINE: F1=0.3939, Precision=0.2453, Recall=1.0000
+  3. COT: F1=0.3939, Precision=0.2453, Recall=1.0000
+
+🏆 Best performing prompt: MECHANISTIC
+   F1 Score: 0.3969
+
+✓ Results saved to: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/analysis/prompt_variants_analysis.xlsx
+
+Generating visualization...
+✓ Plot saved to: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/analysis/prompt_variants_comparison.png
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+Results directory: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/social_norms/run_3/analysis
+  - prompt_variants_analysis.xlsx
+  - prompt_variants_comparison.png
+

@@ -1,0 +1,291 @@
+#!/usr/bin/env python3
+"""
+Supplementary Unified Analysis Script
+Single entry point for all supplementary analyses:
+1. Time/Cost Scaling Analysis (Figure 3: Generation vs Judging costs)
+2. Parallelization Benchmark Analysis (Parallelization thesis figure)
+3. Prompt Sensitivity Analysis (Judge and Corrector sensitivity figures)
+
+Usage:
+    python3 final_runs/SUPP_unified_analysis.py --run-dir /path/to/output
+
+Outputs:
+    - figure3_generation_vs_judging.png (time/cost scaling)
+    - parallelization_thesis_figure.png (parallelization benchmark)
+    - prompt_sensitivity_figure.png (judge sensitivity)
+    - corrector_sensitivity_figure.png (corrector sensitivity)
+"""
+
+import sys
+import os
+import subprocess
+import argparse
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+
+def run_command(cmd, description, *, env=None, cwd=None):
+    """Run a shell command with logging."""
+    print(f"\n{'='*80}")
+    print(f"Running: {description}")
+    print(f"Command: {cmd}")
+    if cwd:
+        print(f"CWD: {cwd}")
+    print(f"{'='*80}\n")
+    try:
+        subprocess.run(cmd, shell=True, check=True, env=env, cwd=cwd)
+        print(f"\n✅ Successfully completed: {description}")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"\n⚠️ Error running: {description}")
+        print(f"Exit code: {e.returncode}")
+        return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Supplementary unified analysis runner")
+    parser.add_argument(
+        "--run-dir",
+        default=None,
+        help=(
+            "Optional output run directory. When set, all supplementary scripts will write "
+            "their outputs to this directory."
+        ),
+    )
+    args = parser.parse_args()
+
+    PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+    FINAL_RUNS = PROJECT_ROOT / "final_runs"
+    os.chdir(PROJECT_ROOT)
+    print(f"Working directory: {PROJECT_ROOT}")
+
+    print("\n" + "#"*80)
+    print("SUPPLEMENTARY: Time/Cost, Parallelization, and Sensitivity Analyses")
+    print("#"*80)
+
+    env = os.environ.copy()
+    if args.run_dir:
+        run_dir = Path(args.run_dir).expanduser().resolve()
+        run_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        run_dir = FINAL_RUNS / f"supp_unified_output_{timestamp}"
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"\nSupplementary output directory: {run_dir}")
+
+    # Track generated figures for final summary
+    generated_figures = []
+
+    # =========================================================================
+    # 1. TIME/COST SCALING ANALYSIS
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("1. Time/Cost Scaling Analysis")
+    print("-"*80)
+
+    time_cost_script = FINAL_RUNS / "supp_time_cost_scaling/analysis_scripts/aggregate_time_cost_scaling.py"
+    time_cost_output = run_dir / "time_cost_scaling"
+    time_cost_output.mkdir(parents=True, exist_ok=True)
+
+    # Check for pre-computed figures first (these are expensive to regenerate)
+    precomputed_time_cost = FINAL_RUNS / "supp_time_cost_scaling/Output/figure3_generation_vs_judging.png"
+    
+    if precomputed_time_cost.exists():
+        dst = run_dir / "figure3_generation_vs_judging.png"
+        shutil.copy(precomputed_time_cost, dst)
+        generated_figures.append(dst)
+        print(f"  ✓ Copied pre-computed: figure3_generation_vs_judging.png")
+    elif time_cost_script.exists():
+        cmd = f"python3 {time_cost_script} --base_dir {FINAL_RUNS} --output_dir {time_cost_output}"
+        success = run_command(cmd, "Time/Cost Scaling Aggregation", env=env)
+        
+        # Find and copy the main thesis figure
+        if success:
+            for fig_pattern in ["*generation*judging*.png", "*figure3*.png", "*scaling*.png"]:
+                for fig in time_cost_output.glob(fig_pattern):
+                    dst = run_dir / "figure3_generation_vs_judging.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
+                    break
+    else:
+        print(f"  ⚠️ Script not found: {time_cost_script}")
+
+    # =========================================================================
+    # 2. PARALLELIZATION BENCHMARK ANALYSIS
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("2. Parallelization Benchmark Analysis")
+    print("-"*80)
+
+    parallel_script = FINAL_RUNS / "supp_parallelization_benchmark/analysis_scripts/analyze_parallelization_results.py"
+    parallel_output = run_dir / "parallelization"
+    parallel_output.mkdir(parents=True, exist_ok=True)
+
+    # Check for pre-computed figures first
+    precomputed_parallel = FINAL_RUNS / "supp_parallelization_benchmark/Output/parallelization_thesis_figure.png"
+    
+    if precomputed_parallel.exists():
+        dst = run_dir / "parallelization_thesis_figure.png"
+        shutil.copy(precomputed_parallel, dst)
+        generated_figures.append(dst)
+        print(f"  ✓ Copied pre-computed: parallelization_thesis_figure.png")
+    elif parallel_script.exists():
+        # Find the latest results file
+        parallel_data = FINAL_RUNS / "supp_parallelization_benchmark/Data"
+        results_files = list(parallel_data.glob("*.xlsx")) if parallel_data.exists() else []
+        
+        if results_files:
+            latest_results = max(results_files, key=lambda p: p.stat().st_mtime)
+            cmd = f"python3 {parallel_script} {latest_results}"
+            # Run in the output directory to capture figures
+            success = run_command(cmd, "Parallelization Analysis", env=env, cwd=str(parallel_output))
+            
+            if success:
+                # Find generated figures in source dir (script saves there)
+                src_figures = FINAL_RUNS / "supp_parallelization_benchmark/figures"
+                for fig in src_figures.glob("*thesis*.png"):
+                    dst = run_dir / "parallelization_thesis_figure.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → parallelization_thesis_figure.png")
+                    break
+        else:
+            print(f"  ⚠️ No results files found in {parallel_data}")
+    else:
+        print(f"  ⚠️ Script not found: {parallel_script}")
+
+    # =========================================================================
+    # 3. PROMPT SENSITIVITY ANALYSIS (JUDGE)
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("3. Prompt Sensitivity Analysis (Judge)")
+    print("-"*80)
+
+    sensitivity_script = FINAL_RUNS / "supp_prompt_sensitivity/analysis_scripts/sensitivity_analysis_simple.py"
+    sensitivity_output = run_dir / "prompt_sensitivity"
+    sensitivity_output.mkdir(parents=True, exist_ok=True)
+
+    # Check for existing pre-computed figures first (these are expensive to regenerate)
+    precomputed_judge = FINAL_RUNS / "supp_prompt_sensitivity/prompt_sensitivity_figure.png"
+    precomputed_corrector = FINAL_RUNS / "supp_prompt_sensitivity/corrector_sensitivity_figure.png"
+
+    if precomputed_judge.exists():
+        dst = run_dir / "prompt_sensitivity_figure.png"
+        shutil.copy(precomputed_judge, dst)
+        generated_figures.append(dst)
+        print(f"  ✓ Copied pre-computed: prompt_sensitivity_figure.png")
+    elif sensitivity_script.exists():
+        # Try running the script (requires embeddings, may be slow)
+        env_sens = env.copy()
+        env_sens["SUPP_OUTPUT_DIR"] = str(sensitivity_output)
+        cmd = f"python3 {sensitivity_script}"
+        success = run_command(cmd, "Judge Sensitivity Analysis", env=env_sens, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
+        
+        if success:
+            for fig in sensitivity_output.glob("*sensitivity*.png"):
+                if "corrector" not in fig.name.lower():
+                    dst = run_dir / "prompt_sensitivity_figure.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
+                    break
+
+    # =========================================================================
+    # 4. CORRECTOR SENSITIVITY ANALYSIS
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("4. Corrector Sensitivity Analysis")
+    print("-"*80)
+
+    corrector_script = FINAL_RUNS / "supp_prompt_sensitivity/analysis_scripts/sensitivity_analysis_corrector.py"
+
+    if precomputed_corrector.exists():
+        dst = run_dir / "corrector_sensitivity_figure.png"
+        shutil.copy(precomputed_corrector, dst)
+        generated_figures.append(dst)
+        print(f"  ✓ Copied pre-computed: corrector_sensitivity_figure.png")
+    elif corrector_script.exists():
+        env_corr = env.copy()
+        env_corr["SUPP_OUTPUT_DIR"] = str(sensitivity_output)
+        cmd = f"python3 {corrector_script}"
+        success = run_command(cmd, "Corrector Sensitivity Analysis", env=env_corr, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
+        
+        if success:
+            for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
+                dst = run_dir / "corrector_sensitivity_figure.png"
+                shutil.copy(fig, dst)
+                generated_figures.append(dst)
+                print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
+                break
+
+    # =========================================================================
+    # 5. COPY STATIC ASSETS (edge ablation figure - not generated, just copied)
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("5. Static Assets (Edge Ablation)")
+    print("-"*80)
+
+    edge_ablation_src = PROJECT_ROOT / "Figures/edge_ablation_f1_ordered.png"
+    if edge_ablation_src.exists():
+        dst = run_dir / "edge_ablation_f1_ordered.png"
+        shutil.copy(edge_ablation_src, dst)
+        generated_figures.append(dst)
+        print(f"  ✓ Copied static asset: edge_ablation_f1_ordered.png")
+    else:
+        # Try alternative location
+        alt_src = PROJECT_ROOT / "thesis/Figures/edge_ablation_f1_ordered.png"
+        if alt_src.exists():
+            dst = run_dir / "edge_ablation_f1_ordered.png"
+            shutil.copy(alt_src, dst)
+            generated_figures.append(dst)
+            print(f"  ✓ Copied static asset: edge_ablation_f1_ordered.png")
+        else:
+            print(f"  ⚠️ Static asset not found: edge_ablation_f1_ordered.png")
+
+    # =========================================================================
+    # Create 'latest' symlink
+    # =========================================================================
+    latest_link = run_dir.parent / "SUPP_latest"
+    if latest_link.exists() or latest_link.is_symlink():
+        latest_link.unlink()
+    latest_link.symlink_to(run_dir, target_is_directory=True)
+    print(f"\n✓ Created symlink: SUPP_latest → {run_dir.name}")
+
+    # =========================================================================
+    # SUMMARY
+    # =========================================================================
+    print("\n" + "="*80)
+    print("SUPPLEMENTARY ANALYSES SUMMARY")
+    print("="*80)
+    print(f"\nOutput directory: {run_dir}")
+    print(f"\nGenerated figures ({len(generated_figures)}):")
+    for fig in generated_figures:
+        print(f"  • {fig.name}")
+    
+    expected_figures = [
+        "figure3_generation_vs_judging.png",
+        "parallelization_thesis_figure.png",
+        "prompt_sensitivity_figure.png",
+        "corrector_sensitivity_figure.png",
+        "edge_ablation_f1_ordered.png",
+    ]
+    
+    missing = [f for f in expected_figures if not (run_dir / f).exists()]
+    if missing:
+        print(f"\n⚠️ Missing figures ({len(missing)}):")
+        for f in missing:
+            print(f"  • {f}")
+    else:
+        print(f"\n✅ All expected supplementary figures generated!")
+
+    print("\n" + "="*80)
+    print("✅ Supplementary analyses completed!")
+    print("="*80)
+
+
+if __name__ == "__main__":
+    main()
+

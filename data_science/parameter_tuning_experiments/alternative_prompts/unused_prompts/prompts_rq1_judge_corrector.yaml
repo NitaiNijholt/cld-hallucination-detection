@@ -1,0 +1,201 @@
+# RQ1 Judge/Corrector Experiment Prompts
+# Specialized prompts for testing LLM-as-a-judge and LLM-as-a-corrector
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        You are a systems modeling assistant. Your role is to identify a single, clearly defined, directly causal variable that influences a target variable within a specific context, time, and space. The variable must be measurable, not composite, and must not overlap with the target or any excluded variables. Respond only with a json including the variable name and its concise definition, formatted as: {"Variable":"Concise name of the variable", "Definition":"Definition of the variable", "Units":"Units of measurements for the variable"}, with no additional text.
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        Name a variable (2,3 words) with a direct causal effect on the target variable {{ target.lower() }}, defined as "{{ target_definition.lower() }}",
+        over the timeframe {{ temporal.lower() }} and spatial scale {{ spatial.lower() }}. 
+        Make sure the variable is acutely measurable, and is not a composite. 
+        Be concise, and give the name of the variable and a short description, as well as the units by which it is measured. 
+        The output must be exactly in the format of the following example: 
+        {"Variable":"Concise name of the variable", 
+        "Definition":"Definition of the variable", 
+        "Units":"Units of measurements for the variable"}
+
+      usr_prompt_extension: " The variable cannot be the same as or overlap with anything in the following list: "
+    version: 0.0.1
+
+  - prompt_id: generateEdges
+    variables:
+      - name: var1
+        type: str
+        description: First variable in undefined relationship.
+      - name: var2
+        type: str
+        description: Second variable in undefined relationship.
+      - name: def1
+        type: str
+        description: Definition of the first variable.
+      - name: def2
+        type: str
+        description: Definition of the second variable.
+      - name: temporal
+        type: str
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: str
+        description: The spatial scale of the causality study.
+      - name: variables
+        type: list
+        description: List of all variables in the model for mediation checking
+    prompts:
+      sys_prompt: >
+        You are a causal relationship analyst. Determine if there is a direct causal relationship between two variables. Consider potential mediating variables and temporal precedence. Be precise about causal mechanisms and provide clear scientific reasoning.
+      usr_prompt: |
+        Analyze the potential causal relationship between these variables:
+        
+        Variable 1: {{ var1 }}
+        Definition: {{ def1 }}
+        
+        Variable 2: {{ var2 }}
+        Definition: {{ def2 }}
+        
+        Temporal Scale: {{ temporal }}
+        Spatial Scale: {{ spatial }}
+        
+        Other variables in the model: {{ variables | join(', ') }}
+        
+        Determine if there is a direct causal relationship. Consider:
+        1. Temporal precedence (cause must precede effect)
+        2. Potential mediating variables from the list above
+        3. Biological/psychological plausibility
+        4. Direction of causality
+        
+        Respond with the relationship type and detailed motivation:
+        - If direct causal relationship exists: specify type (CAUSES, INHIBITS, etc.)
+        - If no direct relationship: respond with "NONE"
+        
+        Format: {"relationship": "TYPE or NONE", "motivation": "detailed scientific explanation"}
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  - prompt_id: generateSpuriousMotivation
+    variables:
+      - name: source
+        type: string
+        description: The source variable in the relationship
+      - name: target
+        type: string
+        description: The target variable in the relationship  
+      - name: relationship
+        type: string
+        description: The type of relationship between the variables
+      - name: motivation
+        type: string
+        description: The original motivation for the relationship
+    prompts:
+      sys_prompt: |
+        You are an expert in creating plausible but scientifically flawed causal explanations.
+        Your task is to create a spurious motivation that sounds convincing but contains subtle logical errors,
+        confounding factors, or incorrect causal mechanisms. This is for testing hallucination detection systems.
+      usr_prompt: |
+        Original relationship:
+        - Source: {{ source }}
+        - Target: {{ target }}
+        - Relationship: {{ relationship }}
+        - Current motivation: {{ motivation }}
+
+        Create a new motivation that:
+        1. Sounds scientifically plausible and uses academic language
+        2. Contains a subtle but fundamental flaw in causal reasoning
+        3. Introduces confounding variables or reverse causation
+        4. Maintains similar length and complexity as the original
+        5. Uses the exact variable names "{{ source }}" and "{{ target }}"
+
+        Provide ONLY the spurious motivation text with no additional commentary.
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  - prompt_id: edgeVerifier
+    variables:
+      - name: edge_description
+        type: string
+        description: The description of the edge to verify
+    prompts:
+      sys_prompt: >
+        You are a rigorous scientific reviewer evaluating causal claims. Your job is to identify logical inconsistencies, confounding factors, reverse causation, or other flaws in causal reasoning. Be precise and conservative in your judgments.
+      usr_prompt: |
+        Evaluate this causal relationship description for scientific validity:
+        
+        {{ edge_description }}
+        
+        Check for:
+        1. Logical consistency and causal plausibility
+        2. Potential confounding variables
+        3. Reverse causation issues
+        4. Temporal precedence problems
+        5. Mechanistic clarity
+        
+        Respond with:
+        - "OK" if the relationship is scientifically sound
+        - "INCONSISTENT: [specific reason]" if there are problems
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  - prompt_id: judgeCitation
+    variables:
+      - name: source
+        type: string
+        description: The source variable in the relationship
+      - name: target
+        type: string
+        description: The target variable in the relationship
+      - name: relationship
+        type: string
+        description: The type of relationship between the variables
+      - name: motivation
+        type: string
+        description: The motivation explaining the relationship
+      - name: citations
+        type: string
+        description: The content of cited sources formatted as text
+    prompts:
+      sys_prompt: |
+        You are a precise and fair judge evaluating whether scientific claims are supported by their cited sources.
+        Your job is to carefully read the relationship motivation and the cited sources, and determine if the motivation is supported.
+        Base your judgment only on the content of the citations provided, not on general knowledge.
+      usr_prompt: |
+        Verify if this relationship is supported by its citations:
+        
+        SOURCE VARIABLE: {{ source }}
+        TARGET VARIABLE: {{ target }}
+        RELATIONSHIP TYPE: {{ relationship }}
+        MOTIVATION: {{ motivation }}
+        
+        Here are the contents of the cited sources:
+        {{ citations }}
+        
+        Based on the cited sources, evaluate if the relationship motivation is supported by the citations.
+        
+        Respond in this format:
+        VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|UNADDRESSED]
+        REASON: [brief explanation of your judgment]
+      usr_prompt_extension: ""
+    version: 0.0.1

@@ -1,0 +1,93 @@
+# RQ1a Baseline Experiment Configuration - Additional Runs (3, 4, 5)
+# Research Question: Baseline CLD accuracy with LLM-as-a-judge (no corruption, no correction)
+# 3 additional runs per CLD, 3 CLDs total = 9 runs
+# This extends the existing 2 runs to reach 5 total runs for stronger statistical power
+
+param_grid:
+  # Basic experiment settings
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # Model configurations for different roles
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  judge_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  # NO CORRUPTION - Baseline accuracy
+  corruption_rate: [0.0]
+  
+  # JUDGE SETTINGS - LLM-as-a-judge evaluation with gpt-4.1
+  judge_edges: [true]
+  judge_models: [["gpt-4.1"]]
+  num_judges: [1]
+  
+  # NO CORRECTOR - Just baseline generation + judging
+  run_correction: [false]
+  
+  # CITATION SETTINGS - Use Brave Search for real citations
+  citation_search_provider: ["brave"]
+  
+  # LLM Temperature settings
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7] 
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.3]
+  judge_top_p: [1.0]
+  
+  # Processing settings
+  parallel: [true]
+  max_workers: [3]
+  load_env: [true]
+  
+  # Visualization settings
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  
+  # Comparison settings for final evaluation
+  only_cited_edges: [false]
+  only_consistent_edges: [false] 
+  filter_validation_nodes_to_session_nodes: [true]
+  
+  # Context-insensitive metrics
+  embedding_enable: [true]
+  ci_fetch_reuse: [true]
+  ci_chunk_chars_override: [null]
+  ci_overlap_ratio: [0.2]
+  
+  # Node comparison settings
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]
+  node_comparison_cosine_percentile: [90.0]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [null]
+  
+  # Preload validation variables to reduce hallucinations
+  preload_validation_variables: [true]
+  
+  # Metadata
+  experiment_description: ["RQ1a_Baseline_Runs345_Extension"]
+  output_json_prefix: ["rq1a_baseline"]
+  compare_variable_overlap: [false]
+
+# CLDs to test (3 main CLDs)
+excel_files:
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"
+  - "Social_norms_and_obesity_prevalence.xlsx"
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+
+# Run 3 additional runs (3, 4, 5) - Total: 3 runs × 3 CLDs = 9 experimental runs
+runs: 3
+run_start: 3  # Start numbering from run 3
+
+# Use specific prompt file (not folder!)
+prompt_files:
+  - "prompts_Nitai_C_andrew_nodegen.yaml"
+
+

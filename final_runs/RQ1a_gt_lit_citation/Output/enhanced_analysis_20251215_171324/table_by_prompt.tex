@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RQ1a: Ground Truth Validation Performance by Prompt (macro-averaged across CLDs)}
+\label{tab:rq1a_gt_by_prompt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Prompt} & \textbf{N} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{r$_{pb}$} \\
+\midrule
+Baseline & 4530 & $0.209 \pm 0.083$ & $0.641 \pm 0.225$ & $0.315 \pm 0.122$ & $-0.162 \pm 0.110$ \\
+Cot & 4529 & $0.214 \pm 0.091$ & $0.663 \pm 0.207$ & $0.323 \pm 0.129$ & $-0.170 \pm 0.117$ \\
+Mechanistic & 4529 & $0.165 \pm 0.061$ & $0.981 \pm 0.018$ & $0.280 \pm 0.087$ & $0.164 \pm 0.085$ \\
+\bottomrule
+\end{tabular}
+\note{Values shown as mean $\pm$ std across CLDs.}
+\end{table}

@@ -1,0 +1,56 @@
+# RQ1 Judge/Corrector Experiment using Nitai_C Prompts
+# Research Question: Can LLM-as-a-judge and LLM-as-a-corrector increase final CLD accuracy?
+# TEST: 1 CLD, 2 prompts (original + andrew's node generation variant)
+# Compares: prompts_Nitai_C.yaml vs prompts_Nitai_C_andrew_nodegen.yaml
+
+# SPECIFIC PROMPT FILES - Test both prompt variants for comparison
+prompt_files: 
+  - "_nitai_only/prompts_Nitai_C.yaml"
+  - "_nitai_only/prompts_Nitai_C_andrew_nodegen.yaml"
+
+param_grid:
+  # Basic experiment settings
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # Model configurations for different roles
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  judge_config:
+    - { provider: "openai", model: "gpt-5-nano" }
+  
+  # CORRUPTION SETTINGS - Create spurious motivations to test detection
+  corruption_rate: [0.0]  # No corruption - clean test
+  
+  # JUDGE SETTINGS - LLM-as-a-judge to detect hallucinations
+  judge_edges: [true]
+  judge_models: [["gpt-5-nano"]]  # List of lists for grid search - inner list is the actual judges
+  num_judges: [1]  # This is ignored when judge_models is a list - list length determines number
+  
+  # CITATION SETTINGS - Use Brave Search for real citations
+  citation_search_provider: ["brave"]
+  
+  # CORRECTOR SETTINGS - Test both with and without correction
+  run_correction: [true]  # Enable corrector to test functionality
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  
+  # Temperature settings
+  generator_temperature: [0.4]
+  corruptor_temperature: [0.7]
+  judge_temperature: [0.0]
+  corrector_temperature: [0.4]
+  
+  # VARIABLE DISCOVERY MODE - Enable node generation for testing andrew's prompt
+  preload_validation_variables: [false]  # Let LLM generate variables instead of pre-loading
+  # num_variables_to_generate will default to validation count (4 for CLD_test)
+
+# EXPERIMENT SCOPE - Only test on CLD_test
+excel_files: ["CLD_test.xlsx"]
+
+# EXPERIMENT PARAMETERS
+runs: 1  # Single run per condition for quick test

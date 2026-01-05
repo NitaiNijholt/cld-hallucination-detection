@@ -1,0 +1,348 @@
+# Fresh Test Judge/Corrector Experiment Prompts
+# Specialized prompts for testing LLM-as-a-judge and LLM-as-a-corrector
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model.
+    content: |
+      You are an expert in causal modeling and systems thinking. Your task is to identify the key variables that causally influence the target variable: "{target}" (measured in {target_units}).
+
+      Target Definition: {target_definition}
+      
+      Temporal Scale: {temporal}
+      Spatial Scale: {spatial}
+      
+      Key Contextual Factors:
+      {context}
+      
+      Instructions:
+      1. Generate 8-12 variables that directly or indirectly influence the target variable
+      2. For each variable, provide:
+         - Name: Clear, specific variable name
+         - Definition: Precise definition explaining what it measures
+         - Units: How the variable is measured or quantified
+         - Temporal Scale: When this variable operates (e.g., "minutes", "days", "years")
+         - Spatial Scale: Where this variable operates (e.g., "individual", "community", "national")
+      
+      3. Focus on variables that are:
+         - Causally relevant to the target
+         - Measurable or observable
+         - Operating at appropriate temporal and spatial scales
+         - Backed by scientific literature
+      
+      Format your response as a JSON array of variable objects:
+      ```json
+      [
+        {
+          "name": "Variable Name",
+          "definition": "Clear definition of what this variable measures",
+          "units": "Units of measurement",
+          "temporal_scale": "Temporal scale",
+          "spatial_scale": "Spatial scale"
+        }
+      ]
+      ```
+
+  - prompt_id: generateRelationships
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: variables
+        type: list
+        description: List of variables generated in the previous step.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model.
+    content: |
+      You are an expert in causal modeling. Your task is to identify causal relationships between variables that influence "{target}".
+
+      Variables in the system:
+      {variables}
+      
+      Temporal Scale: {temporal}
+      Spatial Scale: {spatial}
+      
+      Key Contextual Factors:
+      {context}
+      
+      Instructions:
+      1. Identify causal relationships between variables (including relationships with the target variable)
+      2. For each relationship, provide:
+         - Source variable (cause)
+         - Target variable (effect)  
+         - Relationship type: "INCREASES", "DECREASES", "INFLUENCES"
+         - Motivation: 2-3 sentence scientific explanation of the causal mechanism
+         - Polarity: "positive" (same direction) or "negative" (opposite direction)
+         - Strength: "weak", "moderate", or "strong"
+         - Time lag: How long it takes for the effect to manifest
+      
+      3. Focus on relationships that are:
+         - Supported by scientific evidence
+         - Causally plausible given the temporal and spatial scales
+         - Direct causal links (avoid spurious correlations)
+         - Relevant to the target variable
+      
+      Generate 15-25 high-quality causal relationships.
+      
+      Format as JSON array:
+      ```json
+      [
+        {
+          "source": "Source Variable Name",
+          "target": "Target Variable Name",
+          "relation": "INCREASES|DECREASES|INFLUENCES",
+          "motivation": "Scientific explanation of the causal mechanism",
+          "polarity": "positive|negative",
+          "strength": "weak|moderate|strong",
+          "time_lag": "Description of time delay"
+        }
+      ]
+      ```
+
+  - prompt_id: generateEdges
+    variables:
+      - name: source_var
+        type: string
+        description: Source variable in the potential relationship
+      - name: target_var
+        type: string
+        description: Target variable in the potential relationship
+      - name: source_definition
+        type: string
+        description: Definition of the source variable
+      - name: target_definition
+        type: string
+        description: Definition of the target variable
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    content: |
+      You are an expert in causal modeling. Your task is to determine if there is a plausible causal relationship between two specific variables.
+
+      Source Variable: {source_var}
+      Definition: {source_definition}
+
+      Target Variable: {target_var}
+      Definition: {target_definition}
+
+      Temporal Scale: {temporal}
+      Spatial Scale: {spatial}
+      
+      Key Contextual Factors:
+      {context}
+
+      Instructions:
+      Analyze whether {source_var} could causally influence {target_var} given the definitions and context.
+
+      If a causal relationship exists, provide:
+      1. **Relationship Type**: "INCREASES", "DECREASES", or "INFLUENCES"
+      2. **Motivation**: 2-3 sentence scientific explanation of the causal mechanism
+      3. **Polarity**: "positive" (same direction) or "negative" (opposite direction)  
+      4. **Strength**: "weak", "moderate", or "strong"
+      5. **Time Lag**: How long it takes for the effect to manifest
+      6. **Confidence**: Your confidence in this relationship (1-10 scale)
+
+      If no causal relationship exists, respond with "NO_RELATIONSHIP" and explain why.
+
+      Format as JSON:
+      ```json
+      {
+        "relationship_exists": true,
+        "relation": "INCREASES|DECREASES|INFLUENCES",
+        "motivation": "Scientific explanation of the causal mechanism",
+        "polarity": "positive|negative",
+        "strength": "weak|moderate|strong", 
+        "time_lag": "Description of time delay",
+        "confidence": 8
+      }
+      ```
+
+      OR if no relationship:
+      ```json
+      {
+        "relationship_exists": false,
+        "explanation": "Why no causal relationship exists"
+      }
+      ```
+
+  - prompt_id: generateSpuriousMotivation
+    variables:
+      - name: source
+        type: string
+        description: Source variable in the relationship
+      - name: target
+        type: string
+        description: Target variable in the relationship
+      - name: relation
+        type: string
+        description: Type of relationship
+      - name: original_motivation
+        type: string
+        description: The original correct motivation
+    content: |
+      You are tasked with creating a plausible but incorrect motivation for a causal relationship. This is for testing whether LLM judges can detect spurious reasoning.
+
+      Original Relationship:
+      - Source: {source}
+      - Target: {target}
+      - Relation: {relation}
+      - Original Motivation: {original_motivation}
+
+      Instructions:
+      Create a spurious motivation that:
+      1. Sounds scientific and plausible at first glance
+      2. Contains subtle logical flaws or incorrect causal reasoning
+      3. Is different from the original motivation
+      4. Maintains the same relationship direction but with flawed reasoning
+      5. Uses appropriate scientific terminology
+
+      Types of spurious reasoning to consider:
+      - Correlation vs causation confusion
+      - Reversed causality
+      - Confounding variables ignored
+      - Oversimplified mechanisms
+      - Incorrect temporal assumptions
+
+      Provide only the spurious motivation (2-3 sentences):
+
+  - prompt_id: judgeRelationship
+    variables:
+      - name: source
+        type: string
+        description: Source variable in the relationship
+      - name: target
+        type: string
+        description: Target variable in the relationship
+      - name: relation
+        type: string
+        description: Type of relationship
+      - name: motivation
+        type: string
+        description: Motivation for the relationship
+      - name: citations
+        type: list
+        description: List of citations supporting the relationship
+    content: |
+      You are an expert scientific reviewer evaluating a proposed causal relationship. Your task is to determine if the relationship is supported by evidence and sound reasoning.
+
+      Proposed Relationship:
+      - Source: {source}
+      - Target: {target}  
+      - Relation: {relation}
+      - Motivation: {motivation}
+
+      Supporting Citations:
+      {citations}
+
+      Evaluation Criteria:
+      1. **Scientific Accuracy**: Is the proposed causal mechanism scientifically sound?
+      2. **Evidence Quality**: Do the citations provide adequate support?
+      3. **Logical Reasoning**: Is the motivation logically consistent?
+      4. **Causal Plausibility**: Is the causal direction and mechanism plausible?
+      5. **Temporal Consistency**: Does the timing make sense?
+
+      Your Response:
+      1. **Verdict**: "SUPPORTED", "PARTIALLY_SUPPORTED", or "NOT_SUPPORTED"
+      2. **Confidence**: Scale of 1-10 (10 = very confident)
+      3. **Reasoning**: Detailed explanation of your judgment (3-4 sentences)
+      4. **Key Issues**: Any major problems with the relationship (if applicable)
+
+      Format as JSON:
+      ```json
+      {
+        "verdict": "SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED",
+        "confidence": 8,
+        "reasoning": "Detailed explanation of judgment",
+        "key_issues": "Major problems identified (if any)"
+      }
+      ```
+
+  - prompt_id: correctRelationship
+    variables:
+      - name: source
+        type: string
+        description: Source variable in the relationship
+      - name: target
+        type: string
+        description: Target variable in the relationship
+      - name: relation
+        type: string
+        description: Type of relationship
+      - name: motivation
+        type: string
+        description: Current motivation for the relationship
+      - name: citations
+        type: list
+        description: List of citations
+      - name: judge_feedback
+        type: string
+        description: Feedback from the judge about issues
+    content: |
+      You are an expert scientific editor tasked with correcting a problematic causal relationship based on judge feedback.
+
+      Current Relationship:
+      - Source: {source}
+      - Target: {target}
+      - Relation: {relation}
+      - Current Motivation: {motivation}
+
+      Available Citations:
+      {citations}
+
+      Judge Feedback:
+      {judge_feedback}
+
+      Your Task:
+      Based on the judge feedback and available evidence, decide on the best correction action:
+
+      **Option 1 - REVISE**: Improve the motivation while keeping the relationship
+      **Option 2 - REMOVE**: Remove the relationship entirely if it's fundamentally flawed
+
+      If REVISE:
+      - Provide a corrected motivation that addresses the judge's concerns
+      - Use the available citations to support your revision
+      - Ensure scientific accuracy and logical consistency
+
+      If REMOVE:
+      - Explain why the relationship should be removed
+      - Cite specific issues that cannot be resolved
+
+      Format as JSON:
+      ```json
+      {
+        "action": "REVISE|REMOVE",
+        "corrected_motivation": "New motivation (if revising)",
+        "explanation": "Why you chose this action and how it addresses the issues"
+      }
+      ```

@@ -1,0 +1,76 @@
+# experiment_28_04_2025_config.yaml
+
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+
+  # generator_model: ["gpt-4o", 'claude-3-7-sonnet-20250219']
+  # corruptor_model: ["o4-mini"]
+  # judge_model: ["o4-mini"]
+
+  # Model environment variable names to look up in os.environ.
+  # If blank, the code will default to "sonar-pro" or whatever your fallback is.
+  # generator_model_env: ['gpt-4o','claude-3-7-sonnet-20250219'] 
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+    # - { provider: "openai", model: "gpt-4o" }
+    # - { provider: "anthropic", model: "claude-3-7-sonnet-20250219" }
+  # Similarly, you could do the same for corruptor_config, judge_config
+  # if you'd like multiple variants for them, too
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+    # - { provider: "anthropic", model: "claude-instant-1" }
+
+  judge_config: 
+    - { provider: "openai", model: "gpt-4o" }
+  # Spurious relationship corruption rate
+  corruption_rate: [0.0]
+
+  # Whether to use the built-in judge routine
+  judge_edges: [true]
+
+  # If you do want to test multiple judge models in a single run, 
+  # you can provide them inside a nested list like ["MODEL1", "MODEL2"].
+# ['claude-3-7-sonnet-20250219']]
+  judge_models: [["gpt-4o"]]
+  num_judges: [1]
+
+  # Corrector settings
+  run_correction: [true, false]
+  correction_rounds: [1]
+  corrector_models: [["gpt-4o"]]
+
+  # Hyperparameters for generator/corruptor/judge LLM calls
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7]
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.7]
+  judge_top_p: [1.0]
+
+  # Parallel relationship discovery
+  parallel: [true]
+  max_workers: [3]
+
+  # Whether to load environment variables
+  load_env: [true]
+
+  # Whether to plot graphs
+  plot_session_graph: [true]
+  plot_validation_graph: [true]
+
+  # Settings for final comparison/plotting
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+
+  # Extra metadata
+  experiment_description: ["Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults"]
+  output_json_prefix: ["Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults"]
+
+  # Compare discovered vs validation variable overlap
+  compare_variable_overlap: [false]
+
+# How many times to repeat each param combo
+runs: 1

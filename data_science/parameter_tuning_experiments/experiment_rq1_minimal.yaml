@@ -1,0 +1,36 @@
+# RQ1 Minimal Test - Single CLD, Single Run
+# For quick verification that the pipeline works
+
+experiment_name: "RQ1_Minimal_Test"
+description: "Minimal test with 1 CLD and 1 corruption rate"
+
+# CLD to test (just one)
+clds:
+  - "Social_norms_and_obesity_prevalence.xlsx"
+
+# Single corruption rate
+corruption_rates:
+  - 0.5
+
+# Number of runs per combination
+num_runs: 1
+
+# Generator configuration
+generator:
+  provider: "openai"
+  model: "gpt-4.1"
+  temperature: 0.7
+
+# Corruptor configuration
+corruptor:
+  provider: "perplexity"
+  model: "mistral-7b-instruct"
+  temperature: 0.7
+
+# Judging settings (optional, for when judge_edges=True)
+judge_approach: "per_citation_aggregate"  # Options: "all_citations_at_once" | "per_citation_aggregate" | "correctness"
+
+# Other settings
+yaml_path: "parameter_tuning_experiments/alternative_prompts/prompts_Nitai_C.yaml"
+citation_search_provider: "brave"
+embedding_enable: true

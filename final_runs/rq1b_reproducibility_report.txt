@@ -1,0 +1,153 @@
+RQ1b Reproducibility Verification Report
+================================================================================
+
+
+========================================
+Synthetic Baseline
+========================================
+Folder: RQ1b_corrector_experiment_corruption_detection_correctness_final_baseline
+Status: OK
+
+
+  depressive:
+    run_1: total=69, revise=43, change=26, none=0, error=0
+    run_2: total=62, revise=29, change=31, none=0, error=2
+    run_3: total=58, revise=26, change=32, none=0, error=0
+    TOTALS: {'revise': 98, 'change_type': 89, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 2, 'unknown': 0, 'total': 189}
+
+  emergency_department:
+    run_1: total=278, revise=117, change=160, none=0, error=1
+    run_2: total=257, revise=107, change=150, none=0, error=0
+    run_3: total=269, revise=121, change=148, none=0, error=0
+    TOTALS: {'revise': 345, 'change_type': 458, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 1, 'unknown': 0, 'total': 804}
+
+  social_norms:
+    run_1: total=8, revise=5, change=3, none=0, error=0
+    run_2: total=3, revise=3, change=0, none=0, error=0
+    run_3: total=2, revise=2, change=0, none=0, error=0
+    TOTALS: {'revise': 10, 'change_type': 3, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 0, 'unknown': 0, 'total': 13}
+
+========================================
+Synthetic CoT
+========================================
+Folder: RQ1b_corrector_experiment_corruption_detection_correctness_final_cot
+Status: OK
+
+
+  depressive:
+    run_1: total=69, revise=39, change=27, none=2, error=1
+    run_2: total=62, revise=26, change=33, none=2, error=1
+    run_3: total=58, revise=23, change=33, none=2, error=0
+    TOTALS: {'revise': 88, 'change_type': 93, 'flip_polarity': 0, 'remove': 0, 'none': 6, 'error': 2, 'unknown': 0, 'total': 189}
+
+  emergency_department:
+    run_1: total=278, revise=129, change=148, none=1, error=0
+    run_2: total=257, revise=113, change=143, none=0, error=1
+    run_3: total=269, revise=131, change=138, none=0, error=0
+    TOTALS: {'revise': 373, 'change_type': 429, 'flip_polarity': 0, 'remove': 0, 'none': 1, 'error': 1, 'unknown': 0, 'total': 804}
+
+  social_norms:
+    run_1: total=8, revise=5, change=2, none=0, error=1
+    run_2: total=3, revise=3, change=0, none=0, error=0
+    run_3: total=2, revise=2, change=0, none=0, error=0
+    TOTALS: {'revise': 10, 'change_type': 2, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 1, 'unknown': 0, 'total': 13}
+
+========================================
+Synthetic Mechanistic
+========================================
+Folder: RQ1b_corrector_experiment_corruption_detection_correctness_final_mechanistic
+Status: OK
+
+
+  depressive:
+    run_1: total=69, revise=34, change=35, none=0, error=0
+    run_2: total=62, revise=22, change=38, none=2, error=0
+    run_3: total=58, revise=22, change=29, none=5, error=2
+    TOTALS: {'revise': 78, 'change_type': 102, 'flip_polarity': 0, 'remove': 0, 'none': 7, 'error': 2, 'unknown': 0, 'total': 189}
+
+  emergency_department:
+    run_1: total=278, revise=114, change=159, none=4, error=1
+    run_2: total=257, revise=98, change=153, none=5, error=1
+    run_3: total=269, revise=108, change=155, none=4, error=2
+    TOTALS: {'revise': 320, 'change_type': 467, 'flip_polarity': 0, 'remove': 0, 'none': 13, 'error': 4, 'unknown': 0, 'total': 804}
+
+  social_norms:
+    run_1: total=8, revise=5, change=2, none=1, error=0
+    run_2: total=3, revise=3, change=0, none=0, error=0
+    run_3: total=2, revise=2, change=0, none=0, error=0
+    TOTALS: {'revise': 10, 'change_type': 2, 'flip_polarity': 0, 'remove': 0, 'none': 1, 'error': 0, 'unknown': 0, 'total': 13}
+
+========================================
+GT Baseline
+========================================
+Folder: RQ1b_corrector_experiment_ground_truth_correctness_baseline
+Status: OK
+
+
+  depressive:
+    run_1: total=25, revise=14, change=11, none=0, error=0
+    run_2: total=28, revise=16, change=12, none=0, error=0
+    run_3: total=28, revise=14, change=14, none=0, error=0
+    TOTALS: {'revise': 44, 'change_type': 37, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 0, 'unknown': 0, 'total': 81}
+
+  emergency_department:
+    run_1: total=96, revise=26, change=68, none=0, error=2
+    run_2: total=107, revise=26, change=81, none=0, error=0
+    run_3: total=98, revise=19, change=79, none=0, error=0
+    TOTALS: {'revise': 71, 'change_type': 228, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 2, 'unknown': 0, 'total': 301}
+
+  social_norms:
+    run_1: total=9, revise=2, change=6, none=0, error=1
+    run_2: total=15, revise=2, change=12, none=0, error=1
+    run_3: total=12, revise=3, change=8, none=0, error=1
+    TOTALS: {'revise': 7, 'change_type': 26, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 3, 'unknown': 0, 'total': 36}
+
+========================================
+GT CoT
+========================================
+Folder: RQ1b_corrector_experiment_ground_truth_correctness_cot
+Status: OK
+
+
+  depressive:
+    run_1: total=25, revise=16, change=8, none=0, error=1
+    run_2: total=28, revise=17, change=10, none=0, error=1
+    run_3: total=28, revise=18, change=9, none=0, error=1
+    TOTALS: {'revise': 51, 'change_type': 27, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 3, 'unknown': 0, 'total': 81}
+
+  emergency_department:
+    run_1: total=96, revise=30, change=65, none=0, error=1
+    run_2: total=107, revise=30, change=70, none=6, error=1
+    run_3: total=98, revise=17, change=79, none=1, error=1
+    TOTALS: {'revise': 77, 'change_type': 214, 'flip_polarity': 0, 'remove': 0, 'none': 7, 'error': 3, 'unknown': 0, 'total': 301}
+
+  social_norms:
+    run_1: total=9, revise=4, change=4, none=0, error=1
+    run_2: total=15, revise=5, change=9, none=0, error=1
+    run_3: total=12, revise=4, change=8, none=0, error=0
+    TOTALS: {'revise': 13, 'change_type': 21, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 2, 'unknown': 0, 'total': 36}
+
+========================================
+GT Mechanistic
+========================================
+Folder: RQ1b_corrector_experiment_ground_truth_correctness_mechanistic
+Status: OK
+
+
+  depressive:
+    run_1: total=25, revise=10, change=14, none=0, error=1
+    run_2: total=28, revise=13, change=15, none=0, error=0
+    run_3: total=28, revise=11, change=17, none=0, error=0
+    TOTALS: {'revise': 34, 'change_type': 46, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 1, 'unknown': 0, 'total': 81}
+
+  emergency_department:
+    run_1: total=96, revise=14, change=80, none=1, error=1
+    run_2: total=107, revise=13, change=91, none=3, error=0
+    run_3: total=98, revise=11, change=84, none=2, error=1
+    TOTALS: {'revise': 38, 'change_type': 255, 'flip_polarity': 0, 'remove': 0, 'none': 6, 'error': 2, 'unknown': 0, 'total': 301}
+
+  social_norms:
+    run_1: total=9, revise=2, change=7, none=0, error=0
+    run_2: total=15, revise=3, change=12, none=0, error=0
+    run_3: total=12, revise=3, change=9, none=0, error=0
+    TOTALS: {'revise': 8, 'change_type': 28, 'flip_polarity': 0, 'remove': 0, 'none': 0, 'error': 0, 'unknown': 0, 'total': 36}

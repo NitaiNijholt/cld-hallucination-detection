@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Prompt Sensitivity Analysis: Relationship between semantic distance and output variance}
+\label{tab:sensitivity_analysis}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Prompt} & \textbf{Cosine Distance} & \textbf{F1 Std} & \textbf{Precision Std} & \textbf{Recall Std} \\
+ & (from Baseline) & (Output Var.) & & \\
+\midrule
+Baseline & 0.0000 & 0.002633 & 0.001950 & 0.002594 \\
+CoT & 0.0185 & 0.001567 & 0.001156 & 0.001981 \\
+Mechanistic & 0.3160 & 0.004261 & 0.003393 & 0.001297 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Cosine distance computed using all-mpnet-base-v2 embeddings (Song et al., 2020).
+\item Output variance: Standard deviation of metric across experimental runs.
+\end{tablenotes}
+\end{table}

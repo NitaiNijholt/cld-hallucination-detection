@@ -1,0 +1,30 @@
+\begin{table}[H]
+\centering
+\begin{minipage}{\linewidth}
+\centering
+\caption{LLM Generation Metrics: Two Enrichment Scenarios (Aggregate and Per-CLD)}
+\label{tab:enriched_gt}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+& \textbf{Original} & \multicolumn{2}{c}{\textbf{Scenario 1: Enriched GT}} & \multicolumn{2}{c}{\textbf{Scenario 2: LLM+DR System}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+\textbf{Dataset} & \textbf{F1} & \textbf{F1} & \textbf{FPs $\to$ TP} & \textbf{F1} & \textbf{FNs found} \\
+\midrule
+\textbf{Aggregate} & 0.267 & 0.705 (+163\%) & 111/178 (62\%) & 0.779 (+191\%) & 27/63 (43\%) \\
+\midrule
+Depressive & 0.500 & 0.667 (+33\%) & 14/50 (28\%) & 0.687 (+37\%) & 2/6 (33\%) \\
+Social Norms & 0.455 & 0.692 (+52\%) & 4/6 (67\%) & 0.828 (+82\%) & 3/6 (50\%) \\
+Older Persons & 0.113 & 0.722 (+540\%) & 93/122 (76\%) & 0.813 (+621\%) & 22/51 (43\%) \\
+\bottomrule
+\end{tabular}}
+\begin{tablenotes}
+\small
+\item \textit{Scenario 1 (Enriched GT):} Promotes FP edges with DR evidence to TP. Tests: ``What if experts missed valid relationships?''
+\item \textit{Scenario 2 (LLM+DR System):} Scenario 1 + DR discovers FN edges with literature support. Tests: ``What could a complete LLM+DR pipeline achieve?''
+\item \textit{Aggregate confusion matrices:} Original: TP=44, FP=178, FN=63. Scenario 1: TP=155, FP=67, FN=63. Scenario 2: TP=182, FP=67, FN=36.
+\end{tablenotes}
+\end{threeparttable}
+\end{minipage}
+\end{table}

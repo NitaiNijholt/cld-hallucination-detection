@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\caption{Cosine Distance Matrix between Prompt Variants}
+\label{tab:prompt_distance_matrix}
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{Baseline} & \textbf{CoT} & \textbf{Mechanistic} \\
+\midrule
+\textbf{Baseline} & 0.0000 & 0.0185 & 0.3160 \\
+\textbf{CoT} & 0.0185 & -0.0000 & 0.3433 \\
+\textbf{Mechanistic} & 0.3160 & 0.3433 & -0.0000 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Distance = 1 - cosine\_similarity. Model: all-mpnet-base-v2 (768-dim).
+\end{tablenotes}
+\end{table}

@@ -1,0 +1,30 @@
+\begin{table}[H]
+\centering
+\begin{minipage}{\linewidth}
+\centering
+\caption{Corrector Performance on Ground Truth Data Using Correctness-Based Validation (Baseline Prompt)}
+\label{tab:rq1b_groundtruth_correctness}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{CLD} & \textbf{F1 $\Delta$} & \textbf{Precision $\Delta$} & \textbf{Recall $\Delta$} & \textbf{Judge Score $\Delta$} & \textbf{Total Actions} & \textbf{Revise} & \textbf{Change Type} \\
+\midrule
+Social Norms & $-0.044$ [-0.127, +0.024] & $-0.114$ [-0.189, -0.051] & $+0.083$ [+0.000, +0.167] & $+0.083$ [+0.059, +0.095] & $11.0$ [8.0, 14.0] & $2.3$ [2.0, 3.0] & $8.7$ [6.0, 12.0] \\
+Depressive & $-0.036$ [-0.041, -0.032] & $-0.043$ [-0.047, -0.039] & $+0.029$ [+0.029, +0.029] & $+0.100$ [+0.095, +0.105] & $27.0$ [25.0, 28.0] & $14.7$ [14.0, 16.0] & $12.3$ [11.0, 14.0] \\
+Emergency Dept & $+0.030$ [+0.024, +0.038] & $+0.010$ [+0.007, +0.014] & $+0.131$ [+0.106, +0.151] & $+0.079$ [+0.075, +0.084] & $99.7$ [94.0, 107.0] & $23.7$ [19.0, 26.0] & $76.0$ [68.0, 81.0] \\
+\midrule
+Macro Avg & $-0.017$ [-0.044, +0.030] & $-0.049$ [-0.114, +0.010] & $+0.081$ [+0.029, +0.131] & $+0.087$ [+0.079, +0.100] & $45.9$ [11.0, 99.7] & $13.6$ [2.3, 23.7] & $32.3$ [8.7, 76.0] \\
+\bottomrule
+\end{tabular}}
+\end{threeparttable}
+\vspace{0.5em}
+\footnotesize
+\textit{Note.} Results show change in performance ($\Delta$) from pre- to post-correction (3 runs per CLD).
+F1 $\Delta$ = change in F1 score (Post-Pre); Precision $\Delta$, Recall $\Delta$, Judge Score $\Delta$ = corresponding changes.
+Total Actions = Revise + Change (successful corrections only); Revise = motivation revisions; Change Type = edge type changes.
+Values presented as mean [min, max] across 3 runs per CLD per uncertainty reporting rule. Macro average shows mean of CLD means [min, max] across CLDs.\par
+\textit{Efficacy (blocked).} One-sample Wilcoxon signed-rank test of median(F1 $\Delta$)=0 on block-level values (blocks=(CLD, run), n=9): p=0.301, $r_{rb}=-0.42$.
+
+\end{minipage}
+\end{table}

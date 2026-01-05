@@ -1,0 +1,28 @@
+================================================================================
+RECALCULATED METRICS (using judge_score instead of judge_verdict)
+================================================================================
+
+Dataset:
+  Total samples: 1634
+  Hallucinated: 817 (50.0%)
+  Truthful: 817 (50.0%)
+
+Confusion Matrix (using score threshold = 0.5):
+  TP (caught hallucinations): 702
+  FP (false alarms): 87
+  TN (correct truthful): 730
+  FN (missed hallucinations): 115
+
+Performance Metrics:
+  Accuracy: 87.6% (1432/1634)
+  Precision: 0.890 (702/789 of flagged items were actual hallucinations)
+  Recall: 85.9% (702/817 of hallucinations caught)
+  F1-Score: 0.874
+  Specificity: 89.4% (730/817 of truthful answers correctly identified)
+
+Comparison with Original Results:
+  Original Accuracy (using verdict): 87.6%
+  New Accuracy (using score): 87.6%
+  Improvement: 0.0%
+
+================================================================================

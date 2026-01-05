@@ -1,0 +1,70 @@
+# RQ1 Phase 0: Generate Clean Base CLDs
+#
+# PURPOSE: Generate 6 clean base CLD sessions without corruption or judging
+# These will be cloned in Phase 1 for different corruption rates
+#
+# OUTPUT: 6 base sessions (2 CLDs × 3 runs)
+# These sessions will be saved and reused across multiple experiments
+
+experiment_name: "RQ1 Phase 0 - Generate Base CLDs"
+
+# 3 runs for statistical robustness
+runs: 3
+
+# 2 CLDs from different health contexts
+excel_files:
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+  - Social_norms_and_obesity_prevalence.xlsx
+  -
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+param_grid:
+  # Generator configuration
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  # Corruptor config (not used in Phase 0 but required by system)
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  # Judge config (not used in Phase 0 but required by system)
+  judge_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.3
+  
+  # NO corruption in Phase 0 (clean base CLDs)
+  corruption_rate: [0.0]
+  
+  # NO judging in Phase 0
+  judge_edges: [false]
+  num_judges: [1]
+  judge_models: [[]]
+  
+  # Experimental settings
+  parallel: [true]
+  max_workers: [3]
+  citation_search_provider: ["brave"]
+  
+  # Enable CI metrics (needed for RQ2!)
+  embedding_enable: [true]
+  ci_fetch_reuse: [true]
+  
+  # Output settings
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  export_json: [true]
+  
+  # Other settings
+  dev_mode: [false]
+  load_env: [true]
+  run_correction: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  node_comparison_enable: [false]

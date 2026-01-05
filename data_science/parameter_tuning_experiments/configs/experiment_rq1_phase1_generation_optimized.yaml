@@ -1,0 +1,84 @@
+# RQ1 Phase 1: Generation Only (OPTIMIZED)
+# Generates 12 CLDs (2 CLDs × 2 corruption rates × 3 runs) WITHOUT judging
+# Saves session IDs for Phase 2 judging (7 strategies per session = 84 total)
+#
+# COST-OPTIMIZED DESIGN:
+# - Excludes largest CLD (1,100 edges) to control costs
+# - Uses 2 CLDs with different sizes (110 + 500 edges)
+# - 3 runs for statistical robustness
+# - Total cost: ~$194 (affordable for thesis)
+#
+# STATISTICAL RATIONALE:
+# - Average 305 edges/CLD → 3 runs × 305 = 915 edges per (CLD, rate, strategy) condition
+# - But heterogeneous gets all edges from both CLDs: 1,830 edges total per condition
+# - Sufficient for power > 0.99 to detect Δ F1 ≥ 0.03
+# - Bootstrap CIs: ±0.017 (excellent precision)
+# - Total edges across all conditions: ~25,620
+
+experiment_name: "RQ1 Phase 1 - CLD Generation (Optimized: 2 CLDs × 3 Runs)"
+
+# 3 runs for statistical reliability
+runs: 3
+
+# Test both corruption scenarios
+corruption_rates: 
+  - 0.5   # Mixed scenario (50% corrupted, 50% genuine)
+  - 1.0   # All corrupted (baseline test)
+
+# 2 CLDs with different characteristics
+# - Small (110 edges): Depressive symptoms
+# - Medium (500 edges): Social norms
+# - Omits large CLD (1,100 edges) to control costs
+excel_files:
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+  - Social_norms_and_obesity_prevalence.xlsx
+
+# Fixed generator configuration
+generator_config:
+  provider: openai
+  model: gpt-4.1
+  temperature: 0.7
+
+# Corruptor: Mistral 7B Instruct (different architecture from all judges)
+# - Not based on Llama 3.1 (unlike Sonar Pro)
+# - Ensures judges cannot recognize patterns from architectural similarity
+corruptor_config:
+  provider: perplexity
+  model: mistral-7b-instruct
+  temperature: 0.7
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Parameter grid: Just corruption rates (judging happens in Phase 2)
+param_grid:
+  - corruption_rate: [0.5, 1.0]
+
+# CRITICAL: No judging in Phase 1 (saves ~80% of tokens/cost)
+judge_edges: false
+
+# Experimental settings
+parallel: true
+max_workers: 3
+citation_search_provider: "brave"
+
+# Context-insensitive metrics (not needed for Phase 1)
+embedding_enable: false
+
+# Output settings
+plot_session_graph: false
+plot_validation_graph: false
+export_json: true
+
+# EXPECTED OUTPUT:
+# - 12 session IDs (2 CLDs × 2 rates × 3 runs)
+# - Session IDs saved in param_combo_mapping_exp_<timestamp>_<id>.csv
+# - Each session will be judged 7 times in Phase 2
+# - Total Phase 2 experiments: 12 × 7 = 84
+#
+# COST BREAKDOWN:
+# - Phase 1 (generation): ~$30-40
+# - Phase 2 (judging): ~$154
+# - Total: ~$184-194
+# - Time: ~14-16 hours total

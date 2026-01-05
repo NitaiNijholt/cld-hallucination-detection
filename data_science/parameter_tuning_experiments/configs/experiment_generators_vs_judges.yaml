@@ -1,0 +1,63 @@
+# experiment_generators_vs_judges.yaml
+
+param_grid:
+  # Basic toggles
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+
+  # 3 x 3 grid over generator and judge models
+  generator_config:
+    - { provider: "openai",    model: "gpt-4.1" }
+    - { provider: "anthropic", model: "claude-4-sonnet-20250514" }
+    - { provider: "openai",    model: "gpt-5" }
+
+  # Keep corruptor fixed to reduce variables (change if you want a 3x3xK)
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4.1" }
+
+  judge_config:
+    - { provider: "openai",    model: "gpt-4.1" }
+    - { provider: "anthropic", model: "claude-4-sonnet-20250514" }
+    - { provider: "openai",    model: "gpt-5" }
+
+  # Core evaluation options
+  corruption_rate: [0.0]
+  judge_edges: [true]
+  judge_models: [["claude-4-sonnet-20250514"]]
+  num_judges: [1]
+
+  # Corrector settings
+  run_correction: [true, false]
+  correction_rounds: [1]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+
+  # LLM hyperparameters
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7]
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.7]
+  judge_top_p: [1.0]
+
+  # Parallelism
+  parallel: [true]
+  max_workers: [3]
+
+  # Environment and plotting
+  load_env: [true]
+  plot_session_graph: [true]
+  plot_validation_graph: [true]
+
+  # Final comparison/plotting settings
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+
+  # Metadata
+  experiment_description: ["Generators_vs_Judges_grid"]
+  output_json_prefix: ["gen_vs_judge"]
+  compare_variable_overlap: [false]
+
+# How many repeats per param combo
+runs: 1

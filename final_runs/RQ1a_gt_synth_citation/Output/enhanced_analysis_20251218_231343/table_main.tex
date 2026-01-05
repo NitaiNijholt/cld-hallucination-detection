@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\caption{RQ1a: Judge Performance on Corruption Detection (by CLD and Prompt)}
+\label{tab:rq1a_main}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{CLD} & \textbf{Prompt} & \textbf{N} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{AUC} & \textbf{r$_{pb}$} \\
+\midrule
+emergency department & Baseline & 3 & 0.226±0.001 & 0.988±0.008 & 0.368±0.002 & 0.444 & 0.039 \\
+ & CoT & 3 & 0.228±0.001 & 0.990±0.006 & 0.371±0.002 & 0.451 & 0.024 \\
+ & Mech_Lit & 3 & 0.230±0.001 & 0.987±0.006 & 0.372±0.002 & 0.433 & 0.039 \\
+ & Mechanistic & 3 & 0.229±0.002 & 0.984±0.004 & 0.371±0.002 & 0.431 & 0.041 \\
+\midrule
+social norms & Baseline & 3 & 0.261±0.003 & 1.000±0.000 & 0.414±0.004 & 0.672 & -0.266 \\
+ & CoT & 3 & 0.258±0.001 & 1.000±0.000 & 0.411±0.002 & 0.696 & -0.288 \\
+ & Mech_Lit & 3 & 0.266±0.004 & 0.987±0.022 & 0.420±0.007 & 0.622 & -0.216 \\
+ & Mechanistic & 3 & 0.264±0.006 & 1.000±0.000 & 0.417±0.007 & 0.634 & -0.231 \\
+\midrule
+depressive & Baseline & 3 & 0.293±0.001 & 1.000±0.000 & 0.453±0.002 & 0.510 & -0.027 \\
+ & CoT & 3 & 0.292±0.001 & 1.000±0.000 & 0.452±0.001 & 0.485 & -0.011 \\
+ & Mech_Lit & 3 & 0.294±0.002 & 1.000±0.000 & 0.454±0.003 & 0.463 & 0.025 \\
+ & Mechanistic & 3 & 0.294±0.003 & 1.000±0.000 & 0.455±0.003 & 0.477 & 0.004 \\
+\midrule
+\bottomrule
+\end{tabular}
+\end{table}

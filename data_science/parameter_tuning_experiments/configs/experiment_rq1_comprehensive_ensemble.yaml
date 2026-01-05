@@ -1,0 +1,158 @@
+# RQ1 Comprehensive Ensemble Comparison Experiment
+# Tests all combinations of judging strategies:
+# - Serial (1 judge) for each model
+# - Homogeneous parallel (3x same model) for each model  
+# - Heterogeneous parallel (3 different models)
+#
+# CORRUPTOR: Mistral 7B Instruct via Perplexity API
+# - Completely different architecture from Sonar Pro (Llama-based)
+# - Ensures judges cannot recognize patterns from architectural similarity
+
+experiment_name: "RQ1 - Comprehensive Judge Strategy Comparison"
+
+# Multiple runs for statistical robustness
+runs: 3
+
+# Test both corruption scenarios
+corruption_rates: 
+  - 0.5   # Mixed scenario (50% corrupted, 50% genuine)
+  - 1.0   # All corrupted (baseline test)
+
+# Ground truth CLD(s) to test on
+excel_files:
+  - Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx
+
+# Fixed generator configuration
+generator_config:
+  provider: openai
+  model: gpt-4.1
+  temperature: 0.7
+
+# Corruptor: Mistral 7B Instruct (Mistral AI architecture)
+# - Different from all judges (GPT-4.1, Claude-3.7, Sonar Pro/Llama)
+# - Smaller model but different enough to avoid pattern recognition
+# - Good at creative text generation for plausible corruptions
+corruptor_config:
+  provider: perplexity
+  model: mistral-7b-instruct
+  temperature: 0.7
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Parameter grid: 7 different judging strategies
+param_grid:
+  
+  # ==========================================
+  # SERIAL STRATEGIES (Baseline)
+  # ==========================================
+  
+  # Strategy 1: Serial GPT-4.1
+  - judge_config:
+      provider: openai
+      model: gpt-4.1
+      temperature: 0.3
+    num_judges: 1
+    judging_strategy: "serial_gpt4.1"
+    judge_approach: "per_citation_aggregate"
+  
+  # Strategy 2: Serial Claude-3.7-Sonnet
+  - judge_config:
+      provider: anthropic
+      model: claude-3-7-sonnet-20250219
+      temperature: 0.3
+    num_judges: 1
+    judging_strategy: "serial_claude3.7"
+    judge_approach: "per_citation_aggregate"
+  
+  # Strategy 3: Serial Sonar-Pro (Perplexity)
+  - judge_config:
+      provider: perplexity
+      model: sonar-pro
+      temperature: 0.3
+    num_judges: 1
+    judging_strategy: "serial_sonar"
+    judge_approach: "per_citation_aggregate"
+  
+  # ==========================================
+  # HOMOGENEOUS PARALLEL STRATEGIES
+  # ==========================================
+  
+  # Strategy 4: Parallel 3x GPT-4.1 (homogeneous)
+  - judge_config:
+      - provider: openai
+        model: gpt-4.1
+        temperature: 0.3
+      - provider: openai
+        model: gpt-4.1
+        temperature: 0.3
+      - provider: openai
+        model: gpt-4.1
+        temperature: 0.3
+    num_judges: 3
+    judging_strategy: "parallel_3x_gpt4.1"
+    judge_approach: "per_citation_aggregate"
+  
+  # Strategy 5: Parallel 3x Claude-3.7-Sonnet (homogeneous)
+  - judge_config:
+      - provider: anthropic
+        model: claude-3-7-sonnet-20250219
+        temperature: 0.3
+      - provider: anthropic
+        model: claude-3-7-sonnet-20250219
+        temperature: 0.3
+      - provider: anthropic
+        model: claude-3-7-sonnet-20250219
+        temperature: 0.3
+    num_judges: 3
+    judging_strategy: "parallel_3x_claude3.7"
+    judge_approach: "per_citation_aggregate"
+  
+  # Strategy 6: Parallel 3x Sonar-Pro (homogeneous)
+  - judge_config:
+      - provider: perplexity
+        model: sonar-pro
+        temperature: 0.3
+      - provider: perplexity
+        model: sonar-pro
+        temperature: 0.3
+      - provider: perplexity
+        model: sonar-pro
+        temperature: 0.3
+    num_judges: 3
+    judging_strategy: "parallel_3x_sonar"
+    judge_approach: "per_citation_aggregate"
+  
+  # ==========================================
+  # HETEROGENEOUS PARALLEL STRATEGY
+  # ==========================================
+  
+  # Strategy 7: Parallel Heterogeneous (GPT + Claude + Sonar)
+  - judge_config:
+      - provider: openai
+        model: gpt-4.1
+        temperature: 0.3
+      - provider: anthropic
+        model: claude-3-7-sonnet-20250219
+        temperature: 0.3
+      - provider: perplexity
+        model: sonar-pro
+        temperature: 0.3
+    num_judges: 3
+    judging_strategy: "parallel_heterogeneous"
+    judge_approach: "per_citation_aggregate"
+
+# Experimental settings
+judge_edges: true
+parallel: true
+max_workers: 3
+citation_search_provider: "brave"
+
+# Context-insensitive metrics (for future RQ2)
+embedding_enable: false
+
+# Output settings
+plot_session_graph: false
+plot_validation_graph: false
+export_json: true

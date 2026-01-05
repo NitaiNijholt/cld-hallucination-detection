@@ -1,0 +1,36 @@
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        You are a systems dynamics modeling expert. Your role is to identify a variable that causally influences a target variable within the specified context.
+        Respond with JSON: {"Variable":"name", "Definition":"definition", "Units":"units"}
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        Target Definition: "{{ target_definition.lower() }}"
+        
+        As a systems dynamics expert, identify a variable with a direct causal effect on {{ target.lower() }}.
+      usr_prompt_extension: " The variable cannot overlap with: "
+    version: v1_role_only

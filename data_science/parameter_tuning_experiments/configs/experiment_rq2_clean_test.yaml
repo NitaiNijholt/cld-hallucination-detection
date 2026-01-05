@@ -1,0 +1,77 @@
+# RQ2 Clean Test - Single CLD with Full CI Metrics + Preloaded Nodes
+# Purpose: Generate edges with reduced hallucinations by preloading validation nodes
+# Models: gpt-4.1 (generator), gpt-5-nano (judge)
+
+param_grid:
+  # Basic settings
+  export_json: [true]
+  plot_graph: [false]  # Skip plotting for speed
+  dev_mode: [false]
+  
+  # Models - Updated per user request
+  generator_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  corruptor_config:
+    - { provider: "openai", model: "gpt-4o" }
+  
+  judge_config:
+    - { provider: "openai", model: "gpt-4.1" }
+  
+  # NO CORRUPTION - Get real edges only
+  corruption_rate: [0.0]  # No corruption for RQ2 analysis
+  
+  # JUDGING - ENABLED with gpt-4.1
+  judge_edges: [true]
+  judge_models: [["gpt-4.1"]]  # gpt-4.1 judge (supports logprobs)
+  num_judges: [1]
+  judge_temperature: [0.3]
+  
+  # CITATION
+  citation_search_provider: ["brave"]
+  
+  # NO CORRECTION (just testing metrics)
+  run_correction: [false]
+  
+  # ENABLE CI METRICS COMPUTATION
+  embedding_enable: [true]  # Make sure CI metrics are computed
+  ci_fetch_reuse: [true]  # Reuse citation fetches
+  ci_chunk_chars_override: [null]  # Use default chunking
+  ci_overlap_ratio: [0.2]  # 20% overlap for cosine similarity
+  
+  # Temperatures
+  generator_temperature: [0.7]
+  corruptor_temperature: [0.7]
+  
+  # Parallelism - keep low for cleaner logs
+  parallel: [false]
+  max_workers: [1]
+  
+  # Environment
+  load_env: [true]
+  
+  # Plotting
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  
+  # Comparison
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  
+  # Node comparison
+  node_comparison_enable: [true]  # Enable to get edge data and CI metrics
+  
+  # Node generation mode - PRELOAD validation nodes to reduce hallucinations
+  preload_validation_variables: [true]  # Constrain LLM to generate edges only between ground truth nodes
+
+# SINGLE CLD - Use social norms (larger dataset for better analysis)
+excel_files:
+  - "Social_norms_and_obesity_prevalence.xlsx"
+
+# SINGLE RUN
+runs: 1
+
+# Use specific prompt file (not folder!)
+prompt_files:
+  - "prompts_Nitai_C.yaml"

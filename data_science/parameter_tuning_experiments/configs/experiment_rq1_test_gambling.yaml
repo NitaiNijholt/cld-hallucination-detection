@@ -1,0 +1,65 @@
+# RQ1 Test: Verify Online Gambling CLD Works
+#
+# PURPOSE: Single test run to verify the fixed Online Gambling CLD works correctly
+# This is a quick verification before running the full experiment
+
+experiment_name: "RQ1 Test - Online Gambling CLD Verification"
+
+# Single run for quick test
+runs: 1
+
+# Just the Online Gambling CLD
+excel_files:
+  - Online_Gambeling_Market_Submodel.xlsx
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+param_grid:
+  # Generator configuration
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+      temperature: 0.7
+  
+  # Corruptor config (not used but required by system)
+  corruptor_config:
+    - provider: perplexity
+      model: mistral-7b-instruct
+      temperature: 0.7
+  
+  # Judge config (not used but required by system)
+  judge_config:
+    - provider: anthropic
+      model: claude-3-7-sonnet-20250219
+      temperature: 0.3
+  
+  # NO corruption - just verify CLD generation works
+  corruption_rate: [0.0]
+  
+  # NO judging - just verify CLD generation works
+  judge_edges: [false]
+  num_judges: [1]
+  judge_models: [[]]
+  
+  # Experimental settings
+  parallel: [true]
+  max_workers: [3]
+  citation_search_provider: ["brave"]
+  
+  # Enable CI metrics
+  embedding_enable: [true]
+  ci_fetch_reuse: [true]
+  
+  # Output settings
+  plot_session_graph: [true]
+  plot_validation_graph: [false]
+  export_json: [true]
+  
+  # Other settings
+  dev_mode: [false]
+  load_env: [true]
+  run_correction: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  node_comparison_enable: [false]

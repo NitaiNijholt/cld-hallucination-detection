@@ -1,0 +1,75 @@
+# Remaining Node Generation Prompt Ablation Study
+# 3 prompts × 3 CLDs × 5 runs = 45 total experiments
+# This continues from where the full study crashed (after V0-V3 completed)
+
+experiment_name: "node_ablation_remaining_v4_v5_v6"
+
+# REMAINING 3 PROMPT VARIANTS (V4, V5, V6)
+# Paths are relative to prompts_folder (parameter_tuning_experiments/alternative_prompts)
+prompt_files:
+  - "prompts_Node_V4_CoT_User.yaml"       # V4: Chain-of-Thought in user prompt
+  - "prompts_Node_V5_Nitai_C.yaml"       # V5: Combined (role + CoT system + CoT user + constraints)
+  - "prompts_Node_V6_Andrew.yaml"        # V6: Andrew's enhanced (role + constraints + context awareness)
+
+# SAME 3 GROUND TRUTH CLDs
+excel_files:
+  - "Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx"
+  - "Social_norms_and_obesity_prevalence.xlsx"
+  - "older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx"
+
+# PARAMETER GRID (identical to full study)
+param_grid:
+  export_json: [true]
+  plot_graph: [true]
+  dev_mode: [false]
+  
+  # NODE GENERATION ONLY MODE
+  node_generation_only: [true]
+  
+  # LLM CONFIGS
+  generator_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  corruptor_config:
+    - provider: openai
+      model: gpt-4.1
+  
+  judge_config:
+    - provider: openai
+      model: gpt-5-nano
+  
+  # VARIABLE GENERATION SETTINGS
+  preload_validation_variables: [false]
+  
+  # CONTEXT INFERENCE
+  infer_context_from_validation: [true]
+  
+  # TEMPERATURES
+  generator_temperature: [0.7]
+  
+  # CORRUPTION - Disabled
+  corruption_rate: [0.0]
+  
+  # JUDGING - Disabled
+  judge_edges: [false]
+  judge_models: [["gpt-5-nano"]]
+  num_judges: [1]
+  judge_temperature: [0.0]
+  
+  # CORRECTION - Disabled
+  run_correction: [false]
+  corrector_models: [["claude-4-sonnet-20250514"]]
+  corrector_temperature: [0.4]
+  
+  # NODE COMPARISON SETTINGS
+  node_comparison_enable: [true]
+  node_comparison_mode: ["llm_batch"]
+  node_comparison_cosine_percentile: [90]
+  node_comparison_cosine_model: ["text-embedding-3-small"]
+  node_comparison_cosine_dimensions: [1536]
+
+# 5 runs per prompt per CLD
+runs: 5
+
+# Expected runtime: ~4 minutes × 45 = ~3 hours

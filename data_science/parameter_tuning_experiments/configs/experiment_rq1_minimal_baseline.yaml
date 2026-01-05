@@ -1,0 +1,110 @@
+# RQ1 Minimal Experiment: "Judging Works" Baseline
+# 
+# PURPOSE:
+# - Establish that LLM-as-judge can detect hallucinations
+# - Show ensemble voting improves performance (but increases cost)
+# - Quantify baseline performance and cost for RQ2/RQ3 comparison
+# - Keep thesis focused on RQ2/RQ3 (smart test-time compute)
+#
+# DESIGN RATIONALE:
+# - 1 CLD: Social norms (500 edges, substantial but not too large)
+# - 2 runs: Minimum for confidence intervals and reproducibility
+# - 1 corruption rate: 0.5 (realistic mixed scenario)
+# - 2 judge strategies: Serial baseline + Ensemble (show improvement)
+#
+# COST: ~$95 | TIME: ~6 hours
+# OUTPUT: 4 experiments (1 CLD × 2 runs × 1 rate × 2 strategies, but Phase 2)
+#
+# THESIS CONTRIBUTION:
+# "We demonstrate LLM-as-judge achieves F1=0.72 (serial) to 0.78 (ensemble)
+#  at detecting hallucinations in CLD edges, but ensemble judging costs 3×
+#  more ($X vs $Y per CLD), motivating our investigation of efficient
+#  selective judging using context-insensitive metrics (RQ2/RQ3)."
+
+experiment_name: "RQ1 Minimal - Judging Baseline"
+
+# 2 runs for statistical validity (minimum for CIs)
+runs: 2
+
+# Single corruption rate (realistic mixed scenario)
+corruption_rates: 
+  - 0.5   # 50% edges corrupted, 50% genuine
+
+# Single CLD (substantial size, well-documented)
+excel_files:
+  - Social_norms_and_obesity_prevalence.xlsx
+
+# Generator configuration
+generator_config:
+  provider: openai
+  model: gpt-4.1
+  temperature: 0.7
+
+# Corruptor: Mistral 7B (different architecture from judges)
+corruptor_config:
+  provider: perplexity
+  model: mistral-7b-instruct
+  temperature: 0.7
+
+# Prompt configuration
+prompt_files:
+  - prompts_Nitai_C.yaml
+
+# Parameter grid: 2 judging strategies ONLY
+param_grid:
+  
+  # Strategy 1: Serial Baseline (Single Judge)
+  # Best individual model from literature review
+  - judge_config:
+      provider: anthropic
+      model: claude-3-7-sonnet-20250219
+      temperature: 0.3
+    num_judges: 1
+    judging_strategy: "serial_baseline"
+    judge_approach: "per_citation_aggregate"
+  
+  # Strategy 2: Heterogeneous Ensemble (Show Improvement)
+  # 3 different models, majority voting
+  - judge_config:
+      - provider: openai
+        model: gpt-4.1
+        temperature: 0.3
+      - provider: anthropic
+        model: claude-3-7-sonnet-20250219
+        temperature: 0.3
+      - provider: perplexity
+        model: sonar-pro
+        temperature: 0.3
+    num_judges: 3
+    judging_strategy: "ensemble_voting"
+    judge_approach: "per_citation_aggregate"
+
+# Enable judging
+judge_edges: true
+
+# Experimental settings
+parallel: true
+max_workers: 3
+citation_search_provider: "brave"
+
+# Context-insensitive metrics (CRITICAL for RQ2!)
+embedding_enable: true
+ci_fetch_reuse: true
+
+# Output settings
+plot_session_graph: false
+plot_validation_graph: false
+export_json: true
+
+# EXPECTED OUTPUT:
+# Phase 1: 2 sessions generated (1 CLD × 2 runs)
+# Phase 2: 4 judging experiments (2 sessions × 2 strategies)
+#
+# Results will show:
+# 1. Serial baseline: F1 ≈ 0.70-0.75, Cost = $X/CLD
+# 2. Ensemble voting: F1 ≈ 0.75-0.80, Cost = $3X/CLD
+# 3. Conclusion: Ensemble better but expensive → need smart deployment
+#
+# This directly motivates RQ2:
+# "Can we use CI metrics to predict when judging is needed,
+#  enabling selective (cost-effective) deployment?"

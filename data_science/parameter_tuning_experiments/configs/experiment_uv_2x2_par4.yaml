@@ -1,0 +1,39 @@
+# Real 2x2 sweep: generator x judge (OpenAI GPT-5 vs Claude Sonnet 4)
+# Parallel execution with 4 workers
+param_grid:
+  export_json: [true]
+  plot_graph: [false]
+  dev_mode: [false]
+  load_env: [true]
+  parallel: [true]
+  max_workers: [4]
+  plot_session_graph: [false]
+  plot_validation_graph: [false]
+  only_cited_edges: [false]
+  only_consistent_edges: [false]
+  filter_validation_nodes_to_session_nodes: [true]
+  experiment_description: ["uv_real_multirun_2x2_par4"]
+  output_json_prefix: ["uv_real_multirun_2x2_par4"]
+  compare_variable_overlap: [false]
+
+  generator_config:
+    - { provider: "openai",    model: "gpt-5" }
+    - { provider: "anthropic", model: "claude-sonnet-4-20250514" }
+  judge_config:
+    - { provider: "openai",    model: "gpt-5" }
+    - { provider: "anthropic", model: "claude-sonnet-4-20250514" }
+
+  corruptor_config:
+    - { provider: "openai", model: "gpt-5" }
+
+  corruption_rate: [0.0]
+  generator_temperature: [0.7]
+  generator_top_p: [1.0]
+  corruptor_temperature: [0.7]
+  corruptor_top_p: [1.0]
+  judge_temperature: [0.7]
+  judge_top_p: [1.0]
+
+  judge_edges: [false]
+
+runs: 1
