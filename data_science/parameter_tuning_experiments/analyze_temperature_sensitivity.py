@@ -172,12 +172,23 @@ def infer_temperature_from_order(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def calc_ci_halfwidth(values):
+    """Calculate 95% CI half-width using t-distribution."""
+    n = len(values)
+    if n <= 1:
+        return 0.0
+    std = np.std(values, ddof=1)
+    sem = std / np.sqrt(n)
+    ci_hw = sem * stats.t.ppf(0.975, n - 1)
+    return float(ci_hw)
+
+
 def compute_statistics(df: pd.DataFrame) -> dict:
     """
     Compute per-temperature, per-CLD statistics.
     
     Returns:
-        dict with nested structure: {temp: {cld: {mean, std, n, values}}}
+        dict with nested structure: {temp: {cld: {mean, std, ci_hw, n, values}}}
     """
     stats_dict = {}
     
@@ -193,6 +204,7 @@ def compute_statistics(df: pd.DataFrame) -> dict:
                 stats_dict[temp][cld] = {
                     'mean': float(np.mean(f1_values)),
                     'std': float(np.std(f1_values)),
+                    'ci_hw': calc_ci_halfwidth(f1_values),
                     'n': len(f1_values),
                     'values': f1_values.tolist()
                 }
@@ -200,6 +212,7 @@ def compute_statistics(df: pd.DataFrame) -> dict:
                 stats_dict[temp][cld] = {
                     'mean': None,
                     'std': None,
+                    'ci_hw': None,
                     'n': 0,
                     'values': []
                 }
@@ -210,11 +223,12 @@ def compute_statistics(df: pd.DataFrame) -> dict:
             stats_dict[temp]['overall'] = {
                 'mean': float(np.mean(all_f1)),
                 'std': float(np.std(all_f1)),
+                'ci_hw': calc_ci_halfwidth(all_f1),
                 'n': len(all_f1),
                 'values': all_f1.tolist()
             }
         else:
-            stats_dict[temp]['overall'] = {'mean': None, 'std': None, 'n': 0, 'values': []}
+            stats_dict[temp]['overall'] = {'mean': None, 'std': None, 'ci_hw': None, 'n': 0, 'values': []}
     
     return stats_dict
 
@@ -360,7 +374,7 @@ def generate_latex_table(stats_dict: dict, per_cld_anova: dict = None) -> str:
         r"\begin{threeparttable}",
         r"\begin{tabular}{lcccc}",
         r"\toprule",
-        r"\textbf{Temperature} & \multicolumn{4}{c}{\textbf{Edge F1 Score (Mean $\pm$ Std)}} \\",
+        r"\textbf{Temperature} & \multicolumn{4}{c}{\textbf{Edge F1 Score (Mean $\pm$ 95\% CI)}} \\",
         r"\cmidrule(lr){2-5}",
         r" & \textbf{Social Norms} & \textbf{Depressive} & \textbf{Emergency Dept} & \textbf{Overall} \\",
         r"\midrule"
@@ -370,8 +384,8 @@ def generate_latex_table(stats_dict: dict, per_cld_anova: dict = None) -> str:
         row_vals = []
         for key in ['social_norms', 'depressive', 'emergency_department', 'overall']:
             s = stats_dict[temp].get(key, {})
-            if s.get('mean') is not None and s.get('std') is not None:
-                row_vals.append(f"${s['mean']:.3f} \\pm {s['std']:.3f}$")
+            if s.get('mean') is not None and s.get('ci_hw') is not None:
+                row_vals.append(f"${s['mean']:.3f} \\pm {s['ci_hw']:.3f}$")
             else:
                 row_vals.append("--")
         
@@ -384,8 +398,8 @@ def generate_latex_table(stats_dict: dict, per_cld_anova: dict = None) -> str:
         r"\small",
         r"\item \textit{Note.} Edge F1 = $\frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}$ comparing generated edges against literature ground truth.",
         r"\item \textit{Design.} 5 temperatures $\times$ 3 runs $\times$ 3 CLDs = 45 total experiments. Seeds: 10, 20, 30 per temperature.",
-        r"\item \textit{Per-CLD columns:} Mean $\pm$ Std across 3 runs per CLD at each temperature.",
-        r"\item \textit{Overall column:} Mean $\pm$ Std computed across all 9 individual runs (3 CLDs $\times$ 3 runs) per temperature. The larger Std reflects variability both within and between CLDs.",
+        r"\item \textit{Per-CLD columns:} Mean $\pm$ 95\% CI across 3 runs per CLD at each temperature.",
+        r"\item \textit{Overall column:} Mean $\pm$ 95\% CI computed across all 9 individual runs (3 CLDs $\times$ 3 runs) per temperature. The larger CI reflects variability both within and between CLDs.",
     ])
     
     # Add per-CLD ANOVA results if available
