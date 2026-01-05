@@ -626,7 +626,7 @@ def generate_latex_table(
 \\vspace{{0.5em}}
 \\footnotesize
 \\textit{{Note.}} Ablation study comparing three corrector prompt variants (3 runs per CLD per prompt, 27 total experiments). 
-Aggregate row shows macro-averaged mean $\\pm$ std across CLDs.
+Aggregate row shows macro-averaged mean $\\pm$ 95\\% CI across CLDs.
 F1 $\\Delta$ = change in F1 score from pre- to post-correction; Judge $\\Delta$ = change in LLM judge score.
 Total Actions = Revise + Change Type (successful corrections only); Revise = motivation revisions; Change Type = edge type changes.
 Edges with no correction needed or API errors excluded (see Appendix for full breakdown).\\par

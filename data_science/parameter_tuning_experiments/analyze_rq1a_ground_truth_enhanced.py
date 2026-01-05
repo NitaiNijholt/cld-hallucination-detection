@@ -1068,7 +1068,8 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         )
     
     # FIGURE 1: Row 1 - Performance Metrics (1x3 layout)
-    fig1, axes1 = plt.subplots(1, 3, figsize=(18, 5))
+    fig1, axes1 = plt.subplots(1, 3, figsize=(20, 5))
+    fig1.subplots_adjust(wspace=0.35)
     
     # Recreate Panel 1: F1 Score (Left)
     ax1_split = axes1[0]
@@ -1222,7 +1223,8 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     plt.close(fig1)
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout)
-    fig2, axes2 = plt.subplots(1, 3, figsize=(18, 5))
+    fig2, axes2 = plt.subplots(1, 3, figsize=(20, 5))
+    fig2.subplots_adjust(wspace=0.35)
     
     # Recreate Panel 4: Precision vs Recall (with CLD markers)
     ax4_split = axes2[0]

@@ -1738,8 +1738,8 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     from matplotlib.lines import Line2D
     
     # FIGURE 1: Row 1 - Performance Metrics (1x3 layout)
-    fig1 = plt.figure(figsize=(18, 5))
-    gs1 = fig1.add_gridspec(1, 3, hspace=0.3, wspace=0.4)
+    fig1 = plt.figure(figsize=(20, 5))
+    gs1 = fig1.add_gridspec(1, 3, hspace=0.3, wspace=0.5)
     
     # Recreate Plot 1: F1 Scores
     ax1_split = fig1.add_subplot(gs1[0, 0])
@@ -1915,8 +1915,8 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     print(f"  ✓ Row 1 (Performance Metrics 1x3): {output_file_row1.name}")
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout - heatmap, score discrimination, and classification scores)
-    fig2 = plt.figure(figsize=(18, 5))
-    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.4)
+    fig2 = plt.figure(figsize=(20, 5))
+    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.5)
     
     # Recreate Plot 4: Corruption Type Heatmap
     ax4_split = fig2.add_subplot(gs2[0, 0])

@@ -12,7 +12,7 @@ generating scaling curves distinguished by:
 Outputs:
 - Excel file with raw data and aggregations
 - Publication-quality figures for thesis
-- LaTeX tables with mean ± 95% CI
+- LaTeX tables with mean (± 95% CI) per uncertainty reporting rule (N<30)
 
 Usage:
     python aggregate_time_cost_scaling.py --base_dir /path/to/final_runs --output_dir /path/to/output
@@ -460,8 +460,8 @@ def compute_comprehensive_stats(values: list) -> dict:
     """
     Compute comprehensive statistics for repeated measurements.
     
-    For n < 30, reports mean [min, max] as primary (assumption-free).
-    Also includes SD and 95% CI (t-distribution) for reference.
+    Reports mean ± 95% CI (t-distribution) as primary per uncertainty reporting rule.
+    Also includes SD, min, and max for reference.
     """
     values = [v for v in values if pd.notna(v) and not np.isnan(v) and not np.isinf(v)]
     n = len(values)
@@ -500,7 +500,7 @@ def compute_comprehensive_stats(values: list) -> dict:
         'ci_hw': float(ci_hw),
         'ci_lower': float(ci_lower),
         'ci_upper': float(ci_upper),
-        'latex_primary': f"{mean_val:.2f} [{min_val:.2f}, {max_val:.2f}]",
+        'latex_primary': f"{mean_val:.2f} ± {ci_hw:.2f}",
         'latex_std': f"{mean_val:.2f} ± {std_val:.2f}",
         'latex_ci': f"{mean_val:.2f} ± {ci_hw:.2f}"
     }
@@ -548,6 +548,9 @@ def aggregate_by_dimensions(df: pd.DataFrame) -> dict:
             row[f'{metric}_ci'] = ci_hw
             row[f'{metric}_ci_low'] = ci_low
             row[f'{metric}_ci_high'] = ci_high
+            # Add min/max for uncertainty rule (N<30)
+            row[f'{metric}_min'] = np.min(values) if values else np.nan
+            row[f'{metric}_max'] = np.max(values) if values else np.nan
         
         agg_judge_prompt.append(row)
     
@@ -572,6 +575,9 @@ def aggregate_by_dimensions(df: pd.DataFrame) -> dict:
             mean, ci_hw, ci_low, ci_high = calculate_95_ci(values)
             row[f'{metric}_mean'] = mean
             row[f'{metric}_ci'] = ci_hw
+            # Add min/max for uncertainty rule (N<30)
+            row[f'{metric}_min'] = np.min(values) if values else np.nan
+            row[f'{metric}_max'] = np.max(values) if values else np.nan
         
         agg_cld.append(row)
     
@@ -595,6 +601,9 @@ def aggregate_by_dimensions(df: pd.DataFrame) -> dict:
             mean, ci_hw, ci_low, ci_high = calculate_95_ci(values)
             row[f'{metric}_mean'] = mean
             row[f'{metric}_ci'] = ci_hw
+            # Add min/max for uncertainty rule (N<30)
+            row[f'{metric}_min'] = np.min(values) if values else np.nan
+            row[f'{metric}_max'] = np.max(values) if values else np.nan
         
         agg_model.append(row)
     
@@ -618,6 +627,9 @@ def aggregate_by_dimensions(df: pd.DataFrame) -> dict:
             mean, ci_hw, ci_low, ci_high = calculate_95_ci(values)
             row[f'{metric}_mean'] = mean
             row[f'{metric}_ci'] = ci_hw
+            # Add min/max for uncertainty rule (N<30)
+            row[f'{metric}_min'] = np.min(values) if values else np.nan
+            row[f'{metric}_max'] = np.max(values) if values else np.nan
         
         agg_overall.append(row)
     
@@ -763,7 +775,7 @@ def generate_scaling_figures(df: pd.DataFrame, aggregates: dict, output_dir: Pat
                    label=f'Linear: T = {slope:.2f}E + {intercept:.0f}\nR² = {r2:.3f}')
         
         ax.set_xlabel('Number of Edges (E)', fontsize=12)
-        ax.set_ylabel('Inference Time (s) ± 95% CI', fontsize=12)
+        ax.set_ylabel('Inference Time (s) (± 95% CI)', fontsize=12)
         ax.set_title(f'{judge_type.title()} Judging: Time vs Edges\nExpected: O(E) linear scaling', 
                     fontsize=12, fontweight='bold')
         ax.legend(loc='upper left', fontsize=10)
@@ -819,7 +831,7 @@ def generate_scaling_figures(df: pd.DataFrame, aggregates: dict, output_dir: Pat
                    label=f'Quadratic: T = {a:.2f}N² + {b:.1f}N + {c:.0f}\nR² = {r2_quad:.3f}')
         
         ax.set_xlabel('Number of Nodes (N)', fontsize=12)
-        ax.set_ylabel('Inference Time (s) ± 95% CI', fontsize=12)
+        ax.set_ylabel('Inference Time (s) (± 95% CI)', fontsize=12)
         ax.set_title(f'{judge_type.title()} Judging: Time vs Nodes\nExpected: O(N²) for dense CLDs (E = N×(N-1))', 
                     fontsize=12, fontweight='bold')
         ax.legend(loc='upper left', fontsize=10)
@@ -870,7 +882,7 @@ def generate_scaling_figures(df: pd.DataFrame, aggregates: dict, output_dir: Pat
                            f'{val:.1f}', ha='center', va='bottom', fontsize=8)
         
         ax.set_xlabel('Judge Type', fontsize=11)
-        ax.set_ylabel('Time per Edge (s) ± 95% CI', fontsize=11)
+        ax.set_ylabel('Time per Edge (s) (± 95% CI)', fontsize=11)
         ax.set_title('(A) Time Efficiency by Configuration', fontsize=12, fontweight='bold')
         ax.set_xticks(x + width)
         ax.set_xticklabels(['Correctness', 'Citation'])
@@ -897,7 +909,7 @@ def generate_scaling_figures(df: pd.DataFrame, aggregates: dict, output_dir: Pat
                          alpha=0.8, edgecolor='black', capsize=4)
         
         ax.set_xlabel('Judge Type', fontsize=11)
-        ax.set_ylabel('Cost per Edge (¢) ± 95% CI', fontsize=11)
+        ax.set_ylabel('Cost per Edge (¢) (± 95% CI)', fontsize=11)
         ax.set_title('(B) Cost per Edge (USD cents)', fontsize=12, fontweight='bold')
         ax.set_xticks(x + width)
         ax.set_xticklabels(['Correctness', 'Citation'])
@@ -924,7 +936,7 @@ def generate_scaling_figures(df: pd.DataFrame, aggregates: dict, output_dir: Pat
                          alpha=0.8, edgecolor='black', capsize=4)
         
         ax.set_xlabel('Judge Type', fontsize=11)
-        ax.set_ylabel('Tokens per Edge ± 95% CI', fontsize=11)
+        ax.set_ylabel('Tokens per Edge (± 95% CI)', fontsize=11)
         ax.set_title('(C) Tokens per Edge', fontsize=12, fontweight='bold')
         ax.set_xticks(x + width)
         ax.set_xticklabels(['Correctness', 'Citation'])
@@ -1104,7 +1116,7 @@ def generate_latex_tables(df: pd.DataFrame, aggregates: dict, output_dir: Path):
         lines = []
         lines.append("\\begin{table}[htbp]")
         lines.append("\\centering")
-        lines.append("\\caption{Inference Time and Cost by Judge Type and Prompt Variant (mean $\\pm$ 95\\% CI)}")
+        lines.append("\\caption{Inference Time and Cost by Judge Type and Prompt Variant (mean (± 95% CI))}")
         lines.append("\\label{tab:time_cost_by_config}")
         lines.append("\\begin{tabular}{llrrrrr}")
         lines.append("\\toprule")
@@ -1143,7 +1155,7 @@ def generate_latex_tables(df: pd.DataFrame, aggregates: dict, output_dir: Path):
         lines = []
         lines.append("\\begin{table}[htbp]")
         lines.append("\\centering")
-        lines.append("\\caption{Time and Cost Scaling by CLD Size (mean $\\pm$ 95\\% CI)}")
+        lines.append("\\caption{Time and Cost Scaling by CLD Size (mean (± 95% CI))}")
         lines.append("\\label{tab:scaling_by_cld}")
         lines.append("\\begin{tabular}{llrrrr}")
         lines.append("\\toprule")
@@ -1186,7 +1198,7 @@ def generate_latex_tables(df: pd.DataFrame, aggregates: dict, output_dir: Path):
         lines = []
         lines.append("\\begin{table}[htbp]")
         lines.append("\\centering")
-        lines.append("\\caption{Model Efficiency Comparison (mean $\\pm$ 95\\% CI)}")
+        lines.append("\\caption{Model Efficiency Comparison (mean (± 95% CI))}")
         lines.append("\\label{tab:model_comparison}")
         lines.append("\\begin{tabular}{llrrrrr}")
         lines.append("\\toprule")
@@ -1645,7 +1657,7 @@ def generate_combined_scaling_figure(df_judge: pd.DataFrame, df_gen: pd.DataFram
                    label=f'DR fit: {slope:.1f}E (R²={r_value**2:.3f})')
     
     ax.set_xlabel('Number of Edges (E)', fontsize=12)
-    ax.set_ylabel('Inference Time (s) ± 95% CI [log scale]', fontsize=12)
+    ax.set_ylabel('Inference Time (s) (± 95% CI) [log scale]', fontsize=12)
     ax.set_title('Pipeline Stage Time Scaling\nAll stages show O(E) linear scaling', fontsize=12, fontweight='bold')
     ax.legend(loc='upper left', fontsize=9)
     ax.set_yscale('log')
@@ -1715,7 +1727,7 @@ def generate_combined_scaling_figure(df_judge: pd.DataFrame, df_gen: pd.DataFram
         ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + ci + max(means)*0.02,
                label_text, ha='center', va='bottom', fontsize=10, fontweight='bold')
     
-    ax.set_ylabel('Time per Edge (s) ± 95% CI', fontsize=12)
+    ax.set_ylabel('Time per Edge (s) (± 95% CI)', fontsize=12)
     ax.set_title('Per-Edge Time Comparison\n(Constant for O(E) scaling)', fontsize=12, fontweight='bold')
     ax.set_xticks(x)
     ax.set_xticklabels(categories, fontsize=10, rotation=15, ha='right')
