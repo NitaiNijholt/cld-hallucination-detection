@@ -101,11 +101,12 @@ EXPERIMENTS = {
         'name': 'RQ1a_gt_synth_citation',
         'judge_type': 'citation',
         'is_ground_truth': False,
-        'has_mech_variants': False,  # Only 'Mechanistic' in filename
+        'has_mech_variants': True,  # Has mechanistic and mechanistic_lit
         'prompts': {
             'Baseline': ('prompts_citation_baseline.yaml', 'judgeCitation'),
             'CoT': ('prompts_citation_cot.yaml', 'judgeCitation'),
-            'Mechanistic': ('prompts_citation_mechanistic.yaml', 'judgeCitation')
+            'Mechanistic': ('prompts_citation_mechanistic.yaml', 'judgeCitation'),
+            'Mechanistic_Lit': ('prompts_citation_mechanistic.yaml', 'judgeCitation')
         }
     },
     'Corr. Correctness': {

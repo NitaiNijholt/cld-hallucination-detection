@@ -767,12 +767,58 @@ def generate_baseline_table(
     
     # Build table rows
     import numpy as np
-    from scipy import stats as sp_stats
-    
-    def calc_ci_val(std_val, n):
-        if n > 1 and pd.notna(std_val):
-            sem = std_val / np.sqrt(n)
-            return sem * sp_stats.t.ppf(0.975, n - 1)
+
+    # Two-sided 95% t critical values (0.975 quantile) for small df.
+    # We keep this local to avoid a hard dependency on SciPy for thesis reproduction.
+    _T_CRIT_975 = {
+        1: 12.706204736432095,
+        2: 4.302652729911275,
+        3: 3.182446305284263,
+        4: 2.7764451051977987,
+        5: 2.570581835636305,
+        6: 2.4469118511449692,
+        7: 2.3646242510102993,
+        8: 2.306004135204166,
+        9: 2.2621571627409915,
+        10: 2.2281388519649385,
+        11: 2.200985160082949,
+        12: 2.1788128296634177,
+        13: 2.1603686564610127,
+        14: 2.1447866879169273,
+        15: 2.131449545559323,
+        16: 2.1199052992210112,
+        17: 2.1098155778331806,
+        18: 2.10092204024096,
+        19: 2.093024054408263,
+        20: 2.0859634472658364,
+        21: 2.079613844727662,
+        22: 2.0738730679040147,
+        23: 2.0686576104190406,
+        24: 2.0638985616280205,
+        25: 2.059538552753294,
+        26: 2.055529438642871,
+        27: 2.0518305164802833,
+        28: 2.048407141795244,
+        29: 2.045229642132703,
+        30: 2.0422724563012373,
+    }
+
+    def _t_crit_975(df: int) -> float:
+        df_i = int(df)
+        if df_i <= 0:
+            return float("nan")
+        # Prefer SciPy if available, else fall back to lookup (or normal approx for large df)
+        try:
+            from scipy import stats as sp_stats  # type: ignore
+            return float(sp_stats.t.ppf(0.975, df_i))
+        except Exception:
+            return float(_T_CRIT_975.get(df_i, 1.96))
+
+    def calc_ci_val(std_val: float, n: int) -> float:
+        """Return 95% CI half-width (two-sided t) for a sample std and sample size n."""
+        if n and n > 1 and pd.notna(std_val):
+            sem = float(std_val) / float(np.sqrt(n))
+            return sem * _t_crit_975(n - 1)
         return 0.0
     
     rows = []
@@ -809,7 +855,7 @@ def generate_baseline_table(
         row = f"{cld_display_names[cld]} & {fmt(f1_mean, f1_ci)} & {fmt(prec_mean, prec_ci)} & {fmt(rec_mean, rec_ci)} & {fmt(judge_mean, judge_ci)} & {fmt_action(total_mean, total_ci)} & {fmt_action(revise_mean, revise_ci)} & {fmt_action(change_mean, change_ci)} \\\\"
         rows.append(row)
     
-    # Macro average row - mean ± 95% CI across CLDs per uncertainty rule
+    # Macro average row - mean ± 95% CI across CLDs (n=3 CLDs → df=2)
     macro_f1_mean = per_cld['F1_Delta_mean'].mean()
     macro_f1_std = per_cld['F1_Delta_mean'].std()
     macro_f1_n = len(per_cld)
@@ -888,7 +934,7 @@ def generate_baseline_table(
 \\textit{{Note.}} Results show change in performance ($\\Delta$) from pre- to post-correction (3 runs per CLD).
 F1 $\\Delta$ = change in F1 score (Post-Pre); Precision $\\Delta$, Recall $\\Delta$, Judge Score $\\Delta$ = corresponding changes.
 Total Actions = Revise + Change (successful corrections only); Revise = motivation revisions; Change Type = edge type changes.
-Values presented as mean $\\pm$ std across 3 runs per CLD. Macro average shows mean of CLD means $\\pm$ std across CLDs.\\par
+Values presented as mean $\\pm$ 95\\% CI (two-sided $t$, $df=2$) across 3 runs per CLD. Macro average shows mean of CLD means $\\pm$ 95\\% CI across CLDs.\\par
 {stats_note}
 \\end{{minipage}}
 \\end{{table}}

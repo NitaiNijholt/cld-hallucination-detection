@@ -222,14 +222,17 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             
             # Evaluate
             y_prob = clf.predict_proba(X_test_scaled)[:, 1]
-            y_pred = clf.predict(X_test_scaled)
+            # Deployment-aligned thresholding (fixed policy): predict hallucination if p >= 0.5
+            # NOTE: We make this explicit (instead of clf.predict) to guarantee consistency across estimators.
+            threshold = 0.5
+            y_pred = (y_prob >= threshold).astype(int)
             
             auc = roc_auc_score(y_test, y_prob)
             precision = precision_score(y_test, y_pred, zero_division=0)
             recall = recall_score(y_test, y_pred, zero_division=0)
             f1 = f1_score(y_test, y_pred, zero_division=0)
             
-            print(f"  {test_cld:25s}: AUC={auc:.3f}, F1={f1:.3f}")
+            print(f"  {test_cld:25s}: AUC={auc:.3f}, F1@0.5={f1:.3f}")
             
             results.append({
                 'test_cld': test_cld,
@@ -238,6 +241,8 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
                 'precision': float(precision),
                 'recall': float(recall),
                 'f1': float(f1),
+                'threshold': float(threshold),
+                'threshold_rule': 'p(hallucination) >= 0.5',
                 'n_test': int(len(test_df)),
                 'y_prob': y_prob,
                 'y_true': y_test

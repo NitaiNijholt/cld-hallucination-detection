@@ -28,6 +28,7 @@ from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from scipy import stats
 
 # Centralized path overrides (optional)
 from rq2_paths import rq2_dirs, repo_root
@@ -145,6 +146,7 @@ def _compute_perm_importance_from_latest_rq2_design(
 
         means: list[float] = []
         stds: list[float] = []
+        ci_hws: list[float] = []
         for feat_idx, _feat_name in enumerate(feature_names):
             drops = []
             for _ in range(n_permutations):
@@ -153,12 +155,19 @@ def _compute_perm_importance_from_latest_rq2_design(
                 y_prob_perm = clf.predict_proba(X_perm)[:, 1]
                 auc_perm = float(roc_auc_score(y_test, y_prob_perm))
                 drops.append(baseline_auc - auc_perm)
-            means.append(float(np.mean(drops)))
-            stds.append(float(np.std(drops)))
+            mean_val = float(np.mean(drops))
+            std_val = float(np.std(drops, ddof=1))  # Use ddof=1 for sample std
+            # Compute 95% CI half-width using t-distribution
+            t_val = stats.t.ppf(0.975, n_permutations - 1)
+            ci_hw = t_val * std_val / np.sqrt(n_permutations)
+            means.append(mean_val)
+            stds.append(std_val)
+            ci_hws.append(float(ci_hw))
 
         out[clf_name] = {
             "importances_mean": means,
             "importances_std": stds,
+            "importances_ci_hw": ci_hws,
             "test_auc": baseline_auc,
             "features": feature_names,
             "n_permutations": int(n_permutations),
@@ -271,7 +280,7 @@ def plot_right_perm_importance(ax: plt.Axes, perm: dict) -> None:
     # Step 1: Compute average importance across classifiers for each feature
     feat_importance: dict[str, list[float]] = {f: [] for f in FEATURES}
     feat_means: dict[str, dict[str, float]] = {}  # clf -> feat -> mean
-    feat_stds: dict[str, dict[str, float]] = {}   # clf -> feat -> std
+    feat_ci_hws: dict[str, dict[str, float]] = {}   # clf -> feat -> 95% CI half-width
     
     for clf in CLASSIFIERS:
         if clf not in perm:
@@ -279,10 +288,18 @@ def plot_right_perm_importance(ax: plt.Axes, perm: dict) -> None:
         clf_obj = perm[clf]
         feats = clf_obj["features"]
         means = clf_obj["importances_mean"]
-        stds = clf_obj["importances_std"]
+        # Prefer CI half-width if available, otherwise compute from std
+        if "importances_ci_hw" in clf_obj:
+            ci_hws = clf_obj["importances_ci_hw"]
+        else:
+            # Fallback: compute from std (assume n_permutations=30 if not specified)
+            stds = clf_obj["importances_std"]
+            n_perm = clf_obj.get("n_permutations", 30)
+            t_val = stats.t.ppf(0.975, n_perm - 1)
+            ci_hws = [t_val * s / np.sqrt(n_perm) for s in stds]
         
         feat_means[clf] = {f: float(means[i]) for i, f in enumerate(feats)}
-        feat_stds[clf] = {f: float(stds[i]) for i, f in enumerate(feats)}
+        feat_ci_hws[clf] = {f: float(ci_hws[i]) for i, f in enumerate(feats)}
         
         for f in FEATURES:
             if f in feat_means[clf]:
@@ -318,7 +335,7 @@ def plot_right_perm_importance(ax: plt.Axes, perm: dict) -> None:
         auc = float(clf_obj.get("test_auc", np.nan))
 
         vals = [feat_means[clf].get(f, 0) for f in feat_order]
-        errs = [feat_stds[clf].get(f, 0) for f in feat_order]
+        errs = [feat_ci_hws[clf].get(f, 0) for f in feat_order]
 
         label = f"{clf} (AUC={auc:.3f})" if not np.isnan(auc) else clf
         ax.barh(

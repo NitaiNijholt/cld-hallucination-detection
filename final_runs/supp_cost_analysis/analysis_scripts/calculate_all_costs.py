@@ -27,11 +27,28 @@ from typing import Dict, List, Tuple, Optional, Iterable, Callable
 
 # OpenAI API Pricing (December 2025)
 # GPT-4.1: $2.00/$8.00 per 1M tokens (input/output)
+# GPT-5: $1.25/$10.00 per 1M tokens (input/output)
 # GPT-5-mini: $0.25/$2.00 per 1M tokens (input/output)
 PRICING = {
     'gpt-4.1': {'input': 2.00 / 1_000_000, 'output': 8.00 / 1_000_000},
+    'gpt-5': {'input': 1.25 / 1_000_000, 'output': 10.00 / 1_000_000},
     'gpt-5-mini': {'input': 0.25 / 1_000_000, 'output': 2.00 / 1_000_000},
 }
+
+# Deep Research model mix assumptions.
+# The DR pipeline uses a heavy model for reasoning and a mini model for high-volume subtasks.
+# We estimate token allocation between models from a representative DR run log:
+#   data_science/deep_research_FULL_107edges_20251012_050916.log
+# (Computed by summing per-agent token usage and mapping agents to heavy vs mini model.)
+DR_GPT5_INPUT_FRAC = 0.3077027082594625
+DR_GPT5_OUTPUT_FRAC = 0.21955214090026282
+DR_GPT5MINI_INPUT_FRAC = 1.0 - DR_GPT5_INPUT_FRAC
+DR_GPT5MINI_OUTPUT_FRAC = 1.0 - DR_GPT5_OUTPUT_FRAC
+
+# Fallback input/output split if only total_tokens are available.
+# Derived from the same representative DR run log above.
+DR_INPUT_RATIO_FALLBACK = 0.7834963663388551
+DR_OUTPUT_RATIO_FALLBACK = 1.0 - DR_INPUT_RATIO_FALLBACK
 
 # Experiment definitions
 RQ1A_EXPERIMENTS = {
@@ -487,7 +504,7 @@ def generate_report(rq1a_results: List[Dict], rq1b_results: List[Dict],
     lines.append("=" * 95)
     
     # Pricing info
-    lines.append("\nPricing (OpenAI API, December 2024):")
+    lines.append("\nPricing (OpenAI API, December 2025):")
     for model, prices in PRICING.items():
         lines.append(f"  {model}: ${prices['input']*1e6:.2f}/1M input, ${prices['output']*1e6:.2f}/1M output")
     
@@ -514,8 +531,11 @@ def analyze_rq3_deep_research(base_dir: Path) -> Tuple[Dict, float]:
         "deep_research_results_older_persons_ALL_EDGES_184edges.json",
     ]
     
-    total_tokens = 0
     total_edges = 0
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    clds = set()
     
     for filename in DR_FILES:
         filepath = data_science_dir / filename
@@ -526,12 +546,52 @@ def analyze_rq3_deep_research(base_dir: Path) -> Tuple[Dict, float]:
             with open(filepath, 'r') as f:
                 data = json.load(f)
             
+            # Format A: dict with top-level telemetry (ground-truth validation run)
+            if isinstance(data, dict) and isinstance(data.get("telemetry"), dict):
+                tel = data["telemetry"]
+                total_edges += int(tel.get("total_edges_processed", 0) or 0)
+                total_input_tokens += int(tel.get("total_input_tokens", 0) or 0)
+                total_output_tokens += int(tel.get("total_output_tokens", 0) or 0)
+                total_tokens += int(tel.get("total_tokens", 0) or 0)
+                for row in tel.get("per_edge_statistics", []) or []:
+                    if isinstance(row, dict):
+                        cld = row.get("CLD")
+                        if cld:
+                            clds.add(str(cld))
+                continue
+
+            # Format B: dict with 'results' list (per-edge records)
             results = data.get('results', []) if isinstance(data, dict) else data
-            
+            if not isinstance(results, list):
+                results = []
+
             for result in results:
-                tokens = result.get('total_tokens', 0)
-                if tokens > 0:
-                    total_tokens += tokens
+                if not isinstance(result, dict):
+                    continue
+                cld = result.get("CLD")
+                if cld:
+                    clds.add(str(cld))
+
+                in_tok = result.get("input_tokens")
+                out_tok = result.get("output_tokens")
+                tot_tok = result.get("total_tokens")
+
+                if isinstance(in_tok, (int, float)) and isinstance(out_tok, (int, float)):
+                    in_tok_i = int(in_tok)
+                    out_tok_i = int(out_tok)
+                    total_input_tokens += in_tok_i
+                    total_output_tokens += out_tok_i
+                    total_tokens += in_tok_i + out_tok_i
+                    total_edges += 1
+                    continue
+
+                if isinstance(tot_tok, (int, float)) and tot_tok > 0:
+                    tot_tok_i = int(tot_tok)
+                    in_tok_i = int(round(tot_tok_i * DR_INPUT_RATIO_FALLBACK))
+                    out_tok_i = max(tot_tok_i - in_tok_i, 0)
+                    total_input_tokens += in_tok_i
+                    total_output_tokens += out_tok_i
+                    total_tokens += tot_tok_i
                     total_edges += 1
         except Exception:
             pass
@@ -539,23 +599,31 @@ def analyze_rq3_deep_research(base_dir: Path) -> Tuple[Dict, float]:
     if total_edges == 0:
         return None, 0.0
     
-    # GPT-4.1 pricing with input/output split
-    input_ratio = 0.865
-    input_tokens = int(total_tokens * input_ratio)
-    output_tokens = total_tokens - input_tokens
-    
-    # GPT-4.1: $2.00/$8.00 per 1M
-    total_cost = (input_tokens * 2.00 / 1e6) + (output_tokens * 8.00 / 1e6)
+    # Price Deep Research as a GPT-5 + GPT-5-mini mix.
+    g5_in = total_input_tokens * DR_GPT5_INPUT_FRAC
+    g5_out = total_output_tokens * DR_GPT5_OUTPUT_FRAC
+    g5m_in = total_input_tokens - g5_in
+    g5m_out = total_output_tokens - g5_out
+
+    pricing_5 = PRICING["gpt-5"]
+    pricing_5m = PRICING["gpt-5-mini"]
+    total_cost = (
+        g5_in * pricing_5["input"]
+        + g5_out * pricing_5["output"]
+        + g5m_in * pricing_5m["input"]
+        + g5m_out * pricing_5m["output"]
+    )
+
     tokens_per_edge = total_tokens / total_edges if total_edges > 0 else 0
     cost_per_edge = total_cost / total_edges * 100 if total_edges > 0 else 0
     
     result = {
         'Experiment': 'Deep Research',
-        'Model': 'gpt-4.1',
-        'Files': 3,  # 3 CLDs
+        'Model': 'gpt-5+gpt-5-mini',
+        'Files': len(clds) if clds else 3,  # 3 CLDs
         'Edges': total_edges,
-        'Prompt Tokens': input_tokens,
-        'Completion Tokens': output_tokens,
+        'Prompt Tokens': int(total_input_tokens),
+        'Completion Tokens': int(total_output_tokens),
         'Tokens/Edge': int(tokens_per_edge),
         'Cost/Edge (¢)': round(cost_per_edge, 2),
         'Total Cost ($)': round(total_cost, 2),
@@ -595,7 +663,7 @@ def generate_latex_table(rq1a_results: List[Dict], rq1b_results: List[Dict],
         lines.append(r"\midrule")
         lines.append(r"\multicolumn{7}{l}{\textit{RQ3 Deep Research (actual)}} \\")
         r = rq3_result
-        lines.append(f"{r['Experiment']} & 4.1 & {r['Files']} & {r['Edges']:,} & {r['Tokens/Edge']:,} & {r['Cost/Edge (¢)']:.2f} & {r['Total Cost ($)']:.2f} \\\\")
+        lines.append(f"{r['Experiment']} & 5/5m & {r['Files']} & {r['Edges']:,} & {r['Tokens/Edge']:,} & {r['Cost/Edge (¢)']:.2f} & {r['Total Cost ($)']:.2f} \\\\")
     
     total = rq1a_cost + rq1b_cost + rq3_cost
     lines.append(r"\midrule")
@@ -604,7 +672,7 @@ def generate_latex_table(rq1a_results: List[Dict], rq1b_results: List[Dict],
     lines.append(r"\end{tabular}")
     lines.append(r"\begin{tablenotes}")
     lines.append(r"\small")
-    lines.append(r"\item \textit{Note.} RQ1a costs from actual LLM Usage Stats. RQ1b estimated: correction + rejudging = 2$\times$ correctness tokens/edge. RQ3 from Deep Research logs. Models: 4.1 = GPT-4.1 (\$2.00/\$8.00 per 1M tokens), 5m = GPT-5-mini (\$0.25/\$2.00 per 1M tokens).")
+    lines.append(r"\item \textit{Note.} RQ1a costs from actual LLM Usage Stats. RQ1b estimated: correction + rejudging = 2$\times$ correctness tokens/edge. RQ3 from Deep Research logs (mix of GPT-5 + GPT-5-mini). Models: 4.1 = GPT-4.1 (\$2.00/\$8.00 per 1M tokens), 5 = GPT-5 (\$1.25/\$10.00 per 1M tokens), 5m = GPT-5-mini (\$0.25/\$2.00 per 1M tokens).")
     lines.append(r"\item \textit{Reproduction:} \texttt{python3 final\_runs/cost\_analysis/calculate\_all\_costs.py}")
     lines.append(r"\end{tablenotes}")
     lines.append(r"\end{table}")

@@ -960,10 +960,11 @@ def main():
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
     
-    # Script location: final_runs/Sensitivity_analysis_simple/scripts/
+    # Script location: final_runs/supp_prompt_sensitivity/analysis_scripts/
     project_root = Path(__file__).parent.parent.parent.parent
-    base_dir = project_root / "final_runs"
-    output_dir = base_dir / "Sensitivity_analysis_simple"
+    # RQ1b data is in RQ1b_corrector_ablation/Data/ after data restoration
+    base_dir = project_root / "final_runs" / "RQ1b_corrector_ablation" / "Data"
+    output_dir = project_root / "final_runs" / "Sensitivity_analysis_simple"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     print(f"Base directory: {base_dir}")

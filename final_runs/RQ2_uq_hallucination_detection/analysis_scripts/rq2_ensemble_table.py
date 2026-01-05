@@ -134,13 +134,24 @@ def generate_ensemble_table():
             # phase6_data is keyed by classifier name with list of per-CLD results
             p6_results = phase6_data[clf]
             aucs = [r['auc'] for r in p6_results]
+            f1s = [r.get('f1') for r in p6_results if r.get('f1') is not None]
             row['p6_mean'] = np.mean(aucs)
             p6_std = np.std(aucs, ddof=1)
             n_clds = len(aucs)
             row['p6_ci'] = calc_ci_hw(p6_std, n_clds) if n_clds > 1 else None
+            # Deployment-aligned metric: F1 at fixed threshold (p >= 0.5)
+            if len(f1s) == len(aucs) and len(f1s) > 0:
+                row['p6_f1_mean'] = float(np.mean(f1s))
+                p6_f1_std = float(np.std(f1s, ddof=1)) if len(f1s) > 1 else 0.0
+                row['p6_f1_ci'] = calc_ci_hw(p6_f1_std, len(f1s)) if len(f1s) > 1 else None
+            else:
+                row['p6_f1_mean'] = None
+                row['p6_f1_ci'] = None
         else:
             row['p6_mean'] = None
             row['p6_ci'] = None
+            row['p6_f1_mean'] = None
+            row['p6_f1_ci'] = None
         
         # Performance drop
         if row['p5_test'] is not None and row['p6_mean'] is not None:
@@ -189,6 +200,13 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
             return f"{mean:.3f} $\\pm$ {ci:.3f}"
         return f"{mean:.3f}"
     
+    def fmt_f1(mean, ci):
+        if mean is None:
+            return "N/A"
+        if ci is not None:
+            return f"{mean:.3f} $\\pm$ {ci:.3f}"
+        return f"{mean:.3f}"
+
     def fmt_test(val):
         if val is None:
             return "N/A"
@@ -207,11 +225,11 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \begin{threeparttable}
 \setlength{\tabcolsep}{4pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \textbf{Phase 6:} & \textbf{Performance} \\
- & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{Cross-CLD AUC} & \textbf{Drop (5$\rightarrow$6)} \\
- & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \\
+\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \multicolumn{2}{c}{\textbf{Phase 6 (leave-one-CLD-out):}} & \textbf{Performance} \\
+ & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{F1@0.5} & \textbf{Drop (5$\rightarrow$6)} \\
+ & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & \\
 \midrule
 """
     
@@ -221,6 +239,7 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
         latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
         latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
+        latex += f"{fmt_f1(row.get('p6_f1_mean'), row.get('p6_f1_ci'))} & "
         latex += f"{fmt_drop(row['drop'])} \\\\\n"
         if i < len(rows) - 1:
             latex += r"\midrule" + "\n"
@@ -235,7 +254,7 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \textbf{{Phase 4 (RFE CV AUC):}} {n_folds}-fold block-level CV on all pooled edges; measures feature selection performance.
 \textbf{{Phase 5 (CV AUC):}} {n_folds}-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
 \textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
-\textbf{{Phase 6 (Cross-CLD AUC):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; measures cross-domain generalization.
+\textbf{{Phase 6 (Cross-CLD AUC/F1@0.5):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; AUC uses predicted probabilities; F1@0.5 uses the fixed deployment threshold $p(\mathrm{{hallucination}})\ge 0.5$.
 Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
 \textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.

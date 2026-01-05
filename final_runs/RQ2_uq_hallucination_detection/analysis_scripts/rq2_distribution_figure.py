@@ -194,6 +194,16 @@ def generate_distribution_figure(df, output_path):
     print(f"✅ Saved: {output_path}")
 
 
+def generate_caption_tex(output_path):
+    """Generate LaTeX caption file for the distribution figure."""
+    caption_text = r"""\caption[UQ metric distributions by CLD]{Generator UQ metric distributions comparing correct edges (green) vs.\ hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Subplot annotations report block-level rank-biserial effect sizes $r$ aggregated across runs within each CLD (mean $\pm$ 95\% CI, $t$-distribution, $df=2$), rather than edge-level $p$-values.}
+\label{fig:rq2_distributions_by_cld}"""
+    
+    with open(output_path, 'w') as f:
+        f.write(caption_text)
+    print(f"✅ Saved caption: {output_path}")
+
+
 def main():
     """Main entry point."""
     print("="*80)
@@ -211,19 +221,35 @@ def main():
     print(f"Loaded {len(df)} edges from {df['cld'].nunique()} CLDs")
     print(f"Hallucinations: {df['is_hallucination'].sum()} ({df['is_hallucination'].mean():.1%})")
     
-    # Output path
-    output_dir = Path(__file__).parent.parent / 'final_runs' / 'RQ2_uq_hallucination_detection'
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Output paths - save to both analysis output and thesis figure folder
+    analysis_output_dir = Path(__file__).parent.parent / 'final_runs' / 'RQ2_uq_hallucination_detection'
+    analysis_output_dir.mkdir(parents=True, exist_ok=True)
     
-    output_path = output_dir / 'phase6_distributions_with_effect_sizes.png'
+    thesis_figure_dir = Path(__file__).parent.parent.parent.parent / 'thesis' / 'final_thesis' / 'def_submission_template' / 'Figures' / 'final_runs' / 'RQ2_uq_hallucination_detection'
+    thesis_figure_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate figure
     print(f"\nGenerating distribution figure...")
-    generate_distribution_figure(df, output_path)
+    
+    # Save to analysis folder
+    output_path_analysis = analysis_output_dir / 'phase6_distributions_with_effect_sizes.png'
+    generate_distribution_figure(df, output_path_analysis)
+    
+    # Save to thesis folder with expected name
+    output_path_thesis = thesis_figure_dir / 'feature_distributions_by_cld_4x3.png'
+    generate_distribution_figure(df, output_path_thesis)
+    
+    # Generate caption tex file
+    caption_path = thesis_figure_dir / 'feature_distributions_caption.tex'
+    generate_caption_tex(caption_path)
     
     print("\n" + "="*80)
     print("COMPLETE")
     print("="*80)
+    print(f"\nOutputs:")
+    print(f"  - {output_path_analysis}")
+    print(f"  - {output_path_thesis}")
+    print(f"  - {caption_path}")
     
     return 0
 
