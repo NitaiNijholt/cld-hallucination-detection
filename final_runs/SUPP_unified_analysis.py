@@ -93,14 +93,18 @@ def main():
         cmd = f"python3 {time_cost_script} --base_dir {FINAL_RUNS} --output_dir {time_cost_output}"
         success = run_command(cmd, "Time/Cost Scaling Aggregation", env=env)
         
-        # Find and copy the main thesis figure
+        # Find and copy the main thesis figure (search recursively in subdirs too)
         if success:
-            for fig_pattern in ["*generation*judging*.png", "*figure3*.png", "*scaling*.png"]:
-                for fig in time_cost_output.glob(fig_pattern):
+            found = False
+            for fig_pattern in ["*generation*judging*.png", "*figure1*.png", "*scaling*.png"]:
+                for fig in time_cost_output.rglob(fig_pattern):
                     dst = run_dir / "figure3_generation_vs_judging.png"
                     shutil.copy(fig, dst)
                     generated_figures.append(dst)
                     print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
+                    found = True
+                    break
+                if found:
                     break
     else:
         print(f"  ⚠️ Script not found: {time_cost_script}")
@@ -143,13 +147,24 @@ def main():
             success = run_command(cmd, "Parallelization Analysis", env=env, cwd=str(parallel_output))
             
             if success:
-                # Find generated figures
-                for fig in parallel_output.glob("*.png"):
-                    if "thesis" in fig.name.lower() or "parallel" in fig.name.lower():
+                # Find generated figures - check both output dir and source dir
+                found = False
+                search_dirs = [
+                    parallel_output,
+                    FINAL_RUNS / "supp_parallelization_benchmark/figures",
+                    FINAL_RUNS / "supp_parallelization_benchmark",
+                ]
+                for search_dir in search_dirs:
+                    if not search_dir.exists():
+                        continue
+                    for fig in search_dir.glob("*thesis*.png"):
                         dst = run_dir / "parallelization_thesis_figure.png"
                         shutil.copy(fig, dst)
                         generated_figures.append(dst)
                         print(f"  ✓ Copied: {fig.name} → parallelization_thesis_figure.png")
+                        found = True
+                        break
+                    if found:
                         break
         else:
             print(f"  ⚠️ No results files found in {parallel_data}")
@@ -184,13 +199,21 @@ def main():
         success = run_command(cmd, "Judge Sensitivity Analysis", env=env_sens, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            for fig in sensitivity_output.glob("*sensitivity*.png"):
-                if "corrector" not in fig.name.lower():
-                    dst = run_dir / "prompt_sensitivity_figure.png"
-                    shutil.copy(fig, dst)
-                    generated_figures.append(dst)
-                    print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
-                    break
+            # Script outputs to hardcoded path - check there first
+            hardcoded_fig = FINAL_RUNS / "Sensitivity_analysis_simple/prompt_sensitivity_figure.png"
+            if hardcoded_fig.exists():
+                dst = run_dir / "prompt_sensitivity_figure.png"
+                shutil.copy(hardcoded_fig, dst)
+                generated_figures.append(dst)
+                print(f"  ✓ Copied: prompt_sensitivity_figure.png")
+            else:
+                for fig in sensitivity_output.glob("*sensitivity*.png"):
+                    if "corrector" not in fig.name.lower():
+                        dst = run_dir / "prompt_sensitivity_figure.png"
+                        shutil.copy(fig, dst)
+                        generated_figures.append(dst)
+                        print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
+                        break
 
     # =========================================================================
     # 4. CORRECTOR SENSITIVITY ANALYSIS
@@ -213,12 +236,20 @@ def main():
         success = run_command(cmd, "Corrector Sensitivity Analysis", env=env_corr, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
+            # Script outputs to hardcoded path - check there first
+            hardcoded_fig = FINAL_RUNS / "Sensitivity_analysis_simple/corrector_sensitivity_figure.png"
+            if hardcoded_fig.exists():
                 dst = run_dir / "corrector_sensitivity_figure.png"
-                shutil.copy(fig, dst)
+                shutil.copy(hardcoded_fig, dst)
                 generated_figures.append(dst)
-                print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
-                break
+                print(f"  ✓ Copied: corrector_sensitivity_figure.png")
+            else:
+                for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
+                    dst = run_dir / "corrector_sensitivity_figure.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
+                    break
 
     # =========================================================================
     # 5. COPY STATIC ASSETS (edge ablation figure - not generated, just copied)

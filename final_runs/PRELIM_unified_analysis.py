@@ -153,14 +153,20 @@ def main():
         success = run_command(cmd, "Temperature Sensitivity Analysis", env=env_temp)
         
         if success:
-            # Copy outputs from prelim_temperature_sensitivity/Output
-            src_dir = FINAL_RUNS / "prelim_temperature_sensitivity/Output"
-            if src_dir.exists():
-                for f in src_dir.glob("*"):
-                    dst = run_dir / f.name
-                    shutil.copy(f, dst)
-                    print(f"  ✓ Copied: {f.name}")
-                    generated_outputs.append(dst)
+            # Script outputs to hardcoded path - check multiple locations
+            source_dirs = [
+                FINAL_RUNS / "temperature_sensitivity_analysis",
+                FINAL_RUNS / "prelim_temperature_sensitivity/Output",
+                temperature_output,
+            ]
+            for src_dir in source_dirs:
+                if src_dir.exists():
+                    for f in src_dir.glob("temperature_sensitivity*"):
+                        dst = run_dir / f.name
+                        shutil.copy(f, dst)
+                        print(f"  ✓ Copied: {f.name}")
+                        generated_outputs.append(dst)
+                    break
     else:
         print(f"  ⚠️ Script not found: {temperature_script}")
 
