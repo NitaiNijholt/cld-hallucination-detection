@@ -162,13 +162,13 @@ All experimental results are stored in the \texttt{final\_runs/} directory:
 
 \begin{verbatim}
 final_runs/
-+-- RQ1a_ground_truth_correctness/
++-- RQ1a_gt_lit_correctness/
 |   +-- depressive/run_{1,2,3}/
 |   +-- emergency_department/run_{1,2,3}/
 |   +-- social_norms/run_{1,2,3}/
-+-- RQ1a_ground_truth_citation/       [same structure]
-+-- RQ1a_corruption_detection_correctness_final/  [same structure]
-+-- RQ1a_corruption_detection_citation_gpt5mini/  [same structure]
++-- RQ1a_gt_lit_citation/       [same structure]
++-- RQ1a_gt_synth_correctness/  [same structure]
++-- RQ1a_gt_synth_citation/  [same structure]
 +-- RQ1a_validation_physics_CLDs/     [physics CLD judge validation]
 +-- RQ1a_ulemans_citation_provider_comparison/    [external CLD validation]
 +-- RQ1b_correction_experiment_*/     [correction experiment variants]
@@ -566,12 +566,12 @@ cd data_science/parameter_tuning_experiments/
 # Correctness-based ground truth
 python run_rq1a_ground_truth_multirun.py \
     --approach correctness \
-    --output-dir ../../final_runs/RQ1a_ground_truth_correctness
+    --output-dir ../../final_runs/RQ1a_gt_lit_correctness
 
 # Citation-based ground truth
 python run_rq1a_ground_truth_multirun.py \
     --approach citation \
-    --output-dir ../../final_runs/RQ1a_ground_truth_citation
+    --output-dir ../../final_runs/RQ1a_gt_lit_citation
 \end{verbatim}
 
 \subsection{RQ1a Corruption Detection Experiments}
@@ -618,7 +618,7 @@ Total Experiments & 36 (3 CLDs $\times$ 3 runs $\times$ 4 prompts) \\
 
 \begin{verbatim}
 python run_rq1b_correction_multirun.py \
-    --input-dir ../../final_runs/RQ1a_ground_truth_correctness \
+    --input-dir ../../final_runs/RQ1a_gt_lit_correctness \
     --output-dir ../../final_runs/RQ1b_corrector/ground_truth
 \end{verbatim}
 
@@ -800,7 +800,7 @@ cd final_runs/RQ3_deep_research/
 
 # Run Deep Research on all TP/FP/FN edges from GT Lit experiments
 python test_deep_research_ground_truth.py \
-    --input-dir ../RQ1a_ground_truth_correctness \
+    --input-dir ../RQ1a_gt_lit_correctness \
     --output-dir data/
 \end{verbatim}
 
@@ -2261,7 +2261,7 @@ Figure~\ref{fig:rq1a_gt_correctness_heatmap} shows the judge score heatmap for t
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_ground_truth_correctness/Output/enhanced_analysis_latest/rq1a_ground_truth_correctness_score_heatmap.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_latest/rq1a_ground_truth_enhanced_visualization.png}
 \caption[GT correctness: judge score heatmap]{Judge Score heatmap (mean $\pm$ 95\% CI) for ground truth correctness validation showing classification scores across CLD × prompt combinations, across 3 runs}
 \label{fig:rq1a_gt_correctness_heatmap}
 \end{figure}
@@ -2272,7 +2272,7 @@ Figure~\ref{fig:rq1a_gt_citation_heatmap} shows the judge score heatmap for the 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_ground_truth_citation/Output/enhanced_analysis_latest/rq1a_ground_truth_citation_score_heatmap.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_latest/rq1a_ground_truth_enhanced_visualization.png}
 \caption[GT citation: judge score heatmap]{Score heatmap for ground truth citation validation showing mean judge scores with 95\% confidence intervals for each classification type across all CLD × prompt combinations, across 3 runs}
 \label{fig:rq1a_gt_citation_heatmap}
 \end{figure}
@@ -2283,7 +2283,7 @@ Figure~\ref{fig:rq1a_corr_correctness_heatmap} shows the judge score heatmap for
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_corruption_detection_correctness_final/Output/enhanced_analysis_latest/rq1a_corruption_detection_correctness_score_heatmap.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_latest/rq1a_enhanced_visualization.png}
 \caption[Corruption (correctness): judge score heatmap]{Score heatmap for corruption detection (Correctness Judge) showing mean judge scores with 95\% confidence intervals across all CLD × prompt combinations, across 3 runs}
 \label{fig:rq1a_corr_correctness_heatmap}
 \end{figure}
@@ -2294,7 +2294,7 @@ Figure~\ref{fig:rq1a_corr_citation_heatmap} shows the judge score heatmap for co
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_corruption_detection_citation_gpt5mini/Output/enhanced_analysis_latest/rq1a_corruption_detection_citation_score_heatmap.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_latest/rq1a_enhanced_visualization.png}
 \caption[Corruption (citation): judge score heatmap]{Score heatmap for corruption detection (Citation Judge) showing mean judge scores with 95\% confidence intervals across all CLD × prompt combinations, across 3 runs}
 \label{fig:rq1a_corr_citation_heatmap}
 \end{figure}
@@ -2308,7 +2308,7 @@ This section presents ROC curves for all RQ1a experiments. \textbf{Important met
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_corruption_detection_correctness_final/Output/enhanced_analysis_latest/rq1a_roc_curves.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_latest/rq1a_roc_curves.png}
 \caption[ROC: corruption (correctness)]{ROC curves for correctness-based corruption detection by prompt. Each subplot shows performance for one prompt variant across all CLDs. \textbf{Note:} Scores are discrete (0, 0.5, 1), so curves represent interpolation between only 3 operating points.}
 \label{fig:rq1a_corr_correctness_roc}
 \end{figure}
@@ -2317,7 +2317,7 @@ This section presents ROC curves for all RQ1a experiments. \textbf{Important met
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_corruption_detection_citation_gpt5mini/Output/enhanced_analysis_latest/rq1a_roc_curves.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_latest/rq1a_roc_curves.png}
 \caption[ROC: corruption (citation)]{ROC curves for citation-based corruption detection by prompt. Each subplot shows performance for one of four prompt variants (Baseline, Mechanistic, CoT, Mechanistic-Lit) across all three CLDs. \textbf{Note:} Scores are discrete (0, 0.5, 1), so curves represent interpolation between only 3 operating points.}
 \label{fig:rq1a_corr_citation_roc}
 \end{figure}
@@ -2326,7 +2326,7 @@ This section presents ROC curves for all RQ1a experiments. \textbf{Important met
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_ground_truth_correctness/Output/enhanced_analysis_latest/rq1a_ground_truth_roc_curves.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_latest/rq1a_ground_truth_roc_curves.png}
 \caption[ROC: GT (correctness)]{ROC curves for ground truth correctness validation. Shows discrimination ability per prompt variant across CLDs, with AUC values for each CLD.}
 \label{fig:rq1a_gt_correctness_roc}
 \end{figure}
@@ -2335,7 +2335,7 @@ This section presents ROC curves for all RQ1a experiments. \textbf{Important met
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_ground_truth_citation/Output/enhanced_analysis_latest/rq1a_ground_truth_roc_curves.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_latest/rq1a_ground_truth_roc_curves.png}
 \caption[ROC: GT (citation)]{ROC curves for ground truth citation validation. Shows discrimination ability per prompt variant across CLDs, with AUC values for each CLD.}
 \label{fig:rq1a_gt_citation_roc}
 \end{figure}

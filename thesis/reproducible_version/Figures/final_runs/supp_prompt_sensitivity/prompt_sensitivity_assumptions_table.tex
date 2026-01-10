@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering
+\caption{RM-ANOVA Assumption Checks for Judge Prompt Sensitivity (Appendix K)}
+\label{tab:prompt_sensitivity_assumptions}
+\begin{threeparttable}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lccccccl}
+\toprule
+\textbf{Exp.} & \textbf{$n$} & \textbf{$k$} & \textbf{Shapiro $p$} & \textbf{Mauchly $p$} & \textbf{$\epsilon_{GG}$} & \textbf{$p$ (unc.)} & \textbf{$p$ (GG)} \\
+\midrule
+Corr.\ Cit. & 9 & 4 & 0.002 & $<$.001 & 0.57 & 0.030 & 0.064 \\
+Corr.\ Corr. & 9 & 3 & 0.352 & $<$.001 & 0.74 & $<$.001 & 0.002 \\
+GT\ Cit. & 9 & 4 & 0.684 & $<$.001 & 0.48 & 0.003 & 0.022 \\
+GT\ Corr. & 9 & 3 & 0.509 & $<$.001 & 0.57 & $<$.001 & 0.002 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\scriptsize
+\item \textit{Note.} Shapiro-Wilk is applied to RM-ANOVA residuals (subject + prompt additive model). Mauchly's test assesses sphericity of the within-subject covariance. $\epsilon_{GG}$ is Greenhouse--Geisser epsilon; $p$ (GG) uses $\epsilon_{GG}$-adjusted degrees of freedom. For $k=2$, sphericity is not defined and Mauchly/GG are omitted.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\noindent\textit{Interpretation.} Sphericity is violated in all four experiments (Mauchly $p<.001$), so the Greenhouse--Geisser correction is appropriate. Under $p$ (GG), prompt effects remain significant for Corr.\ Corr., GT\ Cit., and GT\ Corr., but Corr.\ Cit.\ no longer reaches $p<.05$ ($p$ (GG)$=0.064$). Residual normality is violated only for Corr.\ Cit.\ (Shapiro $p=0.002$); the other three analyses are consistent with approximately normal residuals.
