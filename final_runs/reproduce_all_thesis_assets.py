@@ -372,14 +372,35 @@ def main():
     except (PermissionError, OSError):
         pass
 
+    # =========================================================================
+    # Auto-map outputs to thesis figure structure
+    # =========================================================================
+    if not args.verify_only:
+        thesis_figures_dir = PROJECT_ROOT / "thesis" / "reproducible_version" / "Figures" / "final_runs"
+        create_structure_script = FINAL_RUNS / "create_thesis_figure_structure.py"
+        
+        if create_structure_script.exists() and thesis_figures_dir.parent.exists():
+            print("\n" + "="*80)
+            print("MAPPING OUTPUTS TO THESIS STRUCTURE")
+            print("="*80)
+            try:
+                cmd = f"python3 {create_structure_script} --source {output_dir} --target {thesis_figures_dir}"
+                subprocess.run(cmd, shell=True, check=True, env=env)
+                print(f"\n✅ Outputs mapped to: {thesis_figures_dir}")
+            except subprocess.CalledProcessError as e:
+                print(f"\n⚠️ Failed to map outputs (exit code: {e.returncode})")
+        else:
+            print(f"\n⚠️ Skipping thesis mapping (script or thesis dir not found)")
+
     print("\n" + "="*80)
     print("✅ REPRODUCIBILITY RUN COMPLETE")
     print("="*80)
-    print(f"\nTo use reproduced assets in thesis:")
-    print(f"  1. Copy assets from {output_dir} to thesis/Figures/")
-    print(f"  2. Or update \\graphicspath in main.tex to include {output_dir}")
-    print(f"\nTo re-verify:")
-    print(f"  uv run python {Path(__file__).name} --verify-only --output-dir {output_dir}")
+    print(f"\nOutput directory: {output_dir}")
+    print(f"Thesis figures:   {PROJECT_ROOT / 'thesis' / 'reproducible_version' / 'Figures' / 'final_runs'}")
+    print(f"\nNext step: Compile the thesis")
+    print(f"  cd thesis/reproducible_version")
+    print(f"  sed -i 's/oneside, draft/oneside/' main.tex  # Switch to final mode")
+    print(f"  pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex")
 
 
 if __name__ == "__main__":
