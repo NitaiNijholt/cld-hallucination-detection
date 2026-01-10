@@ -235,6 +235,12 @@ def _sig_stars(p_value: float) -> str:
         return "*"
     return ""
 
+#
+# RQ1a plotting note:
+# Figures display raw p-values (no adjusted p-values). Stars reflect raw p thresholds for readability.
+# Multiple-comparison control (e.g., Bonferroni-adjusted alpha) is handled in the thesis text.
+#
+
 
 def _format_p(p_value: float) -> str:
     if p_value is None or np.isnan(p_value):
@@ -1520,7 +1526,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     )
     
     fig = plt.figure(figsize=(20, 12))
-    gs = fig.add_gridspec(2, 3, hspace=0.4, wspace=0.3)
+    gs = fig.add_gridspec(2, 3, hspace=0.45, wspace=0.35)
     
     # Plot 1: F1 Scores by CLD and Prompt
     ax1 = fig.add_subplot(gs[0, 0])
@@ -1541,7 +1547,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     ax1.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax1.set_ylabel('F1 Score', fontsize=12, fontweight='bold')
-    ax1.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax1.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax1.set_xticks(x + (n_bars - 1) * width / 2)
     ax1.set_xticklabels([c.replace('_', ' ') for c in pivot_f1.index], rotation=15, ha='right')
     ax1.legend(title='', fontsize=9)
@@ -1562,7 +1568,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     ax2.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax2.set_ylabel('AUC-ROC', fontsize=12, fontweight='bold')
-    ax2.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=14, fontweight='bold')
+    ax2.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax2.set_xticks(x_auc + (n_bars - 1) * width / 2)
     ax2.set_xticklabels([c.replace('_', ' ') for c in pivot_auc.index], rotation=15, ha='right')
     ax2.grid(axis='y', alpha=0.3)
@@ -1601,7 +1607,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     ax3.set_xlabel('Recall', fontsize=12, fontweight='bold')
     ax3.set_ylabel('Precision', fontsize=12, fontweight='bold')
-    ax3.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold')
+    ax3.set_title('Precision vs Recall Trade-off', fontsize=16, fontweight='bold', wrap=True)
     
     # Create legend combining colors (prompts) and markers (CLDs)
     from matplotlib.patches import Patch
@@ -1651,57 +1657,37 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
         sns.heatmap(pivot_corr, annot=annot_labels, fmt='', cmap='RdYlGn', 
                    vmin=0.5, vmax=1.0, center=0.75, ax=ax4, cbar_kws={'label': 'Recall'},
                    annot_kws={'fontsize': 9})
-        ax4.set_title('Detection Recall by Corruption Type (± 95% CI)', fontsize=14, fontweight='bold')
+        ax4.set_title('Detection Recall by Corruption Type', fontsize=14, fontweight='bold', wrap=True)
         ax4.set_xlabel('Corruption Type', fontsize=12, fontweight='bold')
         ax4.set_ylabel('Prompt', fontsize=12, fontweight='bold')
     
-    # Plot 5: Point-Biserial Correlation (ACTUAL VALUES - negative) with significance
+    # Plot 5: Point-Biserial Correlation (ACTUAL VALUES - negative; descriptive)
     ax5 = fig.add_subplot(gs[1, 1])
     pivot_rpb = aggregate_df.pivot(index='CLD', columns='Prompt', 
                                    values='Point-Biserial r Mean')
-    pivot_rpb_p = aggregate_df.pivot(index='CLD', columns='Prompt',
-                                     values='Point-Biserial r Aggregate P-value')
     x = np.arange(len(pivot_rpb.index))
     
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_rpb.columns:
             values = pivot_rpb[prompt].values  # ACTUAL values (negative)
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['Point-Biserial r CI Halfwidth'].values
-            p_values = pivot_rpb_p[prompt].values if prompt in pivot_rpb_p.columns else None
+            # Align CI halfwidths to the same CLD order as the pivot table
+            prompt_data = (
+                aggregate_df[aggregate_df['Prompt'] == prompt]
+                .set_index('CLD')
+                .reindex(pivot_rpb.index)
+            )
+            errors = prompt_data['Point-Biserial r CI Halfwidth'].values
             
-            bars = ax5.bar(x + i*width, values, width, label=prompt, yerr=errors, capsize=5)
-            
-            # Add significance markers (in red)
-            if p_values is not None:
-                for j, (val, p_val, err) in enumerate(zip(values, p_values, errors)):
-                    if p_val < 0.001:
-                        sig_marker = '***'
-                    elif p_val < 0.01:
-                        sig_marker = '**'
-                    elif p_val < 0.05:
-                        sig_marker = '*'
-                    else:
-                        sig_marker = ''
-                    
-                    if sig_marker:
-                        y_pos = val - err - 0.03 if val < 0 else val + err + 0.03
-                        ax5.text(x[j] + i*width, y_pos, sig_marker, 
-                                ha='center', va='bottom' if val > 0 else 'top', 
-                                fontsize=14, fontweight='bold', color='red')
+            ax5.bar(x + i*width, values, width, label=prompt, yerr=errors, capsize=5)
     
     ax5.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax5.set_ylabel('Point-Biserial r', fontsize=12, fontweight='bold')
-    ax5.set_title('Score Discrimination (± 95% CI)', fontsize=14, fontweight='bold')
+    ax5.set_title('Score Discrimination (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax5.set_xticks(x + width)
     ax5.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5.legend(title='', fontsize=9)
     ax5.grid(axis='y', alpha=0.3)
     ax5.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
-    
-    # Add significance note
-    ax5.text(0.02, 0.98, '*** p < 0.001  ** p < 0.01  * p < 0.05', 
-            transform=ax5.transAxes, fontsize=8, va='top', 
-            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
     # Plot 6: Effect Sizes from Post-hoc Tests - TABLE FORMAT
     # EXCLUDED FROM AGGREGATE FIGURE (per user request - shown separately)
@@ -1746,11 +1732,17 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_f1.columns:
             values = pivot_f1[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['F1 CI Halfwidth'].values
+            # Align CI halfwidths to the same CLD order as the pivot table
+            prompt_data = (
+                aggregate_df[aggregate_df['Prompt'] == prompt]
+                .set_index('CLD')
+                .reindex(pivot_f1.index)
+            )
+            errors = prompt_data['F1 CI Halfwidth'].values
             ax1_split.bar(x + i*width, values, width, label=prompt, yerr=errors, capsize=5)
     ax1_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax1_split.set_ylabel('F1 Score', fontsize=12, fontweight='bold')
-    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax1_split.set_xticks(x + (n_bars - 1) * width / 2)
     ax1_split.set_xticklabels([c.replace('_', ' ') for c in pivot_f1.index], rotation=15, ha='right')
     ax1_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
@@ -1759,12 +1751,12 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     # Add prompt-effect annotation (F1) — Friedman test with per-CLD post-hoc
     if prompt_effect_f1.get("ok", False):
         p = prompt_effect_f1.get("p", np.nan)
-        stars = _sig_stars(p)
+        stars_omnibus = _sig_stars(p)
         n_blocks = prompt_effect_f1.get("n_blocks", 0)
         w = prompt_effect_f1.get("kendall_w", np.nan)
         w_str = f", W={w:.2f}" if not np.isnan(w) else ""
         
-        # Build global post-hoc summary (using Bonferroni-corrected global pairs)
+        # Build global post-hoc summary (compact: stars only, no p-values to prevent overflow)
         global_posthoc = prompt_effect_f1.get("posthoc", {})
         prompt_short = {"baseline": "B", "mechanistic": "M", "mechanistic_original": "M", "cot": "C", "mechanistic_lit": "ML"}
         cld_short = {"depressive": "DE", "emergency_department": "ED", "social_norms": "SN"}
@@ -1775,9 +1767,18 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                 p1, p2 = pair_name.split("_vs_")
                 winner = pair_data.get("winner", "")
                 loser = p2 if winner == p1 else p1
-                global_sig.append(f"{prompt_short.get(winner, winner[0].upper())}>{prompt_short.get(loser, loser[0].upper())}")
+                p_raw = pair_data.get("p", np.nan)
+                # Compact format: omit p-values to prevent overflow (stars indicate significance)
+                global_sig.append(
+                    f"{prompt_short.get(winner, winner[0].upper())}"
+                    f">{prompt_short.get(loser, loser[0].upper())}"
+                    f"{_sig_stars(p_raw)}"
+                )
         
-        global_str = f"{', '.join(global_sig)}" if global_sig else "none"
+        # Limit to first 4 comparisons to prevent overflow
+        global_str = f"{', '.join(global_sig[:4])}" if global_sig else "none"
+        if len(global_sig) > 4:
+            global_str += f" +{len(global_sig)-4}"
         
         # Build per-CLD post-hoc summary (exploratory, uncorrected p<0.05)
         per_cld = prompt_effect_f1.get("per_cld_posthoc", {})
@@ -1799,7 +1800,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
         ax1_split.text(
             0.02,
             0.02,
-            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
+            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars_omnibus}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
             transform=ax1_split.transAxes,
             va="bottom",
             ha="left",
@@ -1812,11 +1813,17 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_auc.columns:
             values = pivot_auc[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['AUC-ROC CI Halfwidth'].values
+            # Align CI halfwidths to the same CLD order as the pivot table
+            prompt_data = (
+                aggregate_df[aggregate_df['Prompt'] == prompt]
+                .set_index('CLD')
+                .reindex(pivot_auc.index)
+            )
+            errors = prompt_data['AUC-ROC CI Halfwidth'].values
             ax2_split.bar(x_auc + i*width, values, width, label=prompt, yerr=errors, capsize=5)
     ax2_split.set_xlabel('CLD', fontsize=12, fontweight='bold')
     ax2_split.set_ylabel('AUC-ROC', fontsize=12, fontweight='bold')
-    ax2_split.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=14, fontweight='bold')
+    ax2_split.set_title('AUC-ROC by CLD (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax2_split.set_xticks(x_auc + (n_bars - 1) * width / 2)
     ax2_split.set_xticklabels([c.replace('_', ' ') for c in pivot_auc.index], rotation=15, ha='right')
     ax2_split.grid(axis='y', alpha=0.3)
@@ -1827,12 +1834,12 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     # Add prompt-effect annotation (AUC) — Friedman test with per-CLD post-hoc
     if prompt_effect_auc.get("ok", False):
         p = prompt_effect_auc.get("p", np.nan)
-        stars = _sig_stars(p)
+        stars_omnibus = _sig_stars(p)
         n_blocks = prompt_effect_auc.get("n_blocks", 0)
         w = prompt_effect_auc.get("kendall_w", np.nan)
         w_str = f", W={w:.2f}" if not np.isnan(w) else ""
         
-        # Build global post-hoc summary (using Bonferroni-corrected global pairs)
+        # Build global post-hoc summary (compact: stars only, no p-values to prevent overflow)
         global_posthoc = prompt_effect_auc.get("posthoc", {})
         prompt_short = {"baseline": "B", "mechanistic": "M", "mechanistic_original": "M", "cot": "C", "mechanistic_lit": "ML"}
         cld_short = {"depressive": "DE", "emergency_department": "ED", "social_norms": "SN"}
@@ -1843,9 +1850,18 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                 p1, p2 = pair_name.split("_vs_")
                 winner = pair_data.get("winner", "")
                 loser = p2 if winner == p1 else p1
-                global_sig.append(f"{prompt_short.get(winner, winner[0].upper())}>{prompt_short.get(loser, loser[0].upper())}")
+                p_raw = pair_data.get("p", np.nan)
+                # Compact format: omit p-values to prevent overflow (stars indicate significance)
+                global_sig.append(
+                    f"{prompt_short.get(winner, winner[0].upper())}"
+                    f">{prompt_short.get(loser, loser[0].upper())}"
+                    f"{_sig_stars(p_raw)}"
+                )
         
-        global_str = f"{', '.join(global_sig)}" if global_sig else "none"
+        # Limit to first 4 comparisons to prevent overflow
+        global_str = f"{', '.join(global_sig[:4])}" if global_sig else "none"
+        if len(global_sig) > 4:
+            global_str += f" +{len(global_sig)-4}"
         
         # Build per-CLD post-hoc summary (exploratory, uncorrected p<0.05)
         per_cld = prompt_effect_auc.get("per_cld_posthoc", {})
@@ -1867,7 +1883,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
         ax2_split.text(
             0.02,
             0.02,
-            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
+            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars_omnibus}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
             transform=ax2_split.transAxes,
             va="bottom",
             ha="left",
@@ -1896,7 +1912,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                        marker=marker, edgecolors='black', linewidth=1.5)
     ax3_split.set_xlabel('Recall', fontsize=12, fontweight='bold')
     ax3_split.set_ylabel('Precision', fontsize=12, fontweight='bold')
-    ax3_split.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold')
+    ax3_split.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold', wrap=True)
     # Use rectangles (patches) for prompts to match bar chart style
     prompt_legend = [Patch(facecolor=colors_map.get(p, '#808080'), edgecolor='black', label=p)
                     for p in available_prompts]
@@ -1915,11 +1931,11 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     print(f"  ✓ Row 1 (Performance Metrics 1x3): {output_file_row1.name}")
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout - heatmap, score discrimination, and classification scores)
-    fig2 = plt.figure(figsize=(20, 6))
-    gs2 = fig2.add_gridspec(1, 3, hspace=0.3, wspace=0.35, top=0.85)
+    # Use figsize=(16, 5) to match row1 output dimensions for consistent font scaling
+    fig2, axes2 = plt.subplots(1, 3, figsize=(16, 5), constrained_layout=True)
     
     # Recreate Plot 4: Corruption Type Heatmap
-    ax4_split = fig2.add_subplot(gs2[0, 0])
+    ax4_split = axes2[0]
     if not corruption_type_df.empty:
         pivot_corr = corruption_type_df.pivot(index='Prompt', 
                                               columns='Corruption Type', 
@@ -1929,14 +1945,12 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
                    ax=ax4_split, linewidths=1, linecolor='black')
         ax4_split.set_xlabel('Corruption Type', fontsize=11, fontweight='bold')
         ax4_split.set_ylabel('Prompt', fontsize=11, fontweight='bold')
-        ax4_split.set_title('Detection Recall\nby Corruption Type\n(±95% CI)', fontsize=10, fontweight='bold')
+        ax4_split.set_title('Detection Recall by Corruption Type', fontsize=16, fontweight='bold', wrap=True)
     
-    # Recreate Plot 5: Score Discrimination
-    ax5_split = fig2.add_subplot(gs2[0, 1])
+    # Recreate Plot 5: Score Discrimination (descriptive; no significance stars)
+    ax5_split = axes2[1]
     pivot_rpb = aggregate_df.pivot(index='CLD', columns='Prompt', 
                                    values='Point-Biserial r Mean')
-    pivot_rpb_sig = aggregate_df.pivot(index='CLD', columns='Prompt', 
-                                       values='Point-Biserial r Aggregate P-value')
     
     x_rpb = np.arange(len(pivot_rpb.index))
     # Dynamically detect available prompts (already mapped to display names)
@@ -1946,45 +1960,26 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     
     for i, prompt in enumerate(available_prompts_rpb):
         values = pivot_rpb[prompt].values
-        errors = aggregate_df[aggregate_df['Prompt'] == prompt]['Point-Biserial r CI Halfwidth'].values
-        bars = ax5_split.bar(x_rpb + i*width, values, width, label=prompt, 
-                       yerr=errors, capsize=5, alpha=0.8)
-        sig_vals = pivot_rpb_sig[prompt].values if prompt in pivot_rpb_sig.columns else None
-        if sig_vals is not None:
-            for j, (bar, p_val) in enumerate(zip(bars, sig_vals)):
-                stars = _sig_stars(p_val)
-                if stars:
-                    height = bar.get_height()
-                    # Position star slightly above bar (positive) or below (negative)
-                    # Add offset based on error bar size if possible, otherwise fixed offset
-                    # Here we just use bar height + small offset
-                    y_offset = 0.02 if height >= 0 else -0.04
-                    va = 'bottom' if height >= 0 else 'top'
-                    
-                    # Ensure stars don't overlap with error bars if they extend beyond bar
-                    # Error is symmetric, so we just check direction
-                    error = errors[j] if j < len(errors) else 0
-                    if height >= 0:
-                        text_y = max(height, height + error) + 0.01
-                    else:
-                        text_y = min(height, height - error) - 0.01
-                        
-                    ax5_split.text(bar.get_x() + bar.get_width()/2., text_y,
-                             stars, ha='center', va=va, fontsize=12, fontweight='bold')
+        # Align CI halfwidths to the same CLD order as the pivot table
+        prompt_data = (
+            aggregate_df[aggregate_df['Prompt'] == prompt]
+            .set_index('CLD')
+            .reindex(pivot_rpb.index)
+        )
+        errors = prompt_data['Point-Biserial r CI Halfwidth'].values
+        ax5_split.bar(x_rpb + i*width, values, width, label=prompt, 
+                      yerr=errors, capsize=5, alpha=0.8)
     ax5_split.set_xlabel('CLD', fontsize=11, fontweight='bold')
     ax5_split.set_ylabel('Point-biserial r', fontsize=11, fontweight='bold')
-    ax5_split.set_title('Score\nDiscrimination\n(±95% CI)', fontsize=10, fontweight='bold')
+    ax5_split.set_title('Score Discrimination (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax5_split.set_xticks(x_rpb + width * (n_prompts_rpb - 1) / 2)
     ax5_split.set_xticklabels([c.replace('_', ' ') for c in pivot_rpb.index], rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9, loc='lower left', bbox_to_anchor=(0.02, 0.07))
     ax5_split.grid(axis='y', alpha=0.3)
     ax5_split.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
-    ax5_split.text(0.02, 0.98, '*** p < 0.001  ** p < 0.01  * p < 0.05', 
-            transform=ax5_split.transAxes, fontsize=8, va='top', 
-            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
     # NEW Plot 6: Classification Statistics Bar Chart (scores as heights)
-    ax6_split = fig2.add_subplot(gs2[0, 2])
+    ax6_split = axes2[2]
     
     from scipy import stats as sp_stats
     
@@ -2041,7 +2036,7 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     # Set labels and title
     ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=11, fontweight='bold')
     ax6_split.set_xlabel('Hallucination-Detection Outcome', fontsize=10, fontweight='bold')
-    ax6_split.set_title('Scores by\nHallucination-Detection\nOutcome (±95% CI)', fontsize=10, fontweight='bold')
+    ax6_split.set_title('Scores by Hallucination-Detection Outcome (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax6_split.set_xticks(x_pos)
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylim([0, 1.15])
@@ -2070,7 +2065,6 @@ def create_enhanced_visualizations(aggregate_df: pd.DataFrame,
     ax6_split.legend(handles=legend_elements, loc='center right', fontsize=8, 
                     title=f'Total: n={total_all:,} edges', title_fontsize=9, framealpha=0.95)
     
-    plt.tight_layout()
     output_file_row2 = output_dir / "rq1a_row2_detailed_analysis.png"
     fig2.savefig(output_file_row2, dpi=300, bbox_inches='tight')
     print(f"  ✓ Row 2 (Detailed Analysis 1x3): {output_file_row2.name}")
@@ -2275,7 +2269,13 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_f1_pub.columns:
             values = pivot_f1_pub[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['F1 CI Halfwidth'].values
+            # Align CI halfwidths to the same CLD order as the pivot table
+            prompt_data = (
+                aggregate_df[aggregate_df['Prompt'] == prompt]
+                .set_index('CLD')
+                .reindex(pivot_f1_pub.index)
+            )
+            errors = prompt_data['F1 CI Halfwidth'].values
             ax.bar(x_pub + i*width_pub, values, width_pub, label=prompt, yerr=errors, 
                    capsize=5, color=colors.get(prompt, None), 
                    edgecolor='black', linewidth=1.5, alpha=0.85)
@@ -2310,7 +2310,13 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     for i, prompt in enumerate(['Baseline', 'Mechanistic', 'CoT', 'Mech-Lit']):
         if prompt in pivot_auc_pub.columns:
             values = pivot_auc_pub[prompt].values
-            errors = aggregate_df[aggregate_df['Prompt'] == prompt]['AUC-ROC CI Halfwidth'].values
+            # Align CI halfwidths to the same CLD order as the pivot table
+            prompt_data = (
+                aggregate_df[aggregate_df['Prompt'] == prompt]
+                .set_index('CLD')
+                .reindex(pivot_auc_pub.index)
+            )
+            errors = prompt_data['AUC-ROC CI Halfwidth'].values
             ax.bar(x_auc_pub + i*width_pub, values, width_pub, label=prompt, yerr=errors,
                    capsize=5, color=colors.get(prompt, None),
                    edgecolor='black', linewidth=1.5, alpha=0.85)
@@ -2409,8 +2415,7 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     fig, ax = plt.subplots(figsize=(12, 8))
     pivot_rpb = aggregate_df.pivot(index='CLD', columns='Prompt',
                                    values='Point-Biserial r Mean')
-    pivot_rpb_p = aggregate_df.pivot(index='CLD', columns='Prompt',
-                                     values='Point-Biserial r Aggregate P-value')
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     # For 3 prompts in this figure
     n_bars_rpb = 3
     width_rpb = 0.22
@@ -2421,29 +2426,9 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
         if prompt in pivot_rpb.columns:
             values = pivot_rpb[prompt].values
             errors = aggregate_df[aggregate_df['Prompt'] == prompt]['Point-Biserial r CI Halfwidth'].values
-            p_values = pivot_rpb_p[prompt].values if prompt in pivot_rpb_p.columns else None
-            
             bars = ax.bar(x_rpb + i*width_rpb, values, width_rpb, label=prompt, yerr=errors,
                          capsize=5, color=colors.get(prompt, None),
                          edgecolor='black', linewidth=1.5, alpha=0.85)
-            
-            # Add significance markers
-            if p_values is not None:
-                for j, (val, p_val, err) in enumerate(zip(values, p_values, errors)):
-                    if p_val < 0.001:
-                        sig_marker = '***'
-                    elif p_val < 0.01:
-                        sig_marker = '**'
-                    elif p_val < 0.05:
-                        sig_marker = '*'
-                    else:
-                        sig_marker = ''
-                    
-                    if sig_marker:
-                        y_pos = val - err - 0.05 if val < 0 else val + err + 0.05
-                        ax.text(x_rpb[j] + i*width_rpb, y_pos, sig_marker,
-                               ha='center', va='bottom' if val > 0 else 'top',
-                               fontsize=14, fontweight='bold', color='red')
     
     ax.set_xlabel('Causal Loop Diagram', fontsize=pub_fontsize_label, fontweight='bold')
     ax.set_ylabel('Point-Biserial Correlation (r)', fontsize=pub_fontsize_label, fontweight='bold')
@@ -2458,11 +2443,6 @@ def create_individual_figures_high_dpi(aggregate_df: pd.DataFrame,
     ax.axhline(y=0, color='black', linestyle='-', linewidth=1)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    
-    # Add significance legend
-    ax.text(0.02, 0.98, '*** p < 0.001  ** p < 0.01  * p < 0.05',
-           transform=ax.transAxes, fontsize=pub_fontsize_tick, va='top',
-           bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='black'))
     
     plt.tight_layout()
     output_file = individual_dir / "fig_score_discrimination.png"

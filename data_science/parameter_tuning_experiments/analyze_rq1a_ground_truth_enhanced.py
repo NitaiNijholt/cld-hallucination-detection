@@ -168,6 +168,13 @@ def _sig_stars(p_value: float) -> str:
         return "*"
     return ""
 
+# ---------------------------------------------------------------------------
+# RQ1a plotting note (thesis convention)
+# ---------------------------------------------------------------------------
+# - Thesis-level multiple-comparison control (e.g., Bonferroni-adjusted alpha) is handled in the text.
+# - Figure annotations show *raw (unadjusted)* p-values; stars reflect raw p thresholds for readability.
+# ---------------------------------------------------------------------------
+
 
 def _format_p(p_value: float) -> str:
     if p_value is None or np.isnan(p_value):
@@ -282,14 +289,15 @@ def compute_prompt_effect_test(
                 
                 posthoc[f"{p1}_vs_{p2}"] = {
                     "p": float(w_p),
-                    "p_adj": float(min(w_p * n_comparisons, 1.0)),  # Bonferroni adjusted
-                    "sig": bool(w_p < alpha_bonf),
+                    "p_adj": float(min(w_p * n_comparisons, 1.0)),  # available for tables/text if needed
+                    "sig": bool(w_p < alpha_bonf),                 # Bonferroni-corrected significance
+                    "sig_raw": bool(w_p < 0.05),                   # raw significance for figure annotations
                     "effect_r": float(effect_r),
                     "mean_diff": mean_diff,
                     "winner": p1 if mean_diff > 0 else p2,
                 }
             except Exception as e:
-                posthoc[f"{p1}_vs_{p2}"] = {"p": np.nan, "sig": False, "error": str(e)}
+                posthoc[f"{p1}_vs_{p2}"] = {"p": np.nan, "sig": False, "sig_raw": False, "error": str(e)}
     
     # Per-CLD pairwise tests (Wilcoxon across runs within each CLD)
     per_cld_posthoc = {}
@@ -496,29 +504,43 @@ def extract_detailed_performance(excel_path: Path, judge_type: str = 'correctnes
         
         df_data = pd.DataFrame(data)
         df_data['ground_truth'] = df_data['is_hallucination'].astype(int)
-        
+
+        # ---------------------------------------------------------------------
+        # IMPORTANT: Handle missing scores consistently
+        # ---------------------------------------------------------------------
+        # Some citation-judge rows legitimately have no scorable content (e.g. NO_CITATION),
+        # resulting in aggregate_score = NaN. In pandas, (NaN <= 0.5) is False, which would
+        # incorrectly force these rows into TN/FN counts while simultaneously being dropped
+        # from mean-score calculations. That mismatch is the "blank cell but nonzero count" bug.
+        #
+        # Fix: compute all threshold-based predictions and confusion metrics ONLY on rows with
+        # a valid numeric aggregate_score.
+        df_scored = df_data[df_data['aggregate_score'].notna()].copy()
+        if len(df_scored) == 0:
+            return None
+
         # For ground truth, use numeric score threshold instead of verdict mapping
         # Score <= 0.5 means predicted as hallucination (judge_pred = 1)
         # Score > 0.5 means predicted as clean (judge_pred = 0)
-        df_data['judge_pred'] = (df_data['aggregate_score'] <= 0.5).astype(int)
+        df_scored['judge_pred'] = (df_scored['aggregate_score'] <= 0.5).astype(int)
         
         # Confusion matrix based on score threshold
         # Confusion matrix based on score threshold (0.5)
-        tp = ((df_data['ground_truth'] == 1) & (df_data['judge_pred'] == 1)).sum()
-        tn = ((df_data['ground_truth'] == 0) & (df_data['judge_pred'] == 0)).sum()
-        fp = ((df_data['ground_truth'] == 0) & (df_data['judge_pred'] == 1)).sum()
-        fn = ((df_data['ground_truth'] == 1) & (df_data['judge_pred'] == 0)).sum()
+        tp = ((df_scored['ground_truth'] == 1) & (df_scored['judge_pred'] == 1)).sum()
+        tn = ((df_scored['ground_truth'] == 0) & (df_scored['judge_pred'] == 0)).sum()
+        fp = ((df_scored['ground_truth'] == 0) & (df_scored['judge_pred'] == 1)).sum()
+        fn = ((df_scored['ground_truth'] == 1) & (df_scored['judge_pred'] == 0)).sum()
         
         # F1, Precision, Recall at threshold=0.5 (lenient)
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-        accuracy = (tp + tn) / len(df_data) if len(df_data) > 0 else 0.0
+        accuracy = (tp + tn) / len(df_scored) if len(df_scored) > 0 else 0.0
         
         # ROC-AUC (using scores: 0.0/0.5/1.0)
         # For hallucination detection, we need detection_score = 1 - judge_score
         # (lower judge score = higher detection score)
-        scores_for_roc = df_data[df_data['aggregate_score'].notna()].copy()
+        scores_for_roc = df_scored.copy()
         if len(scores_for_roc) >= 2 and scores_for_roc['ground_truth'].nunique() == 2:
             # Detection score: invert so higher = more likely hallucination
             detection_scores = 1 - scores_for_roc['aggregate_score']
@@ -527,7 +549,7 @@ def extract_detailed_performance(excel_path: Path, judge_type: str = 'correctnes
             roc_auc = np.nan
         
         # Point-biserial correlation (is_hallucination vs score)
-        scores_clean = df_data[df_data['aggregate_score'].notna()].copy()
+        scores_clean = df_scored.copy()
         if len(scores_clean) >= 2:
             r_pb, pb_p = stats.pointbiserialr(scores_clean['is_hallucination'], 
                                              scores_clean['aggregate_score'])
@@ -543,20 +565,20 @@ def extract_detailed_performance(excel_path: Path, judge_type: str = 'correctnes
         # judge-score threshold (<=0.5) as the prediction. To keep the "Judge Scores
         # by Classification" panel consistent with the F1 plot, we compute the
         # confusion type using (ground_truth, judge_pred).
-        df_data['detect_confusion'] = np.select(
+        df_scored['detect_confusion'] = np.select(
             [
-                (df_data['ground_truth'] == 1) & (df_data['judge_pred'] == 1),  # hallucination detected
-                (df_data['ground_truth'] == 0) & (df_data['judge_pred'] == 1),  # false alarm
-                (df_data['ground_truth'] == 1) & (df_data['judge_pred'] == 0),  # missed hallucination
-                (df_data['ground_truth'] == 0) & (df_data['judge_pred'] == 0),  # correct non-hallucination
+                (df_scored['ground_truth'] == 1) & (df_scored['judge_pred'] == 1),  # hallucination detected
+                (df_scored['ground_truth'] == 0) & (df_scored['judge_pred'] == 1),  # false alarm
+                (df_scored['ground_truth'] == 1) & (df_scored['judge_pred'] == 0),  # missed hallucination
+                (df_scored['ground_truth'] == 0) & (df_scored['judge_pred'] == 0),  # correct non-hallucination
             ],
             ['TP', 'FP', 'FN', 'TN'],
             default='NA'
         )
-        tp_scores = df_data[df_data['detect_confusion'] == 'TP']['aggregate_score'].dropna()
-        tn_scores = df_data[df_data['detect_confusion'] == 'TN']['aggregate_score'].dropna()
-        fp_scores = df_data[df_data['detect_confusion'] == 'FP']['aggregate_score'].dropna()
-        fn_scores = df_data[df_data['detect_confusion'] == 'FN']['aggregate_score'].dropna()
+        tp_scores = df_scored[df_scored['detect_confusion'] == 'TP']['aggregate_score'].dropna()
+        tn_scores = df_scored[df_scored['detect_confusion'] == 'TN']['aggregate_score'].dropna()
+        fp_scores = df_scored[df_scored['detect_confusion'] == 'FP']['aggregate_score'].dropna()
+        fn_scores = df_scored[df_scored['detect_confusion'] == 'FN']['aggregate_score'].dropna()
         
         return {
             'precision': precision,
@@ -575,8 +597,8 @@ def extract_detailed_performance(excel_path: Path, judge_type: str = 'correctnes
             'n_tn_edges': int(tn),
             'n_fp_edges': int(fp),
             'n_fn_edges': int(fn),
-            'n_total': len(df_data),
-            'n_hallucinations': int(df_data['is_hallucination'].sum()),
+            'n_total': len(df_scored),
+            'n_hallucinations': int(df_scored['is_hallucination'].sum()),
             'point_biserial_r': r_pb,
             'pb_p_value': pb_p,
             'tp_mean_score': float(tp_scores.mean()) if len(tp_scores) > 0 else np.nan,
@@ -827,7 +849,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_roc_mean.plot(kind='bar', ax=ax1, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_roc_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax1.set_ylabel('ROC-AUC', fontsize=14, fontweight='bold')
-    ax1.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax1.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax1.set_ylim([0, 1])
     ax1.axhline(y=0.5, color='red', linestyle='--', linewidth=1, alpha=0.5, label='Random (AUC=0.5)')
     ax1.set_xticklabels(ax1.get_xticklabels(), rotation=15, ha='right')
@@ -845,7 +867,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     pivot_f1_mean.plot(kind='bar', ax=ax2, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_f1_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax2.set_ylabel('F1 Score', fontsize=14, fontweight='bold')
-    ax2.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax2.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax2.set_ylim([0, 1])
     ax2.set_xticklabels(ax2.get_xticklabels(), rotation=15, ha='right')
     ax2.legend(title='', fontsize=9)
@@ -889,7 +911,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax3.set_xticks(x + width * 1.5)
     ax3.set_xticklabels(metrics)
     ax3.set_ylabel('Score', fontsize=14, fontweight='bold')
-    ax3.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax3.set_title('Performance by Prompt (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax3.set_ylim([0, 1])
     ax3.legend(title='', loc='upper right', fontsize=9)
     ax3.grid(axis='y', alpha=0.3)
@@ -905,7 +927,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
                    alpha=0.7, edgecolors='black', linewidth=1.5)
     ax4.set_xlabel('Recall', fontsize=14, fontweight='bold')
     ax4.set_ylabel('Precision', fontsize=14, fontweight='bold')
-    ax4.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold')
+    ax4.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold', wrap=True)
     ax4.set_xlim([0, 1])
     ax4.set_ylim([0, 1])
     ax4.legend(title='', fontsize=9)
@@ -948,7 +970,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax5.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax5.set_ylabel('Mean Judge Score (μ)', fontsize=14, fontweight='bold')
     ax5.set_xlabel('Classification Type', fontsize=14, fontweight='bold')
-    ax5.set_title('Judge Scores by Hallucination-Detection Outcome (± 95% CI)', fontsize=14, fontweight='bold')
+    ax5.set_title('Judge Scores by Hallucination-Detection Outcome (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax5.set_ylim([0, 1.15])
     ax5.grid(axis='y', alpha=0.3)
     
@@ -1001,31 +1023,12 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax6.set_xticklabels([get_prompt_label(p) for p in by_prompt['prompt']], rotation=15, ha='right')
     ax6.set_ylabel('Metric Value', fontsize=14, fontweight='bold')
     ax6.set_xlabel('Prompt', fontsize=14, fontweight='bold')
-    ax6.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax6.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax6.set_ylim([0, 1])
     ax6.legend(title='Metric', loc='upper right', fontsize=9)
     ax6.grid(axis='y', alpha=0.3)
     
-    # Add significance stars for Point-Biserial correlation (using p-value from pooled test)
-    pivot_pb_mean = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='point_biserial_r_mean')
-    pivot_pb_pval = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='pb_p_value_mean')
-    # Rename columns to display names for consistent legends
-    pivot_pb_mean.columns = [get_prompt_label(c) for c in pivot_pb_mean.columns]
-    pivot_pb_pval.columns = [get_prompt_label(c) for c in pivot_pb_pval.columns]
-    
-    for i, cld in enumerate(pivot_pb_mean.index):
-        for j, prompt in enumerate(pivot_pb_mean.columns):
-            r_val = pivot_pb_mean.loc[cld, prompt]
-            p_val = pivot_pb_pval.loc[cld, prompt]
-            
-            if pd.notna(r_val) and pd.notna(p_val):
-                # Use p-value from pooled statistical test
-                sig = '***' if p_val < 0.001 else '**' if p_val < 0.01 else '*' if p_val < 0.05 else ''
-                
-                if sig:
-                    y_pos = r_val + (0.02 if r_val > 0 else -0.05)
-                    ax6.text(i + (j - 1) * 0.27, y_pos, sig, ha='center', va='center', 
-                            fontsize=14, fontweight='bold', color='red')
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     
     plt.tight_layout()
     plt.savefig(output_dir / 'rq1a_ground_truth_enhanced_visualization.png', 
@@ -1068,15 +1071,16 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         )
     
     # FIGURE 1: Row 1 - Performance Metrics (1x3 layout)
-    fig1, axes1 = plt.subplots(1, 3, figsize=(20, 5))
-    fig1.subplots_adjust(wspace=0.35)
+    # Use same approach as synth script for consistent output dimensions
+    fig1 = plt.figure(figsize=(20, 5))
+    gs1 = fig1.add_gridspec(1, 3, hspace=0.3, wspace=0.5)
     
     # Recreate Panel 1: F1 Score (Left)
-    ax1_split = axes1[0]
+    ax1_split = fig1.add_subplot(gs1[0, 0])
     pivot_f1_mean.plot(kind='bar', ax=ax1_split, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_f1_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax1_split.set_ylabel('F1 Score', fontsize=14, fontweight='bold')
-    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax1_split.set_title('F1 Scores by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax1_split.set_ylim([0, 1])
     ax1_split.set_xticklabels(ax1_split.get_xticklabels(), rotation=15, ha='right')
     ax1_split.legend(title='', fontsize=9)
@@ -1084,12 +1088,12 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
 
     if prompt_effect_f1 and prompt_effect_f1.get("ok", False):
         p = prompt_effect_f1.get("p", np.nan)
-        stars = _sig_stars(p)
+        stars_omnibus = _sig_stars(p)
         n_blocks = prompt_effect_f1.get("n_blocks", 0)
         w = prompt_effect_f1.get("kendall_w", np.nan)
         w_str = f", W={w:.2f}" if not np.isnan(w) else ""
         
-        # Build global post-hoc summary (using Bonferroni-corrected global pairs)
+        # Build global post-hoc summary (compact: stars only, no p-values to prevent overflow)
         global_posthoc = prompt_effect_f1.get("posthoc", {})
         prompt_short = {"baseline": "B", "mechanistic": "M", "mechanistic_original": "M", "cot": "C", "mechanistic_lit": "ML"}
         
@@ -1101,9 +1105,18 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
                 p1, p2 = pair_name.split("_vs_")
                 winner = pair_data.get("winner", "")
                 loser = p2 if winner == p1 else p1
-                global_sig.append(f"{prompt_short.get(winner, winner[0].upper())}>{prompt_short.get(loser, loser[0].upper())}")
+                p_raw = pair_data.get("p", np.nan)
+                # Compact format: omit p-values to prevent overflow (stars indicate significance)
+                global_sig.append(
+                    f"{prompt_short.get(winner, winner[0].upper())}"
+                    f">{prompt_short.get(loser, loser[0].upper())}"
+                    f"{_sig_stars(p_raw)}"
+                )
         
-        global_str = f"{', '.join(global_sig)}" if global_sig else "none"
+        # Limit to first 4 comparisons to prevent overflow
+        global_str = f"{', '.join(global_sig[:4])}" if global_sig else "none"
+        if len(global_sig) > 4:
+            global_str += f" +{len(global_sig)-4}"
         
         # Build per-CLD post-hoc summary (exploratory, uncorrected p<0.05)
         per_cld = prompt_effect_f1.get("per_cld_posthoc", {})
@@ -1125,7 +1138,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         ax1_split.text(
             0.02,
             0.02,
-            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
+            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars_omnibus}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
             transform=ax1_split.transAxes,
             va="bottom",
             ha="left",
@@ -1134,11 +1147,11 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         )
     
     # Recreate Panel 2: ROC-AUC (Middle)
-    ax2_split = axes1[1]
+    ax2_split = fig1.add_subplot(gs1[0, 1])
     pivot_roc_mean.plot(kind='bar', ax=ax2_split, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_roc_ci, capsize=4, error_kw={'linewidth': 1.5})
     ax2_split.set_ylabel('ROC-AUC', fontsize=14, fontweight='bold')
-    ax2_split.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax2_split.set_title('ROC-AUC by CLD and Prompt (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax2_split.set_ylim([0, 1])
     ax2_split.axhline(y=0.5, color='red', linestyle='--', linewidth=1, alpha=0.5, label='Random (AUC=0.5)')
     ax2_split.set_xticklabels(ax2_split.get_xticklabels(), rotation=15, ha='right')
@@ -1147,12 +1160,12 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
 
     if prompt_effect_auc and prompt_effect_auc.get("ok", False):
         p = prompt_effect_auc.get("p", np.nan)
-        stars = _sig_stars(p)
+        stars_omnibus = _sig_stars(p)
         n_blocks = prompt_effect_auc.get("n_blocks", 0)
         w = prompt_effect_auc.get("kendall_w", np.nan)
         w_str = f", W={w:.2f}" if not np.isnan(w) else ""
         
-        # Build global post-hoc summary (using Bonferroni-corrected global pairs)
+        # Build global post-hoc summary (compact: stars only, no p-values to prevent overflow)
         global_posthoc = prompt_effect_auc.get("posthoc", {})
         prompt_short = {"baseline": "B", "mechanistic": "M", "mechanistic_original": "M", "cot": "C", "mechanistic_lit": "ML"}
         cld_short = {"depressive": "DE", "emergency_department": "ED", "social_norms": "SN"}
@@ -1163,9 +1176,18 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
                 p1, p2 = pair_name.split("_vs_")
                 winner = pair_data.get("winner", "")
                 loser = p2 if winner == p1 else p1
-                global_sig.append(f"{prompt_short.get(winner, winner[0].upper())}>{prompt_short.get(loser, loser[0].upper())}")
+                p_raw = pair_data.get("p", np.nan)
+                # Compact format: omit p-values to prevent overflow (stars indicate significance)
+                global_sig.append(
+                    f"{prompt_short.get(winner, winner[0].upper())}"
+                    f">{prompt_short.get(loser, loser[0].upper())}"
+                    f"{_sig_stars(p_raw)}"
+                )
         
-        global_str = f"{', '.join(global_sig)}" if global_sig else "none"
+        # Limit to first 4 comparisons to prevent overflow
+        global_str = f"{', '.join(global_sig[:4])}" if global_sig else "none"
+        if len(global_sig) > 4:
+            global_str += f" +{len(global_sig)-4}"
         
         # Build per-CLD post-hoc summary (exploratory, uncorrected p<0.05)
         per_cld = prompt_effect_auc.get("per_cld_posthoc", {})
@@ -1187,7 +1209,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         ax2_split.text(
             0.02,
             0.02,
-            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
+            f"Friedman (n={n_blocks}): p={_format_p(p)}{stars_omnibus}{w_str} | Global: {global_str}\nPer-CLD: {per_cld_str}",
             transform=ax2_split.transAxes,
             va="bottom",
             ha="left",
@@ -1196,7 +1218,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
         )
     
     # Recreate Panel 3: Performance by Prompt (SWAPPED)
-    ax3_split = axes1[2]
+    ax3_split = fig1.add_subplot(gs1[0, 2])
     metrics = ['ROC-AUC', 'F1', 'Precision', 'Recall']
     metric_cols = ['roc_auc_mean', 'f1_mean', 'precision_mean', 'recall_mean']
     x = np.arange(len(metrics))
@@ -1211,20 +1233,20 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax3_split.set_xticks(x + width_bar * 1.5)
     ax3_split.set_xticklabels(metrics)
     ax3_split.set_ylabel('Score', fontsize=14, fontweight='bold')
-    ax3_split.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold')
+    ax3_split.set_title('Performance by Prompt (± 95% CI)', fontsize=14, fontweight='bold', wrap=True)
     ax3_split.set_ylim([0, 1])
     ax3_split.legend(title='', loc='upper right', fontsize=9)
     ax3_split.grid(axis='y', alpha=0.3)
     
-    plt.tight_layout()
+    # Note: No tight_layout() call here to match synth script behavior
     output_file_row1 = output_dir / "rq1a_ground_truth_row1_performance_metrics.png"
     fig1.savefig(output_file_row1, dpi=300, bbox_inches='tight')
     print(f"  ✓ Row 1 (Performance Metrics 1x3): {output_file_row1.name}")
     plt.close(fig1)
     
     # FIGURE 2: Row 2 - Detailed Analysis (1x3 layout)
-    fig2, axes2 = plt.subplots(1, 3, figsize=(20, 5))
-    fig2.subplots_adjust(wspace=0.35)
+    # Use figsize=(16, 5) to match synth script output dimensions for consistent font scaling
+    fig2, axes2 = plt.subplots(1, 3, figsize=(16, 5), constrained_layout=True)
     
     # Recreate Panel 4: Precision vs Recall (with CLD markers)
     ax4_split = axes2[0]
@@ -1262,7 +1284,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     
     ax4_split.set_xlabel('Recall', fontsize=14, fontweight='bold')
     ax4_split.set_ylabel('Precision', fontsize=14, fontweight='bold')
-    ax4_split.set_title('Precision vs Recall Trade-off', fontsize=14, fontweight='bold')
+    ax4_split.set_title('Precision vs Recall Trade-off', fontsize=16, fontweight='bold', wrap=True)
     ax4_split.set_xlim([0, 1])
     ax4_split.set_ylim([0, 1])
     ax4_split.grid(alpha=0.3)
@@ -1296,59 +1318,22 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax5_split = axes2[1]
     pivot_pb_mean = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='point_biserial_r_mean')
     pivot_pb_ci = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='point_biserial_r_ci95')
-    pivot_pb_pval = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='pb_p_value_mean')
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     # Rename columns to display names for consistent legends
     pivot_pb_mean.columns = [get_prompt_label(c) for c in pivot_pb_mean.columns]
     pivot_pb_ci.columns = [get_prompt_label(c) for c in pivot_pb_ci.columns]
-    pivot_pb_pval.columns = [get_prompt_label(c) for c in pivot_pb_pval.columns]
-    # Rename columns to display names for consistent legends
-    pivot_pb_mean.columns = [get_prompt_label(c) for c in pivot_pb_mean.columns]
-    pivot_pb_ci.columns = [get_prompt_label(c) for c in pivot_pb_ci.columns]
-    pivot_pb_pval.columns = [get_prompt_label(c) for c in pivot_pb_pval.columns]
     
     pivot_pb_mean.plot(kind='bar', ax=ax5_split, width=0.8, edgecolor='black', alpha=0.8,
                        yerr=pivot_pb_ci, capsize=4, error_kw={'linewidth': 1.5},
                        color=[prompt_colors.get(c.lower(), '#808080') for c in pivot_pb_mean.columns])
     ax5_split.set_ylabel('Point-Biserial r', fontsize=14, fontweight='bold')
-    ax5_split.set_title('Score Discrimination (± 95% CI)', fontsize=14, fontweight='bold')
+    ax5_split.set_title('Score Discrimination (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax5_split.axhline(y=0, color='black', linestyle='--', linewidth=1)
     ax5_split.set_xticklabels(ax5_split.get_xticklabels(), rotation=15, ha='right')
     ax5_split.legend(title='', fontsize=9)
     ax5_split.grid(axis='y', alpha=0.3)
     
-    # Add significance stars based on p-value from pooled statistical test
-    # Use p-value from scipy.stats.pointbiserialr computed on pooled data
-    n_prompts = len(pivot_pb_mean.columns)
-    bar_width = 0.8 / n_prompts  # Each bar's width within the group
-    
-    # Track min/max y positions for axis limits
-    y_positions = []
-    
-    for i, cld in enumerate(pivot_pb_mean.index):
-        for j, prompt in enumerate(pivot_pb_mean.columns):
-            r_val = pivot_pb_mean.loc[cld, prompt]
-            p_val = pivot_pb_pval.loc[cld, prompt]
-            ci_val = pivot_pb_ci.loc[cld, prompt] if pd.notna(pivot_pb_ci.loc[cld, prompt]) else 0
-            
-            if pd.notna(r_val) and pd.notna(p_val):
-                # Use p-value from pooled statistical test
-                sig = '***' if p_val < 0.001 else '**' if p_val < 0.01 else '*' if p_val < 0.05 else ''
-                
-                if sig:
-                    # Calculate x position: group center (i) - half group width + bar center
-                    # For pandas bar plot: bars are centered at i, distributed within width=0.8
-                    x_pos = i - 0.4 + (j + 0.5) * bar_width
-                    y_pos = r_val + ci_val + 0.02 if r_val > 0 else r_val - ci_val - 0.05
-                    y_positions.append(y_pos)
-                    ax5_split.text(x_pos, y_pos, sig, ha='center', va='bottom' if r_val > 0 else 'top', 
-                                  fontsize=12, fontweight='bold', color='black')
-    
-    # Adjust y-axis limits to include significance markers with padding
-    if y_positions:
-        current_ylim = ax5_split.get_ylim()
-        y_min = min(current_ylim[0], min(y_positions) - 0.08)
-        y_max = max(current_ylim[1], max(y_positions) + 0.08)
-        ax5_split.set_ylim([y_min, y_max])
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     
     # Recreate Panel 6: Score distributions by classification (swapped to right)
     ax6_split = axes2[2]
@@ -1386,7 +1371,7 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax6_split.set_xticklabels(classifications, fontsize=14, fontweight='bold')
     ax6_split.set_ylabel('Mean Judge Score (μ)', fontsize=12, fontweight='bold')
     ax6_split.set_xlabel('Classification Type', fontsize=12, fontweight='bold')
-    ax6_split.set_title('Judge Scores by Hallucination-Detection\nOutcome (± 95% CI)', fontsize=12, fontweight='bold')
+    ax6_split.set_title('Judge Scores by Hallucination-Detection Outcome (± 95% CI)', fontsize=16, fontweight='bold', wrap=True)
     ax6_split.set_ylim([0, 1.15])
     ax6_split.grid(axis='y', alpha=0.3)
     
@@ -1411,7 +1396,6 @@ def create_enhanced_visualizations(by_cld_prompt_df: pd.DataFrame,
     ax6_split.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(0.98, 0.98), 
                     fontsize=8, title=f'Total: n={total_all:,} edges', title_fontsize=9, framealpha=0.95)
     
-    plt.tight_layout()
     output_file_row2 = output_dir / "rq1a_ground_truth_row2_detailed_analysis.png"
     fig2.savefig(output_file_row2, dpi=300, bbox_inches='tight')
     print(f"  ✓ Row 2 (Detailed Analysis 1x3): {output_file_row2.name}")
@@ -1746,7 +1730,7 @@ def create_individual_ground_truth_figures_high_dpi(by_cld_prompt_df: pd.DataFra
     fig, ax = plt.subplots(figsize=(14, 8))
     pivot_pb_mean = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='point_biserial_r_mean')
     pivot_pb_ci = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='point_biserial_r_ci95')
-    pivot_pb_pval = by_cld_prompt_df.pivot(index='cld', columns='prompt', values='pb_p_value_mean')
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     
     # Use pandas plot which handles NaN values automatically  
     pivot_pb_mean.plot(kind='bar', ax=ax, width=0.7, edgecolor='black', alpha=0.85,
@@ -1754,25 +1738,7 @@ def create_individual_ground_truth_figures_high_dpi(by_cld_prompt_df: pd.DataFra
                       color=[colors.get(p, '#808080') for p in pivot_pb_mean.columns],
                       linewidth=1.5)
     
-    # Add significance markers manually after plotting (using p-value from pooled test)
-    for i, cld in enumerate(pivot_pb_mean.index):
-        for j, prompt in enumerate(pivot_pb_mean.columns):
-            r_val = pivot_pb_mean.loc[cld, prompt]
-            p_val = pivot_pb_pval.loc[cld, prompt]
-            ci_val = pivot_pb_ci.loc[cld, prompt]
-            
-            if pd.notna(r_val) and pd.notna(p_val):
-                # Use p-value from pooled statistical test
-                sig = '***' if p_val < 0.001 else '**' if p_val < 0.01 else '*' if p_val < 0.05 else ''
-                
-                if sig:
-                    y_pos = r_val + (ci_val + 0.03 if r_val > 0 else -(ci_val + 0.03))
-                    # Position based on bar groups
-                    n_bars = len(pivot_pb_mean.columns)
-                    bar_width = 0.7 / n_bars
-                    x_pos = i + (j - n_bars/2 + 0.5) * bar_width
-                    ax.text(x_pos, y_pos, sig, ha='center', va='bottom' if r_val > 0 else 'top',
-                           fontsize=14, fontweight='bold', color='red')
+    # NOTE: We treat point-biserial correlation as descriptive and do not plot significance stars.
     
     ax.set_xlabel('Causal Loop Diagram', fontsize=pub_fontsize_label, fontweight='bold')
     ax.set_ylabel('Point-Biserial Correlation (r)', fontsize=pub_fontsize_label, fontweight='bold')
@@ -1788,11 +1754,6 @@ def create_individual_ground_truth_figures_high_dpi(by_cld_prompt_df: pd.DataFra
     ax.grid(axis='y', alpha=0.3, linestyle='--')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    
-    # Add significance legend
-    ax.text(0.02, 0.98, '*** p < .001  ** p < .01  * p < .05',
-           transform=ax.transAxes, fontsize=pub_fontsize_tick, va='top',
-           bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='black'))
     
     plt.tight_layout()
     output_file = individual_dir / "fig_point_biserial_correlation.png"

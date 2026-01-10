@@ -19,12 +19,76 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 from scipy import stats
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, average_precision_score
 import sys
 import warnings
 warnings.filterwarnings('ignore')
 
 from rq2_paths import rq2_dirs
+
+# Number of single-metric tests for Bonferroni correction (per Methods Section 4.5)
+N_METRIC_TESTS = 4  # Perplexity, Min Prob, Max Window Entropy, Cosine Similarity
+ALPHA = 0.05
+ALPHA_ADJ = ALPHA / N_METRIC_TESTS  # 0.0125
+
+
+def bonferroni_correction(p_values: dict, alpha: float = 0.05) -> dict:
+    """
+    Apply Bonferroni correction to a family of p-values.
+    
+    Per Methods Section 4.5: RQ2 uses 4 single-metric tests → alpha_adj = 0.0125
+    
+    Args:
+        p_values: Dict of {test_name: p_value}
+        alpha: Significance level (default 0.05)
+    
+    Returns:
+        Dict with correction results including adjusted p-values
+    """
+    m = len(p_values)
+    if m == 0:
+        return {
+            'method': 'Bonferroni',
+            'n_tests': 0,
+            'alpha_original': alpha,
+            'alpha_adjusted': np.nan,
+            'results': {},
+            'n_significant_original': 0,
+            'n_significant_adjusted': 0,
+        }
+    
+    alpha_adj = alpha / m
+    
+    results = {}
+    for name, p in p_values.items():
+        if p is None or np.isnan(p):
+            results[name] = {
+                'p_original': p,
+                'p_adjusted': np.nan,
+                'significant_original': False,
+                'significant_adjusted': False,
+                'changed': False
+            }
+        else:
+            p_adj = min(float(p) * m, 1.0)
+            results[name] = {
+                'p_original': float(p),
+                'p_adjusted': float(p_adj),
+                'significant_original': bool(p < alpha),
+                'significant_adjusted': bool(p_adj < alpha),
+                'changed': bool((p < alpha) != (p_adj < alpha))
+            }
+    
+    return {
+        'method': 'Bonferroni',
+        'n_tests': m,
+        'alpha_original': alpha,
+        'alpha_adjusted': alpha_adj,
+        'results': results,
+        'n_significant_original': sum(1 for r in results.values() if r.get('significant_original', False)),
+        'n_significant_adjusted': sum(1 for r in results.values() if r.get('significant_adjusted', False))
+    }
+
 
 def bootstrap_ci_blocks(data, n_boot=10000, alpha=0.05):
     """Compute bootstrap CI for mean of block-level data."""
@@ -119,6 +183,13 @@ def analyze_file_for_metric(filepath: str, metric: str):
             result['auc'] = float(roc_auc_score(df_clean['is_hallucination'], df_clean[metric]))
         except:
             result['auc'] = None
+
+        # PR-AUC (Average Precision) — baseline equals positive prevalence under random ranking
+        # Useful under class imbalance: focuses on precision/recall trade-off for the positive class.
+        try:
+            result['ap'] = float(average_precision_score(df_clean['is_hallucination'], df_clean[metric]))
+        except:
+            result['ap'] = None
         
         # Point-biserial correlation (Pearson with binary)
         try:
@@ -158,14 +229,25 @@ def compute_meta_analysis(file_results: list):
     df = pd.DataFrame(file_results)
     
     # 1. Aggregate to Block Level (CLD, Run)
-    # We take the mean AUC/Corr for each block
+    # We take the mean AUC/AP/Corr for each block, and sum edges to compute prevalence baselines.
     if 'cld' in df.columns and 'run' in df.columns:
-        block_df = df.groupby(['cld', 'run'])[['auc', 'correlation_r']].mean().reset_index()
+        block_df = (
+            df.groupby(['cld', 'run'])
+            .agg(
+                auc=('auc', 'mean'),
+                ap=('ap', 'mean'),
+                correlation_r=('correlation_r', 'mean'),
+                n_edges=('n_edges', 'sum'),
+                n_halluc=('n_halluc', 'sum'),
+            )
+            .reset_index()
+        )
     else:
         # Fallback if no block info (shouldn't happen with new main)
         block_df = df.copy()
     
     block_aucs = block_df['auc'].dropna()
+    block_aps = block_df['ap'].dropna()
     block_corrs = block_df['correlation_r'].dropna()
     
     n_blocks = len(block_aucs)
@@ -200,6 +282,34 @@ def compute_meta_analysis(file_results: list):
         result['auc_ttest_p'] = float(p_val)
         result['auc_above_chance'] = (p_val < 0.05) and (mean_auc > 0.5)
         result['auc_below_chance'] = (p_val < 0.05) and (mean_auc < 0.5)
+
+    # --- PR-AUC (Average Precision) Meta-Analysis (Block-Level) ---
+    # Baseline under random ranking equals positive prevalence; we test AP - prevalence vs 0 on blocks.
+    if len(block_aps) >= 2:
+        mean_ap = float(block_aps.mean())
+        std_ap = float(block_aps.std())
+        n = len(block_aps)
+        se = std_ap / np.sqrt(n)
+
+        t_crit = stats.t.ppf(0.975, n - 1)
+        ci_lower_ap = float(mean_ap - t_crit * se)
+        ci_upper_ap = float(mean_ap + t_crit * se)
+
+        result['mean_ap'] = mean_ap
+        result['std_ap'] = std_ap
+        result['ci_lower_ap'] = ci_lower_ap
+        result['ci_upper_ap'] = ci_upper_ap
+
+        # Prevalence baseline per block (may vary across CLD×run)
+        block_prev = (block_df.loc[block_aps.index, 'n_halluc'] / block_df.loc[block_aps.index, 'n_edges']).astype(float)
+        result['mean_prevalence'] = float(block_prev.mean())
+
+        # One-sample t-test vs prevalence baseline (on blocks): AP - prevalence
+        deltas = block_aps.values - block_prev.values
+        t_stat, p_val = stats.ttest_1samp(deltas, 0.0)
+        result['ap_delta_ttest_t'] = float(t_stat)
+        result['ap_delta_ttest_p'] = float(p_val)
+        result['ap_above_baseline'] = (p_val < 0.05) and (float(np.mean(deltas)) > 0.0)
 
     # --- Correlation Meta-Analysis (Fisher Z on Blocks) ---
     if len(block_corrs) >= 2:
@@ -238,8 +348,8 @@ def compute_meta_analysis(file_results: list):
     return result
 
 
-def generate_latex_table(metrics_results: dict, output_path: Path):
-    """Generate LaTeX table for thesis."""
+def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output_path: Path):
+    """Generate LaTeX table for thesis with Bonferroni-adjusted p-values."""
     
     # Sort by AUC descending
     sorted_metrics = sorted(
@@ -253,10 +363,13 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
 \caption{Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}
 \label{tab:rq2_single_metrics}
 \begin{threeparttable}
-\begin{tabular}{lccccc}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
- & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
+\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Mean PR-AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
+ & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
 \midrule
 """
     
@@ -265,25 +378,29 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
         metric_short = METRIC_SHORT_NAMES.get(metric, metric)
         parts = metric_short.split('\\\\')
         
-        # Format AUC with significance
+        # Format AUC with significance (using ADJUSTED p-values from Bonferroni)
         if 'mean_auc' in meta:
             auc_val = meta['mean_auc']
             ci_l, ci_u = meta['ci_lower_auc'], meta['ci_upper_auc']
             ci_hw = (ci_u - ci_l) / 2
             
-            # Significance markers
-            p_val = meta.get('auc_ttest_p', 1.0)
-            if p_val < 0.001:
+            # Use Bonferroni-adjusted p-value for significance markers
+            bonf_result = bonferroni_results.get('results', {}).get(metric, {})
+            p_adj = bonf_result.get('p_adjusted', meta.get('auc_ttest_p', 1.0))
+            
+            # Significance markers based on adjusted p-value
+            if p_adj < 0.001:
                 sig = '***'
-            elif p_val < 0.01:
+            elif p_adj < 0.01:
                 sig = '**'
-            elif p_val < 0.05:
+            elif p_adj < 0.05:
                 sig = '*'
             else:
                 sig = '^{ns}'
             
-            # Direction marker for below chance
-            if meta.get('auc_below_chance', False):
+            # Direction marker for below chance (use adjusted significance)
+            sig_adj = bonf_result.get('significant_adjusted', False)
+            if sig_adj and auc_val < 0.5:
                 sig += r'\downarrow'
             
             auc_str = f"{auc_val:.3f}${sig}$"
@@ -291,15 +408,25 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
         else:
             auc_str = "N/A"
             auc_ci = ""
+
+        # Format PR-AUC (Average Precision) (descriptive + baseline-aware test stored in JSON/Excel)
+        if 'mean_ap' in meta:
+            ap_val = meta['mean_ap']
+            ci_l, ci_u = meta['ci_lower_ap'], meta['ci_upper_ap']
+            ci_hw = (ci_u - ci_l) / 2
+            ap_str = f"{ap_val:.3f}"
+            ap_ci = f"$\\pm$ {ci_hw:.3f}"
+        else:
+            ap_str = "N/A"
+            ap_ci = ""
         
-        # Format correlation
+        # Format correlation (Bonferroni-adjusted across 4 single-metric correlation tests)
         if 'mean_corr' in meta:
             corr_val = meta['mean_corr']
             ci_l, ci_u = meta['ci_lower_corr'], meta['ci_upper_corr']
             ci_hw = (ci_u - ci_l) / 2
             
-            # Significance markers
-            p_val = meta.get('corr_ttest_p', 1.0)
+            p_val = meta.get('corr_ttest_p_adj', meta.get('corr_ttest_p', 1.0))
             if p_val < 0.001:
                 sig = '***'
             elif p_val < 0.01:
@@ -324,28 +451,37 @@ def generate_latex_table(metrics_results: dict, output_path: Path):
         
         # First row
         if len(parts) == 1:
-            latex += f"{parts[0]} & {n_edges} & {auc_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
-            latex += f" & & {auc_ci} & {corr_ci} & & \\\\\n"
+            latex += f"{parts[0]} & {n_edges} & {auc_str} & {ap_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
+            latex += f" & & {auc_ci} & {ap_ci} & {corr_ci} & & \\\\\n"
         else:
-            latex += f"{parts[0]} & {n_edges} & {auc_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
-            latex += f"{parts[1]} & & {auc_ci} & {corr_ci} & & \\\\\n"
+            latex += f"{parts[0]} & {n_edges} & {auc_str} & {ap_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
+            latex += f"{parts[1]} & & {auc_ci} & {ap_ci} & {corr_ci} & & \\\\\n"
         
         latex += r"\midrule" + "\n"
     
     # Remove last \midrule
     latex = latex.rstrip("\n").rstrip(r"\midrule")
     
+    # Get Bonferroni correction info for footnote
+    n_tests = bonferroni_results.get('n_tests', N_METRIC_TESTS)
+    alpha_adj = bonferroni_results.get('alpha_adjusted', ALPHA_ADJ)
+    
     latex += r"""\bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{tablenotes}
 \small
 \item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
 Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
 \textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks.
+\textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
 \textbf{Correlation r} computed via Fisher z-transform aggregation across blocks.
 \textbf{Significant Files (\%)} = percentage of files where Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure.
-Significance levels: *** $p<0.001$, ** $p<0.01$, * $p<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample t-test of block means vs.\ 0.5).
+"""
+    
+    latex += f"\\item \\textit{{Multiple comparisons:}} Bonferroni correction applied across {n_tests} single-metric AUC tests and {n_tests} single-metric correlation tests ($\\alpha_{{\\text{{adj}}}} = {alpha_adj:.4f}$ per family). Significance markers (*, **, ***) reflect Bonferroni-adjusted $p$-values ($p_{{\\text{{adj}}}} = p \\times {n_tests}$).\n"
+    
+    latex += r"""\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample t-test of block means vs.\ 0.5).
 \item \textit{Assumptions:} While edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}), block-level mean AUCs follow a normal distribution (Shapiro-Wilk $p > 0.05$), validating the use of t-tests for meta-analysis. Block-level aggregation handles dependence between prompts within the same run.
 \end{tablenotes}
 \end{threeparttable}
@@ -358,8 +494,8 @@ Significance levels: *** $p<0.001$, ** $p<0.01$, * $p<0.05$, $^{ns}$ = not signi
     print(f"  ✅ LaTeX table saved: {output_path.name}")
 
 
-def generate_excel(metrics_results: dict, file_level_results: dict, output_path: Path):
-    """Generate Excel file with all results."""
+def generate_excel(metrics_results: dict, bonferroni_results: dict, file_level_results: dict, output_path: Path):
+    """Generate Excel file with all results including Bonferroni-adjusted values."""
     
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
         # Summary sheet
@@ -374,8 +510,18 @@ def generate_excel(metrics_results: dict, file_level_results: dict, output_path:
                 'AUC_CI_Upper': meta.get('ci_upper_auc'),
                 'AUC_Std': meta.get('std_auc'),
                 'AUC_ttest_p': meta.get('auc_ttest_p'),
+                'AUC_ttest_p_adj': meta.get('auc_ttest_p_adj'),  # Bonferroni-adjusted
                 'AUC_Above_Chance': meta.get('auc_above_chance'),
+                'AUC_Above_Chance_Adj': meta.get('auc_above_chance_adj'),  # Bonferroni-adjusted
                 'AUC_Below_Chance': meta.get('auc_below_chance'),
+                'AUC_Below_Chance_Adj': meta.get('auc_below_chance_adj'),  # Bonferroni-adjusted
+                'Mean_PR_AUC': meta.get('mean_ap'),
+                'PR_AUC_CI_Lower': meta.get('ci_lower_ap'),
+                'PR_AUC_CI_Upper': meta.get('ci_upper_ap'),
+                'PR_AUC_Std': meta.get('std_ap'),
+                'Mean_Prevalence': meta.get('mean_prevalence'),
+                'PR_AUC_Delta_ttest_p': meta.get('ap_delta_ttest_p'),
+                'PR_AUC_Above_Baseline': meta.get('ap_above_baseline'),
                 'Mean_Corr': meta.get('mean_corr'),
                 'Corr_CI_Lower': meta.get('ci_lower_corr'),
                 'Corr_CI_Upper': meta.get('ci_upper_corr'),
@@ -399,8 +545,11 @@ def generate_excel(metrics_results: dict, file_level_results: dict, output_path:
             'Generated': datetime.now().isoformat(),
             'Script': 'rq2_single_metric_table.py',
             'Statistical_Test': 'Mann-Whitney U (non-parametric)',
-            'Significance_Alpha': 0.05,
-            'Note': 'File-level aggregation to avoid pseudo-replication'
+            'AUC_Test': 'One-sample t-test vs 0.5 on block means',
+            'Significance_Alpha': ALPHA,
+            'Bonferroni_N_Tests': bonferroni_results.get('n_tests', N_METRIC_TESTS),
+            'Bonferroni_Alpha_Adj': bonferroni_results.get('alpha_adjusted', ALPHA_ADJ),
+            'Note': 'Bonferroni correction applied across 4 single-metric AUC tests per Methods Section 4.5'
         }])
         metadata.to_excel(writer, sheet_name='Metadata', index=False)
     
@@ -469,15 +618,59 @@ def main():
     
     output_dir.mkdir(parents=True, exist_ok=True)
     
+    # Apply Bonferroni correction across the 4 single-metric AUC tests
+    # Per Methods Section 4.5: RQ2 uses 4 tests → alpha_adj = 0.0125
+    print("\n" + "-"*40)
+    print("Applying Bonferroni correction...")
+    
+    auc_p_values = {
+        metric: meta.get('auc_ttest_p', 1.0)
+        for metric, meta in metrics_results.items()
+    }
+    bonferroni_results = bonferroni_correction(auc_p_values, alpha=ALPHA)
+    
+    print(f"  Bonferroni family: {bonferroni_results['n_tests']} tests")
+    print(f"  α_original = {bonferroni_results['alpha_original']:.3f}")
+    print(f"  α_adjusted = {bonferroni_results['alpha_adjusted']:.4f}")
+    print(f"  Significant before correction: {bonferroni_results['n_significant_original']}")
+    print(f"  Significant after correction:  {bonferroni_results['n_significant_adjusted']}")
+    
+    # Add adjusted values back to metrics_results
+    for metric in metrics_results:
+        if metric in bonferroni_results['results']:
+            bonf = bonferroni_results['results'][metric]
+            metrics_results[metric]['auc_ttest_p_adj'] = bonf['p_adjusted']
+            metrics_results[metric]['auc_significant_adj'] = bonf['significant_adjusted']
+            metrics_results[metric]['auc_above_chance_adj'] = (
+                bonf['significant_adjusted'] and metrics_results[metric].get('mean_auc', 0) > 0.5
+            )
+            metrics_results[metric]['auc_below_chance_adj'] = (
+                bonf['significant_adjusted'] and metrics_results[metric].get('mean_auc', 0) < 0.5
+            )
+
+    # Apply Bonferroni correction across the 4 single-metric correlation tests (separate family)
+    corr_p_values = {
+        metric: meta.get('corr_ttest_p', 1.0)
+        for metric, meta in metrics_results.items()
+    }
+    bonferroni_corr_results = bonferroni_correction(corr_p_values, alpha=ALPHA)
+
+    # Add adjusted correlation values back to metrics_results
+    for metric in metrics_results:
+        if metric in bonferroni_corr_results.get('results', {}):
+            bonf = bonferroni_corr_results['results'][metric]
+            metrics_results[metric]['corr_ttest_p_adj'] = bonf['p_adjusted']
+            metrics_results[metric]['corr_significant_adj'] = bonf['significant_adjusted']
+    
     # Generate outputs
     print("\n" + "-"*40)
     print("Generating outputs...")
     
-    # LaTeX table
-    generate_latex_table(metrics_results, output_dir / 'single_metric_table.tex')
+    # LaTeX table (with Bonferroni-adjusted p-values for AUC and correlation)
+    generate_latex_table(metrics_results, bonferroni_results, output_dir / 'single_metric_table.tex')
     
-    # Excel file
-    generate_excel(metrics_results, file_level_results, output_dir / 'single_metric_table.xlsx')
+    # Excel file (with Bonferroni-adjusted values)
+    generate_excel(metrics_results, bonferroni_results, file_level_results, output_dir / 'single_metric_table.xlsx')
     
     # JSON archive
     json_path = output_dir / 'single_metric_results.json'
@@ -499,6 +692,7 @@ def main():
     with open(json_path, 'w') as f:
         json.dump(convert_numpy({
             'timestamp': datetime.now().isoformat(),
+            'bonferroni_correction': bonferroni_results,
             'metrics': metrics_results,
             'file_level': {k: v for k, v in file_level_results.items()}
         }), f, indent=2)

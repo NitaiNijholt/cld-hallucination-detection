@@ -22,6 +22,7 @@ import numpy as np
 from pathlib import Path
 import sys
 import argparse
+import json
 from typing import Any, Dict, Optional, Tuple
 import os
 
@@ -1119,10 +1120,69 @@ def main():
         experiments_to_run = [args.type]
     
     results = {}
+    blocked_stats_all = {}  # Store blocked stats for each experiment for cross-experiment Bonferroni
+    
     for exp_type in experiments_to_run:
         result = analyze_experiment(exp_type, output_dir, judge_suffix)
         if result is not None:
             results[exp_type] = result
+            # Re-compute blocked stats for cross-experiment Bonferroni
+            try:
+                blocked_stats_all[exp_type] = compute_blocked_prompt_tests(result)
+            except Exception:
+                pass
+    
+    # Apply Bonferroni correction across the 2 omnibus Friedman tests (synthetic vs groundtruth)
+    # Per Methods Section 4.5: RQ1b uses 2 omnibus tests → alpha_adj = 0.025
+    if len(blocked_stats_all) == 2 and 'synthetic' in blocked_stats_all and 'groundtruth' in blocked_stats_all:
+        print("\n" + "-"*60)
+        print("BONFERRONI CORRECTION ACROSS 2 OMNIBUS FRIEDMAN TESTS (RQ1b)")
+        print("-"*60)
+        
+        omnibus_p_values = {
+            exp: stats.get('friedman_p', np.nan)
+            for exp, stats in blocked_stats_all.items()
+        }
+        
+        bonf_omnibus = bonferroni_correction(omnibus_p_values, alpha=0.05)
+        
+        print(f"  Bonferroni family: {bonf_omnibus['n_tests']} tests (synthetic, groundtruth)")
+        print(f"  α_original = {bonf_omnibus['alpha_original']:.3f}")
+        print(f"  α_adjusted = {bonf_omnibus['alpha_adjusted']:.4f}")
+        
+        for exp, bonf_result in bonf_omnibus['results'].items():
+            p_orig = bonf_result['p_original']
+            p_adj = bonf_result['p_adjusted']
+            sig_orig = '✓' if bonf_result['significant_original'] else '✗'
+            sig_adj = '✓' if bonf_result['significant_adjusted'] else '✗'
+            changed = ' (CHANGED)' if bonf_result['changed'] else ''
+            print(f"  {exp}: p={_format_p(p_orig)} → p_adj={_format_p(p_adj)} [sig: {sig_orig} → {sig_adj}]{changed}")
+        
+        # Save omnibus Bonferroni results to JSON
+        bonf_json_path = output_dir / 'rq1b_omnibus_bonferroni.json'
+        with open(bonf_json_path, 'w') as f:
+            def convert_numpy(obj):
+                if isinstance(obj, (np.integer, np.int64, np.int32)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating, np.float64, np.float32)):
+                    return float(obj)
+                elif isinstance(obj, (np.bool_, bool)):
+                    return bool(obj)
+                elif isinstance(obj, dict):
+                    return {k: convert_numpy(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_numpy(item) for item in obj]
+                return obj
+            
+            json.dump(convert_numpy({
+                'method': 'Bonferroni',
+                'description': 'Cross-experiment correction for 2 omnibus Friedman tests per Methods Section 4.5',
+                'experiments': list(omnibus_p_values.keys()),
+                'alpha_original': 0.05,
+                'alpha_adjusted': bonf_omnibus['alpha_adjusted'],
+                'results': bonf_omnibus['results']
+            }), f, indent=2)
+        print(f"\n  ✅ Omnibus Bonferroni results saved to: {bonf_json_path.name}")
     
     # Summary
     print("\n" + "="*80)

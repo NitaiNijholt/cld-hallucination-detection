@@ -116,10 +116,6 @@ def main():
     script_report = rq2_scripts / "rq2_master_report_v2_enhanced.py"
     run_command(f"python3 {script_report}", "RQ2 Master Report Generation", env=env)
 
-    # 5b. Ensemble Performance Table (LaTeX)
-    script_ensemble = rq2_scripts / "rq2_ensemble_table.py"
-    run_command(f"python3 {script_ensemble}", "RQ2 Ensemble Performance Table", env=env)
-
     # 6. Copy figures to thesis-compatible names for reproducibility
     if run_dir is not None:
         print("\n" + "="*80)

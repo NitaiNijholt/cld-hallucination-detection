@@ -1659,7 +1659,7 @@ def generate_combined_scaling_figure(df_judge: pd.DataFrame, df_gen: pd.DataFram
     ax.set_xlabel('Number of Edges (E)', fontsize=12)
     ax.set_ylabel('Inference Time (s) (± 95% CI) [log scale]', fontsize=12)
     ax.set_title('Pipeline Stage Time Scaling\nAll stages show O(E) linear scaling', fontsize=12, fontweight='bold')
-    ax.legend(loc='upper left', fontsize=9)
+    ax.legend(loc='lower right', fontsize=9)
     ax.set_yscale('log')
     ax.grid(True, alpha=0.3, which='both')
     ax.set_xlim(left=0)

@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import roc_auc_score, roc_curve, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_auc_score, roc_curve, precision_score, recall_score, f1_score, average_precision_score
 from scipy import stats
 import json
 import sys
@@ -228,16 +228,18 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             y_pred = (y_prob >= threshold).astype(int)
             
             auc = roc_auc_score(y_test, y_prob)
+            ap = average_precision_score(y_test, y_prob)
             precision = precision_score(y_test, y_pred, zero_division=0)
             recall = recall_score(y_test, y_pred, zero_division=0)
             f1 = f1_score(y_test, y_pred, zero_division=0)
             
-            print(f"  {test_cld:25s}: AUC={auc:.3f}, F1@0.5={f1:.3f}")
+            print(f"  {test_cld:25s}: AUC={auc:.3f}, PR-AUC={ap:.3f}, F1@0.5={f1:.3f}")
             
             results.append({
                 'test_cld': test_cld,
                 'train_clds': list(train_clds),
                 'auc': float(auc),
+                'ap': float(ap),
                 'precision': float(precision),
                 'recall': float(recall),
                 'f1': float(f1),
@@ -251,8 +253,11 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
         # Summary for this classifier
         mean_auc = np.mean([r['auc'] for r in results])
         std_auc = np.std([r['auc'] for r in results])
+        mean_ap = np.mean([r['ap'] for r in results])
+        std_ap = np.std([r['ap'] for r in results])
         
         print(f"\n  Mean AUC: {mean_auc:.3f} ± {std_auc:.3f}")
+        print(f"  Mean PR-AUC: {mean_ap:.3f} ± {std_ap:.3f}")
         print(f"  Range: [{min(r['auc'] for r in results):.3f}, {max(r['auc'] for r in results):.3f}]")
         
         all_results[clf_name] = results

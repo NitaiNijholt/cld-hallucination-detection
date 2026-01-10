@@ -106,7 +106,7 @@ EXPERIMENTS = {
             'Baseline': ('prompts_citation_baseline.yaml', 'judgeCitation'),
             'CoT': ('prompts_citation_cot.yaml', 'judgeCitation'),
             'Mechanistic': ('prompts_citation_mechanistic.yaml', 'judgeCitation'),
-            'Mechanistic_Lit': ('prompts_citation_mechanistic.yaml', 'judgeCitation')
+            'Mechanistic_Lit': ('prompts_citation_mechanistic_lit.yaml', 'judgeCitation')
         }
     },
     'Corr. Correctness': {
@@ -124,24 +124,25 @@ EXPERIMENTS = {
         'name': 'RQ1a_gt_lit_citation',
         'judge_type': 'citation',
         'is_ground_truth': True,
-        'has_mech_variants': True,  # Has mechanistic_lit and mechanistic_original
+        'has_mech_variants': True,  # Has mechanistic_lit (+ mechanistic_original alias in filenames)
         'prompts': {
             'Baseline': ('prompts_citation_baseline.yaml', 'judgeCitation'),
             'CoT': ('prompts_citation_cot.yaml', 'judgeCitation'),
-            'Mechanistic_Lit': ('prompts_citation_mechanistic.yaml', 'judgeCitation'),
-            'Mechanistic_Original': ('prompts_citation_mechanistic.yaml', 'judgeCitation')
+            # NOTE: Some runs label this prompt as "mechanistic_original" in filenames.
+            # We normalize that alias to "Mechanistic" during file parsing.
+            'Mechanistic': ('prompts_citation_mechanistic.yaml', 'judgeCitation'),
+            'Mechanistic_Lit': ('prompts_citation_mechanistic_lit.yaml', 'judgeCitation')
         }
     },
     'GT Correctness': {
         'name': 'RQ1a_gt_lit_correctness',
         'judge_type': 'correctness',
         'is_ground_truth': True,
-        'has_mech_variants': True,
+        'has_mech_variants': False,
         'prompts': {
             'Baseline': ('prompts_correctness_baseline.yaml', 'judgeCorrectness'),
             'CoT': ('prompts_correctness_cot.yaml', 'judgeCorrectness'),
-            'Mechanistic_Lit': ('prompts_correctness_mechanistic.yaml', 'judgeCorrectness'),
-            'Mechanistic_Original': ('prompts_correctness_mechanistic.yaml', 'judgeCorrectness')
+            'Mechanistic': ('prompts_correctness_mechanistic.yaml', 'judgeCorrectness')
         }
     }
 }
@@ -159,8 +160,7 @@ PROMPT_MARKERS = {
     'Baseline': 'o',
     'CoT': 's',
     'Mechanistic': '^',
-    'Mechanistic_Lit': 'v',
-    'Mechanistic_Original': 'D'
+    'Mechanistic_Lit': 'v'
 }
 
 # Colors for prompts in bar charts
@@ -168,8 +168,7 @@ PROMPT_COLORS = {
     'Baseline': '#3498db',        # Blue
     'CoT': '#2ecc71',             # Green
     'Mechanistic': '#e74c3c',     # Red
-    'Mechanistic_Lit': '#9b59b6', # Purple
-    'Mechanistic_Original': '#f39c12'  # Orange
+    'Mechanistic_Lit': '#9b59b6'  # Purple
 }
 
 
@@ -303,13 +302,18 @@ def compute_f1_from_file(excel_path: Path, judge_type: str, is_ground_truth: boo
 
 
 def get_prompt_type_from_filename(fname_lower: str) -> str:
-    """Determine prompt type from filename, distinguishing mechanistic variants."""
+    """Determine prompt type from filename.
+
+    NOTE: Some historical runs used "mechanistic_original" as an alias for the
+    standard mechanistic prompt. We normalize that alias to "Mechanistic" so it
+    does not appear as a separate prompt in figures/tables.
+    """
     if 'baseline' in fname_lower:
         return 'Baseline'
     elif 'mechanistic_lit' in fname_lower:
         return 'Mechanistic_Lit'
     elif 'mechanistic_original' in fname_lower:
-        return 'Mechanistic_Original'
+        return 'Mechanistic'
     elif 'mechanistic' in fname_lower:
         return 'Mechanistic'  # fallback for experiments without variants
     elif 'cot' in fname_lower:
@@ -457,7 +461,7 @@ def collect_all_data(base_dir: Path, prompts_dir: Path) -> pd.DataFrame:
         
         # Compile data for each prompt found in the data
         # Order: Baseline, CoT, then any Mechanistic variants
-        all_possible_prompts = ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit', 'Mechanistic_Original']
+        all_possible_prompts = ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit']
         available_prompts = [p for p in all_possible_prompts if p in f1_by_prompt]
         
         for prompt in available_prompts:
@@ -781,8 +785,11 @@ def create_visualization(data: pd.DataFrame, p_values: Dict[str, float], sobol_m
         'GT Correctness': 'Correctness Judge (Ground Truth)'
     }
     # Prompts vary by experiment type
+    # - Most experiments: 3 prompts (Baseline/CoT/Mechanistic)
+    # - Citation experiments: include Mechanistic_Lit as a 4th prompt, while
+    #   "mechanistic_original" filenames are normalized to "Mechanistic".
     prompts_3 = ['Baseline', 'CoT', 'Mechanistic']
-    prompts_4 = ['Baseline', 'CoT', 'Mechanistic_Lit', 'Mechanistic_Original']
+    prompts_4 = ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit']
     
     for idx, exp in enumerate(experiments):
         ax = axes[idx]
@@ -796,7 +803,7 @@ def create_visualization(data: pd.DataFrame, p_values: Dict[str, float], sobol_m
         # Determine which prompts are available for this experiment
         available_prompts = exp_data['Prompt'].unique().tolist()
         # Order them consistently
-        if any('Mechanistic_' in p for p in available_prompts):
+        if 'Mechanistic_Lit' in available_prompts:
             prompts = [p for p in prompts_4 if p in available_prompts]
         else:
             prompts = [p for p in prompts_3 if p in available_prompts]
@@ -867,7 +874,7 @@ def create_visualization(data: pd.DataFrame, p_values: Dict[str, float], sobol_m
         # Formatting - use shorter labels for mechanistic variants
         short_labels = {
             'Baseline': 'Base', 'CoT': 'CoT', 'Mechanistic': 'Mech',
-            'Mechanistic_Lit': 'Mech-Lit', 'Mechanistic_Original': 'Mech-Orig'
+            'Mechanistic_Lit': 'Mech-Lit'
         }
         ax.set_xticks(x_pos)
         ax.set_xticklabels([short_labels.get(p, p) for p in prompts], fontsize=10)
@@ -883,7 +890,7 @@ def create_visualization(data: pd.DataFrame, p_values: Dict[str, float], sobol_m
     # Add legend with all possible prompt types
     all_prompts_in_data = data['Prompt'].unique()
     legend_elements = [mpatches.Patch(facecolor=PROMPT_COLORS.get(p, '#cccccc'), edgecolor='black', label=p)
-                       for p in ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit', 'Mechanistic_Original']
+                       for p in ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit']
                        if p in all_prompts_in_data]
     fig.legend(handles=legend_elements, loc='upper center', ncol=len(legend_elements), 
                fontsize=10, frameon=True, bbox_to_anchor=(0.5, 0.02))
@@ -998,12 +1005,11 @@ def generate_latex_table(data: pd.DataFrame, p_values: Dict[str, float], sobol_m
         'Baseline': 'Baseline',
         'CoT': 'CoT',
         'Mechanistic': 'Mechanistic',
-        'Mechanistic_Lit': 'Mech-Lit',
-        'Mechanistic_Original': 'Mech-Orig'
+        'Mechanistic_Lit': 'Mech-Lit'
     }
     
     # Order of prompts to show
-    all_prompts = ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit', 'Mechanistic_Original']
+    all_prompts = ['Baseline', 'CoT', 'Mechanistic', 'Mechanistic_Lit']
     
     for exp in experiments:
         exp_data = data[data['Experiment'] == exp]
