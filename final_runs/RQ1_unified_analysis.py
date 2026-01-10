@@ -88,8 +88,9 @@ def main():
     print("RQ1a: LLM-as-a-Judge (Hallucination Detection)")
     print("#"*80)
 
-    script_path_agg = PROJECT_ROOT / "data_science/parameter_tuning_experiments/analyze_rq1a_aggregate_enhanced.py"
-    script_path_gt = PROJECT_ROOT / "data_science/parameter_tuning_experiments/analyze_rq1a_ground_truth_enhanced.py"
+    # Use local copies in analysis_lib (self-contained, no data_science dependency)
+    script_path_agg = PROJECT_ROOT / "final_runs/analysis_lib/analyze_rq1a_aggregate_enhanced.py"
+    script_path_gt = PROJECT_ROOT / "final_runs/analysis_lib/analyze_rq1a_ground_truth_enhanced.py"
 
     rq1a_runs = [
         {

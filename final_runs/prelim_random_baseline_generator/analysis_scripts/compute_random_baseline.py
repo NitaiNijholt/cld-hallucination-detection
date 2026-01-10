@@ -38,8 +38,9 @@ REPO_ROOT = Path(__file__).resolve().parents[3]  # project root
 HERE = Path(__file__).resolve().parent
 
 # Prefer a self-contained copy of the GT CLDs under this final_runs module.
-# If they're missing, we copy from the canonical location under data_science/.
+# Fallback locations: 1) analysis_lib (self-contained), 2) data_science (legacy)
 LOCAL_GROUND_TRUTH_DIR = HERE / "ground_truth_clds_for_experiments"
+ANALYSIS_LIB_GROUND_TRUTH_DIR = REPO_ROOT / "final_runs" / "analysis_lib" / "data" / "ground_truth_clds"
 CANONICAL_GROUND_TRUTH_DIR = (
     REPO_ROOT
     / "data_science"
@@ -71,7 +72,7 @@ def _ensure_local_ground_truth_dir() -> None:
     Ensure GT CLD JSONs exist under final_runs/random_baseline_generator/ground_truth_clds_for_experiments/.
 
     This keeps the random-baseline generator self-contained while still allowing the repo to keep the
-    canonical GT CLDs under data_science/.
+    canonical GT CLDs under data_science/ or analysis_lib/.
     """
     LOCAL_GROUND_TRUTH_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -79,17 +80,23 @@ def _ensure_local_ground_truth_dir() -> None:
     for _, info in VALIDATION_CLDS.items():
         for key in ("vars_file", "edges_file"):
             local_fp = LOCAL_GROUND_TRUTH_DIR / info[key]
+            # Check multiple source locations in priority order
+            analysis_lib_fp = ANALYSIS_LIB_GROUND_TRUTH_DIR / info[key]
             canon_fp = CANONICAL_GROUND_TRUTH_DIR / info[key]
-            # Always sync from canonical -> local to avoid stale GT JSONs
-            # (the canonical GT files may be updated over time).
-            to_copy.append((canon_fp, local_fp))
+            # Use analysis_lib first (self-contained), then data_science (legacy)
+            if analysis_lib_fp.exists():
+                to_copy.append((analysis_lib_fp, local_fp))
+            elif canon_fp.exists():
+                to_copy.append((canon_fp, local_fp))
+            else:
+                to_copy.append((canon_fp, local_fp))  # Will fail with clear error
 
-    for canon_fp, local_fp in to_copy:
-        if not canon_fp.exists():
+    for source_fp, local_fp in to_copy:
+        if not source_fp.exists():
             raise FileNotFoundError(
-                f"Missing GT CLD file. Expected either local '{local_fp}' or canonical '{canon_fp}'."
+                f"Missing GT CLD file. Checked: '{ANALYSIS_LIB_GROUND_TRUTH_DIR}', '{CANONICAL_GROUND_TRUTH_DIR}'."
             )
-        shutil.copy2(canon_fp, local_fp)
+        shutil.copy2(source_fp, local_fp)
 
 
 def _mean_ci_95(mean: float, std: float, n: int) -> tuple[float, float]:

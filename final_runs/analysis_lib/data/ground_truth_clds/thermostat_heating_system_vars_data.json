@@ -1,0 +1,46 @@
+[
+  {
+    "index": 0,
+    "name": "Room Temperature",
+    "definition": "The current air temperature inside the room, measured in degrees Celsius or Fahrenheit. This is the primary stock variable in the system, representing thermal energy stored in the room air mass."
+  },
+  {
+    "index": 1,
+    "name": "Desired Temperature",
+    "definition": "The thermostat setpoint temperature that the heating system aims to maintain. This is an exogenous parameter set by the user, typically between 18-22°C for comfort."
+  },
+  {
+    "index": 2,
+    "name": "Temperature Gap",
+    "definition": "The difference between the desired temperature and the current room temperature (Desired - Actual). A positive gap indicates the room is too cold; a negative gap indicates it is too warm."
+  },
+  {
+    "index": 3,
+    "name": "Heating Rate",
+    "definition": "The rate at which the furnace or heating system adds thermal energy to the room, measured in watts or BTU/hour. In a bang-bang thermostat, this is either fully on or off based on the temperature gap."
+  },
+  {
+    "index": 4,
+    "name": "Heat Loss Rate",
+    "definition": "The rate at which thermal energy escapes from the room to the external environment through walls, windows, and doors. Governed by Newton's law of cooling: Q = hA(T_room - T_outside)."
+  },
+  {
+    "index": 5,
+    "name": "Outside Temperature",
+    "definition": "The ambient temperature outside the building, an exogenous variable that affects heat loss. Lower outside temperatures increase the temperature differential and thus heat loss rate."
+  },
+  {
+    "index": 6,
+    "name": "Thermal Resistance",
+    "definition": "The insulation quality of the building envelope (walls, windows, roof), measured in R-value. Higher thermal resistance reduces heat transfer between inside and outside."
+  }
+]
+
+
+
+
+
+
+
+
+

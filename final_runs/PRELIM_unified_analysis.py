@@ -173,7 +173,8 @@ def main():
     print("3. Temperature Sensitivity Analysis")
     print("-"*80)
 
-    temperature_script = PROJECT_ROOT / "data_science/parameter_tuning_experiments/analyze_temperature_sensitivity.py"
+    # Use local copy in analysis_lib (self-contained, no data_science dependency)
+    temperature_script = PROJECT_ROOT / "final_runs/analysis_lib/analyze_temperature_sensitivity.py"
     temperature_output = run_dir / "temperature_sensitivity"
     temperature_output.mkdir(parents=True, exist_ok=True)
 

@@ -1,0 +1,21 @@
+[
+  {"source": "Prey Population", "target": "Prey Birth Rate", "type": "POSITIVE", "motivation": "According to the Lotka-Volterra equations, prey reproduction follows exponential growth in the absence of predation. The prey birth rate is proportional to the current prey population: dR/dt (births) = αR, where R is prey population and α is the birth rate coefficient. More prey means more breeding individuals, directly causing higher birth rates."},
+  {"source": "Prey Birth Rate", "target": "Prey Population", "type": "POSITIVE", "motivation": "This is a fundamental stock-flow relationship. Births are an inflow to the prey population stock. An increase in the birth rate directly causes an increase in the prey population over time: R(t+dt) = R(t) + births*dt."},
+  {"source": "Prey Population", "target": "Prey Death Rate", "type": "POSITIVE", "motivation": "In the Lotka-Volterra model, prey deaths occur through predator-prey encounters. The death rate is proportional to prey population: deaths = βRP, where β is the predation rate coefficient, R is prey, and P is predators. More prey means more potential encounters with predators, causing higher death rates."},
+  {"source": "Predator Population", "target": "Prey Death Rate", "type": "POSITIVE", "motivation": "The Lotka-Volterra predation term βRP shows that prey death rate increases with predator population. More predators means more hunting, more encounters with prey, and thus higher prey mortality."},
+  {"source": "Prey Death Rate", "target": "Prey Population", "type": "NEGATIVE", "motivation": "Deaths are an outflow from the prey population stock. An increase in death rate directly causes a decrease in prey population: R(t+dt) = R(t) - deaths*dt. This is a fundamental conservation principle."},
+  {"source": "Prey Population", "target": "Predator Birth Rate", "type": "POSITIVE", "motivation": "Predator reproduction depends on food availability. In Lotka-Volterra, predator births = δRP, where δ is the conversion efficiency of prey to predator offspring. More prey means more food, enabling higher predator reproduction rates."},
+  {"source": "Predator Population", "target": "Predator Birth Rate", "type": "POSITIVE", "motivation": "Predator births require existing predators to reproduce. The birth rate scales with predator population: births = δRP. More predators means more breeding individuals, causing higher total birth rates (given sufficient prey)."},
+  {"source": "Predator Birth Rate", "target": "Predator Population", "type": "POSITIVE", "motivation": "Births are an inflow to the predator population stock. An increase in birth rate directly causes an increase in predator population: P(t+dt) = P(t) + births*dt."},
+  {"source": "Predator Population", "target": "Predator Death Rate", "type": "POSITIVE", "motivation": "In the Lotka-Volterra model, predator deaths occur at a rate proportional to population: deaths = γP, where γ is the natural death rate. More predators means more individuals that can die, causing higher total death rates."},
+  {"source": "Predator Death Rate", "target": "Predator Population", "type": "NEGATIVE", "motivation": "Deaths are an outflow from the predator population stock. An increase in death rate directly causes a decrease in predator population: P(t+dt) = P(t) - deaths*dt."}
+]
+
+
+
+
+
+
+
+
+

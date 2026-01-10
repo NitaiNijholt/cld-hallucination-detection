@@ -1,0 +1,17 @@
+[
+  {"source": "Inflow Rate", "target": "Net Flow Rate", "type": "POSITIVE", "motivation": "Net Flow Rate is defined as Inflow minus Outflow: dV/dt = Qin - Qout. An increase in inflow rate directly causes an increase in net flow rate, by definition. This is conservation of mass applied to the tank."},
+  {"source": "Outflow Rate", "target": "Net Flow Rate", "type": "NEGATIVE", "motivation": "Since Net Flow = Inflow - Outflow, an increase in outflow rate directly causes a decrease in net flow rate. This follows from conservation of mass: water leaving reduces the net accumulation."},
+  {"source": "Net Flow Rate", "target": "Water Level", "type": "POSITIVE", "motivation": "This is a fundamental stock-flow relationship. The water level (stock) integrates the net flow rate over time: h(t) = h(0) + ∫(net flow)/A dt, where A is tank cross-sectional area. Positive net flow causes water level to rise."},
+  {"source": "Water Level", "target": "Outlet Pressure", "type": "POSITIVE", "motivation": "According to hydrostatics, the pressure at a depth h below the water surface is P = ρgh (Pascal's Law). An increase in water level (h) directly causes an increase in outlet pressure, assuming the outlet is at the bottom of the tank."},
+  {"source": "Outlet Pressure", "target": "Outflow Rate", "type": "POSITIVE", "motivation": "According to Torricelli's theorem and fluid dynamics, flow rate through an orifice increases with driving pressure: Q = Cd*A*√(2P/ρ). Higher pressure causes faster outflow. This is derived from Bernoulli's principle."},
+  {"source": "Outlet Valve Opening", "target": "Outflow Rate", "type": "POSITIVE", "motivation": "The valve opening controls the effective flow area. A more open valve allows more water to flow through: Q = Cd*A_valve*√(2ΔP/ρ). Increasing valve opening increases the effective area, directly causing higher outflow rate."}
+]
+
+
+
+
+
+
+
+
+
