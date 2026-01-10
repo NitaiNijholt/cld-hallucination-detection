@@ -1,0 +1,145 @@
+\documentclass[class=Thesis]{standalone}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+
+\begin{document}
+
+\chapter{Supplementary Sensitivity Analysis}
+\label{app:sensitivity_analysis}
+
+This appendix provides extended sensitivity analyses for both Judge (RQ1a) and Corrector (RQ1b) prompts, quantifying performance stability across prompt variations.
+
+\section{Judge Prompt Sensitivity}
+\label{app:judge_sensitivity}
+
+To quantify how prompt engineering choices affect judge performance, we perform a sensitivity analysis measuring the relationship between prompt variation (input) and F1 change (output). For judge prompts (RQ1a), prompt distances are computed as cosine distance from the baseline prompt using MPNet embeddings. We use \textbf{repeated-measures ANOVA} with CLD$\times$run as subjects and prompt as the within-subject factor, reporting \textbf{partial $\eta^2$} as the effect size (proportion of within-subject variance explained by prompt). Bonferroni correction is applied across the four RQ1a tests ($\alpha_{\text{adj}} = 0.0125$).
+
+\subsection{Derivation: First-Order Sobol Index for a Categorical Factor}
+\label{app:sobol_eta2_derivation}
+
+For a single categorical factor $A \in \{1,\dots,K\}$ with $p_a = \Pr(A=a)$, define $\mu_a := \mathbb{E}[Y \mid A=a]$ and $\mu := \mathbb{E}[Y] = \sum_{a=1}^K p_a \mu_a$. The first-order Sobol index for $A$ is:
+\begin{equation}
+S_A := \frac{\mathrm{Var}(\mathbb{E}[Y \mid A])}{\mathrm{Var}(Y)}.
+\end{equation}
+Since $\mathbb{E}[Y \mid A]$ takes value $\mu_a$ when $A=a$, we have
+\begin{equation}
+\mathrm{Var}(\mathbb{E}[Y \mid A]) = \sum_{a=1}^K p_a(\mu_a - \mu)^2.
+\end{equation}
+By the law of total variance,
+\begin{equation}
+\mathrm{Var}(Y) = \mathbb{E}[\mathrm{Var}(Y \mid A)] + \mathrm{Var}(\mathbb{E}[Y \mid A])
+= \sum_{a=1}^K p_a\,\mathrm{Var}(Y \mid A=a) + \sum_{a=1}^K p_a(\mu_a - \mu)^2.
+\end{equation}
+Hence,
+\begin{equation}
+S_A = \frac{\sum_{a=1}^K p_a(\mu_a - \mu)^2}{\mathrm{Var}(Y)} = \eta^2,
+\end{equation}
+i.e., the population one-way ANOVA effect size (correlation ratio) for a categorical factor~\cite{saltelli2010variance}. In the main experiments, we report $\eta^2_p$ (partial eta-squared) because our design is blocked by CLD$\times$run (repeated measures), so the sensitivity measure is computed after controlling for these subject-level differences.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/supp_prompt_sensitivity/prompt_sensitivity_figure.png}
+\caption[Prompt sensitivity analysis (RQ1a)]{Prompt sensitivity analysis across RQ1a experiments. Each panel shows F1 performance (mean $\pm$ 95\% CI across CLDs and runs) for prompt variants. Statistical test: repeated-measures ANOVA with partial $\eta^2$; significance indicated by * $p<0.05$, ** $p<0.01$, *** $p<0.001$; $\dagger$ significant after Bonferroni correction. Dashed lines indicate baseline.}
+\label{fig:sensitivity_analysis_app}
+\end{figure}
+
+Figure~\ref{fig:sensitivity_analysis_app} shows that prompt effects are strongest for the correctness judge (Corruption Detection: $\eta^2_p=0.62$, $p<0.001$; Ground Truth: $\eta^2_p=0.68$, $p<0.001$), with large effect sizes indicating that 62--68\% of within-subject variance is explained by prompt choice. Citation judge effects are weaker (Corruption Detection: $\eta^2_p=0.31$, $p=0.030$) and do not survive Bonferroni correction.
+
+\input{Figures/final_runs/supp_prompt_sensitivity/prompt_sensitivity_table.tex}
+
+\input{Figures/final_runs/supp_prompt_sensitivity/prompt_sensitivity_assumptions_table.tex}
+
+Interpreting the assumption checks (Table~\ref{tab:prompt_sensitivity_assumptions}), Mauchly's test indicates \textbf{sphericity violations} in all judge prompt analyses ($p<.001$), so inferential conclusions should be based on \textbf{Greenhouse--Geisser corrected} $p$-values. Under GG correction, the corruption-detection citation judge prompt effect is no longer significant ($p_{\text{GG}}=0.064$), while both correctness judge prompt effects remain robust ($p_{\text{GG}}=0.002$). The ground-truth citation judge effect is marginal under GG ($p_{\text{GG}}=0.022$) and still does not survive Bonferroni correction ($\alpha_{\text{adj}}=0.0125$). Shapiro--Wilk rejects residual normality only for Corr.\ Cit.; given $n=9$, we treat $p$-values as approximate and emphasise effect sizes alongside corrected inference.
+
+Table~\ref{tab:prompt_sensitivity} shows that prompt choice significantly affects the correctness judge (large effects, $\eta^2_p>0.60$), while citation-judge prompt effects are moderate ($\eta^2_p\approx0.30$--0.43) with the corruption detection effect not surviving family-wise correction.
+
+\section{Corrector Prompt Sensitivity}
+\label{app:corrector_sensitivity}
+
+Extending the sensitivity analysis to the LLM-as-a-Corrector (RQ1b), we evaluate how corrector prompt complexity affects correction performance. Unlike judge prompts which had distinct semantic content, corrector prompts follow a cumulative design: Baseline provides examples only, CoT adds step-by-step reasoning (1.45$\times$ length), and Mechanistic adds Bradford Hill criteria (1.91$\times$ length).
+Because these prompts are long and share a common prefix, we compute corrector prompt distances using long-context Jina embeddings v2 (to avoid truncation artefacts in short-context encoders).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/supp_prompt_sensitivity/corrector_sensitivity_figure.png}
+\caption[Corrector prompt sensitivity (RQ1b)]{Corrector prompt sensitivity analysis. F1 $\Delta$ (post-correction minus pre-correction) by prompt type. Statistical test: repeated-measures ANOVA with partial $\eta^2$; significance: * $p<0.05$, ** $p<0.01$, *** $p<0.001$. Error bars show 95\% CI across CLDs and runs.}
+\label{fig:corrector_sensitivity_app}
+\end{figure}
+
+Figure~\ref{fig:corrector_sensitivity_app} shows a significant prompt effect for synthetic corruptions ($\eta^2_p=0.40$, $F(2,16)=5.43$, $p=0.016$), indicating that simpler prompts (Baseline: $+0.075$) outperform complex prompts (Mechanistic: $+0.026$). Ground truth correction shows a marginally significant effect ($\eta^2_p=0.31$, $p=0.052$).
+
+\input{Figures/final_runs/supp_prompt_sensitivity/corrector_sensitivity_table.tex}
+
+\input{Figures/final_runs/supp_prompt_sensitivity/corrector_sensitivity_assumptions_table.tex}
+
+Interpreting the assumption checks (Table~\ref{tab:corrector_sensitivity_assumptions}), Mauchly's test again indicates \textbf{sphericity violations} ($p<.001$), so GG-corrected $p$-values provide the most appropriate inference. Under GG correction, the synthetic prompt effect is borderline ($p_{\text{GG}}=0.044$) and would not meet the Bonferroni-adjusted threshold for the two RQ1b tests ($\alpha_{\text{adj}}=0.025$), while the GT Lit prompt effect remains non-significant ($p_{\text{GG}}=0.073$). Shapiro--Wilk does not reject residual normality for either experiment.
+
+The table above summarises the repeated-measures ANOVA results for corrector prompt sensitivity.
+
+\subsection{Corrector Action Counts}
+\label{app:corrector_action_counts}
+
+Tables~\ref{tab:rq1b_action_counts_synthetic} and~\ref{tab:rq1b_action_counts_groundtruth} provide the full breakdown of corrector actions for verification purposes.
+
+\begin{table}[H]
+\centering
+\caption{RQ1b Corrector Action Counts - Synthetic Corruptions (Full Breakdown)}
+\label{tab:rq1b_action_counts_synthetic}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Prompt} & \textbf{Edges} & \textbf{Successful} & \textbf{Revise} & \textbf{Change Type} & \textbf{None} & \textbf{Error} \\
+\textbf{Variant} & \textbf{Processed} & \textbf{Actions} & & & & \\
+\midrule
+Baseline & 1003 & 1003 & 450 & 553 & 0 & 0 \\
+CoT & 995 & 995 & 471 & 524 & 0 & 0 \\
+Mechanistic & 979 & 979 & 408 & 571 & 0 & 0 \\
+\midrule
+\textbf{Aggregate} & 2977 & 2977 & 1329 & 1648 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Full breakdown of corrector actions for verification. 
+Edges Processed = total candidate edges for correction.
+Successful Actions = Revise + Change (used in main text tables).
+None = edges where corrector determined no change needed.
+Error = API/parsing errors during correction.
+Verification: Edges Processed = Revise + Change + None + Error.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ1b Corrector Action Counts - Ground Truth (Full Breakdown)}
+\label{tab:rq1b_action_counts_groundtruth}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Prompt} & \textbf{Edges} & \textbf{Successful} & \textbf{Revise} & \textbf{Change Type} & \textbf{None} & \textbf{Error} \\
+\textbf{Variant} & \textbf{Processed} & \textbf{Actions} & & & & \\
+\midrule
+Baseline & 1122 & 1111 & 728 & 383 & 0 & 11 \\
+CoT & 1122 & 1105 & 724 & 381 & 4 & 13 \\
+Mechanistic & 1122 & 1103 & 663 & 440 & 11 & 8 \\
+\midrule
+\textbf{Aggregate} & 3366 & 3319 & 2115 & 1204 & 15 & 32 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Full breakdown of corrector actions for verification. 
+Edges Processed = total candidate edges for correction.
+Successful Actions = Revise + Change (used in main text tables).
+None = edges where corrector determined no change needed.
+Error = API/parsing errors during correction.
+Verification: Edges Processed = Revise + Change + None + Error.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\end{document}

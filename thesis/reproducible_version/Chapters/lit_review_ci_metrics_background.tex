@@ -1,0 +1,195 @@
+% Literature Review: Logprob Uncertainty Quantification (LUQ) Metrics for Hallucination Detection
+% LUQ abbreviation is defined in this file's section heading
+% NOTE: Background on autoregressive generation / decoding and general hallucination mechanisms
+% was moved to the Background chapter (Section~\\ref{sec:background_llms}) to avoid repetition here.
+
+\section{Logprob Uncertainty Quantification (LUQ) Metrics for Hallucination Detection}
+\label{sec:lit_luq_metrics}
+\label{sec:lit_rq2_signals}
+
+In the Background chapter we reviewed autoregressive decoding (including temperature, top-$k$, and top-$p$ sampling) and the general mechanisms by which autoregressive generation can amplify errors. Here, we focus on \emph{corpus-independent} predictors and grounding signals that can be computed from the generation process and lightweight comparisons, motivating the metrics evaluated in this thesis.
+
+Observing the assigned probabilities over an LLM's output tokens can provide computationally inexpensive uncertainty signals derived directly from the generation process without requiring external knowledge bases or retrieval systems. 
+Relying on LLM-generated signals to quantify uncertainty requires that this model uncertainty is reflected in the model's internal state at some level---i.e., that models `know what they don't know'---in a manner that is measurable through either the internal state or the outputs, a premise supported by \citet{kadavath2022language}. Yet, hallucination is associated with a model asserting something factually incorrect in a confident manner \citep{xiao-wang-2021-hallucination}, so this uncertainty may not be reflected in the output text itself.
+It may, however, be reflected in the LLM's output log-probability distribution over tokens, which has been shown to be directly related to hallucinations \citep{varshney2023stitch, sriramanan2024llmcheck}.
+
+While these metrics are directly accessible with white-box model access when running models locally or via open-source model providers, the proprietary OpenAI LLM APIs also expose token-level log-probabilities during generation, enabling computation of Logprob Uncertainty Quantification (LUQ) metrics using state-of-the-art commercial models (at time of writing, GPT-4.1). 
+
+These signals contain useful information that can be employed for, e.g., knowledge distillation, where a student model is trained to replicate a teacher model's output token probability distributions \citep{gu2023minillm}, thereby improving the student's performance. Other use cases include autocomplete and evaluation for RAG. The utility of the information contained in output distribution logprobs may also explain why some providers of proprietary models (i.e., Anthropic) do not expose them, whether for data/privacy reasons \citep{mattern2023membership} or to prevent model stealing \citep{carlini2024stealing} or distillation. Notably, OpenAI exposes only a truncated probability distribution over the vocabulary, limited to the top $k$ tokens. 
+Nonetheless, logprobs remain available for open-source alternatives and are thus feasible to compute in many cases.
+As noted, because logprobs are generated as part of the sequence generation process, they are computationally inexpensive and have the additional benefit of providing a measure of uncertainty that is independent of external knowledge bases or retrieval systems. Consequently, if logprobs prove to be useful signals for hallucination detection in a CLD generation context, they would constitute a desirable signal to employ.
+
+
+\subsection{The Uncertainty--Hallucination Link.} Crucially, the probability distribution at each generation step provides a window into the model's epistemic state. When the model ``knows'' the correct continuation, the distribution tends to be peaked; when uncertain, probability mass spreads across alternatives. \citet{xiao-wang-2021-hallucination} empirically confirmed that higher predictive uncertainty - measured through the token distribution - corresponds to higher hallucination rates. This insight motivates LUQ metrics: by examining the shape of these distributions, we can identify generation steps where the model may be confabulating.
+
+\subsection{LUQ Metrics: From Sequence to Token Granularity}
+
+Token-level probability distributions, accessible through model logits or log-probabilities, provide direct insight into the LLM's confidence during generation. \citet{varshney2023stitch} demonstrated that low-confidence generations correlate with hallucinated content, proposing validation of outputs based on minimum token probability. Their ``stitch in time'' approach identifies potentially hallucinated spans by detecting tokens where $P(x_i | x_{<i}) < \tau$ for a calibrated threshold $\tau$, enabling early intervention before erroneous content propagates.
+
+Given these token-level probability distributions, we can derive uncertainty features at multiple granularities. We present three complementary metrics, ordered from coarsest (whole-sequence) to finest (single-token) aggregation:
+
+\subsubsection{Perplexity (Sequence-Level).} Perplexity aggregates uncertainty across the \textit{entire generated sequence}, providing a holistic measure of how ``surprising'' the output was to the model. Defined as the exponentiated average negative log-likelihood with \textit{length normalization}:
+\begin{equation}
+\text{PPL} = \exp\left(-\frac{1}{N}\sum_{i=1}^{N} \log P(x_i | x_{<i})\right)
+\end{equation}
+Length normalization (division by $N$) ensures comparability across sequences of different lengths, as shorter sequences generally have higher joint probability \citep{sriramanan2024llmcheck}. Higher perplexity indicates the model found the sequence surprising, potentially signalling confabulation. However, as a whole-sequence average, perplexity can be diluted by confident tokens surrounding a localized hallucination, and can be inflated by domain-specific terminology or rare but valid tokens.
+
+\subsubsection{Maximum Window Entropy (Subsequence-Level).} To detect \textit{localized} uncertainty spikes that whole-sequence averaging would obscure, \citet{sriramanan2024llmcheck} proposed windowed aggregation. They observe that the entire sentence may not be hallucinatory, and that length-average scores may therefore be insufficient for accurate hallucination detection, motivating a windowed approach sensitive to short, localized hallucination spans.
+
+At each token position $t$, entropy is computed over the top-$k$ alternative tokens:
+\begin{equation}
+H_k(t) = -\sum_{j=1}^{k} \tilde{p}_j \log \tilde{p}_j
+\end{equation}
+where $\tilde{p}_j$ represents the normalized probability of the $j$-th most likely token. We then apply a sliding window of size $w$ to compute rolling averages, returning the maximum:
+\begin{equation}
+H_{\text{max-win}} = \max_{i} \left( \frac{1}{w} \sum_{t=i}^{i+w-1} H_k(t) \right)
+\end{equation}
+This identifies the highest-uncertainty \textit{subsequence} in the generated text - particularly suited for detecting hallucination onset, where uncertainty may spike locally before the model commits to a fabricated claim and in the generated sequence contingent on that claim the model may rise in confidence again.
+
+\subsubsection{Minimum Probability (Token-Level).} At the finest granularity, minimum probability captures the single ``weakest link'' in the generation chain:
+\begin{equation}
+P_{\min} = \min_{i \in [1,N]} P(x_i | x_{<i})
+\end{equation}
+\citet{varshney2023stitch} demonstrated that this metric effectively identifies hallucination onset - a single highly uncertain token often marks where fabrication begins. Their ``stitch in time'' approach uses this signal for early intervention, detecting tokens where $P(x_i | x_{<i}) < \tau$ for a calibrated threshold $\tau$.
+
+\subsection{Worked Example: Applying LUQ Metrics}
+
+To illustrate these metrics, consider an LLM generating the causal claim: \textit{``Stress increases cortisol levels''}. At each token position $t$, the API returns the probability of the selected token along with probabilities for top-$k$ alternatives. Figure~\ref{fig:token_example} visualises a hypothetical generation with $k=3$:
+
+\begin{figure}[h]
+\centering
+\small
+\begin{tabular}{cccc}
+$t=1$ & $t=2$ & $t=3$ & $t=4$ \\[0.5ex]
+\fbox{\textbf{Stress}} & \fbox{\textbf{increases}} & \fbox{\textbf{cortisol}} & \fbox{\textbf{levels}} \\[0.3ex]
+$P=0.92$ & $P=0.88$ & $P=0.45$ & $P=0.95$ \\[1ex]
+\hline \\[-1.5ex]
+\multicolumn{4}{c}{\textit{Top-$k$ alternatives (normalized $\tilde{p}$):}} \\[0.5ex]
+\begin{tabular}{c} Stress \\ \scriptsize(0.85) \end{tabular} &
+\begin{tabular}{c} increases \\ \scriptsize(0.80) \end{tabular} &
+\begin{tabular}{c} cortisol \\ \scriptsize(0.50) \end{tabular} &
+\begin{tabular}{c} levels \\ \scriptsize(0.90) \end{tabular} \\[0.5ex]
+\begin{tabular}{c} Chronic \\ \scriptsize(0.10) \end{tabular} &
+\begin{tabular}{c} elevates \\ \scriptsize(0.15) \end{tabular} &
+\begin{tabular}{c} adrenaline \\ \scriptsize(0.30) \end{tabular} &
+\begin{tabular}{c} production \\ \scriptsize(0.07) \end{tabular} \\[0.5ex]
+\begin{tabular}{c} Acute \\ \scriptsize(0.05) \end{tabular} &
+\begin{tabular}{c} raises \\ \scriptsize(0.05) \end{tabular} &
+\begin{tabular}{c} hormone \\ \scriptsize(0.20) \end{tabular} &
+\begin{tabular}{c} release \\ \scriptsize(0.03) \end{tabular} \\
+\end{tabular}
+\caption[Token probabilities during LLM generation.]{Token probabilities during LLM generation. Top row: selected tokens with probabilities $P(x_t|x_{<t})$. Below: top-$k$ alternatives with normalized probabilities. Position $t=3$ shows high uncertainty - alternatives ``adrenaline'' and ``hormone'' have substantial probability mass.}
+\label{fig:token_example}
+\end{figure}
+
+Position 3 (``cortisol'') exhibits lower confidence ($P=0.45$) and higher distributional uncertainty. Applying the LUQ metrics at each granularity:
+\begin{itemize}[noitemsep]
+    \item \textbf{Perplexity} (Sequence): $\exp\!\left(-\frac{1}{4}[\log 0.92 + \log 0.88 + \log 0.45 + \log 0.95]\right) \approx 1.60$ - the uncertain token at $t=3$ is partially masked by confident neighbours.
+    \item \textbf{Max Window Entropy} (Subsequence): With $w=2$, the window spanning $t=3,4$ would show elevated entropy due to position 3, localizing the uncertainty spike.
+    \item \textbf{Min Probability} (Token): $\min(0.92, 0.88, 0.45, 0.95) = 0.45$ at $t=3$ - directly identifying the weakest link.
+\end{itemize}
+This example illustrates the complementary nature of the three granularities: perplexity provides a global summary, windowed entropy localizes problematic subsequences, and min probability pinpoints the exact token of concern.
+
+\subsection{Types of Uncertainty in the Logprob Signal}
+
+The uncertainty captured by LUQ metrics is not monolithic. Following the classical decomposition in machine learning \citep{hullermeier2021aleatoric}, uncertainty in autoregressive language models can be categorized into two fundamentally different types:
+
+\subsubsection{Uncertainty sources in autoregressive generation.} In the context of autoregressive language modelling, these uncertainties arise from distinct sources \citep{malinin2021uncertainty}:
+\begin{itemize}[noitemsep]
+    \item \textit{Epistemic}: Out-of-distribution inputs, rare token combinations, knowledge gaps, extrapolation beyond training distribution
+    \item \textit{Aleatoric}: Genuinely ambiguous contexts, multiple valid completions, underspecified prompts
+    \begin{itemize}[noitemsep]
+        \item \textit{Lexical} (sub-case): Synonym choices, paraphrase options, stylistic variation, tokenization alternatives
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Aleatoric Uncertainty (Data Uncertainty).} This is inherent, irreducible uncertainty arising from ambiguity in the task itself. In language generation, aleatoric uncertainty manifests when multiple valid continuations exist - for instance, completing ``The cat sat on the...'' could legitimately yield ``mat,'' ``sofa,'' or ``windowsill.'' This uncertainty reflects genuine linguistic variability rather than model ignorance. High entropy at such positions is \textit{not} indicative of hallucination; it reflects the creative freedom inherent in language.
+
+A notable sub-case is \textit{lexical uncertainty} (surface-form variation), where multiple tokens or phrasings convey the same semantic content. When a model shows uncertainty between ``large'' and ``big,'' or ``however'' and ``nevertheless,'' this reflects stylistic optionality rather than factual doubt. This distinction is central to semantic entropy approaches \citep{farquhar2024detecting}, which cluster semantically equivalent outputs to separate surface-level lexical uncertainty from deeper semantic uncertainty about factual content. For hallucination detection, lexical uncertainty is largely noise - what matters is whether the model is uncertain about \textit{what to claim}, not \textit{how to phrase it}.
+
+\subsubsection{Epistemic Uncertainty (Model Uncertainty).} This is reducible uncertainty arising from the model's lack of knowledge - gaps in training data or limitations in model capacity. When a model is asked about events after its knowledge cutoff, obscure facts, or domains underrepresented in training, the resulting uncertainty reflects genuine ignorance. \citet{xiao-wang-2021-hallucination} demonstrated that epistemic uncertainty is more indicative of hallucination than aleatoric or total uncertainty, as it captures precisely those cases where the model is ``guessing'' rather than expressing legitimate ambiguity.
+
+The challenge for hallucination detection is that LUQ metrics capture \textit{total} uncertainty without distinguishing its source. A flat probability distribution may indicate either ``I don't know'' (epistemic - hallucination risk) or ``many options are valid'' (aleatoric - creative freedom). This conflation is a fundamental limitation of single-generation uncertainty metrics, motivating approaches like semantic entropy \citep{farquhar2024detecting} that attempt to separate these components through multiple sampling.
+
+\subsection{Limitations of LUQ Metrics}
+
+Despite their theoretical grounding, LUQ metrics face fundamental limitations:
+
+\noindent\textbf{Calibration assumptions.} LUQ metrics assume that model confidence correlates with factual accuracy - that uncertainty signals epistemic doubt. However, this calibration is not guaranteed by standard training objectives \citep{kadavath2022language}. Models can be confidently wrong, particularly on memorized but incorrect patterns.
+
+\noindent\textbf{Domain shift.} Metric distributions vary with domain. A model may exhibit high perplexity on valid but specialized terminology (e.g., medical or legal jargon), producing false positives. Conversely, fluent hallucinations in the model's ``comfort zone'' may show low uncertainty.
+
+\noindent\textbf{Confident hallucinations.} The hallucination snowballing phenomenon \citep{zhang2023language} means that once a model commits to a fabricated premise, subsequent tokens may be generated with high confidence as the model maintains internal coherence - despite being factually wrong.
+
+\noindent\textbf{Uncertainty conflation.} As discussed in Section~\ref{sec:lit_luq_metrics}, the logprob distribution conflates epistemic, aleatoric, and lexical uncertainty into a single signal. A high-entropy distribution may indicate genuine ignorance (hallucination risk), legitimate ambiguity (multiple valid continuations), or mere stylistic optionality (synonym choices). LUQ metrics cannot distinguish these cases from a single generation. This conflation means that high uncertainty is a necessary but not sufficient condition for hallucination - the model may be uncertain for benign reasons. Approaches like semantic entropy \citep{farquhar2024detecting} attempt to address this by sampling multiple generations and clustering semantically equivalent outputs, thereby isolating epistemic uncertainty. However, such methods require multiple forward passes and are computationally expensive compared to single-generation LUQ metrics.
+
+These limitations motivate hybrid approaches combining LUQ metrics with context-sensitive validation (e.g., retrieval-augmented verification) and ensemble classification over multiple uncertainty signals.
+
+\section{Embedding-Based Grounding Metrics}
+\label{sec:lit_embedding_grounding}
+
+Complementing LUQ metrics, embedding-based similarity between a candidate text span $t$ and an external reference $s$ provides a context-sensitive grounding check. More generally, for any text span whose support is being assessed (e.g., an LLM output, a human-written claim, or an intermediate system-generated hypothesis), the cosine similarity between the candidate text $t$ and a chosen reference text $s$ can serve as a soft grounding signal:
+\begin{equation}
+\text{sim}(\mathbf{e}_{t}, \mathbf{e}_{s}) = \frac{\mathbf{e}_{t} \cdot \mathbf{e}_{s}}{\|\mathbf{e}_{t}\| \|\mathbf{e}_{s}\|}
+\end{equation}
+where $\mathbf{e}_{t}$ and $\mathbf{e}_{s}$ are embedding vectors of the candidate text span $t$ and the chosen reference text $s$, respectively. Low similarity may indicate that the candidate text is weakly supported by (or inconsistent with) the chosen reference---including cases where a claim is paired with an irrelevant or mismatched reference (``attribution hallucination'') \citep{tonmoy2024comprehensive,batista2025safeimprovingllmsystems}.
+
+\subsection{Design choices: reference text and input/query text.} The usefulness of embedding-based grounding depends on what is selected as the reference text $s$ and what is embedded as the input/query $x$ (when retrieval is involved). Valid choices for the \emph{reference text} $s$ include: (i) an explicitly cited span or paragraph, (ii) retrieved passages provided as context (e.g., RAG evidence), (iii) a gold-standard evidence snippet in an evaluation dataset, (iv) a full document section (trading precision for coverage), or (v) other machine-generated text intended as evidence (e.g., a judge's retrieved quote). Likewise, the \emph{input/query text} $x$ can be the original user prompt, the model's full answer, an extracted atomic claim, or a structured hypothesis (e.g., a causal edge narrative). In many practical pipelines, $x$ is derived directly from the candidate span $t$ (e.g., $x=t$ or a structured reformulation of $t$) when the goal is to retrieve evidence for that candidate claim. These choices induce different failure modes (e.g., dilution when embedding long answers, overconstraint when using retrieval context as the only reference) and therefore matter when comparing grounding approaches later in this thesis.
+
+Unlike LUQ metrics, which are purely intrinsic to the generation process, embedding-based grounding requires access to external reference material. This represents both a strength (verification against source text becomes feasible) and a limitation (access to reference material is required). Furthermore, proprietary model providers do not provide access to the training corpus of their language models, making direct source attribution infeasible in such cases, as the mapping between a generated sequence and its original training sources is unavailable.
+
+\subsection{Retrieval-Augmented Generation}
+
+The canonical Retrieval-Augmented Generation (RAG) approach \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp} uses an input sequence $x$ to retrieve passages $z$ from a knowledge base $\mathcal{K}$ according to a retrieval objective, typically based on embedding similarity:
+\begin{equation}
+z^* = \argmax_{z \in \mathcal{K}} \text{sim}(\mathbf{e}_x, \mathbf{e}_z)
+\end{equation}
+where $\mathbf{e}_x$ and $\mathbf{e}_z$ denote the embeddings of the query $x$ and candidate passage $z$, respectively. The retrieved passage(s) are then provided as context to a generator, producing an output sequence $y$ conditioned on both $x$ and the retrieved evidence (e.g., $p_\theta(y \mid x, z^*)$), with retrieval typically parameterized as $p_\eta(z \mid x)$ \citep{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}.
+
+Modern LLM web interfaces from providers such as Anthropic, OpenAI, Google, and Perplexity incorporate search-augmented generation, combining iteratively refined web searches with RAG to produce grounded responses \citep{wu2025clashevalquantifyingtugofwarllms}. This approach aims to anchor generation in retrievable sources, reducing the risk of hallucination and providing direct attribution.
+
+\subsection{Limitations of Retrieval-Constrained Generation}
+
+A notable limitation of the RAG paradigm is that retrieval may \textit{overconstrain} generation, leading to a failure mode where the model, instructed to condition its response solely on retrieved content, fails to assert a true claim simply because the retrieval process did not surface supporting evidence \citep{liu2023lostmiddle}. This can occur even when an unconstrained model---drawing on its parametric knowledge---might have correctly inferred the relationship, but the retrieved context does not contain (or even contradicts) the relevant support \citep{wu2025clashevalquantifyingtugofwarllms}.
+
+This failure mode becomes more likely as the source that would confirm the claim may not appear in search results, with the probability of this occurrence inversely related to the depth and breadth of the search. Furthermore, evidence suggests that LLM responses may synthesize knowledge from multiple sources \citep{wang2023source,park2024identifyingsourcegenerationlarge}, such that a valid claim may not be directly attributable to any single retrievable document. This synthesis property of LLMs exacerbates the recall limitations of RAG-constrained systems, as the supporting evidence for a synthesized claim may be distributed across multiple sources that are not jointly retrievable.
+
+In contrast, unconstrained generation (standard LLM inference without retrieval constraints) does not suffer this recall limitation but is more susceptible to false positives (hallucinations), as the model may generate plausible-sounding but unsupported claims.
+
+\subsection{A Hybrid Approach: Generate-then-Search}
+\label{sec:hybrid_generate_then_search}
+
+Given the complementary strengths and weaknesses of unconstrained generation and retrieval-augmented validation, we propose a hybrid approach that maximises recall through unconstrained generation while boosting precision through post-hoc retrieval-augmented validation. This approach proceeds as follows:
+
+\begin{enumerate}
+    \item \textbf{Hypothesis Generation:} An LLM generates a hypothesized causal link with a narrative justification (e.g., ``$A$ causes $B$ through mechanism $M$'').
+    
+    \item \textbf{Evidence Retrieval and Validation:} The hypothesis is submitted as a query to a retrieval system (e.g., web search). An LLM-as-a-judge evaluates whether the retrieved evidence supports the causal narrative.
+    
+    \item \textbf{Iterative Correction:} If the judge validates the claim, the hypothesis is accepted. If not, a corrector revises the causal narrative accordingly before re-evaluation.
+\end{enumerate}
+
+This generate-then-search paradigm separates the creative generation phase (optimised for recall) from the critical validation phase (optimised for precision), potentially yielding higher F1 scores with respect to ground truth than either approach alone.
+
+\subsection{Limitations of the Hybrid Approach}
+
+Several limitations of this hybrid approach warrant acknowledgment:
+
+\noindent\textbf{Retrieval dependency.} The quality of LLM-as-a-judge validation remains contingent on retrieval system accuracy and the availability of relevant source documents, and even the position of those source texts in the context window \citep{liu2023lostmiddle}. Claims for which no supporting documentation exists in the search corpus cannot be validated, regardless of their truth value.
+
+\noindent\textbf{Confirmation bias.} As formulated, the system queries only for \textit{supporting} evidence and does not actively seek counter-evidence. This asymmetry may introduce confirmation bias, where claims are accepted based on partial supporting evidence without consideration of contradictory information \citep{nickerson1998confirmationbias}.
+
+\noindent\textbf{Semantic gap.} Embedding-based similarity may fail to capture nuanced semantic relationships. A generated claim and its purported source may have high embedding similarity while differing in critical details, or conversely, may express the same fact in sufficiently different language to register low similarity.
+
+\noindent Despite these limitations, when a reasonable match is found between a generated sequence and a source text, this provides supporting evidence for the generated claim---a desirable starting point in scientific contexts, from which further verification or attempts at falsification can proceed.
+
+\section{Synthesis: Integrating Uncertainty Quantification Approaches}
+\label{sec:uq_design_rationale}
+
+The preceding sections established that LUQ metrics and embedding-based grounding have complementary strengths and limitations: LUQ metrics are corpus-independent but conflate uncertainty types and cannot distinguish confident hallucinations from genuine knowledge, while embedding-based grounding provides external validation but inherits retrieval coverage constraints and cannot capture causal semantics from topical similarity alone. This section articulates how these complementary signals can be combined in a unified hallucination detection framework.
+
+The key insight motivating our evaluation strategy is that neither approach alone suffices for CLD validation. LUQ metrics may flag uncertainty but cannot verify factual correctness; embedding similarity may confirm topical relevance but cannot validate causal direction or polarity. We therefore treat both as lightweight features that complement---rather than replace---more expensive context-sensitive validation. Specifically, we pair these metrics with correctness-based and citation-based generate-then-search judging to assess whether retrieved passages provide causal evidence for an edge narrative.
+
+This layered approach enables adaptive test-time compute allocation: given that UQ metrics are computationally cheaper than LLM-as-a-judge or corrector pipelines, if effective, UQ signals could flag likely hallucinations and trigger deployment of more expensive verification only where needed. The experiments in this thesis quantify how much each component (LUQ, embedding grounding, retrieval, and judging) contributes to hallucination detection and, where effective, to adaptive allocation of test-time verification compute.
+
+\noindent The concrete UQ feature set and its use in our experiments are specified in Methods (Section~\ref{sec:uq_metrics_definition}).

@@ -1,0 +1,47 @@
+\chapter{Ethics and Data Management}
+\label{ch:ethics}
+
+This thesis adheres to the ethical code (\url{https://student.uva.nl/en/topics/ethics-in-research}) and research data management policies (\url{https://rdm.uva.nl/en}) of UvA and IvI.
+
+\section{Ethical Considerations}
+
+This research involves the use of large language models (LLMs) for automated generation and validation of causal loop diagrams in health domains. Several ethical considerations are relevant:
+
+\begin{itemize}
+    \item \textbf{No human subjects:} This research does not involve human participants except in human validation of LLM outputs. All experiments use publicly available datasets and published causal loop diagrams from peer-reviewed literature.
+    
+    \item \textbf{AI transparency:} LLM-generated outputs are clearly labelled as such. We emphasise that LLM-generated CLDs should serve as starting points for expert review rather than definitive scientific conclusions.
+    
+    \item \textbf{Potential for misuse:} While this research aims to assist domain experts, there is potential for misuse if LLM-generated causal structures are treated as ground truth without expert validation. We explicitly recommend human oversight for any practical applications.
+    
+    \item \textbf{Environmental impact:} The computational experiments involve substantial API calls to commercial LLM providers. We have optimised experimental designs to minimise unnecessary compute while maintaining scientific rigor, for example by capturing generator UQ metrics during generation in RQ1 runs such that these needn't be recomputed for RQ2.
+\end{itemize}
+
+\section{Data Management}
+
+The source code for this thesis is contained within a private GitHub repository (\url{https://github.com/CausalixAI/platform}, branch: \texttt{thesis-nitai}). The repository is private because the code pertains to a startup (Causalix) that Professor Quax and the author are launching. As detailed in the Declaration of Authorship, this thesis was conducted within a shared software environment, with clear delineation of individual contributions. Access to the repository can be granted to examiners upon request.
+
+\begin{table}[ht]
+\centering
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3cm}|}
+\hline
+\textbf{Description} & \textbf{Availability} & \textbf{License} \\
+\hline
+Thesis source code and experimental pipeline & Private GitHub repository (access on request) & Proprietary (Causalix) \\
+\hline
+Ground truth CLDs: Depressive Symptoms, Social Norms, Emergency Department, Alzheimer's, Physics & Extracted from cited publications & Fair use for research \\
+\hline
+Generated CLD datasets & Private GitHub repository & Proprietary (Causalix) \\
+\hline
+RQ1 human validation data (n=72) & Private GitHub repository & Proprietary (Causalix) \\
+\hline
+RQ3 human validation data (n=50) & Available upon request & CC-BY \\
+\hline
+Analysis scripts and notebooks & Available upon request & CC-BY \\
+\hline
+\end{tabularx}
+\caption{Data and code availability for thesis reproducibility.}
+\label{tab:data_availability}
+\end{table}
+
+All experimental artefacts, including generated CLDs, judge outputs, corrector outputs, and Deep Research evidence, are preserved in structured formats (JSON, CSV) with full provenance tracking (run IDs, timestamps, model versions, prompts). Reproducibility procedures are described in Section~\ref{sec:execution_commands}.
