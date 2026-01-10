@@ -27,7 +27,14 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[11pt, oneside]{Thesis} % The default font size and one-sided printing (no margin offsets)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% REPRODUCIBILITY MODE TOGGLE
+% -------------------------------------------------------------------------
+% BEFORE running reproduction: Use 'draft' to show placeholder boxes for missing figures
+% AFTER running reproduction:  Remove 'draft' to show actual figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt, oneside, draft]{Thesis} % DRAFT MODE: shows placeholders for missing figures
+% \documentclass[11pt, oneside]{Thesis}      % FINAL MODE: shows actual figures (use after reproduction)
 
 \graphicspath{{./}{Pictures/}{Figures/}{figures/}} % ISOLATED: only local paths % Search paths for figures (template + thesis_full assets)
 \makeatletter
