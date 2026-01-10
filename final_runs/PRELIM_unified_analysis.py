@@ -89,13 +89,21 @@ def main():
                              cwd=str(FINAL_RUNS / "prelim_generator_model_comparison"))
         
         if success:
-            # Copy table from source Output dir to run_dir
-            src_table = FINAL_RUNS / "prelim_generator_model_comparison/Output/generator_model_comparison.tex"
-            if src_table.exists():
-                dst = run_dir / "generator_model_comparison.tex"
-                shutil.copy(src_table, dst)
-                generated_outputs.append(dst)
-                print(f"  ✓ Copied: generator_model_comparison.tex")
+            # Script outputs to analysis_scripts/ directory
+            fallback_dirs = [
+                FINAL_RUNS / "prelim_generator_model_comparison/analysis_scripts",
+                FINAL_RUNS / "prelim_generator_model_comparison/Output",
+                FINAL_RUNS / "prelim_generator_model_comparison",
+            ]
+            
+            for src_dir in fallback_dirs:
+                src_table = src_dir / "generator_model_comparison.tex"
+                if src_table.exists():
+                    dst = run_dir / "generator_model_comparison.tex"
+                    shutil.copy(src_table, dst)
+                    generated_outputs.append(dst)
+                    print(f"  ✓ Copied: generator_model_comparison.tex")
+                    break
     else:
         print(f"  ⚠️ Script not found: {generator_model_script}")
 
@@ -118,20 +126,33 @@ def main():
                              cwd=str(FINAL_RUNS / "prelim_random_baseline_generator"))
         
         if success:
-            # Copy figure from source Output dir to run_dir
-            src_fig = FINAL_RUNS / "prelim_random_baseline_generator/Output/random_baseline_comparison.png"
-            if src_fig.exists():
-                dst = run_dir / "random_baseline_comparison.png"
-                shutil.copy(src_fig, dst)
-                generated_outputs.append(dst)
-                print(f"  ✓ Copied: random_baseline_comparison.png")
-            # Also copy the table
-            src_table = FINAL_RUNS / "prelim_random_baseline_generator/Output/random_baseline_table.tex"
-            if src_table.exists():
-                dst = run_dir / "random_baseline_table.tex"
-                shutil.copy(src_table, dst)
-                generated_outputs.append(dst)
-                print(f"  ✓ Copied: random_baseline_table.tex")
+            # Script outputs to analysis_scripts/ directory
+            scripts_dir = FINAL_RUNS / "prelim_random_baseline_generator/analysis_scripts"
+            fallback_dirs = [
+                scripts_dir,
+                FINAL_RUNS / "prelim_random_baseline_generator/Output",
+                random_baseline_output,
+            ]
+            
+            # Copy figure
+            for src_dir in fallback_dirs:
+                src_fig = src_dir / "random_baseline_comparison.png"
+                if src_fig.exists():
+                    dst = run_dir / "random_baseline_comparison.png"
+                    shutil.copy(src_fig, dst)
+                    generated_outputs.append(dst)
+                    print(f"  ✓ Copied: random_baseline_comparison.png")
+                    break
+            
+            # Copy table if exists
+            for src_dir in fallback_dirs:
+                src_table = src_dir / "random_baseline_table.tex"
+                if src_table.exists():
+                    dst = run_dir / "random_baseline_table.tex"
+                    shutil.copy(src_table, dst)
+                    generated_outputs.append(dst)
+                    print(f"  ✓ Copied: random_baseline_table.tex")
+                    break
     else:
         print(f"  ⚠️ Script not found: {random_baseline_script}")
 

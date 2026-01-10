@@ -32,7 +32,9 @@ import matplotlib.pyplot as plt
 
 
 # Ground truth CLD paths
-REPO_ROOT = Path(__file__).resolve().parents[2]  # .../causalix.ai
+# From .../final_runs/prelim_random_baseline_generator/analysis_scripts/
+#   parents[0] = analysis_scripts/, [1] = prelim_random_baseline_generator/, [2] = final_runs/, [3] = project root
+REPO_ROOT = Path(__file__).resolve().parents[3]  # project root
 HERE = Path(__file__).resolve().parent
 
 # Prefer a self-contained copy of the GT CLDs under this final_runs module.
