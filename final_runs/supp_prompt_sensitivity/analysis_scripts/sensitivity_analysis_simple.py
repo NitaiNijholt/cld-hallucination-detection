@@ -41,7 +41,9 @@ import sys
 # Add project root(s) to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))           # /.../final_runs
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))   # /home/nitai/code/causalix.ai
-from data_science.logit_metrics import get_embedding_local
+# Import from local analysis_lib (self-contained)
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "analysis_lib"))
+from logit_metrics import get_embedding_local
 
 
 # =============================================================================
