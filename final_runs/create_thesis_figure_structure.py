@@ -135,14 +135,9 @@ def main():
     print(f"Target: {target}")
     print()
     
-    # Clear target (except .gitkeep)
-    if target.exists():
-        for item in target.iterdir():
-            if item.name != '.gitkeep':
-                if item.is_dir():
-                    shutil.rmtree(item)
-                else:
-                    item.unlink()
+    # NOTE: We do NOT clear the target directory to preserve pre-populated static files
+    # (e.g., latex/table21_scaling_summary.tex, supp_prompt_sensitivity/*.tex)
+    # The copy operation will overwrite any existing files with the same name
     
     target.mkdir(parents=True, exist_ok=True)
     
