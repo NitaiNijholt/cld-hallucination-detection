@@ -93,19 +93,39 @@ def main():
         cmd = f"python3 {time_cost_script} --base_dir {FINAL_RUNS} --output_dir {time_cost_output}"
         success = run_command(cmd, "Time/Cost Scaling Aggregation", env=env)
         
-        # Find and copy the main thesis figure (search recursively in subdirs too)
+        # Find and copy the main thesis figure.
+        # IMPORTANT: be specific here; otherwise we can accidentally copy figure1_scaling_analysis.png
+        # and overwrite the intended combined scaling plot.
         if success:
-            found = False
-            for fig_pattern in ["*generation*judging*.png", "*figure1*.png", "*scaling*.png"]:
-                for fig in time_cost_output.rglob(fig_pattern):
-                    dst = run_dir / "figure3_generation_vs_judging.png"
-                    shutil.copy(fig, dst)
+            dst = run_dir / "figure3_generation_vs_judging.png"
+
+            # Preferred exact path (this is where aggregate_time_cost_scaling.py writes it)
+            preferred = time_cost_output / "figures" / "figure3_generation_vs_judging.png"
+            if preferred.exists():
+                shutil.copy(preferred, dst)
+                generated_figures.append(dst)
+                print(f"  ✓ Copied: {preferred.name} → figure3_generation_vs_judging.png")
+            else:
+                # Fallback: exact filename anywhere under the output directory
+                candidates = list(time_cost_output.rglob("figure3_generation_vs_judging.png"))
+                if candidates:
+                    src = candidates[0]
+                    shutil.copy(src, dst)
                     generated_figures.append(dst)
-                    print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
-                    found = True
-                    break
-                if found:
-                    break
+                    print(f"  ✓ Copied: {src.name} → figure3_generation_vs_judging.png")
+                else:
+                    # Final fallback: try pattern match, but avoid copying figure1/scaling_analysis
+                    pattern_candidates = [
+                        p for p in time_cost_output.rglob("*generation*judging*.png")
+                        if "figure1" not in p.name.lower() and "scaling_analysis" not in p.name.lower()
+                    ]
+                    if pattern_candidates:
+                        src = pattern_candidates[0]
+                        shutil.copy(src, dst)
+                        generated_figures.append(dst)
+                        print(f"  ✓ Copied: {src.name} → figure3_generation_vs_judging.png")
+                    else:
+                        print("  ⚠️ Could not find figure3_generation_vs_judging.png in time/cost scaling outputs.")
     else:
         print(f"  ⚠️ Script not found: {time_cost_script}")
 
