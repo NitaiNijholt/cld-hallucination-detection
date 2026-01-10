@@ -123,7 +123,7 @@ This section presents hallucination detection performance across all CLDs and pr
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_20260105_132218/rq1a_row1_performance_metrics.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_latest/rq1a_row1_performance_metrics.png}
 \caption[Corruption detection metrics (Correctness Judge)]{Performance metrics overview for corruption detection (Correctness Judge). Shows F1 scores (Left), ROC-AUC with random (AUC=0.5) baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (see Appendix~\ref{app:statistical_procedures_reference}) (below each panel) tests prompt effect with (CLD, run) as blocks; per-CLD Wilcoxon tests (see Appendix~\ref{app:statistical_procedures_reference}) show which pairs differ within each CLD (e.g., ``DE:M$>$B'' = Depressive Symptoms: \PromptMechanistic{}$>$\PromptBaseline{}). W = Kendall's W. DE=Depressive Symptoms, ED=Emergency Department, SN=Social Norms; B=\PromptBaseline, M=\PromptMechanistic, C=\PromptCoT. *** $p<0.001$, ** $p<0.01$, * $p<0.05$ (unadjusted; Bonferroni handled in text).}
 \label{fig:rq1a_corr_correct_row1}
 \end{figure}
@@ -141,7 +141,7 @@ In-depth analysis of corruption type detection patterns and score discrimination
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_20260105_132218/rq1a_row2_detailed_analysis.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_latest/rq1a_row2_detailed_analysis.png}
 \caption[Corruption detection analysis (Correctness Judge)]{Detailed analysis for correctness-based corruption detection. Recall by corruption type with colour scale from 0.5 to 1.0 (Left). Score discrimination showing point-biserial correlation between ground truth hallucinations (corruption=True) and judge scores (Middle). Judge scores by hallucination-detection outcome (Right): mean judge scores ($\mu$) and 95\% confidence intervals, with correct outcomes shown in green and incorrect outcomes shown in red.}
 \label{fig:rq1a_corr_correct_row2}
 \end{figure}
@@ -179,7 +179,7 @@ Detailed view of core performance metrics across all CLDs and prompt variants.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_20260105_132218/rq1a_ground_truth_row1_performance_metrics.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_latest/rq1a_ground_truth_row1_performance_metrics.png}
 \caption[GT validation metrics (Correctness Judge)]{Performance metrics overview for ground truth correctness validation. Shows F1 scores (Left), ROC-AUC with random (AUC=0.5) baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (see Appendix~\ref{app:statistical_procedures_reference}) (below each panel) tests prompt effect with (CLD, run) as blocks; per-CLD Wilcoxon tests (see Appendix~\ref{app:statistical_procedures_reference}) show which pairs differ within each CLD (e.g., ``DE:M$>$B''). W = Kendall's W. *** $p<0.001$, ** $p<0.01$, * $p<0.05$ (unadjusted; Bonferroni handled in text).}
 \label{fig:rq1a_gt_correctness_row1}
 \end{figure}
@@ -197,7 +197,7 @@ In-depth analysis of precision-recall trade-offs, score distributions, and point
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_20260105_132218/rq1a_ground_truth_row2_detailed_analysis.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_latest/rq1a_ground_truth_row2_detailed_analysis.png}
 \caption[GT validation analysis (Correctness Judge)]{Detailed analysis for ground truth correctness validation. Precision-recall trade-off (Left). Point-biserial correlations showing discrimination ability (Middle). Judge scores by hallucination-detection outcome (Right): mean judge scores ($\mu$) and 95\% confidence intervals for TP/FP/TN/FN under the hallucination label (GT Lit: FP$\lor$FN) and score-threshold decision rule used for the F1 plots.}
 \label{fig:rq1a_gt_correctness_row2}
 \end{figure} 
@@ -235,7 +235,7 @@ Detailed view of core performance metrics of Citation Judge on GT synth (corrupt
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_20260105_132218/rq1a_row1_performance_metrics.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_latest/rq1a_row1_performance_metrics.png}
 \caption[Corruption detection metrics (Citation Judge)]{Performance metrics overview for citation-based corruption detection. Shows F1 scores (Left), AUC-ROC with chance baseline (Middle), and aggregate performance (Right). Friedman test (see Appendix~\ref{app:statistical_procedures_reference}) (below each panel) tests prompt effect; per-CLD Wilcoxon tests (see Appendix~\ref{app:statistical_procedures_reference}) show which pairs differ within each CLD. 4 prompts $\times$ 3 CLDs $\times$ 3 runs = 36 experiments. *** $p<0.001$, ** $p<0.01$, * $p<0.05$ (unadjusted; Bonferroni handled in text).}
 \label{fig:rq1a_corr_citation_row1}
 \end{figure}
@@ -256,7 +256,7 @@ In-depth analysis of corruption type detection patterns and score discrimination
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_20260105_132218/rq1a_row2_detailed_analysis.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_latest/rq1a_row2_detailed_analysis.png}
 \caption[Corruption detection analysis (Citation Judge)]{Detailed analysis for citation-based corruption detection. Recall by corruption type with colour scale from 0.5 to 1.0 (Left). Score discrimination showing point-biserial correlation between ground truth (corruption=True) and judge scores (Middle). Judge scores by hallucination-detection outcome (Right): mean judge scores ($\mu$) and 95\% confidence intervals, with correct outcomes shown in green and incorrect outcomes shown in red.}
 \label{fig:rq1a_corr_citation_row2}
 \end{figure}
@@ -292,7 +292,7 @@ Detailed view of core performance metrics of Citation Judge on GT Lit (hallucina
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_20260105_132218/rq1a_ground_truth_row1_performance_metrics.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_latest/rq1a_ground_truth_row1_performance_metrics.png}
 \caption[GT validation metrics (Citation Judge)]{Performance metrics overview for ground truth citation validation. Shows F1 scores (Left), ROC-AUC with random baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (see Appendix~\ref{app:statistical_procedures_reference}) (below each panel) tests prompt effect; per-CLD Wilcoxon tests (see Appendix~\ref{app:statistical_procedures_reference}) show which pairs differ within each CLD. W = Kendall's W. *** $p<0.001$, ** $p<0.01$, * $p<0.05$ (unadjusted; Bonferroni handled in text).}
 \label{fig:rq1a_gt_citation_row1}
 \end{figure}
@@ -311,7 +311,7 @@ In-depth analysis of precision-recall trade-offs, score distributions, and point
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_20260105_132218/rq1a_ground_truth_row2_detailed_analysis.png}
+\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_latest/rq1a_ground_truth_row2_detailed_analysis.png}
 \caption[GT validation analysis (Citation Judge)]{Detailed analysis for ground truth citation validation. Precision-recall trade-off (Left). Point-biserial correlations showing discrimination ability (Middle). Judge scores by hallucination-detection outcome (Right): mean judge scores ($\mu$) and 95\% confidence intervals for TP/FP/TN/FN under the hallucination label (GT Lit: FP$\lor$FN) and score-threshold decision rule used for the F1 plots.}
 \label{fig:rq1a_gt_citation_row2}
 \end{figure}
