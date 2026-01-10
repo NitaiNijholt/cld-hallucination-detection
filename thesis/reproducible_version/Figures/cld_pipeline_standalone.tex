@@ -1,0 +1,24 @@
+\documentclass[12pt]{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{center}
+\textbf{\Large CLD Generation, Judging, and Correction Pipeline}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{figure}[h]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\input{cld_pipeline_flowchart.tex}
+}
+\caption{Complete CLD pipeline showing three phases: Generation (green) creates variables and edges with UQ metrics capture, Judging (blue) evaluates edge quality via correctness or citation-based approaches, and Correction (orange) applies LLM-guided fixes to flagged edges with optional re-judging.}
+\end{figure}
+
+\end{document}
+
