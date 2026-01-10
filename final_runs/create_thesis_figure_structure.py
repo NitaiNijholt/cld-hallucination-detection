@@ -18,20 +18,22 @@ from pathlib import Path
 
 # Mapping from reproduction output paths to thesis expected paths
 # Format: (source_pattern, thesis_path)
+# Use ** for recursive glob, * for single-level glob
 FIGURE_MAPPINGS = [
-    # RQ1a figures (need enhanced_analysis_latest subdirs)
-    ("RQ1/RQ1a_gt_synth_correctness/*.png", "RQ1a_gt_synth_correctness/enhanced_analysis_latest/"),
-    ("RQ1/RQ1a_gt_lit_correctness/*.png", "RQ1a_gt_lit_correctness/enhanced_analysis_latest/"),
-    ("RQ1/RQ1a_gt_synth_citation/*.png", "RQ1a_gt_synth_citation/enhanced_analysis_latest/"),
-    ("RQ1/RQ1a_gt_lit_citation/*.png", "RQ1a_gt_lit_citation/enhanced_analysis_latest/"),
+    # RQ1a figures (nested in enhanced_analysis_TIMESTAMP subdirs)
+    ("RQ1/RQ1a_gt_synth_correctness/**/rq1a_*.png", "RQ1a_gt_synth_correctness/enhanced_analysis_latest/"),
+    ("RQ1/RQ1a_gt_lit_correctness/**/rq1a_*.png", "RQ1a_gt_lit_correctness/enhanced_analysis_latest/"),
+    ("RQ1/RQ1a_gt_synth_citation/**/rq1a_*.png", "RQ1a_gt_synth_citation/enhanced_analysis_latest/"),
+    ("RQ1/RQ1a_gt_lit_citation/**/rq1a_*.png", "RQ1a_gt_lit_citation/enhanced_analysis_latest/"),
     
     # RQ1b corrector ablation tables
     ("RQ1/RQ1b_corrector_ablation/*.tex", "RQ1b_corrector_ablation/"),
     
-    # RQ2 figures and tables
-    ("RQ2/phase4_rfe_complete.png", "RQ2_uq_hallucination_detection/phase4_rfe_complete.png"),
-    ("RQ2/phase6_distributions_with_effect_sizes.png", "RQ2_uq_hallucination_detection/phase6_distributions_with_effect_sizes.png"),
-    ("RQ2/*.tex", "RQ2_uq_hallucination_detection/"),
+    # RQ2 figures and tables (in artifacts subdir)
+    ("RQ2/artifacts/phase4_rfe_complete.png", "RQ2_uq_hallucination_detection/phase4_rfe_complete.png"),
+    ("RQ2/analyses/**/phase6_distributions_with_effect_sizes.png", "RQ2_uq_hallucination_detection/phase6_distributions_with_effect_sizes.png"),
+    ("RQ2/artifacts/*.tex", "RQ2_uq_hallucination_detection/"),
+    ("RQ2/artifacts/*.png", "RQ2_uq_hallucination_detection/"),
     
     # RQ3 figures and tables
     ("RQ3/figures/*.png", "RQ3_deep_research_validation/Output/"),
@@ -80,14 +82,19 @@ FIGURE_MAPPINGS = [
 
 def copy_with_glob(source_dir: Path, pattern: str, target_dir: Path, target_subpath: str):
     """Copy files matching pattern from source to target."""
-    source_path = source_dir / pattern.rsplit('/', 1)[0] if '/' in pattern else source_dir
-    file_pattern = pattern.rsplit('/', 1)[-1]
-    
-    # Handle glob patterns
-    if '*' in file_pattern:
-        files = list(source_path.glob(file_pattern))
+    # Handle recursive glob patterns (**)
+    if '**' in pattern:
+        # Use full pattern from source_dir
+        files = list(source_dir.glob(pattern))
     else:
-        files = [source_path / file_pattern] if (source_path / file_pattern).exists() else []
+        source_path = source_dir / pattern.rsplit('/', 1)[0] if '/' in pattern else source_dir
+        file_pattern = pattern.rsplit('/', 1)[-1]
+        
+        # Handle glob patterns
+        if '*' in file_pattern:
+            files = list(source_path.glob(file_pattern))
+        else:
+            files = [source_path / file_pattern] if (source_path / file_pattern).exists() else []
     
     copied = 0
     for src_file in files:
