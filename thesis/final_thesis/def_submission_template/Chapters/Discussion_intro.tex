@@ -1,0 +1,31 @@
+%==============================================================================
+% Discussion Intro (draft scratchpad)
+%==============================================================================
+%
+% Use this file to draft/iterate on the opening of the Discussion chapter.
+% It is NOT included anywhere by default.
+%
+% If you want to include it in the thesis build later, add one of:
+%   \input{Chapters/Discussion_intro}
+% or (if already inside Chapters/Discussion.tex):
+%   \input{Discussion_intro}
+%
+% -----------------------------------------------------------------------------
+
+% === Start writing here ===
+
+% Example scaffold (delete/replace freely):
+% \noindent
+% This chapter synthesizes the results across RQ1--RQ3 and explains what they
+% imply for corpus-independent CLD generation, hallucination detection, and
+% evidence-grounded validation. We first restate the core empirical takeaways,
+% then interpret failure modes and boundary conditions, and finally discuss
+% practical deployment guidance and future work.
+
+\noindent
+This chapter synthesizes the results from RQ1--RQ3 on corpus-independent causal loop diagram (CLD) edge generation and hallucination mitigation. We evaluated two LLM-as-a-Judge approaches (correctness-based and citation-based), an LLM-as-a-corrector loop, and generator-side uncertainty quantification (UQ) metrics across three health-domain CLDs. To separate controlled from ecological settings, we test both synthetic ground truth (GT Synth; known corruptions) and literature ground truth (GT Lit; deviation from published expert CLDs). Finally, we explore adaptive test-time compute via an exploratory pilot of Deep Research (DR): multi-agent literature search for direct causal evidence, including a judge-triggered ``smart deployment'' estimate.
+
+\medskip
+\noindent
+\textbf{In summary, we find} that corpus-independent CLD edge generation performs substantially above random baselines under GT Lit, indicating that generate-only CLD construction can be a viable alternative (or complement) to text-to-CLD pipelines, while leaving substantial room for improvement in absolute alignment. Correctness judging transfers only partially from GT Synth to GT Lit: it reliably detects synthetic corruptions, but discrimination drops sharply under GT Lit and becomes domain-dependent, with mechanistic (Bradford Hill--aligned) prompting as a notable exception that improves GT Lit discrimination in two of the three CLDs. Citation-based judging shows limited and unstable discrimination; diagnostic studies suggest this is driven primarily by evidence type and retrieval quality (e.g., scarcity of direct causal evidence and the limitations of shallow, narrative-based search), rather than a complete judge malfunction. Judge-guided correction exhibits strong setting dependence and Goodhart-like behaviour: the LLM-as-a-corrector can repair synthetic corruptions, but does not reliably improve GT Lit alignment and often improves judge scores without improving expert-grounded edge quality. Generator-side UQ metrics provide weak, non-robust signals: they can support in-distribution hallucination detection when combined in an ensemble classifier, but generalise poorly out-of-CLD, and the observed positive association between cosine similarity (retrieved citations vs.\ narratives) and hallucination rate illustrates that topical alignment is not equivalent to causal verification. Finally, Deep Research reframes test-time compute from correction to validation/enrichment, but remains exploratory: DR retrieves direct causal evidence for many edges labelled FP/FN under GT Lit, suggesting that some apparent ``hallucinations'' may reflect scope/construct-mapping mismatches or overlooked-but-valid relationships when edges are evaluated in isolation; however, evidence applicability varies and inter-rater reliability is limited, so enrichment-style conclusions should be treated as preliminary. Under these constraints, a proof-of-concept smart-deployment policy that uses a mechanistic correctness-judge score as a trigger for selectively deploying DR (instead of UQ-triggered correction) can improve estimated accuracy-per-dollar relative to always-on DR.
+
