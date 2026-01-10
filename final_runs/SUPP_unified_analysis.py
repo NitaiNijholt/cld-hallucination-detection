@@ -105,6 +105,21 @@ def main():
     else:
         print(f"  ⚠️ Script not found: {time_cost_script}")
 
+    # Generate Table 21: Scaling Summary (for thesis)
+    table21_script = FINAL_RUNS / "supp_cost_analysis/analysis_scripts/generate_table21_scaling_summary.py"
+    if table21_script.exists():
+        cmd = f"python3 {table21_script}"
+        success = run_command(cmd, "Table 21: Scaling Summary", env=env)
+        if success:
+            # Copy the generated table to output
+            src_table = FINAL_RUNS / "latex/table21_scaling_summary.tex"
+            if src_table.exists():
+                latex_dir = run_dir / "latex"
+                latex_dir.mkdir(parents=True, exist_ok=True)
+                dst = latex_dir / "table21_scaling_summary.tex"
+                shutil.copy(src_table, dst)
+                print(f"  ✓ Copied: table21_scaling_summary.tex")
+
     # =========================================================================
     # 2. PARALLELIZATION BENCHMARK ANALYSIS
     # =========================================================================
@@ -328,7 +343,6 @@ t: edge_ablation_f1_ordered.png")
 
 if __name__ == "__main__":
     main()
-
 
 
 

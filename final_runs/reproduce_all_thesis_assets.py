@@ -105,7 +105,13 @@ def generate_verification_report(output_dir: Path, project_root: Path) -> dict:
         "PRELIM": {
             "description": "Preliminary Analysis Figures & Tables",
             "patterns": ["*.png", "*.tex"],
-            "expected_count": 2,
+            "expected_count": 4,
+            "subdirs": ["."],
+        },
+        "VALIDATION": {
+            "description": "Validation Tables (TruthfulQA, Human, Uleman's, Physics)",
+            "patterns": ["*.tex"],
+            "expected_count": 6,
             "subdirs": ["."],
         },
     }
@@ -299,6 +305,35 @@ def main():
             env
         )
         
+        # =====================================================================
+        # VALIDATION: Validation Studies (TruthfulQA, Human, Uleman's, Physics)
+        # =====================================================================
+        validation_script = FINAL_RUNS / "VALIDATION_unified_analysis.py"
+        validation_output = output_dir / "VALIDATION"
+        results["VALIDATION"] = run_script(
+            validation_script,
+            f"--run-dir {validation_output}",
+            "VALIDATION: Validation Studies",
+            env
+        )
+        
+        # =====================================================================
+        # Effect Size Summary Table (generated/)
+        # =====================================================================
+        effect_size_script = FINAL_RUNS / "retrieve_effect_sizes.py"
+        if effect_size_script.exists():
+            print("\n" + "#"*80)
+            print("Running: Effect Size Summary Table")
+            print("#"*80)
+            try:
+                import subprocess
+                subprocess.run(f"python3 {effect_size_script}", shell=True, check=True, env=env)
+                results["EFFECT_SIZES"] = True
+                print("✅ Completed: Effect Size Summary Table")
+            except:
+                results["EFFECT_SIZES"] = False
+                print("❌ Failed: Effect Size Summary Table")
+        
         # Print run summary
         print("\n" + "="*80)
         print("ANALYSIS RUNS SUMMARY")
@@ -349,7 +384,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 

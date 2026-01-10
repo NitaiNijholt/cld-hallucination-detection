@@ -2,14 +2,17 @@
 """
 Preliminary Unified Analysis Script
 Single entry point for all preliminary analyses:
-1. Random Baseline Generator Comparison
-2. Temperature Sensitivity Analysis
+1. Generator Model Comparison
+2. Random Baseline Generator Comparison
+3. Temperature Sensitivity Analysis
 
 Usage:
     python3 final_runs/PRELIM_unified_analysis.py --run-dir /path/to/output
 
 Outputs:
+    - generator_model_comparison.tex
     - random_baseline_comparison.png
+    - random_baseline_table.tex
     - temperature_sensitivity_table.tex
 """
 
@@ -69,13 +72,38 @@ def main():
 
     print(f"\nPreliminary output directory: {run_dir}")
 
-    generated_figures = []
+    generated_outputs = []
 
     # =========================================================================
-    # 1. RANDOM BASELINE GENERATOR COMPARISON
+    # 1. GENERATOR MODEL COMPARISON
     # =========================================================================
     print("\n" + "-"*80)
-    print("1. Random Baseline Generator Comparison")
+    print("1. Generator Model Comparison")
+    print("-"*80)
+
+    generator_model_script = FINAL_RUNS / "prelim_generator_model_comparison/analysis_scripts/analyze_generator_models.py"
+    
+    if generator_model_script.exists():
+        cmd = f"python3 {generator_model_script}"
+        success = run_command(cmd, "Generator Model Comparison", env=env,
+                             cwd=str(FINAL_RUNS / "prelim_generator_model_comparison"))
+        
+        if success:
+            # Copy table from source Output dir to run_dir
+            src_table = FINAL_RUNS / "prelim_generator_model_comparison/Output/generator_model_comparison.tex"
+            if src_table.exists():
+                dst = run_dir / "generator_model_comparison.tex"
+                shutil.copy(src_table, dst)
+                generated_outputs.append(dst)
+                print(f"  ✓ Copied: generator_model_comparison.tex")
+    else:
+        print(f"  ⚠️ Script not found: {generator_model_script}")
+
+    # =========================================================================
+    # 2. RANDOM BASELINE GENERATOR COMPARISON
+    # =========================================================================
+    print("\n" + "-"*80)
+    print("2. Random Baseline Generator Comparison")
     print("-"*80)
 
     random_baseline_script = FINAL_RUNS / "prelim_random_baseline_generator/analysis_scripts/compute_random_baseline.py"
@@ -95,16 +123,23 @@ def main():
             if src_fig.exists():
                 dst = run_dir / "random_baseline_comparison.png"
                 shutil.copy(src_fig, dst)
-                generated_figures.append(dst)
+                generated_outputs.append(dst)
                 print(f"  ✓ Copied: random_baseline_comparison.png")
+            # Also copy the table
+            src_table = FINAL_RUNS / "prelim_random_baseline_generator/Output/random_baseline_table.tex"
+            if src_table.exists():
+                dst = run_dir / "random_baseline_table.tex"
+                shutil.copy(src_table, dst)
+                generated_outputs.append(dst)
+                print(f"  ✓ Copied: random_baseline_table.tex")
     else:
         print(f"  ⚠️ Script not found: {random_baseline_script}")
 
     # =========================================================================
-    # 2. TEMPERATURE SENSITIVITY ANALYSIS
+    # 3. TEMPERATURE SENSITIVITY ANALYSIS
     # =========================================================================
     print("\n" + "-"*80)
-    print("2. Temperature Sensitivity Analysis")
+    print("3. Temperature Sensitivity Analysis")
     print("-"*80)
 
     temperature_script = PROJECT_ROOT / "data_science/parameter_tuning_experiments/analyze_temperature_sensitivity.py"
@@ -125,8 +160,7 @@ def main():
                     dst = run_dir / f.name
                     shutil.copy(f, dst)
                     print(f"  ✓ Copied: {f.name}")
-                    if f.suffix == ".tex":
-                        generated_figures.append(dst)
+                    generated_outputs.append(dst)
     else:
         print(f"  ⚠️ Script not found: {temperature_script}")
 
@@ -146,9 +180,9 @@ def main():
     print("PRELIMINARY ANALYSES SUMMARY")
     print("="*80)
     print(f"\nOutput directory: {run_dir}")
-    print(f"\nGenerated outputs ({len(generated_figures)}):")
-    for fig in generated_figures:
-        print(f"  • {fig.name}")
+    print(f"\nGenerated outputs ({len(generated_outputs)}):")
+    for out in generated_outputs:
+        print(f"  • {out.name}")
 
     print("\n" + "="*80)
     print("✅ Preliminary analyses completed!")

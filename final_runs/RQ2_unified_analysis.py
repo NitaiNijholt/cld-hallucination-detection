@@ -116,7 +116,22 @@ def main():
     script_report = rq2_scripts / "rq2_master_report_v2_enhanced.py"
     run_command(f"python3 {script_report}", "RQ2 Master Report Generation", env=env)
 
-    # 6. Copy figures to thesis-compatible names for reproducibility
+    # 6. Normality Tests Table (for thesis)
+    script_normality = rq2_scripts / "rq2_normality_tests.py"
+    if script_normality.exists():
+        run_command(f"python3 {script_normality}", "RQ2 Normality Tests Table", env=env)
+
+    # 7. Ensemble Performance Table (for thesis)
+    script_ensemble_table = rq2_scripts / "rq2_ensemble_table.py"
+    if script_ensemble_table.exists():
+        run_command(f"python3 {script_ensemble_table}", "RQ2 Ensemble Performance Table", env=env)
+
+    # 8. Distribution Figure with Effect Sizes (for thesis)
+    script_distribution = rq2_scripts / "rq2_distribution_figure.py"
+    if script_distribution.exists():
+        run_command(f"python3 {script_distribution}", "RQ2 Distribution Figure", env=env)
+
+    # 9. Copy figures to thesis-compatible names for reproducibility
     if run_dir is not None:
         print("\n" + "="*80)
         print("Creating thesis-compatible figure copies...")
@@ -138,6 +153,30 @@ def main():
             if feat_dist_src.exists():
                 shutil.copy(feat_dist_src, feat_dist_dst)
                 print(f"  ✓ Copied: phase6_feature_distributions_by_cld.png → feature_distributions_by_cld_4x3.png")
+        
+        # Copy thesis tables and figures from source directory
+        rq2_source = PROJECT_ROOT / "final_runs/RQ2_uq_hallucination_detection"
+        thesis_assets = [
+            "single_metric_table.tex",
+            "normality_tests_table.tex",
+            "ensemble_performance_table.tex",
+            "phase4_rfe_complete.png",
+        ]
+        for asset in thesis_assets:
+            src = rq2_source / asset
+            if src.exists():
+                dst = artifacts_dir / asset
+                shutil.copy(src, dst)
+                print(f"  ✓ Copied: {asset}")
+        
+        # Copy distribution figure (may be in figures/ subdir)
+        dist_fig = rq2_source / "figures" / "phase6_distributions_with_effect_sizes.png"
+        if not dist_fig.exists():
+            dist_fig = rq2_source / "phase6_distributions_with_effect_sizes.png"
+        if dist_fig.exists():
+            dst = artifacts_dir / "phase6_distributions_with_effect_sizes.png"
+            shutil.copy(dist_fig, dst)
+            print(f"  ✓ Copied: phase6_distributions_with_effect_sizes.png")
         
         # Create a 'latest' symlink for the entire run
         latest_link = run_dir.parent / "RQ2_latest"
