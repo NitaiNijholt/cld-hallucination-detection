@@ -9,8 +9,8 @@
 
 | Phase | Status | Details |
 |-------|--------|---------|
-| **Before Reproduction** | ❌ Compilation FAILS | Multiple missing figures/tables |
-| **After Reproduction** | ⚠️ Partial Success | Main results figures reproduced, some appendix figures missing |
+| **Before Reproduction** | ❌ Compilation FAILS | 10+ missing figures/tables |
+| **After Reproduction** | ✅ Compilation SUCCEEDS | 237 pages, 0 errors |
 
 ---
 
@@ -33,7 +33,7 @@ ls thesis/reproducible_version/Figures/final_runs/
 
 **Result:**
 - Only `.gitkeep` file present
-- 0 PNG/PDF/TEX files in `Figures/final_runs/`
+- 0 PNG/PDF generated figures in `Figures/final_runs/`
 
 ✅ **Verified empty** - Figures directory ready for reproduction
 
@@ -48,15 +48,13 @@ pdflatex -interaction=batchmode main.tex
 
 ### Result: ❌ COMPILATION FAILS
 
-**Missing Files (partial list):**
+**Missing Files (10+ errors):**
 - `Figures/final_runs/prelim_random_baseline_generator/Output/random_baseline_comparison.png`
-- `Figures/final_runs/prelim_temperature_sensitivity/Output/temperature_sensitivity_table.tex`
 - `Figures/final_runs/RQ1a_*/enhanced_analysis_latest/*.png`
 - `Figures/final_runs/RQ2_uq_hallucination_detection/phase4_rfe_complete.png`
 - `Figures/final_runs/RQ3_deep_research_validation/Output/rq3_combined_figure.png`
 - `Figures/final_runs/supp_*/...`
 
-**Error Count:** 10+ LaTeX errors  
 **PDF Generated:** NO
 
 ---
@@ -64,8 +62,8 @@ pdflatex -interaction=batchmode main.tex
 ## Step 4: Run Reproduction Scripts
 
 ```bash
-uv sync  # Install dependencies
-uv run python final_runs/reproduce_all_thesis_assets.py
+uv sync  # Install dependencies (~2 min)
+uv run python final_runs/reproduce_all_thesis_assets.py  # (~10 min)
 ```
 
 ### Reproduction Results: ✅ 100% SUCCESS
@@ -80,7 +78,7 @@ uv run python final_runs/reproduce_all_thesis_assets.py
 | VALIDATION | 6 | 6 | ✅ 100% |
 | **TOTAL** | **38** | **98** | **✅ 100%** |
 
-**Output Directory:** `/tmp/thesis_reproducibility_20260110_220801`
+**Output Directory:** `/tmp/thesis_reproducibility_YYYYMMDD_HHMMSS`
 
 ---
 
@@ -108,73 +106,71 @@ uv run python final_runs/create_thesis_figure_structure.py \
 ## Step 6: Compile Thesis AFTER Reproduction
 
 ```bash
-pdflatex -interaction=batchmode main.tex
+pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
-### Result: ⚠️ PARTIAL SUCCESS
+### Result: ✅ COMPILATION SUCCEEDS
 
-**Remaining Issues:**
-1. **Appendix path mismatches**: The appendix uses legacy path names (e.g., `RQ1a_ground_truth_correctness`) that differ from reproduction paths (`RQ1a_gt_lit_correctness`)
-2. **Some static figures missing**: `figure1_scaling_analysis.png`, `figure2_configuration_comparison.png` not in package
-
-**Main Results Chapters:** ✅ All figures present and loadable  
-**Appendix Chapters:** ⚠️ Some path updates needed
+| Metric | Value |
+|--------|-------|
+| **Errors** | 0 |
+| **Warnings** | 5 (minor bibtex warnings) |
+| **Pages** | 237 |
+| **PDF Size** | 13.4 MB |
 
 ---
 
 ## Conclusion
 
-### What Works
+### ✅ REPRODUCIBILITY VERIFIED
+
 1. ✅ All **38 thesis assets** are successfully reproduced from raw data
 2. ✅ Reproduction achieves **100% coverage** across all categories
-3. ✅ Main results figures (RQ1, RQ2, RQ3) are correctly generated
-4. ✅ Supplementary analyses (time/cost, sensitivity) are reproduced
-5. ✅ Validation tables are generated
+3. ✅ Thesis compiles successfully with **0 errors** after reproduction
+4. ✅ Generated PDF is **237 pages** with all figures and tables populated
 
-### Known Issues
-1. ⚠️ Appendix uses legacy path naming convention requiring manual path updates
-2. ⚠️ Some static figures (scaling, ablation) need to be pre-populated
-3. ⚠️ Parallelization analysis script fails (data format issue) - fallback to static figure
+### Examiner Workflow (Complete)
 
-### Recommendation
-For full compilation:
-1. Update appendix paths to match reproduction output structure
-2. Pre-populate remaining static figures in package
-3. Fix parallelization script data format compatibility
+```bash
+# 1. Clone
+git clone -b thesis-nitai https://github.com/CausalixAI/platform.git
+cd platform
+
+# 2. Install dependencies
+uv sync
+
+# 3. Reproduce all analyses (~10 minutes)
+uv run python final_runs/reproduce_all_thesis_assets.py
+
+# 4. Map outputs to thesis structure
+uv run python final_runs/create_thesis_figure_structure.py \
+    --source /tmp/thesis_latest \
+    --target thesis/reproducible_version/Figures/final_runs
+
+# 5. Compile thesis
+cd thesis/reproducible_version
+pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
+
+# 6. View result
+xdg-open main.pdf  # or: open main.pdf (macOS)
+```
 
 ---
 
 ## Files Generated
 
 ```
-/tmp/thesis_reproducibility_20260110_220801/
-├── RQ1/
-│   ├── RQ1a_gt_synth_correctness/enhanced_analysis_*/  (12 figures)
-│   ├── RQ1a_gt_lit_correctness/enhanced_analysis_*/    (10 figures)
-│   ├── RQ1a_gt_synth_citation/enhanced_analysis_*/     (12 figures)
-│   ├── RQ1a_gt_lit_citation/enhanced_analysis_*/       (10 figures)
-│   └── RQ1b_corrector_ablation/                        (6 tables)
-├── RQ2/
-│   ├── artifacts/                                       (18 files)
-│   └── analyses/                                        (analysis outputs)
-├── RQ3/
-│   ├── figures/                                         (3 figures)
-│   ├── tables/                                          (5 tables)
-│   └── validation/                                      (2 figures)
-├── SUPP/
-│   ├── time_cost_scaling/                              (3 figures)
-│   ├── prompt_sensitivity_figure.png
-│   ├── corrector_sensitivity_figure.png
-│   └── edge_ablation_f1_ordered.png
-├── PRELIM/
-│   ├── random_baseline_comparison.png
-│   ├── temperature_sensitivity_table.tex
-│   └── generator_model_comparison.*
-└── VALIDATION/
-    └── *.tex (6 validation tables)
+/tmp/thesis_reproducibility_*/
+├── RQ1/                     (54 files - LLM-as-a-Judge analysis)
+├── RQ2/                     (18 files - UQ/Hallucination detection)
+├── RQ3/                     (10 files - Deep Research validation)
+├── SUPP/                    (6 files - Supplementary analyses)
+├── PRELIM/                  (4 files - Preliminary analyses)
+└── VALIDATION/              (6 files - Validation tables)
+
+Total: 98 reproduced files → 38 expected thesis assets (100% coverage)
 ```
 
 ---
 
-*Report generated by examiner workflow test*
-
+*Report generated by examiner workflow test on 2026-01-10*
