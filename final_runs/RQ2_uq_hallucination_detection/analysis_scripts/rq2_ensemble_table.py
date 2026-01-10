@@ -225,11 +225,11 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \begin{threeparttable}
 \setlength{\tabcolsep}{4pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \multicolumn{2}{c}{\textbf{Phase 6 (leave-one-CLD-out):}} & \textbf{Performance} \\
- & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{F1@0.5} & \textbf{Drop (5$\rightarrow$6)} \\
- & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & \\
+\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \textbf{Phase 6:} & \textbf{Performance} \\
+ & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{Cross-CLD AUC} & \textbf{Drop (5$\rightarrow$6)} \\
+ & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \\
 \midrule
 """
     
@@ -239,7 +239,6 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
         latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
         latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
-        latex += f"{fmt_f1(row.get('p6_f1_mean'), row.get('p6_f1_ci'))} & "
         latex += f"{fmt_drop(row['drop'])} \\\\\n"
         if i < len(rows) - 1:
             latex += r"\midrule" + "\n"
@@ -254,7 +253,7 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> s
 \textbf{{Phase 4 (RFE CV AUC):}} {n_folds}-fold block-level CV on all pooled edges; measures feature selection performance.
 \textbf{{Phase 5 (CV AUC):}} {n_folds}-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
 \textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
-\textbf{{Phase 6 (Cross-CLD AUC/F1@0.5):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; AUC uses predicted probabilities; F1@0.5 uses the fixed deployment threshold $p(\mathrm{{hallucination}})\ge 0.5$.
+\textbf{{Phase 6 (Cross-CLD AUC):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; measures cross-domain generalization.
 Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
 \textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
