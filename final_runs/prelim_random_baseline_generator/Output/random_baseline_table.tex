@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Random Baseline Comparison for Generator Edge Recovery}
+\label{tab:random_baseline}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{CLD} & $|V|$ & $|E|$ & \textbf{Density} & \textbf{Random F1} & \textbf{Analytical} \\
+\midrule
+Depressive Symptoms & 14 & 34 & 0.187 & 0.186$\pm$0.061 & 0.187 \\
+Social Norms & 10 & 12 & 0.133 & 0.133$\pm$0.089 & 0.133 \\
+Emergency Department & 34 & 66 & 0.059 & 0.058$\pm$0.028 & 0.059 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Random F1 computed via Monte Carlo simulation (1000 iterations).
+\item Density = $|E| / (|V| \times (|V|-1))$; Analytical = expected F1 based on graph density.
+\item LLM generator must significantly exceed these baselines to demonstrate causal reasoning.
+\end{tablenotes}
+\end{table}
