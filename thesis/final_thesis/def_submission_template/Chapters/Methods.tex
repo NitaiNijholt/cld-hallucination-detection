@@ -260,6 +260,9 @@ $A \xrightarrow{\texttt{NONE}} B$ (remove wrong) + $B \xrightarrow{\texttt{POS}}
 
 \textbf{Algorithm reference:} Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:corrector}). \textbf{Input parameters (prompts):} Appendix~\ref{sec:corrector_prompts}.
 
+\paragraph{Temperature defaults.}
+Other temperature defaults (judge T=0.0) were chosen based on established recommendations from the LLM-as-a-Judge literature~\citep{liu2023gevalnlgevaluationusing, zheng2024judging}. The corruptor temperature default was chosen to be the same as the generator temperature (T=0.7) to minimise stylistic distributional shifts, ensuring that hallucinations must be detected based on content rather than stylistic artefacts. The corrector's temperature default was also chosen to be T=0.7 to align with the generator, in line with the Self-Refine framework which also selects similar temperatures for generator and corrector~\citep{madaan2023selfrefineiterativerefinementselffeedback}.
+
 %------------------------------------------------------------------------------
 \section{Deep Research System}
 \label{sec:deep_research_system}
