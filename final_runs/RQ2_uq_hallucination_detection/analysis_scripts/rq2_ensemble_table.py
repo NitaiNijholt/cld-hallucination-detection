@@ -282,10 +282,13 @@ Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
         for row in rows:
             clf = row["classifier"]
             blk = (phase6_summary.get(clf, {}) or {}).get("block_level", None)
-            pval = blk.get("ttest_p") if isinstance(blk, dict) else None
+            # Prefer Wilcoxon (robust) p-values if available; fall back to t-test
+            pval = None
+            if isinstance(blk, dict):
+                pval = blk.get("wilcoxon_p_adj", blk.get("wilcoxon_p", blk.get("ttest_p")))
             p_parts.append(f"{clf}: $p{('=' + fmt_p(pval)) if fmt_p(pval) != '<0.001' else '<0.001'}$")
 
-        latex += "\\textbf{Exploratory chance test (Phase 6):} one-sample $t$-tests vs.\\ AUC$=0.5$ on block-level AUCs (CLD$\\times$run, $N=9$) yield " + "; ".join(p_parts) + ".\n"
+        latex += "\\textbf{Exploratory chance test (Phase 6):} one-sample Wilcoxon signed-rank tests vs.\\ AUC$=0.5$ on block-level AUCs (CLD$\\times$run, $N=9$; Bonferroni-adjusted across classifiers) yield " + "; ".join(p_parts) + ".\n"
     
     latex += r"""\end{tablenotes}
 \end{threeparttable}

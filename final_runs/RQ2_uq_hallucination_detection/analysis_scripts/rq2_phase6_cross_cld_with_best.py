@@ -318,6 +318,14 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             block_ci_lower = float(block_mean - block_tcrit * block_se)
             block_ci_upper = float(block_mean + block_tcrit * block_se)
             t_stat, p_val = stats.ttest_1samp(block_auc_values, 0.5)
+            # Robustness check in the spirit of the non-parametric framework:
+            # Wilcoxon signed-rank test on (AUC - 0.5) across blocks
+            try:
+                w_stat, w_p = stats.wilcoxon(block_auc_values - 0.5, alternative='two-sided')
+                w_stat = float(w_stat)
+                w_p = float(w_p)
+            except Exception:
+                w_stat, w_p = None, None
             block_level = {
                 'n': block_n,
                 'mean': block_mean,
@@ -326,6 +334,8 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
                 'ci_upper': block_ci_upper,
                 'ttest_t': float(t_stat),
                 'ttest_p': float(p_val),
+                'wilcoxon_w': w_stat,
+                'wilcoxon_p': w_p,
             }
 
         summary_stats[clf_name] = {
@@ -343,6 +353,16 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             'per_cld': {r['test_cld']: float(r['auc']) for r in results},
             'block_level': block_level,
         }
+
+    # Bonferroni-adjust Wilcoxon p-values across classifiers (4 tests)
+    wilcoxon_ps = {
+        clf: (s.get('block_level') or {}).get('wilcoxon_p')
+        for clf, s in summary_stats.items()
+        if isinstance((s.get('block_level') or {}).get('wilcoxon_p'), (int, float))
+    }
+    for clf, p in wilcoxon_ps.items():
+        p_adj = min(float(p) * len(wilcoxon_ps), 1.0) if wilcoxon_ps else float(p)
+        summary_stats[clf].setdefault('block_level', {})['wilcoxon_p_adj'] = p_adj
     
     # Print summary table
     print(f"{'Classifier':<25} {'Mean':<8} {'±1 SD':<16} {'95% CI (t-dist)':<20} {'[min, max]':<16}")
