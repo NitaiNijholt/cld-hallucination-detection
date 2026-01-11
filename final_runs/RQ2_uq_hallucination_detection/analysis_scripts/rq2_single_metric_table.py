@@ -4,7 +4,9 @@ RQ2 Single UQ Metric Performance Table Generator
 
 Generates Table: Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)
 
-Uses Mann-Whitney U tests (non-parametric) given evidence of non-normality.
+Uses block-level (CLD×run) aggregation for inference, with one-sample Wilcoxon signed-rank tests
+on (AUC-0.5) and on block-level correlations. Edge-level Mann-Whitney U tests are retained only as
+descriptive diagnostics (Significant Files %).
 Outputs:
 - LaTeX table for thesis (single_metric_table.tex)
 - Excel file for reproducibility (single_metric_table.xlsx)
@@ -481,7 +483,7 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
 \small
 \item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
-Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
+Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to insufficient class counts ($<$2 hallucinations or $<$2 correct edges).
 \textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks. Significance markers on Mean AUC are based on one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ over blocks (with Bonferroni correction across the 4 metrics).
 \textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
 \textbf{Correlation r} computed via Fisher z-transform aggregation across blocks; correlation significance markers are based on one-sample Wilcoxon signed-rank tests on block-level correlations (with Bonferroni correction across the 4 metrics).
@@ -553,7 +555,7 @@ def generate_excel(metrics_results: dict, bonferroni_results: dict, file_level_r
         metadata = pd.DataFrame([{
             'Generated': datetime.now().isoformat(),
             'Script': 'rq2_single_metric_table.py',
-            'Statistical_Test': 'Mann-Whitney U (non-parametric)',
+            'Statistical_Test': 'Block-level Wilcoxon (AUC/corr); MWU descriptive (files)',
             'AUC_Test': 'One-sample Wilcoxon signed-rank test vs 0.5 on block AUCs',
             'Significance_Alpha': ALPHA,
             'Bonferroni_N_Tests': bonferroni_results.get('n_tests', N_METRIC_TESTS),
@@ -569,7 +571,7 @@ def main():
     print("\n" + "="*80)
     print("RQ2 SINGLE UQ METRIC TABLE GENERATOR")
     print("="*80)
-    print("\nUsing Mann-Whitney U tests (non-parametric) for significance testing\n")
+    print("\nInference: block-level Wilcoxon tests (AUC/corr); edge-level MWU used only for descriptive diagnostics\n")
     
     analyses_dir, output_dir = rq2_dirs()
     if not analyses_dir.exists():

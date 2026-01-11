@@ -28,7 +28,7 @@ Gen Min Prob & 31,704 & 0.479$^{ns}$ & 0.181 & -0.036$^{ns}$ & 14.3\% & 63 \\
 \small
 \item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
-Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
+Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to insufficient class counts ($<$2 hallucinations or $<$2 correct edges).
 \textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks. Significance markers on Mean AUC are based on one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ over blocks (with Bonferroni correction across the 4 metrics).
 \textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
 \textbf{Correlation r} computed via Fisher z-transform aggregation across blocks; correlation significance markers are based on one-sample Wilcoxon signed-rank tests on block-level correlations (with Bonferroni correction across the 4 metrics).
