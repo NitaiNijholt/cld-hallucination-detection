@@ -289,7 +289,7 @@ Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
     if t_parts:
         latex += "\\textbf{Selected thresholds:} " + "; ".join(t_parts) + ".\n"
 
-    latex += "\\textbf{No hypothesis test in Phase 6:} We do not test AUC vs.\\ 0.5 in Phase~6 because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.\n"
+    latex += "\\textbf{No Phase 6 test against the null of no discriminative signal:} We do not test Phase~6 AUC against $\\mathrm{AUC}=0.5$ (random-ranking discrimination) because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.\n"
     
     latex += r"""\end{tablenotes}
 \end{threeparttable}
