@@ -200,7 +200,7 @@ More critically, highly deterministic (low-temperature) generation may trigger e
 
 \subsection{Implications for Original RQ3 Design}
 
-The poor cross-CLD generalisation undermined the original RQ3 design of using UQ metrics as early hallucination indicators. Optimal thresholds varied substantially across domains, making universal threshold-based triggering unreliable. Per-domain calibration would require enough labelled edges to estimate stable metric distributions---data unavailable early in CLD construction. This finding motivated the pivot to Deep Research.
+The poor cross-CLD generalisation undermined the original RQ3 design of using UQ metrics as early hallucination indicators. Optimal thresholds varied substantially across domains, making universal threshold-based triggering unreliable. Per-domain calibration would require enough labelled edges to estimate stable metric distributions---data unavailable early in CLD construction. The poor F1 scores observed even at optimal thresholds, together with the domain-dependent brittleness, motivated a design shift: rather than using UQ metrics as the primary trigger, the Mechanistic Correctness Judge---which achieved better F1 performance and more interpretable outputs---could serve as a compute-cheap hallucination flagger to selectively deploy more expensive validation.
 
 %------------------------------------------------------------------------------
 \section{RQ3: Deep Research Validation}
@@ -215,7 +215,7 @@ The original RQ3 design proposed \textit{adaptive test-time compute allocation}:
     \item \textbf{RQ2 Prerequisite:} UQ metrics would generalise across CLDs, enabling threshold-based triggering.
     \item \textbf{RQ1b Prerequisite:} The LLM-as-a-corrector would effectively repair detected hallucinations.
 \end{enumerate}
-Our findings undermined both prerequisites. We therefore pivoted RQ3 to address: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature.''
+Our findings undermined both prerequisites: UQ metrics failed to generalise (RQ2), and the corrector did not reliably improve GT~Lit alignment (RQ1b). Combined with the observation that the Mechanistic Correctness Judge provided more robust discrimination than UQ metrics, we pivoted RQ3 to address: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature,'' with the judge serving as a cheap pre-filter to trigger expensive Deep Research selectively.
 
 \subsection{Interpretation: Why Literature Validation Has Weak Discriminative Power}
 
