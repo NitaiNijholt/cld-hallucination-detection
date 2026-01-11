@@ -254,7 +254,9 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir, thres
             f1 = f1_score(y_test, y_pred, zero_division=0)
             f1_05 = f1_score(y_test, y_pred_05, zero_division=0)
             
-            print(f"  {test_cld:25s}: AUC={auc:.3f}, PR-AUC={ap:.3f}, F1@t*={f1:.3f} (F1@0.5={f1_05:.3f})")
+            # Keep PR-AUC in saved results for the table, but avoid surfacing it in console output
+            # to reduce interpretation burden in iterative runs.
+            print(f"  {test_cld:25s}: AUC={auc:.3f}, F1@t*={f1:.3f} (F1@0.5={f1_05:.3f})")
             
             results.append({
                 'test_cld': test_cld,
@@ -284,7 +286,6 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir, thres
         std_ap = np.std([r['ap'] for r in results])
         
         print(f"\n  Mean AUC: {mean_auc:.3f} ± {std_auc:.3f}")
-        print(f"  Mean PR-AUC: {mean_ap:.3f} ± {std_ap:.3f}")
         print(f"  Range: [{min(r['auc'] for r in results):.3f}, {max(r['auc'] for r in results):.3f}]")
         
         all_results[clf_name] = results
