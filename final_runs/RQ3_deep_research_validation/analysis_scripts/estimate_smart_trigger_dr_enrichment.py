@@ -26,7 +26,29 @@ from scipy import stats
 # Paths
 # ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-RQ1A_ENHANCED = BASE_DIR / "final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_20251225_233458_e5fcc326/rq1a_ground_truth_enhanced_results.xlsx"
+
+# ---------------------------------------------------------------------------
+# Resolve inputs robustly (avoid hard-coding timestamped folders)
+# ---------------------------------------------------------------------------
+def _resolve_latest_rq1a_gt_lit_correctness_xlsx() -> Path:
+    """
+    Resolve the most recent RQ1a GT Lit correctness 'enhanced results' workbook.
+
+    This repo often contains multiple timestamped analysis outputs; rather than hard-coding
+    one, select the newest file by modification time.
+    """
+    root = BASE_DIR / "final_runs/RQ1a_gt_lit_correctness"
+    candidates = list(root.glob("**/rq1a_ground_truth_enhanced_results.xlsx"))
+    if not candidates:
+        raise FileNotFoundError(
+            f"Could not find rq1a_ground_truth_enhanced_results.xlsx under {root}. "
+            "Run the RQ1a enhanced analysis first or set the path explicitly in the script."
+        )
+    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return candidates[0]
+
+
+RQ1A_ENHANCED = _resolve_latest_rq1a_gt_lit_correctness_xlsx()
 DR_FILES = [
     BASE_DIR / "final_runs/RQ3_deep_research_validation/Data/deep_research_results_depressive_symptoms_20251013_032002_84edges.json",
     BASE_DIR / "final_runs/RQ3_deep_research_validation/Data/deep_research_results_social_norms_20251012_213641_17edges.json",
