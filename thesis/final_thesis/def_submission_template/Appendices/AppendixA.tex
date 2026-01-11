@@ -2237,9 +2237,12 @@ Guidelines:
 \label{sec:citation_judge_prompt_text}
 % ------------------------------------------------------------------------------
 
-The citation judge evaluates whether causal claims are supported by their cited sources. The baseline variant is shown; CoT and Mechanistic variants follow the same pattern as correctness judge variants.
+The citation judge evaluates whether causal claims are supported by their cited sources. Four variants were tested.
 
-\noindent\textbf{System Prompt (Baseline):}
+\subsection{Baseline Variant}
+\label{sec:prompt_citation_baseline}
+
+\noindent\textbf{System Prompt:}
 \begin{small}
 \begin{verbatim}
 You are a precise and fair judge evaluating whether scientific claims are
@@ -2271,6 +2274,115 @@ VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|UNADDRESSED]
 REASON: [brief explanation of your judgment]
 \end{verbatim}
 \end{small}
+
+\subsection{Chain-of-Thought (CoT) Variant}
+\label{sec:prompt_citation_cot}
+
+Based on Kojima et al.\ (2022)~\cite{kojima2022large}. Same system prompt as Baseline. User prompt adds the CoT trigger:
+
+\begin{small}
+\begin{verbatim}
+Evaluate whether the citations support this relationship claim:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+EXPLANATION: {{ motivation }}
+
+CITED SOURCES:
+{{ citations }}
+
+Let's think step by step to assess whether the explanation is adequately
+supported by the citations.
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
+SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill)}
+\label{sec:prompt_citation_mechanistic}
+
+Based on Shimonovich et al.\ (2020)~\cite{shimonovich2020bradford}. Evaluates citations against Bradford Hill criteria.
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating cited evidence using the Bradford
+Hill framework.
+
+You will assess whether citations provide evidence for four key causality
+criteria identified as having strong support across modern causal inference:
+
+1. STRENGTH OF ASSOCIATION - including confounding analysis
+2. TEMPORALITY - temporal precedence and ruling out reverse causation
+3. PLAUSIBILITY - causal mechanisms and mediation pathways
+4. EXPERIMENT/DESIGN - study design implications for exchangeability
+
+Base your judgment only on what the citations actually say, not on general
+knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate the cited evidence for this causal relationship using the Bradford
+Hill framework:
+
+CLAIMED CAUSAL PATHWAY:
+{{ source }} -> [{{ relationship }}] -> {{ target }}
+
+PROPOSED MECHANISM:
+{{ motivation }}
+
+CITED SOURCES:
+{{ citations }}
+
+Let's think step by step. Assess whether the citations provide evidence for:
+
+1. PLAUSIBILITY (Causal Mechanism):
+   - Does the explanation describe HOW {{ source }} affects {{ target }}?
+   - Is a specific mechanism or pathway described (not just assertion)?
+
+2. TEMPORALITY (Causal Direction):
+   - Does the explanation support the direction {{ source }} -> {{ target }}?
+   - Does it avoid reverse causation?
+
+3. STRENGTH (Relative Importance):
+   - Does the explanation convey that {{ source }} is an IMPORTANT influence?
+   - Is this more than trivial or merely correlational?
+
+4. COHERENCE (Internal Consistency):
+   - Is the reasoning logically consistent and non-contradictory?
+   - Does it avoid tautological or circular arguments?
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
+SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic-Literature Variant}
+\label{sec:prompt_citation_mechanistic_lit}
+
+Extends Mechanistic variant with explicit literature grounding requirements. Adds experimental evidence criterion:
+
+\begin{small}
+\begin{verbatim}
+4. EXPERIMENT/DESIGN (Implications for Exchangeability):
+   - Do citations include experimental or quasi-experimental studies?
+   - Do they discuss study designs that enhance causal inference (RCTs,
+     natural experiments)?
+   - Do they address comparability between exposed and unexposed groups?
+   - Do they consider or control for factors affecting exchangeability?
+\end{verbatim}
+\end{small}
+
+\noindent This variant requires citations to provide evidence of experimental design considerations beyond mere mechanism description, emphasizing literature-grounded causal inference.
 
 % ------------------------------------------------------------------------------
 \section{Full Prompt Text: Corrector}
