@@ -42,6 +42,9 @@ The RQ3 Deep Research analysis provides direct evidence for this claim: 62.4\% o
 
 For definitions of GT~Lit and GT~Synth, see Results Section~\ref{sec:rq1a_definitions}.
 
+\paragraph{Generator performance (preliminary context).}
+Although corpus-independent CLD generation was not a primary research contribution of this thesis---the focus being hallucination \emph{detection} and mitigation---the generator results provide important context. The LLM generator exceeded random baselines by 2--3$\times$ across all three CLDs (Results Section~\ref{sec:results_generator_baseline_validation}), demonstrating that LLMs capture non-trivial causal structure from literature prompts alone. These results are encouraging but domain-limited: all primary evaluations used health-related CLDs. Future work should validate generator performance on CLDs from other scientific domains (economics, ecology, engineering) to establish whether the observed baseline-exceeding behaviour generalises or is artefactual to health-domain training coverage.
+
 %------------------------------------------------------------------------------
 \section{Mechanisms of Judge Failure}
 \label{sec:discussion_failure_mechanisms}
