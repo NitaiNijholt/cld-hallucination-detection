@@ -1,0 +1,898 @@
+\chapter{Detailed Experimental Specifications}
+\label{app:experiment_details}
+
+\label{sec:experimental_details}
+
+\noindent\textbf{Structure of Experimental Details}
+\label{sec:experiment_details_structure}
+
+This appendix expands each row of Table~\ref{tab:master} into a reproducible specification. To make experiments easy to scan and compare, each experiment section follows a consistent structure:
+\begin{itemize}[noitemsep]
+    \item \textbf{RQ \& Goal / Hypotheses:} What the experiment is testing and the expected direction of effects.
+    \item \textbf{Source Data:} Which datasets/edge tables are used and how ground truth labels are defined (GT Lit vs.\ GT Synth, TP/FP/FN).
+    \item \textbf{Simulation Parameters:} What varies vs.\ what is fixed (models, prompts, seeds, corruption rate, judge temperature), aligned with the \textbf{Varies/Fixed} columns in Table~\ref{tab:master}.
+    \item \textbf{Simulation Procedure:} The operational steps (generation $\rightarrow$ judging $\rightarrow$ correction / Deep Research) and any filtering/deduplication rules.
+    \item \textbf{Outputs:} The artefacts produced (Excel/JSON tables, scores, plots) and where they enter downstream analyses.
+    \item \textbf{Metrics / Statistical Analysis:} The reported metrics and inference procedure (unit of analysis, tests, and multiple-comparison family).
+    \item \textbf{Reproducibility:} The exact scripts/entry points and appendix pointers needed to rerun the experiment end-to-end.
+\end{itemize}
+
+When an RQ contains multiple experimental cells (e.g., RQ1a’s judge$\times$GT combinations), we list the shared setup first, then provide a short \textbf{Experiment Details} breakdown for each cell.
+
+%------------------------------------------------------------------------------
+% Compact field labels for dense experiment writeups
+%------------------------------------------------------------------------------
+% In the Experimental Details section, we prefer run-in bold labels over
+% heading-style \paragraph blocks to reduce vertical whitespace.
+% Experiment-level headers use numbered \subsubsection for clear structure.
+\begingroup
+\setlength{\leftskip}{1.25em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\makeatletter
+\renewcommand{\paragraph}[1]{\par\noindent\textbf{#1}\par\noindent}
+\renewcommand{\subparagraph}[1]{\par\noindent\textbf{#1}\par\noindent}
+\makeatother
+
+%==============================================================================
+\section{Preliminary: Generator Selection}
+\label{sec:preliminary_studies}
+%==============================================================================
+
+\paragraph{Overview.}
+Before running the main experiments, we conducted preliminary studies to select the generator model, prompt, and temperature. These configuration choices are fixed across all subsequent experiments.
+
+%------------------------------------------------------------------------------
+\subsubsection{Generator Model Selection}
+\label{sec:generator_model_selection}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Select a single frontier LLM for all CLD generation experiments, prioritizing edge recovery performance and availability of token-level log probabilities for downstream uncertainty quantification.
+
+\paragraph{Source Data.}
+Three validation CLDs (Depressive Symptoms, Social Norms, Emergency Department) with literature-derived ground truth. Node sets are fixed to ground truth variables.
+Ground-truth CLD files in Appendix~\ref{sec:data_availability} (Table~\ref{tab:gt_files}).
+
+\paragraph{Simulation Parameters.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Models compared:} GPT-4.1 (OpenAI), Sonar-Pro (Perplexity), Claude Sonnet 4 (Anthropic)
+    \item \textbf{Prompt:} Nitai\_C (fixed across models)
+    \item \textbf{Temperature:} T=0.7
+    \item \textbf{Corruption/judging:} Disabled (pure edge recovery comparison)
+\end{itemize}
+
+\paragraph{Simulation Procedure.}
+For each model--CLD combination, generate a complete \texttt{All Edges} table using the same node set as the literature ground truth. Models are compared purely on edge recovery against GT Lit.
+Generation procedure in Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}).
+
+\paragraph{Simulation Outputs.}
+Per-model \texttt{All Edges} tables with relationship types and causal narratives.
+Result directory and scripts in Appendix~\ref{sec:generator_comparison} (Table~\ref{tab:generator_comparison_config}).
+
+\paragraph{Unit of Analysis.}
+Run-level: each (model, CLD, seed) combination constitutes one observation ($N=27$ total: 3 models $\times$ 3 CLDs $\times$ 3 runs).
+
+\paragraph{Metrics.}
+Confusion-matrix counts (TP/FP/FN) computed from \texttt{All Edges} sheets, yielding precision, recall, and F1. Aggregate micro-averaged F1 computed by pooling TP/FP/FN across all three CLDs.
+
+\paragraph{Selection Rule.}
+Select the generator with highest aggregate (micro-averaged) F1, prioritizing balanced precision/recall. Secondary constraint: token-level logprobs availability for RQ2; among compared models, this is available for GPT-4.1.
+
+\paragraph{Reproducibility.}
+Full configuration and script locations in Appendix~\ref{sec:generator_comparison} (Table~\ref{tab:generator_comparison_config}).
+
+\paragraph{Results.}
+Table~\ref{tab:generator_model_comparison} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsubsection{Generator Prompt Selection (Nitai\_C)}
+\label{sec:generator_prompt_selection}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Select a fixed generator prompt variant that maximises edge recovery performance.
+
+\paragraph{Source Data.}
+Three validation CLDs (Depressive Symptoms, Social Norms, Emergency Department) with literature-derived ground truth (edge ablation), plus the node-generation ablation dataset described in Appendix~\ref{sec:ablation_node}.
+Ground-truth CLD files in Appendix~\ref{sec:data_availability} (Table~\ref{tab:gt_files}).
+
+\paragraph{Simulation Procedure.}
+Two ablation studies were conducted:
+\begin{itemize}[noitemsep]
+    \item \textbf{Edge Generation Ablation:} Nine prompt variants evaluated across three CLDs, testing CoT, task decomposition, RAG/citation requirements, and relationship taxonomy complexity.
+    \item \textbf{Node Generation Ablation:} Seven prompt variants evaluated in a 7$\times$3$\times$5 factorial design (105 runs total).
+\end{itemize}
+Generation procedure in Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}).
+
+\paragraph{Simulation Outputs.}
+Per-variant F1 scores for edge and node generation tasks.
+Edge ablation appendix in Appendix~\ref{sec:ablation_edge}; node ablation appendix in Appendix~\ref{sec:ablation_node}.
+
+\paragraph{Unit of Analysis.}
+Prompt variant-level: Edge ablation uses 9 prompts $\times$ 3 CLDs = 27 observations; node ablation uses 7 prompts $\times$ 3 CLDs $\times$ 5 runs = 105 observations.
+
+\paragraph{Key Findings.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Edge generation:} Nitai\_C (dual-level CoT, three relationship types) achieved highest F1 (0.460), outperforming baseline (0.371) by 24\%. CoT improved progressively (Nitai\_A$\rightarrow$B$\rightarrow$C); mandatory citations reduced performance by 25\%; overly restrictive grounding caused complete failure (Cillian\_C: F1=0.00).
+    \item \textbf{Node generation:} ANOVA revealed no significant differences ($F=0.81$, $p=0.57$; see Appendix~\ref{app:statistical_procedures_reference}), with F1 ranging 0.617--0.677. Node generation is robust to prompt engineering choices.
+\end{itemize}
+
+\paragraph{Reproducibility.}
+Exact Nitai\_C prompt in Appendix~\ref{sec:generator_prompt_nitai_c} (Listing~\ref{lst:generator_nitai_c_yaml}). Edge ablation: Appendix~\ref{sec:ablation_edge}. Node ablation: Appendix~\ref{sec:ablation_node}.
+
+\paragraph{Results.}
+Edge ablation: Appendix~\ref{sec:ablation_edge}. Node ablation: Appendix~\ref{sec:ablation_node}.
+
+%------------------------------------------------------------------------------
+\subsubsection{Generator Temperature Selection}
+\label{sec:generator_temp_selection}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Validate generator temperature T=0.7 through sensitivity analysis measuring edge recovery performance.
+
+\paragraph{Source Data.}
+Three validation CLDs: Social Norms (10 nodes, 12 edges), Depressive Symptoms (14 nodes, 34 edges), Emergency Department (34 nodes, 66 edges).
+Ground-truth CLD files in Appendix~\ref{sec:data_availability} (Table~\ref{tab:gt_files}).
+
+\paragraph{Simulation Parameters.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Generator:} GPT-4.1 with Nitai\_C prompt
+    \item \textbf{Ground Truth:} Literature-derived CLDs (GT Lit)
+    \item \textbf{Temperatures:} T$\in$\{0.0, 0.3, 0.5, 0.7, 1.0\} (5 levels)
+    \item \textbf{Runs:} 3 per temperature per CLD (seeds 10, 20, 30), totaling 45 experiments
+\end{itemize}
+
+\paragraph{Simulation Procedure.}
+For each temperature--CLD--seed combination, generate edges and compute F1 against GT Lit.
+Generation procedure in Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}).
+
+\paragraph{Simulation Outputs.}
+Per-run edge F1 scores (45 total).
+Temperature sensitivity configuration in Appendix Table~\ref{tab:temp_sensitivity_config}.
+
+\paragraph{Unit of Analysis.}
+Run-level: each (temperature, CLD, seed) combination constitutes one observation ($N=45$ total: 5 temperatures $\times$ 3 CLDs $\times$ 3 runs).
+
+\paragraph{Metrics.}
+Edge F1 per run; aggregated by temperature level.
+
+\paragraph{Statistical Analysis.}
+One-way ANOVA tested whether temperature significantly affects edge F1 (see Appendix~\ref{app:statistical_procedures_reference}). Results in Table~\ref{tab:temperature_sensitivity}.
+
+\paragraph{Selection Rule.}
+Temperature T=0.7 retained as it shows no significant performance difference from other values.
+
+\paragraph{Results.}
+Table~\ref{tab:temperature_sensitivity} (Chapter~\ref{ch:results}).
+
+\paragraph{Reproducibility.}
+Full configuration in Appendix Table~\ref{tab:temp_sensitivity_config}.
+
+%==============================================================================
+\section{Preliminaries: Generator Performance}
+\label{sec:random_baseline_method}
+%==============================================================================
+
+\noindent\textbf{RQ \& Goal:}\\
+Contextualize generator performance via a structural random baseline---the expected edge-recovery for random graphs with the same $(n,m)$ as each CLD.\\
+\textbf{Source Data:}\\
+Three validation CLDs with known node and edge counts (Appendix~\ref{sec:data_availability}, Table~\ref{tab:gt_files}).\\
+\textbf{Parameters:}\\
+Random baseline: 1000 Erd\H{o}s--R\'enyi directed graphs $G(n,m)$ per CLD; LLM generator: 3 runs per CLD (seeds 10, 20, 30). Full configuration in Appendix~\ref{sec:random_baseline} (Table~\ref{tab:random_baseline_config}).\\
+\textbf{Unit of Analysis:}\\
+Graph-level for random baseline ($N=1000$ per CLD); run-level for LLM ($N=3$ per CLD).\\
+\textbf{Simulation Procedure:}\\
+For each random graph, compute edge precision/recall/F1 vs.\ the ground truth; for the LLM runs, compute edge F1 likewise (Appendix~\ref{sec:random_baseline}, Table~\ref{tab:random_baseline_config}).\\
+\textbf{Outputs:}\\
+Random-baseline per-graph F1 distributions (1000 samples per CLD) and per-run LLM F1 values; directory mapping in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).\\
+\textbf{Metrics/CI:}\\
+Precision, recall, F1; 95\% CI uses z for random ($n{=}1000$) and t for LLM ($n{=}3$).\\
+\textbf{Results:}\\
+Table~\ref{tab:random_baseline} and Figure~\ref{fig:random_baseline_final} (Chapter~\ref{ch:results}).\\
+\textbf{Reproducibility:}\\
+Full configuration in Appendix~\ref{sec:random_baseline} (Table~\ref{tab:random_baseline_config}).
+
+%------------------------------------------------------------------------------
+\section{Preliminary: TruthfulQA Verification}
+\label{sec:rq1_verification}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{RQ \& Goal:}\\
+Sanity-check the correctness-based judge on a general-domain hallucination benchmark before CLD-specific evaluation; strong TruthfulQA performance with weak CLD performance would suggest CLD hallucinations require domain grounding or citation validation beyond correctness judging.\\
+\textbf{Hypothesis:}\\
+$H_0$: Accuracy $\leq 0.80$; $H_1$: Accuracy $> 0.80$.\\
+\textbf{Source Data:}\\
+TruthfulQA~\cite{lin2022truthfulqa} (817 questions). We construct a balanced set of 1{,}634 QA pairs: 817 truthful answers and 817 imitative falsehoods (Appendix~\ref{sec:data_availability}, Table~\ref{tab:validation_datasets}).\\
+\textbf{Parameters:}\\
+GPT-4.1, temperature 0.0, seed 42, baseline correctness prompt (same structure as RQ1a), max tokens 250. Full configuration in Appendix~\ref{sec:truthqa_verification} (Table~\ref{tab:truthqa_config}).\\
+\textbf{Unit of Analysis:}\\
+Q\&A pair-level ($N=1634$ total: 817 truthful $+$ 817 hallucinated).\\
+\textbf{Simulation Procedure:}\\
+The judge labels each answer as \texttt{CORRECT} vs.\ \texttt{INCORRECT} based solely on factual accuracy (Algorithm~\ref{alg:judge_correctness}).\\
+\textbf{Outputs:}\\
+Per-answer verdicts with reasoning (artefact schema: Appendix~\ref{sec:output_artefacts}, Table~\ref{tab:output_files}).\\
+\textbf{Metrics:}\\
+Accuracy; Precision/Recall/F1 treating \texttt{Hallucinated} as the positive class.\\
+\textbf{Reproducibility:}\\
+Data in \texttt{final\_runs/RQ1\_verification\_Truth\_QA/}; execution/configuration in Appendix~\ref{sec:truthqa_verification} (Table~\ref{tab:truthqa_config}).\\
+\textbf{Results:}\\
+Table~\ref{tab:truthqa_verification} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\section{RQ1a: LLM-as-a-Judge Hallucination Detection}
+\label{sec:rq1a_experiments}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{RQ \& Goal:}\\
+Test whether LLM judges can detect hallucinated CLD edges: Correctness Judge (Section~\ref{sec:correctness_judge}) and Citation Judge (Section~\ref{sec:citation_judge}) under two ground-truth regimes (GT Lit and GT Synth), yielding four experiment cells.\\
+\textbf{Hypotheses:}\\
+\textbf{H1 (Correctness):} lower correctness score implies hallucination (FP/FN w.r.t.\ GT).\\
+\textbf{H2 (Citation):} lower citation score implies hallucination (FP/FN w.r.t.\ GT).\\
+\textbf{Source Data:}\\
+Three validation CLDs (Depressive Symptoms, Social Norms, Emergency Department) with literature-derived ground truth; node sets fixed to GT variables (edge-only evaluation; node generation ablation in Appendix~\ref{sec:ablation_node}). Ground-truth files and output directories: Appendix~\ref{sec:data_availability} (Tables~\ref{tab:gt_files},~\ref{tab:experiment_datasets}).\\
+\textbf{Parameters:}\\
+Correctness judge: 3 prompt variants (\PromptBaseline, \PromptCoT, \PromptMechanistic) $\times$ 3 CLDs $\times$ 3 runs = 27.\\
+Citation judge: 4 prompt variants (\PromptBaseline, \PromptCoT, \PromptMechanistic, \PromptMechanisticLit) $\times$ 3 CLDs $\times$ 3 runs = 36.\\
+GT Lit seeds 10/20/30 (generation variation); GT Synth seeds 1/2/3 (corruption variation) with 30\% corruption.\\
+Citation retrieval in ContentScraper-only mode (Jina AI Reader disabled; Appendix~\ref{alg:citation_fetcher}). Full config in Table~\ref{tab:master}.\\
+\textbf{Simulation Procedure:}\\
+For each CLD--seed--prompt: generate edges (GPT-4.1 with Nitai\_C); for GT Synth apply Corruptor; run the judge to score each edge; compare scores to GT labels (Algorithms~\ref{alg:cld_generation},~\ref{alg:judge_correctness},~\ref{alg:judge_citation}, and for GT Synth Algorithm~\ref{alg:corruption}).\\
+\textbf{Outputs:}\\
+Per-edge scores (0.0/0.5/1.0) with verdicts and reasoning; schemas in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).\\
+\textbf{Metrics:}\\
+AUC-ROC (baseline 0.5), point-biserial correlation $r$, and thresholded classification (score $\leq 0.5$ = hallucination): Precision/Recall/F1.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$); edge-level ($N \approx 10{,}000$--$31{,}000$ depending on experiment cell).\\
+\textbf{Stats:}\\
+Prompt effects under blocked repeated-measures (block = CLD$\times$run, $n{=}9$): Friedman omnibus + paired Wilcoxon with Bonferroni correction (Section~\ref{sec:multiple_comparisons}; Appendix~\ref{app:statistical_procedures_reference}); RM-ANOVA sensitivity decomposition ($\eta^2_p$) in Appendix~\ref{app:sensitivity_analysis}.\\
+\textbf{Reproducibility:}\\
+Data directories: \texttt{final\_runs/RQ1a\_ground\_truth\_*} and \texttt{final\_runs/RQ1a\_corruption\_*}; see Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}) and Appendix~\ref{sec:code_availability} (Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}).\\
+\textbf{Results:}\\
+GT Lit Correctness: Figures~\ref{fig:rq1a_gt_correctness_row1},~\ref{fig:rq1a_gt_correctness_row2}. GT Synth Correctness: Figures~\ref{fig:rq1a_corr_correct_row1},~\ref{fig:rq1a_corr_correct_row2}. GT Lit Citation: Figures~\ref{fig:rq1a_gt_citation_row1},~\ref{fig:rq1a_gt_citation_row2}. GT Synth Citation: Figures~\ref{fig:rq1a_corr_citation_row1},~\ref{fig:rq1a_corr_citation_row2} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\noindent\textbf{Experiment Details}
+%------------------------------------------------------------------------------
+
+\subsubsection{RQ1a: Correctness Judge (Lit)}
+\label{sec:rq1a_correctness_lit}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Correctness Judge on GT Lit edges (literature-derived ground truth). See shared RQ1a setup (Section~\ref{sec:rq1a_experiments}).\\
+\textbf{Source Data:}\\
+GT Lit edges from 3 CLDs; ground truth = FP/FN w.r.t.\ expert CLDs. GT files: Appendix Table~\ref{tab:gt_files}.\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq1a_gt_lit_correctness_config}. Fixed: GPT-4.1, T=0.0. Varies: 3 prompts $\times$ 3 CLDs $\times$ 3 runs = 27.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:cld_generation} (generation) $\rightarrow$ Algorithm~\ref{alg:judge_correctness} (judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1a\_gt\_lit\_correctness/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+CLD$\times$run$\times$prompt ($N=27$: 3 prompts $\times$ 3 CLDs $\times$ 3 runs).\\
+\textbf{Metrics / Stats:}\\
+See shared RQ1a setup; Friedman + Wilcoxon.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq1a_gt_correctness_row1},~\ref{fig:rq1a_gt_correctness_row2} (Chapter~\ref{ch:results}).
+
+\subsubsection{RQ1a: Correctness Judge (Synth)}
+\label{sec:rq1a_correctness_synth}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Correctness Judge on GT Synth edges (30\% corruption). See shared RQ1a setup (Section~\ref{sec:rq1a_experiments}).\\
+\textbf{Source Data:}\\
+GT Synth edges from 3 CLDs; ground truth = corruption status (corrupted = hallucination).\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq1a_gt_synth_correctness_config}. Fixed: GPT-4.1, T=0.0, 30\% corruption. Varies: 3 prompts $\times$ 3 CLDs $\times$ 3 runs = 27.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:cld_generation} (generation) $\rightarrow$ Algorithm~\ref{alg:corruption} (corruption) $\rightarrow$ Algorithm~\ref{alg:judge_correctness} (judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1a\_gt\_synth\_correctness/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+CLD$\times$run$\times$prompt ($N=27$: 3 prompts $\times$ 3 CLDs $\times$ 3 runs).\\
+\textbf{Metrics / Stats:}\\
+See shared RQ1a setup; Friedman + Wilcoxon.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq1a_corr_correct_row1},~\ref{fig:rq1a_corr_correct_row2} (Chapter~\ref{ch:results}).
+
+\subsubsection{RQ1a: Citation Judge (Lit)}
+\label{sec:rq1a_citation_lit}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Citation Judge on GT Lit edges (literature retrieval). See shared RQ1a setup (Section~\ref{sec:rq1a_experiments}).\\
+\textbf{Source Data:}\\
+GT Lit edges from 3 CLDs; ground truth = FP/FN w.r.t.\ expert CLDs. GT files: Appendix Table~\ref{tab:gt_files}.\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq1a_gt_lit_citation_config}. Fixed: GPT-4.1, T=0.0, ContentScraper. Varies: 4 prompts $\times$ 3 CLDs $\times$ 3 runs = 36.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:cld_generation} (generation) $\rightarrow$ Algorithm~\ref{alg:citation_fetcher} (retrieval) $\rightarrow$ Algorithm~\ref{alg:judge_citation} (judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1a\_gt\_lit\_citation/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+CLD$\times$run$\times$prompt ($N=36$: 4 prompts $\times$ 3 CLDs $\times$ 3 runs).\\
+\textbf{Metrics / Stats:}\\
+See shared RQ1a setup; Friedman + Wilcoxon.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq1a_gt_citation_row1},~\ref{fig:rq1a_gt_citation_row2} (Chapter~\ref{ch:results}).
+
+\subsubsection{RQ1a: Citation Judge (Synth)}
+\label{sec:rq1a_citation_synth}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Citation Judge on GT Synth edges (30\% corruption, GPT-5-mini). See shared RQ1a setup (Section~\ref{sec:rq1a_experiments}).\\
+\textbf{Source Data:}\\
+GT Synth edges from 3 CLDs; ground truth = corruption status (corrupted = hallucination).\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:gt_synth_citation_config}. Fixed: GPT-5-mini, T=0.0, 30\% corruption. Varies: 4 prompts $\times$ 3 CLDs $\times$ 3 runs = 36.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:cld_generation} (generation) $\rightarrow$ Algorithm~\ref{alg:corruption} (corruption) $\rightarrow$ Algorithm~\ref{alg:citation_fetcher} (retrieval) $\rightarrow$ Algorithm~\ref{alg:judge_citation} (judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1a\_gt\_synth\_citation/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+CLD$\times$run$\times$prompt ($N=36$: 4 prompts $\times$ 3 CLDs $\times$ 3 runs).\\
+\textbf{Metrics / Stats:}\\
+See shared RQ1a setup; Friedman + Wilcoxon.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq1a_corr_citation_row1},~\ref{fig:rq1a_corr_citation_row2} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\section{Sensitivity: Prompt Sensitivity Analysis}
+\label{sec:rq1a_sensitivity}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Quantify prompt engineering impact on judge performance using variance-based sensitivity analysis inspired by Sobol indices~\cite{sobol1993sensitivity}.
+
+\paragraph{Source Data.}
+Prompt-level and block-level results from the four RQ1a judge experiments (summarised in Table~\ref{tab:master}).
+Sensitivity output directory in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).
+
+\paragraph{Simulation Parameters.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Design:} Blocked with CLD$\times$run as subjects, prompt as within-subject factor
+    \item \textbf{Prompt distance:} MPNet~\cite{song2020mpnet} embeddings (768-dim); cosine distance from baseline: $d(p_i) = 1 - \cos(\mathbf{e}_{\text{baseline}}, \mathbf{e}_i)$
+    \item \textbf{Scope:} 4 experiments $\times$ 3--4 prompt variants
+\end{itemize}
+
+\paragraph{Simulation Procedure.}
+Repeated-measures ANOVA with CLD$\times$run as subjects and prompt as within-subject factor.
+Full RM-ANOVA tables and diagnostics in Appendix~\ref{app:sensitivity_analysis}.
+
+\paragraph{Simulation Outputs.}
+RM-ANOVA effect sizes ($\eta^2_p$), assumption diagnostics, and sensitivity figures for each judge$\times$GT setting.
+Output artefacts in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}); sensitivity output directory in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).
+
+\paragraph{Metrics.}
+Following Sobol's variance-based sensitivity framework, for a categorical factor $A\in\{1,\dots,K\}$ (here: prompt choice) the first-order index is:
+\begin{equation}
+S_A := \frac{\mathrm{Var}(\mathbb{E}[Y \mid A])}{\mathrm{Var}(Y)}.
+\end{equation}
+For categorical $A$, this reduces to $S_A=\eta^2$,
+i.e., the population one-way ANOVA effect size (correlation ratio) for a categorical factor~\cite{saltelli2010variance}. In the main
+experiments, we report $\eta^2_p$ (partial eta-squared) because our design is blocked by CLD$\times$run (repeated
+measures), so the sensitivity measure is computed after controlling for these subject-level differences.
+Partial eta-squared: $\eta^2_p = \frac{SS_{\text{prompt}}}{SS_{\text{prompt}} + SS_{\text{error}}}$. Measures proportion of within-subject variance in F1 explained by prompt choice. Interpretation (Cohen): $<$0.01 negligible, 0.01--0.06 small, 0.06--0.14 medium, $\geq$0.14 large.
+
+\paragraph{Unit of Analysis.}
+Block-level (CLD$\times$run, $N=9$) for RM-ANOVA variance decomposition; prompt as within-subject factor.
+
+\paragraph{Statistical Analysis.}
+RM-ANOVA assumption diagnostics: Shapiro--Wilk (residual normality), Mauchly (sphericity), Greenhouse--Geisser correction when violated, and Bonferroni correction (see Appendix~\ref{app:statistical_procedures_reference}). Full tables in Appendix~\ref{app:sensitivity_analysis}.
+
+\paragraph{Reproducibility.}
+Data: \texttt{final\_runs/supp\_prompt\_sensitivity/}. Scripts: \texttt{sensitivity\_analysis\_simple\_rm\_anova.py}.
+Dataset mapping in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).
+
+\paragraph{Results.}
+Appendix~\ref{app:sensitivity_analysis} (Figure~\ref{fig:sensitivity_analysis_app}).
+
+%------------------------------------------------------------------------------
+\section{Validation: Uleman's Provider Study}
+\label{sec:rq1a_validation_studies}
+%------------------------------------------------------------------------------
+
+\paragraph{Overview.}
+Four validation studies assess judge reliability: (1) search provider comparison, (2) human-LLM agreement, (3) physics CLD sanity check, and (4) retrieval success analysis.
+
+\paragraph{Source Data.}
+Validation datasets (Uleman's CLD, physics CLDs, human validation set) and their output directories.
+Dataset locations in Appendix~\ref{sec:data_availability} (Table~\ref{tab:validation_datasets}).
+
+\paragraph{Simulation Procedure.}
+Apply the relevant judge pipeline(s) (correctness/citation) to validation edges; citation judging includes retrieval and fetching.
+Algorithms in Appendix~\ref{sec:algorithms} (Algorithms~\ref{alg:judge_correctness},~\ref{alg:judge_citation},~\ref{alg:citation_fetcher}).
+
+\paragraph{Simulation Outputs.}
+Per-edge verdicts/scores (and retrieval diagnostics for citation judging) stored in the corresponding validation output directories.
+Output artefacts in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}); validation directories in Appendix~\ref{sec:data_availability} (Table~\ref{tab:validation_datasets}).
+
+\paragraph{Reproducibility.}
+Dataset specifications: Appendix~\ref{sec:data_availability} (Tables~\ref{tab:validation_datasets},~\ref{tab:physics_cld_dataset}). Scripts and configurations: Appendix~\ref{sec:rq1a_validation} (Tables~\ref{tab:ulemans_config},~\ref{tab:human_validation_config}).
+
+%------------------------------------------------------------------------------
+\subsection{Search Provider Comparison (Uleman's CLD)}
+\label{sec:ulemans_validation}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Validate citation-based judge on an independently expert-validated dataset. Determine whether low GT Lit scores are due to search infrastructure limitations.
+
+\paragraph{Hypothesis.}
+If low scores are infrastructure-driven, we expect significant variation across providers/fetchers. Consistently low scores would confirm a fundamental validation gap between expert reasoning and literature-based verification.
+
+\paragraph{Source Data.}
+Uleman's CLD: 150-edge causal loop diagram for Alzheimer's disease, constructed through Group Model Building (GMB) with 17 domain experts~\cite{uleman2024triangulation}. Unlike primary CLDs (extracted from literature), represents direct expert consensus with bibliographic references.
+
+\paragraph{Simulation Parameters.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Search Providers (4):} OpenAlex, Brave Search (with/without domain whitelist), Perplexity, PubMed
+    \item \textbf{Citation Fetcher:} ContentScraper (BeautifulSoup-based, PDF-capable); Jina AI Reader disabled
+    \item \textbf{Design:} 4 providers $\times$ 2 fetchers $\times$ 150 edges = 1,200 judgements
+    \item \textbf{Judge:} Citation-based (GPT-4.1, baseline prompt)
+\end{itemize}
+Full configuration in Appendix~\ref{sec:rq1a_validation} (Table~\ref{tab:ulemans_config}).
+
+\paragraph{Outputs.}
+Per-edge scores and provider comparison summaries; output artefacts in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
+
+\paragraph{Metrics.}
+Average score (mean 0--1), coverage (successful fetch \%), score difference (ContentScraper $-$ Jina AI).
+
+\paragraph{Unit of Analysis.}
+Edge-level ($N=150$); crossed with 4 providers $\times$ 2 fetchers = 1,200 total judgements.
+
+\paragraph{Reproducibility.}
+Data: \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/}. Configuration: Appendix Table~\ref{tab:ulemans_config}.
+
+\paragraph{Results.}
+Table~\ref{tab:ulemans_search_providers} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsection{Human--LLM Agreement}
+\label{sec:human_llm_agreement}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Validate that LLM citation judges produce reliable verdicts by measuring inter-rater agreement with human experts.
+
+\paragraph{Hypothesis.}
+Expect substantial agreement ($\kappa > 0.60$), performance comparable to human baseline, and consistency across CLDs/generators.
+
+\paragraph{Source Data.}
+72 causal edges across 3 validation files (2 CLDs, 2 generators): 30 edges Depressive Symptoms/GPT-4.1, 30 edges Depressive Symptoms/Claude 4 Sonnet, 12 edges Social Norms/GPT-4.1.
+
+\paragraph{Simulation Parameters.}
+Human validator (domain expert) and LLM judge (GPT-4.1, T=0, baseline prompt) each provide categorical verdicts: Not supported (0), Partially supported (0.5), Fully supported (1). Judge settings follow RQ1a Citation Judge configuration. Full configuration in Appendix~\ref{sec:rq1a_validation} (Table~\ref{tab:human_validation_config}).
+
+\paragraph{Outputs.}
+Per-edge human and LLM verdicts with agreement statistics; output artefacts in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
+
+\paragraph{Metrics.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Cohen's $\kappa$:} Chance-corrected agreement. Interpretation (Landis \& Koch): $<$0.20 slight, 0.21--0.40 fair, 0.41--0.60 moderate, 0.61--0.80 substantial, $>$0.80 almost perfect.
+    \item \textbf{Agreement Rate:} Exact match percentage
+    \item \textbf{Pearson $r$:} Score correlation
+\end{itemize}
+Baseline: Human inter-rater reliability from prior GMB studies ($\kappa \approx 0.60$, 80\% agreement).
+
+\paragraph{Unit of Analysis.}
+Edge-level ($N=72$ total across 3 validation files: 30 + 30 + 12 edges).
+
+\paragraph{Reproducibility.}
+Data: \texttt{final\_runs/RQ1\_human\_validation\_citation\_judge/}. Configuration: Appendix Table~\ref{tab:human_validation_config}.
+
+\paragraph{Results.}
+Tables~\ref{tab:human_validation},~\ref{tab:human_validation_confusion} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsection{Physics Sanity Check}
+\label{sec:physics_validation}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Verify that judges correctly identify valid causal relationships when unambiguous (sanity check under curated inputs).
+
+\paragraph{Source Data.}
+Four physics-based CLDs derived from fundamental laws (31 edges, 26 variables):
+\begin{enumerate}[noitemsep]
+    \item Thermostat Heating System: Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}
+    \item Predator-Prey Dynamics: Lotka-Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}
+    \item RC Circuit: Ohm's Law~\cite{ohm1827galvanische}, Kirchhoff's Laws~\cite{kirchhoff1845durchgang}
+    \item Water Tank: Pascal's Law~\cite{pascal1663equilibre}, Torricelli's Law~\cite{torricelli1644opera}
+\end{enumerate}
+Edge rationales generated by Claude 4.5 Opus, verified against source texts. Per-CLD breakdown: Appendix Table~\ref{tab:physics_cld_dataset}.
+
+\paragraph{Simulation Parameters.}
+Full configuration in Appendix~\ref{sec:physics_cld_validation} (Table~\ref{tab:physics_cld_config}). Judge settings follow RQ1a configuration (GPT-4.1, T=0.0).
+
+\paragraph{Simulation Procedure.}
+Both Correctness Judge and Citation Judge applied to curated physics edges (Algorithms~\ref{alg:judge_correctness},~\ref{alg:judge_citation}).
+
+\paragraph{Outputs.}
+Per-edge verdicts and scores; output artefacts in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
+
+\paragraph{Unit of Analysis.}
+Edge-level ($N=31$ edges across 4 physics CLDs).
+
+\paragraph{Reproducibility.}
+Data: \texttt{final\_runs/validation\_RQ1a\_physics\_clds/}. Configuration: Appendix Table~\ref{tab:physics_cld_config}.
+
+\paragraph{Results.}
+Table~\ref{tab:physics-comparison-enhanced} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsection{Retrieval Success Analysis}
+\label{sec:retrieval_success}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Investigate whether low citation scores are driven by retrieval failures (missing documents) or evidence characteristics (weak/hedged claims).
+
+\paragraph{Source Data.}
+\begin{enumerate}[noitemsep]
+    \item Expert-provided citations: Physics CLDs, Uleman's CLD (150 edges)
+    \item Automated web search: Three main validation CLDs via generate-then-search pipeline
+\end{enumerate}
+For Uleman's and Physics CLDs, causal narratives generated by Claude 4.5 Opus.
+
+\paragraph{Metrics.}
+Retrieval success rate = percentage of edges with successfully fetched content. Discrepancies between retrieval success and judge approval distinguish infrastructure failures from validation failures. Fetch success criteria: Appendix~\ref{alg:citation_fetcher}.
+
+\paragraph{Unit of Analysis.}
+Edge-level (diagnostic analysis comparing retrieval success vs.\ approval rates across datasets).
+
+\paragraph{Reproducibility.}
+Analysis integrated with Uleman's and Physics CLD validation studies; see Appendix~\ref{sec:rq1a_validation} for scripts and configurations.
+
+\paragraph{Results.}
+Table~\ref{tab:retrieval-comparison} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\section{RQ1b: LLM-as-a-Corrector Evaluation}
+\label{sec:rq1b}
+\label{sec:rq1b_experiments}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{RQ \& Goal:}\\
+Evaluate whether the Corrector (Section~\ref{sec:corrector}) can repair judge-flagged hallucinations.\\
+\textbf{Hypothesis:}\\
+H3: correction improves edge quality for flagged edges ($\Delta$F1 $> 0$).\\
+\textbf{Source Data:}\\
+Judge-flagged edges from RQ1a (GT Synth and GT Lit); output directories in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).\\
+\textbf{Parameters:}\\
+3 corrector prompts (Baseline, CoT, Mechanistic); design = 3 prompts $\times$ 3 CLDs $\times$ 3 runs = 27 runs per GT type; evaluation judge = baseline Correctness Judge; scope = correctness-based correction only (citation-corrector omitted due to retrieval cost). Full configuration in Table~\ref{tab:master}.\\
+\textbf{Simulation Procedure:}\\
+For each flagged edge, apply the Corrector (revise relationship type and/or narrative), re-judge the corrected edge, and compare pre/post metrics against ground truth (Algorithms~\ref{alg:corrector} and~\ref{alg:judge_correctness}).\\
+\textbf{Outputs:}\\
+Corrected edges plus re-judge scores; artefact schema in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).\\
+\textbf{Metrics:}\\
+$\Delta$F1/$\Delta$Precision/$\Delta$Recall (pre$\rightarrow$post vs.\ GT) and $\Delta$JudgeScore = mean(corrected) $-$ mean(original).\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$) for statistical inference; edge-level for individual correction evaluation.\\
+\textbf{Stats:}\\
+Efficacy via one-sample Wilcoxon signed-rank on block-level $\Delta$F1 (blocks = CLD$\times$run, $n{=}9$) testing median$(\Delta\mathrm{F1})=0$; prompt effects via Friedman omnibus + paired Wilcoxon with Bonferroni correction (Section~\ref{sec:multiple_comparisons}; Appendix~\ref{app:statistical_procedures_reference}); RM-ANOVA sensitivity in Appendix~\ref{app:sensitivity_analysis}.\\
+\textbf{Reproducibility:}\\
+Data in \texttt{final\_runs/RQ1b\_corrector\_experiment\_*/}; scripts in Appendix~\ref{sec:code_availability} (Table~\ref{tab:exec_scripts}); analysis script \texttt{analyze\_corrector\_ablation.py}.\\
+\textbf{Results:}\\
+GT Synth: Tables~\ref{tab:rq1b_synthetic_correctness},~\ref{tab:rq1b_prompt_ablation_synthetic}. GT Lit: Tables~\ref{tab:rq1b_groundtruth_correctness},~\ref{tab:rq1b_prompt_ablation_groundtruth} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\noindent\textbf{Experiment Details}
+%------------------------------------------------------------------------------
+
+\subsubsection{RQ1b: Correctness Corrector (Synth)}
+\label{sec:rq1b_corrector_synth}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Corrector on GT Synth flagged edges. See shared RQ1b setup (Section~\ref{sec:rq1b_experiments}).\\
+\textbf{Source Data:}\\
+Judge-flagged edges from RQ1a GT Synth experiments (corrupted CLDs).\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq1b_corrector_synth_config}. Fixed: GPT-4.1, T=0.0, baseline judge. Varies: 3 prompts $\times$ 3 CLDs $\times$ 3 runs = 27.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:corrector} (correction) $\rightarrow$ Algorithm~\ref{alg:judge_correctness} (re-judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1b\_corrector\_experiment\_corruption\_*/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$); see shared RQ1b setup (Section~\ref{sec:rq1b_experiments}).\\
+\textbf{Metrics / Stats:}\\
+$\Delta$F1 pre$\rightarrow$post; Wilcoxon signed-rank.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Tables~\ref{tab:rq1b_synthetic_correctness},~\ref{tab:rq1b_prompt_ablation_synthetic} (Chapter~\ref{ch:results}).
+
+\subsubsection{RQ1b: Correctness Corrector (Lit)}
+\label{sec:rq1b_corrector_lit}
+
+\textbf{RQ \& Goal:}\\
+Evaluate Corrector on GT Lit flagged edges. See shared RQ1b setup (Section~\ref{sec:rq1b_experiments}).\\
+\textbf{Source Data:}\\
+Judge-flagged edges from RQ1a GT Lit experiments. GT files: Appendix Table~\ref{tab:gt_files}.\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq1b_corrector_lit_config}. Fixed: GPT-4.1, T=0.0, baseline judge. Varies: 3 prompts $\times$ 3 CLDs $\times$ 3 runs = 27.\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:corrector} (correction) $\rightarrow$ Algorithm~\ref{alg:judge_correctness} (re-judging).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ1b\_corrector\_experiment\_ground\_truth\_*/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$); see shared RQ1b setup (Section~\ref{sec:rq1b_experiments}).\\
+\textbf{Metrics / Stats:}\\
+$\Delta$F1 pre$\rightarrow$post; Wilcoxon signed-rank.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Tables~\ref{tab:rq1b_groundtruth_correctness},~\ref{tab:rq1b_prompt_ablation_groundtruth} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\section{RQ2: Context-Insensitive Hallucination Detection}
+\label{sec:rq2_experiments}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{RQ \& Goal:}\\
+Test whether UQ metrics captured during generation (Section~\ref{sec:uq_metrics_definition}) can predict hallucinations without external context.\\
+\textbf{Hypotheses:}\\
+\textbf{H4 (UQ):} higher perplexity / lower $P_{\min}$ / higher window entropy $\Rightarrow$ hallucination (block-level AUC $>0.5$).\\
+\textbf{H5 (CosSim):} lower narrative--citation cosine similarity $\Rightarrow$ hallucination (block-level AUC $>0.5$).\\
+\textbf{Source Data:}\\
+63 deduplicated GT Lit files (36 citation, 27 correctness), 31{,}704 edges, hallucination rate 15.2\%. Hallucination label: (FP or FN) w.r.t.\ GT Lit. Ensemble phases use a 16{,}507-edge subset (35 citation files) where all four metrics are available. Outputs and GT files: Appendix~\ref{sec:data_availability} (Tables~\ref{tab:experiment_datasets},~\ref{tab:gt_files}).\\
+\textbf{UQ Metrics + Parameters:}\\
+Computed from generator logprobs (Algorithms~\ref{alg:uq_metrics},~\ref{alg:classification}). Perplexity uses capped NLL averaging (token cap 20.0; average cap 10.0, bounding PPL to $\le e^{10}\approx22{,}026$); $P_{\min}$ is the minimum token probability; $H_{\text{win}}$ is max sliding-window entropy (window size 5 over top-$k$ entropies with $k{=}5$); CosSim is the max narrative--citation-chunk embedding similarity for citation experiments (embedding model all-mpnet-base-v2 from \cite{muennighoff2023mteb}).\\
+\textbf{Outputs:}\\
+Per-edge metric values, per-file AUCs, and classifier predictions; schemas in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).\\
+\textbf{Metrics:}\\
+AUC-ROC, point-biserial correlation $r$, and classifier CV/test AUC. Because hallucinations are the minority class (15.2\%), AUC is used as a threshold-free separation metric; thresholded Precision/Recall depend on the chosen operating point and class prevalence.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$) for statistical inference; edge-level ($N=31{,}704$) for descriptive analysis.\\
+\textbf{Stats:}\\
+Block-level aggregation (CLD$\times$run, $N{=}9$) as the unit of inference; single-metric one-sample $t$-tests on block-mean AUC vs.\ 0.5 with Bonferroni correction; edge-level Mann--Whitney U reported descriptively. Block means are approximately normal (Shapiro--Wilk $p{=}0.67$); 95\% CI via $t$ ($df{=}8$). Correlations aggregated via Fisher $z$ (Appendix~\ref{app:statistical_procedures_reference}).\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq2_distributions_by_cld},~\ref{fig:rq2_rfe} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\noindent\textbf{Experiment Details}
+%------------------------------------------------------------------------------
+
+\subsubsection{RQ2: UQ (Logprobs)}
+\label{sec:rq2_uq_logprobs}
+
+\textbf{RQ \& Goal:}\\
+Test whether logprob-derived UQ metrics can predict hallucinations. See shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
+\textbf{Source Data:}\\
+RQ1a GT Lit experiments (27 correctness + 36 citation files, 31,704 edges); hallucination = FP/FN.\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq2_uq_logprobs_config}. Metrics: PPL, $P_{\min}$, $H_{\text{win}}$ (computed during generation).\\
+\textbf{Simulation Procedure:}\\
+Algorithm~\ref{alg:uq_metrics} (metric extraction from logprobs).\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$); see shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
+\textbf{Metrics / Stats:}\\
+Block-level AUC; one-sample $t$-test vs.\ 0.5.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figure~\ref{fig:rq2_distributions_by_cld} (Chapter~\ref{ch:results}).
+
+\subsubsection{RQ2: CosSim (Embeddings)}
+\label{sec:rq2_cossim_embeddings}
+
+\textbf{RQ \& Goal:}\\
+Test whether narrative--citation cosine similarity can predict hallucinations. See shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
+\textbf{Source Data:}\\
+RQ1a GT Lit Citation experiments only (36 files); ensemble subset = 16,507 edges.\\
+\textbf{Simulation Parameters:}\\
+Appendix Table~\ref{tab:rq2_cossim_config}. Model: all-mpnet-base-v2; max narrative--citation-chunk similarity.\\
+\textbf{Simulation Procedure:}\\
+Embedding computation + cosine similarity calculation. Benchmark: Appendix~\ref{sec:embedding_benchmark}.\\
+\textbf{Outputs:}\\
+Directory: \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/}. Schemas: Appendix Table~\ref{tab:output_files}.\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$); see shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
+\textbf{Metrics / Stats:}\\
+Block-level AUC; one-sample $t$-test vs.\ 0.5.\\
+\textbf{Reproducibility:}\\
+Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
+\textbf{Results:}\\
+Figure~\ref{fig:rq2_distributions_by_cld} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsubsection{RQ2: Analysis Pipeline (6 Phases)}
+\label{sec:rq2_analysis}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{Simulation Procedure (6 phases):}\\
+\textbf{Phases 1--3 (single-metric):} compute per-file AUC-ROC, aggregate to blocks ($N{=}9$), and test above-chance discrimination via one-sample $t$-test.\\
+\textbf{Phase 4 (RFE):} Recursive Feature Elimination~\cite{pedregosa2011sklearn} with \texttt{GroupKFold(n\_splits=3)} over blocks; classifiers: LogReg, RF, GradBoost.\\
+\textbf{Phase 5 (ensemble):} block-level train/test split (67\%/33\%) via \texttt{GroupShuffleSplit} and model selection on training blocks via \texttt{GroupKFold}; four classifiers including a neural network.\\
+\textbf{Classifier families:} brief algorithm notes for LR/RF/GB/MLP appear in Appendix~\ref{sec:rq2_classifier_notes}.\\
+\textbf{Phase 6 (LOCO):} leave-one-CLD-out evaluation for cross-domain generalisation. Full formal specification in Appendix~\ref{alg:classification}.\\
+\textbf{Reproducible splitting protocol (Phases 4--6):}\\
+Grouping key is \texttt{block\_id=cld\_run} (3 CLDs $\times$ 3 runs $\Rightarrow N{=}9$); rows are deterministically sorted by \((\texttt{block\_id}, \texttt{source\_file})\) prior to any group split; scaling uses \texttt{StandardScaler} fit on training blocks only.\\
+Phase 4 holds out 3 blocks and trains on 6; evaluates \(k \in \{1,2,3,4\}\) and selects the \(k\) maximizing validation AUC per fold.\\
+Phase 5 holds out 3 blocks for testing and uses the remaining 6 for training; CV on training uses 3 folds (2 blocks held out per fold).\\
+Phase 6 holds out an entire CLD as test and trains on the other two CLDs (scaling fit on training CLDs only).\\
+\textbf{Unit of Analysis:}\\
+Block-level (CLD$\times$run, $N=9$) for Phases 1--5; CLD-level ($N=3$) for Phase 6 (LOCO).\\
+\textbf{Limitations:}\\
+UQ metrics are not applicable for GT Synth (corruption is post-generation); cosine similarity is only defined for Citation Judge runs.\\
+\textbf{Reproducibility:}\\
+Data in \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/}; dataset mapping in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}). Analysis scripts in Appendix~\ref{sec:code_availability} (Table~\ref{tab:analysis_scripts}).\\
+\textbf{Results:}\\
+Figures~\ref{fig:rq2_distributions_by_cld},~\ref{fig:rq2_rfe}; Section~\ref{sec:rq2_ensemble} (Chapter~\ref{ch:results}).
+    
+%------------------------------------------------------------------------------
+\section{RQ3: Deep Research Literature Validation}
+\label{sec:rq3_experiments}
+%------------------------------------------------------------------------------
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Methodological Note:} The original RQ3 design proposed \textit{smart test-time compute allocation}---using UQ metrics to selectively deploy the LLM-as-a-corrector. This was predicated on: (1) RQ2 UQ metrics generalizing across CLDs, and (2) RQ1b correctors effectively repairing hallucinations. Neither condition was met (see Discussion, Section~\ref{sec:discussion_rq3}). We therefore pivoted to \textbf{Deep Research validation} (system documented in Section~\ref{sec:deep_research_system}).
+
+This section presents Deep Research as an \textbf{exploratory pilot study}. Given time constraints from the late pivot, the experimental design is less comprehensive than RQ1--RQ2: single-run (no replication), limited parameter ablation, and no end-to-end pipeline integration.
+}}
+\end{center}
+
+% (spacing trimmed for density)
+
+\subsubsection{Deep Research}
+\label{sec:rq3_deep_research}
+
+\paragraph{RQ \& Goal.}
+Evaluate whether Deep Research (Section~\ref{sec:deep_research_system}) can distinguish valid from hallucinated causal claims by finding \emph{direct causal} evidence in the scientific literature.
+
+\paragraph{Hypothesis.}
+H6: high detection for TP, low detection for FP, and a TP--FP gap $>$20 percentage points.
+
+\paragraph{Source Data.}
+285 edges from RQ1a GT Lit experiments (TP=44, FP=178, FN=63). Output directory: Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}).
+
+\paragraph{Parameters.}
+Single run per edge ($\sim\$0.87$/edge) with \texttt{max\_iterations=1}, \texttt{max\_sources=5}, \texttt{MAX\_SEARCHES=5}, \texttt{time\_limit=900s}.
+
+\paragraph{Simulation Procedure.}
+Generate search queries from the causal claim, run parallel Brave searches, score evidence, apply strict direct-causality criteria, and synthesize a verdict (Algorithm~\ref{alg:deep_research}).
+
+\paragraph{Outputs.}
+Per-edge verdict, confidence (1--10), \texttt{direct\_causal\_found} flag, and source URLs; schemas in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
+
+\paragraph{Metrics.}
+Detection rate of \texttt{direct\_causal\_found}; TP--FP gap $\Delta>20$pp; mean confidence by class.
+
+\paragraph{Stats.}
+Pairwise Fisher exact tests (Bonferroni: $m=3$, $\alpha_{\text{adj}}=0.017$); effect size Cohen's $h$ (Appendix~\ref{app:statistical_procedures_reference}).
+
+\paragraph{Unit of Analysis.}
+Edge-level ($N=285$ edges: TP=44, FP=178, FN=63).
+
+\paragraph{Reproducibility.}
+Config in Appendix~\ref{sec:rq3_execution} (Table~\ref{tab:rq3_config}); script \texttt{run\_rq3\_analysis.py}.
+
+\paragraph{Results.}
+Figure~\ref{fig:rq3_combined}, Table~\ref{tab:dr_cost} (Chapter~\ref{ch:results}).
+
+%------------------------------------------------------------------------------
+\subsubsection{Computational Cost}
+\label{sec:rq3_computational_cost}
+%------------------------------------------------------------------------------
+
+\noindent\textbf{Cost summary (reported in Results).}\\
+See Results Section~\ref{sec:rq3_cost_results} (Table~\ref{tab:dr_cost}) for the Deep Research computational cost breakdown by CLD and the overall cost comparison (\$0.87/edge; $\sim$119$\times$ citation judging; $\sim$512$\times$ correctness judging).
+
+%------------------------------------------------------------------------------
+\subsubsection{Limitations}
+\label{sec:rq3_limitations}
+%------------------------------------------------------------------------------
+
+\begin{itemize}[noitemsep]
+    \item \textbf{No replication:} Single run per edge prevents uncertainty quantification
+    \item \textbf{Evidence applicability:} Retrieved causal evidence may be only partially aligned to specific edge claims
+    \item \textbf{Full-text access:} Paywalled articles limit evidence quality
+    \item \textbf{Search API dependency:} Results depend on Brave Search indexing
+\end{itemize}
+
+%------------------------------------------------------------------------------
+\subsubsection{Exploratory Analysis: Ground Truth Enrichment}
+\label{sec:gt_enrichment_method}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Explore whether DR results could enrich expert-constructed GT by validating ``hallucinations'' that may represent valid causal relationships experts omitted.
+
+\paragraph{Extrapolation Procedure.}
+Two enrichment scenarios:
+\begin{itemize}[noitemsep]
+    \item \textbf{Scenario 1 (Enriched GT):} Promote DR-validated FPs to TP in ground truth; recompute Precision/Recall/F1.
+    \item \textbf{Scenario 2 (LLM+DR):} Additionally add DR-validated FNs to system output.
+\end{itemize}
+
+\paragraph{Caveats.}
+Domain variation (28\% Depressive Symptoms vs 76\% Emergency Department FP promotion), evidence specificity concerns, circularity risk (LLM validating LLM), no expert review. Results exploratory.
+
+\paragraph{Results.}
+Section~\ref{sec:gt_enrichment_results}, Table~\ref{tab:enriched_gt} (Chapter~\ref{ch:results}).
+
+\paragraph{Reproducibility.}
+\texttt{python final\_runs/RQ3\_deep\_research\_validation/compute\_enriched\_gt\_metrics.py}
+
+%------------------------------------------------------------------------------
+\subsubsection{Human Validation}
+\label{sec:rq3_human_validation}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Validate DR verdicts via human review to establish applicability thresholds and enable extrapolation.
+
+\paragraph{Source Data.}
+50 edges (29.6\% of 169 eligible) via proportional stratified sampling across CLD $\times$ classification. Seed 42 for reproducibility.
+
+\paragraph{Annotation Procedure.}
+Human reviewer assigns categorical verdict (\texttt{causal}, \texttt{different\_vars}, \texttt{invalid}) and continuous applicability score $\in[0,1]$ using the applicability rubric in Appendix Table~\ref{tab:human-validation-rubric-rq3}: 1.0 = exact match; 0.8--0.9 = different operationalisations; $\approx$0.7 = partial claim; $\approx$0.6 = proxy constructs; $\leq$0.5 = weak/non-causal evidence.
+
+\paragraph{Results.}
+Figure~\ref{fig:rq3_human_validation_elbow}, Table~\ref{tab:rq3_human_validation_tradeoff}, Table~\ref{tab:rq3_verdict_distribution} (Chapter~\ref{ch:results}).
+
+\paragraph{Reproducibility.}
+\texttt{python final\_runs/RQ3\_deep\_research\_validation/scripts/sample\_edges\_for\_validation.py}
+
+\paragraph{Inter-rater reliability check.}
+To assess rubric reliability, a second rater independently annotated an overlapping subset of 13 edges using the same rubric. Agreement for the categorical verdict was quantified using Cohen's $\kappa$ (chance-corrected; interpretation per Landis \& Koch as defined in Section~\ref{sec:human_llm_agreement}). Agreement for the continuous applicability score was quantified using the Intraclass Correlation Coefficient, ICC(2,1) (two-way random effects, absolute agreement, single measures)~\citep{koo2016guideline}. The ICC is defined as:
+\[
+\text{ICC} = \frac{\sigma^2_{\text{between}}}{\sigma^2_{\text{between}} + \sigma^2_{\text{within}}}
+\]
+where $\sigma^2_{\text{between}}$ is the variance between subjects (edges) and $\sigma^2_{\text{within}}$ is the variance within subjects (across raters). Interpretation thresholds~\citep{koo2016guideline}: $<$0.50 poor, 0.50--0.75 moderate, 0.75--0.90 good, $>$0.90 excellent.\\
+\textbf{Reproducibility:} \texttt{python final\_runs/RQ3\_deep\_research\_validation/validation/calculate\_inter\_rater\_reliability.py}
+
+%------------------------------------------------------------------------------
+\subsubsection{Threshold Selection and Extrapolation}
+\label{sec:rq3_threshold_selection}
+%------------------------------------------------------------------------------
+
+\paragraph{RQ \& Goal.}
+Determine applicability threshold for filtering DR verdicts and extrapolate enrichment potential to full dataset.
+
+\paragraph{Extrapolation Procedure.}
+Sensitivity analysis across $t \in \{0.5, 0.6, 0.7, 0.8, 0.9\}$. For each threshold, compute coverage (pass rate) and correct-causal rate with Wilson 95\% CI. Select threshold via gradient-based elbow rule on coverage--correctness curve.
+
+\paragraph{Metrics.}
+\begin{itemize}[noitemsep]
+    \item \textbf{Coverage:} $x(t) = \Pr(\text{applicability} \geq t)$
+    \item \textbf{Correct-causal rate:} $y(t) = \Pr(\texttt{verdict}=\texttt{causal} \mid \text{applicability} \geq t)$
+\end{itemize}
+
+\paragraph{Elbow Rule (Threshold Selection).}
+For each pair of adjacent thresholds $(t_i, t_{i+1})$ moving from stricter to looser (i.e., descending $t$), compute:
+\[
+\text{score}_i = \frac{\Delta x}{\lvert \Delta y \rvert} = \frac{x(t_{i+1}) - x(t_i)}{\lvert y(t_{i+1}) - y(t_i) \rvert}
+\]
+where $\Delta x > 0$ is the coverage gain and $\lvert \Delta y \rvert$ is the absolute drop in correct-causal rate. Select $t^* = t_{i+1}$ for the segment with maximum score. Intuition: choose the threshold where coverage gain per unit correctness loss is maximised (the ``elbow'' or diminishing-returns point).
+
+\paragraph{Extrapolation.}
+Two-stage: (1) compute pass rate and causal rate from validated sample at $t^*$; (2) project to full dataset ($n=285$) with conservative lower CI bounds. Compute projected F1 under Scenarios 1 and 2.
+
+\paragraph{Caveats.}
+Small strata (e.g., Social Norms $n=3$) have high sampling variance. Results reported with point estimates and conservative bounds.
+
+\paragraph{Results.}
+Figure~\ref{fig:rq3_human_validation_elbow}, Table~\ref{tab:rq3_human_validation_tradeoff}, Table~\ref{tab:enriched_gt_validated} (Chapter~\ref{ch:results}).
+
+\paragraph{Reproducibility.}
+\texttt{python final\_runs/RQ3\_deep\_research\_validation/scripts/enrichment\_extrapolation.py}
+
+\subsubsection{Smart Trigger}
+\label{sec:rq3_smart_trigger}
+Estimate a cost-efficient DR deployment policy by triggering DR only on edges flagged as uncertain by the strongest GT Lit Correctness Judge (Mechanistic prompt). We compute an aggregate per-edge judge score (mean over runs) and mark edges with score $\leq 0.5$ as triggered. We then evaluate the triggered subset using DR outputs and extrapolate expected $\Delta$F1/\$ under human-calibrated applicability thresholds (see Results Figure~\ref{fig:rq3_dr_cost_efficiency} and Methods Section~\ref{sec:rq3_threshold_selection}).\\
+\textbf{Reproducibility:} Scripts in \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/} (see Appendix~\ref{sec:code_availability}).
+
+\endgroup
