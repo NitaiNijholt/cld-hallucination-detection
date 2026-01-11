@@ -74,6 +74,13 @@ The key discussion-level implication is that correctness judging is informative 
 %------------------------------------------------------------------------------
 Citation judging reframes edge validation as an \textit{evidence assessment} problem. Its practical limitations are therefore shaped by retrieval bias, evidence specificity, and aggregation choices---all of which motivate the failure-mode analysis below.
 
+\subsection{Implementation considerations and aggregation limitations}
+\label{sec:discussion_citation_aggregation}
+
+The citation-judge pipeline in this thesis uses a shallow, cost-constrained \emph{generate-then-search} approach: the model first generates a causal narrative and then retrieves and evaluates supporting snippets post hoc. This design increases recall (generation is not retrieval-bounded) but introduces several interpretation-relevant limitations. First, because queries are derived from the model's own narrative, retrieval is susceptible to confirmation bias and can preferentially surface topically aligned but non-causal evidence. Second, \texttt{NONE} (negative) claims are intrinsically hard to validate: absence of retrieved evidence can be misinterpreted as support (an ``evidence of absence'' asymmetry). Third, aggregation matters: in this thesis, per-citation verdicts are mapped to scores and aggregated by a simple mean, which is sensitive to citation count, search ranking, fetch failures (missing-at-random is not guaranteed), and redundant sources.
+
+Future work should therefore treat aggregation and selection as first-class design choices (not just implementation details), e.g., using median or top-$k$/max rules, or adding an explicit evidence-selection step (reranker/verifier) that chooses the single most informative citation for a more expensive causal judgement rather than averaging over mixed-quality evidence.
+
 %------------------------------------------------------------------------------
 \section{Mechanisms of Judge Failure}
 \label{sec:discussion_failure_mechanisms}
@@ -339,7 +346,7 @@ While our multi-CLD validation spans diverse domains, the total number of CLDs (
 
 We mitigate LLM randomness by fixing seeds where supported and using $T{=}0$ for judges, but model/provider updates can still change outputs over time. While we ran 3 replicates per experimental condition, some analyses (particularly Deep Research) were single-run due to cost constraints. Additionally, the Deep Research system has many degrees of freedom (query count, iteration depth, scoring thresholds, agent prompts) that were not systematically ablated, limiting the ability to attribute performance to specific design choices.
 
-LLM judges can be systematically lenient or sceptical depending on prompt framing. Citation judging is especially sensitive to confirmation bias because queries are generated from the model's own narrative (generate-then-search). Validating \texttt{NONE} edges is intrinsically difficult: absence of retrieved evidence can be misinterpreted as support for ``no relationship'' claims (``evidence of absence'' failure mode), which can inflate scores for missed expert edges.
+LLM judges can be systematically lenient or sceptical depending on prompt framing. For citation judging, Section~\ref{sec:discussion_citation_aggregation} details how generate-then-search query formation and simple score aggregation can create confirmation bias and an ``evidence of absence'' failure mode for \texttt{NONE} edges.
 
 \subsection{Confirmation Bias in Retrieval}
 

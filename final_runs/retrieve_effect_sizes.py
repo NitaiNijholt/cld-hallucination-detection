@@ -471,7 +471,11 @@ def get_rq3_discrimination() -> List[EffectRow]:
 
 
 def get_rq3_enrichment() -> List[EffectRow]:
-    """Extract RQ3 enrichment metrics from enriched GT tables."""
+    """Extract RQ3 enrichment metrics from enriched GT tables.
+    
+    For human-validated scenarios, we use the CONSERVATIVE estimates
+    (Wilson CI lower bound) to provide a more defensible lower-bound estimate.
+    """
     rows = []
     
     enriched_gt_tex = REPO_ROOT / "final_runs/RQ3_deep_research_validation/rq3_enriched_gt_table.tex"
@@ -479,6 +483,7 @@ def get_rq3_enrichment() -> List[EffectRow]:
     
     # Default fallback
     orig, sc1, sc2 = 0.267, 0.705, 0.779
+    # Human-validated: use conservative (Wilson CI lower bound) estimates
     hv_sc1, hv_sc2 = 0.527, 0.582
     
     try:
@@ -494,14 +499,15 @@ def get_rq3_enrichment() -> List[EffectRow]:
     try:
         txt = validation_tex.read_text(encoding="utf-8", errors="replace")
         for line in txt.splitlines():
-            if "Scenario 1: Enriched GT" in line:
+            # Read CONSERVATIVE scenarios (Wilson CI lower bound) for human-validated estimates
+            if "Conservative Scenario 1" in line:
                 floats = re.findall(r"(?<![\w.])\d+\.\d+(?![\w.])", line)
                 if floats:
-                    hv_sc1 = float(floats[-1])
-            if "Scenario 2: LLM+DR System" in line:
+                    hv_sc1 = float(floats[-1])  # Last float is F1
+            if "Conservative Scenario 2" in line:
                 floats = re.findall(r"(?<![\w.])\d+\.\d+(?![\w.])", line)
                 if floats:
-                    hv_sc2 = float(floats[-1])
+                    hv_sc2 = float(floats[-1])  # Last float is F1
     except Exception as e:
         print(f"  Warning: Could not read validation table: {e}")
     
@@ -509,8 +515,8 @@ def get_rq3_enrichment() -> List[EffectRow]:
         ("Enrichment baseline", "Descriptive", "F1", f"{orig:.3f}", "Baseline"),
         ("Scenario 1: Enriched GT", "Descriptive", r"$\Delta$F1", f"{sc1-orig:+.3f}", "Exploratory"),
         ("Scenario 2: LLM+DR", "Descriptive", r"$\Delta$F1", f"{sc2-orig:+.3f}", "Exploratory"),
-        ("Human-val. Scenario 1", "Extrapolation", r"$\Delta$F1", f"{hv_sc1-orig:+.3f}", "Exploratory"),
-        ("Human-val. Scenario 2", "Extrapolation", r"$\Delta$F1", f"{hv_sc2-orig:+.3f}", "Exploratory"),
+        ("Human-val. Sc. 1 (cons.)", "Extrapolation", r"$\Delta$F1", f"{hv_sc1-orig:+.3f}", "Exploratory"),
+        ("Human-val. Sc. 2 (cons.)", "Extrapolation", r"$\Delta$F1", f"{hv_sc2-orig:+.3f}", "Exploratory"),
     ]
     
     for hyp, test, effect, value, conclusion in enrichment_data:
@@ -653,7 +659,7 @@ def generate_effect_size_table() -> str:
     lines.append(r"\scriptsize")
     lines.append(r"\item \textit{Effect size interpretation.} $\kappa$: Landis-Koch (0.61--0.80 = substantial). $W$: $<$0.3 weak, 0.3--0.5 moderate, $>$0.5 strong. $d$: $<$0.2 small, 0.2--0.8 medium, $>$0.8 large. $r$: $<$0.2 weak, 0.2--0.5 moderate, $>$0.5 strong. $h$: $<$0.2 negligible, 0.2--0.5 small, 0.5--0.8 medium, $>$0.8 large.")
     lines.append(r"\item \textit{Significance.} * $p<.05$, ** $p<.01$, *** $p<.001$. RQ3 $p$-values are Bonferroni-adjusted ($\alpha_{\text{adj}}=0.0167$).")
-    lines.append(r"\item \textsuperscript{$\ast$} \textit{RQ3 exploratory.} Enrichment estimates are upper-bound/extrapolated; not independently validated ground truth.")
+    lines.append(r"\item \textsuperscript{$\ast$} \textit{RQ3 exploratory.} Enrichment estimates are extrapolated; human-validated scenarios use Wilson CI lower bound (conservative). Not independently validated ground truth.")
     lines.append(r"\item \textit{RQ1a prompt tests.} Friedman with (CLD$\times$run) blocking; $W$ = Kendall's concordance. \textit{RQ1b efficacy.} One-sample Wilcoxon signed-rank on 9 blocks.")
     lines.append(r"\item \textit{RQ2 discrimination.} AUC = Area Under Curve; One-sample t-test on 9 block means (CLD$\times$run) vs 0.5.")
     lines.append(r"\end{tablenotes}")
