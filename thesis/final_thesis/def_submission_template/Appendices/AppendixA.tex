@@ -29,9 +29,9 @@ Table~\ref{tab:function_mapping} provides the complete tracing from result direc
  & & & compute\_max\_window\_entropy (:259) \\
  & & & get\_embedding\_local (:98) \\
 \midrule
-6 & RQ2\_hallucination\_detection/ & rq2\_ensemble\_classifier.py & train\_classifiers (:32) \\
+6 & RQ2\_uq\_hallucination\_detection/ & rq2\_ensemble\_classifier.py & train\_classifiers (:32) \\
 7 & (see Algorithm~\ref{alg:citation_fetcher}) & modules.py & fetch\_citations\_with\_jina (:265) \\
-8 & RQ3\_deep\_research/ & test\_deep\_research\_ground\_truth.py & DeepResearchManager (pydantic\_ai\_deepresearch\_orchestration.py:642) \\
+8 & RQ3\_deep\_research\_validation/ & test\_deep\_research\_ground\_truth.py & DeepResearchManager (pydantic\_ai\_deepresearch.py:642) \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -99,10 +99,10 @@ Each Excel file contains: edge definitions (source/target), relationship polarit
 \textbf{Dataset} & \textbf{Used In} & \textbf{Size} & \textbf{Location} \\
 \midrule
 TruthfulQA~\cite{lin2022truthfulqa} & RQ1 Verification & 1,634 Q\&A pairs & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/} \\
-Physics CLDs (see below) & RQ1a Validation & 31 edges, 4 CLDs & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/} \\
-Uleman's Alzheimer CLD & RQ1a Validation & 150 edges & \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/} \\
+Physics CLDs (see below) & RQ1a Validation & 31 edges, 4 CLDs & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/} \\
+Uleman's Alzheimer CLD & RQ1a Validation & 150 edges & \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/} \\
 Human Validation Set & RQ1a Validation & 72 edges & \texttt{final\_runs/RQ1\_human\_validation\_citation\_judge/} \\
-RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research/human\_validation/} \\
+RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/human\_validation/} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -171,7 +171,7 @@ RQ3 & Deep Research & 285 edges & \texttt{final\_runs/RQ3\_deep\_research\_valid
   & Temperature Sensitivity & 45 & \texttt{final\_runs/prelim\_temperature\_sensitivity/} \\
   & Random Baseline & 3,000 & \texttt{final\_runs/prelim\_random\_baseline\_generator/} \\
 \midrule
-Sens. & Prompt Sensitivity & 4 exp. & \texttt{final\_runs/Sensitivity\_analysis\_simple/} \\
+Sens. & Prompt Sensitivity & 4 exp. & \texttt{final\_runs/supp\_prompt\_sensitivity/} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -255,47 +255,47 @@ All execution scripts located in: \texttt{data\_science/parameter\_tuning\_exper
 \multicolumn{2}{@{}l}{\textit{RQ1a: LLM-as-Judge}} \\
 RQ1a Aggregate Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_aggregate\_enhanced.py} \\
 RQ1a Ground Truth Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_ground\_truth\_enhanced.py} \\
-Physics CLD Validation & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/analyse\_physics\_cld\_results.py} \\
-Physics CLD Test Runner & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} \\
-Uleman's Provider Comparison & \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} \\
+Physics CLD Validation & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} \\
+Physics CLD Test Runner & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} \\
+Uleman's Provider Comparison & \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} \\
 TruthfulQA Verification & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/runner/truthqa\_judge\_baseline\_correctness.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1b: Corrector}} \\
 RQ1b Results Analysis & \texttt{final\_runs/RQ1b\_corrector\_ablation\_analysis/scripts/analyze\_corrector\_ablation.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: UQ Metrics}} \\
-RQ2 Master Report & \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
-RQ2 Batch Analyser & \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
+RQ2 Master Report & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
+RQ2 Batch Analyser & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ3: Deep Research}} \\
-RQ3 Unified Analysis & \texttt{final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} \\
-RQ3 Statistical Tests & \texttt{final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} \\
-RQ3 Per-CLD Detection Rates & \texttt{final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} \\
-RQ3 Enrichment Metrics & \texttt{final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} \\
-RQ3 Human Validation & \texttt{final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} \\
-RQ3 Smart Trigger Analysis & \texttt{final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
-RQ3 Cost Efficiency Plot & \texttt{final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} \\
-RQ3 Figure Generation & \texttt{final\_runs/RQ3\_deep\_research/generate\_figures.py} \\
-RQ3 Edge Sampling & \texttt{final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} \\
-RQ3 Validation Tables & \texttt{final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} \\
+RQ3 Unified Analysis & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_unified\_analysis.py} \\
+RQ3 Statistical Tests & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_statistical\_test.py} \\
+RQ3 Per-CLD Detection Rates & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_per\_cld\_detection\_rates.py} \\
+RQ3 Enrichment Metrics & \texttt{final\_runs/RQ3\_deep\_research\_validation/compute\_enriched\_gt\_metrics.py} \\
+RQ3 Human Validation & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/enrichment\_extrapolation.py} \\
+RQ3 Smart Trigger Analysis & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
+RQ3 Cost Efficiency Plot & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/plot\_dr\_cost\_efficiency.py} \\
+RQ3 Figure Generation & \texttt{final\_runs/RQ3\_deep\_research\_validation/generate\_figures.py} \\
+RQ3 Edge Sampling & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/sample\_edges\_for\_validation.py} \\
+RQ3 Validation Tables & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/generate\_validation\_distribution\_tables.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Preliminary \& Validation}} \\
-Generator Model Comparison & \texttt{final\_runs/generator\_model\_comparison\_analysis/analyse\_generator\_models.py} \\
+Generator Model Comparison & \texttt{final\_runs/prelim\_generator\_model\_comparison/analysis\_scripts/analyze\_generator\_models.py} \\
 Random Baseline Analysis & \texttt{final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} \\
-Embedding Model Benchmark & \texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} \\
+Embedding Model Benchmark & \texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py} \\
 Power Analysis & \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost \& Scaling Analysis}} \\
-Complete Cost Analysis & \texttt{final\_runs/cost\_analysis/calculate\_all\_costs.py} \\
-Per-Experiment Costs & \texttt{final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} \\
-Deep Research Costs & \texttt{final\_runs/cost\_analysis/compute\_dr\_costs.py} \\
-Token Analysis & \texttt{final\_runs/token\_call\_analysis\_RQ1a\_judge/analyse\_output\_tokens\_tiktoken.py} \\
-Time/Cost Scaling & \texttt{final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
-Parallelization Benchmark & \texttt{final\_runs/parallelization\_benchmark/scripts/analyse\_parallelization\_results.py} \\
+Complete Cost Analysis & \texttt{final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} \\
+Per-Experiment Costs & \texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} \\
+Deep Research Costs & \texttt{final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} \\
+Token Analysis & \texttt{final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} \\
+Time/Cost Scaling & \texttt{final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
+Parallelization Benchmark & \texttt{final\_runs/supp\_parallelization\_benchmark/analysis\_scripts/analyze\_parallelization\_results.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Sensitivity Analysis}} \\
-Judge Prompt Sensitivity & \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} \\
-Corrector Prompt Sensitivity & \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} \\
+Judge Prompt Sensitivity & \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} \\
+Corrector Prompt Sensitivity & \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} \\
 Temperature Assumption Tests & \texttt{final\_runs/temperature\_sensitivity\_assumption\_tests.py} \\
 \bottomrule
 \end{tabularx}
@@ -339,25 +339,25 @@ To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \texttt{final\_runs/RQ1\_verification\_Truth\_QA/analysis\_script/recalculate\_metrics.py} & \texttt{python final\_runs/RQ1\_verification\_Truth\_QA/analysis\_script/recalculate\_metrics.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1a validation: physics CLDs}} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/analyse\_physics\_cld\_results.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/analyse\_physics\_cld\_results.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_comparison\_table.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_comparison\_table.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_retrieval\_comparison\_table.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_retrieval\_comparison\_table.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/get\_avg\_scores.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/get\_avg\_scores.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/create\_thermostat\_excel.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/create\_thermostat\_excel.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_supporting\_quotes.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_supporting\_quotes.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_urls\_to\_references.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_urls\_to\_references.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/show\_example.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/show\_example.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_urls.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_urls.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/generate\_comparison\_table.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/generate\_comparison\_table.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/generate\_retrieval\_comparison\_table.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/generate\_retrieval\_comparison\_table.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/get\_avg\_scores.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/get\_avg\_scores.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/create\_thermostat\_excel.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/create\_thermostat\_excel.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_supporting\_quotes.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_supporting\_quotes.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_urls\_to\_references.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_urls\_to\_references.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/show\_example.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/show\_example.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_urls.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_urls.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1a validation: Uleman's citation provider comparison}} \\
-\texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} & \texttt{python final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} \\
-\texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/compare\_jina\_vs\_scraper.py} & \texttt{python final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/compare\_jina\_vs\_scraper.py} \\
+\texttt{final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} & \texttt{python final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} \\
+\texttt{final\_runs/validation\_RQ1a\_ulemans\_external/compare\_jina\_vs\_scraper.py} & \texttt{python final\_runs/validation\_RQ1a\_ulemans\_external/compare\_jina\_vs\_scraper.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: hallucination detection (UQ metrics)}} \\
-\texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} & \texttt{python final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
-\texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} & \texttt{python final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
+\texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} & \texttt{python final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
+\texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} & \texttt{python final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ3: Deep Research analysis}} \\
 \texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/rq3\_unified\_analysis.py} & \texttt{python ...rq3\_unified\_analysis.py} \\
@@ -368,23 +368,23 @@ To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/plot\_dr\_cost\_efficiency.py} & \texttt{python ...plot\_dr\_cost\_efficiency.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost, scaling, and diagnostics}} \\
-\texttt{final\_runs/cost\_analysis/calculate\_all\_costs.py} & \texttt{python final\_runs/cost\_analysis/calculate\_all\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} & \texttt{python final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_experiment\_costs.py} & \texttt{python final\_runs/cost\_analysis/calculate\_experiment\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_costs\_max\_edges.py} & \texttt{python final\_runs/cost\_analysis/calculate\_costs\_max\_edges.py} \\
-\texttt{final\_runs/cost\_analysis/analyse\_token\_and\_call\_stats.py} & \texttt{python final\_runs/cost\_analysis/analyse\_token\_and\_call\_stats.py} \\
-\texttt{final\_runs/cost\_analysis/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/cost\_analysis/analyse\_output\_tokens\_tiktoken.py} \\
-\texttt{final\_runs/cost\_analysis/compute\_dr\_costs.py} & \texttt{python final\_runs/cost\_analysis/compute\_dr\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/generate\_table21\_scaling\_summary.py} & \texttt{python final\_runs/cost\_analysis/generate\_table21\_scaling\_summary.py} \\
-\texttt{final\_runs/token\_call\_analysis\_RQ1a\_judge/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/token\_call\_analysis\_RQ1a\_judge/analyse\_output\_tokens\_tiktoken.py} \\
-\texttt{final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
-\texttt{final\_runs/time\_and\_cost\_scaling/collect\_corrector\_timing.py} & \texttt{python final\_runs/time\_and\_cost\_scaling/collect\_corrector\_timing.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_experiment\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_experiment\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_max\_edges.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_costs\_max\_edges.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/analyse\_token\_and\_call\_stats.py} & \texttt{python final\_runs/supp\_cost\_analysis/analyse\_token\_and\_call\_stats.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/supp\_cost\_analysis/analyse\_output\_tokens\_tiktoken.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/generate\_table21\_scaling\_summary.py} & \texttt{python final\_runs/supp\_cost\_analysis/generate\_table21\_scaling\_summary.py} \\
+\texttt{final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} \\
+\texttt{final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
+\texttt{final\_runs/supp\_time\_cost\_scaling/collect\_corrector\_timing.py} & \texttt{python final\_runs/supp\_time\_cost\_scaling/collect\_corrector\_timing.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Sensitivity, benchmarks, and baselines}} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple\_rm\_anova.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple\_rm\_anova.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} \\
 \texttt{final\_runs/supp\_parallelization\_benchmark/analysis\_scripts/analyze\_parallelization\_results.py} & \texttt{python ...analyze\_parallelization\_results.py} \\
 \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} & \texttt{python final\_runs/power\_analysis/compute\_power\_analysis.py} \\
 \texttt{final\_runs/prelim\_random\_baseline\_generator/analysis\_scripts/compute\_random\_baseline.py} & \texttt{python ...compute\_random\_baseline.py} \\
@@ -590,8 +590,12 @@ Max Tokens & 250 \\
 \end{itemize}
 
 \subsection{RQ1a Ground Truth Experiments}
+\label{sec:rq1a_execution}
+
+\noindent\textit{[Requires private platform repository]}
 
 \begin{verbatim}
+# Private platform: data_science/parameter_tuning_experiments/
 cd data_science/parameter_tuning_experiments/
 
 # Correctness-based ground truth
@@ -808,7 +812,7 @@ python judge_citation_providers.py
 # python compare_jina_vs_scraper.py
 \end{verbatim}
 
-\textbf{Script Location:} \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/} \texttt{judge\_citation\_providers.py}
+\textbf{Script Location:} \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/} \texttt{judge\_citation\_providers.py}
 
 \begin{table}[H]
 \centering
@@ -943,8 +947,12 @@ Als de bron echt niet duidelijk is of er iets vreemds aan de hand is. Goed besch
 \end{itemize}
 
 \subsection{RQ2 Hallucination Detection Analysis}
+\label{sec:rq2_execution}
+
+\noindent\textit{[Requires private platform repository]}
 
 \begin{verbatim}
+# Private platform: data_science/
 cd data_science/
 
 python rq2_master_report.py \
@@ -1238,19 +1246,21 @@ $[0.9, 1.0]$ & 2 & 8 & 4 & 14 (28.0\%) \\
 \end{table}
 
 \subsection{Generator Temperature Sensitivity Analysis}
+\label{sec:temp_sensitivity_execution}
 
 This experiment validates the generator temperature choice (T=0.7) by testing whether temperature significantly affects edge recovery performance against literature ground truth.
 
-\begin{verbatim}
-cd data_science/parameter_tuning_experiments/
+\noindent\textit{[Requires private platform repository for execution; pre-computed results available in public snapshot]}
 
+\begin{verbatim}
+# Private platform: data_science/parameter_tuning_experiments/
+cd data_science/parameter_tuning_experiments/
 python run_temperature_sensitivity.py
 \end{verbatim}
 
-\textbf{Script Location:} \texttt{data\_science/parameter\_tuning\_experiments/run\_temperature\_sensitivity.py}
+\textbf{Script Location (private):} \texttt{data\_science/parameter\_tuning\_experiments/run\_temperature\_sensitivity.py}
 
-\textbf{Results Location:} \texttt{data\_science/parameter\_tuning\_experiments/results/}\\
-\hspace*{2em}\texttt{temperature\_sensitivity\_<timestamp>/}
+\textbf{Results Location (public):} \texttt{final\_runs/prelim\_temperature\_sensitivity/}
 
 \begin{table}[H]
 \centering
@@ -1398,13 +1408,13 @@ CI Method & z-distribution (n=1000) \\
 
 This analysis quantifies how prompt engineering choices affect judge and corrector performance by measuring the input-output relationship between semantic prompt distance and F1 change.
 
-\textbf{Script Location (Judge):} \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/}\\
+\textbf{Script Location (Judge):} \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/}\\
 \hspace*{2em}\texttt{sensitivity\_analysis\_simple.py}
 
-\textbf{Script Location (Corrector):} \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/}\\
+\textbf{Script Location (Corrector):} \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/}\\
 \hspace*{2em}\texttt{sensitivity\_analysis\_corrector.py}
 
-\textbf{Results Location:} \texttt{final\_runs/Sensitivity\_analysis\_simple/}
+\textbf{Results Location:} \texttt{final\_runs/supp\_prompt\_sensitivity/}
 
 \begin{table}[H]
 \centering
@@ -1483,18 +1493,18 @@ Total Benchmark Runs & 12 \\
 
 This analysis aggregates inference time and cost metrics across all RQ1 experiments to characterise computational scaling.
 
-\textbf{Script Location:} \texttt{data\_science/aggregate\_time\_cost\_scaling.py}
+\noindent\textit{[Pre-computed results available in public snapshot; script available for re-analysis]}
 
-\textbf{Results Location:} \texttt{final\_runs/time\_and\_cost\_scaling/}
+\textbf{Script Location (public):} \texttt{final\_runs/supp\_time\_cost\_scaling/analysis\_scripts/aggregate\_time\_cost\_scaling.py}
+
+\textbf{Results Location (public):} \texttt{final\_runs/supp\_time\_cost\_scaling/}
 
 \begin{verbatim}
-cd data_science/
-
-python aggregate_time_cost_scaling.py \
-    --base_dir ../RQ1_excel_snapshot_20251215/final_runs \
-    --output_dir ../final_runs/supp_time_cost_scaling \
-    --gen-dir parameter_tuning_experiments/results \
-    --latex
+# From repository root:
+uv run python final_runs/supp_time_cost_scaling/analysis_scripts/\
+    aggregate_time_cost_scaling.py \
+    --base_dir final_runs \
+    --output_dir final_runs/supp_time_cost_scaling
 \end{verbatim}
 
 \begin{table}[H]
@@ -1753,7 +1763,7 @@ cot & Chain-of-thought reasoning & 1,534 & 10,000 & 24,266 & 59,795 & 59,304 & 9
 \begin{tablenotes}
 \small
 \item \textit{Note.} Max Tok = maximum observed output tokens via GPT-4 tokenizer (tiktoken). Limit = \texttt{max\_tokens} API parameter. Calls = total API calls. Success = HTTP 200 completions. Rate = success percentage.
-\item \textit{Reproduction:} \texttt{python final\_runs/token\_call\_analysis\_RQ1a\_judge/} \texttt{analyse\_output\_tokens\_tiktoken.py}
+\item \textit{Reproduction:} \texttt{python final\_runs/supp\_token\_analysis\_rq1a/} \texttt{analyse\_output\_tokens\_tiktoken.py}
 \end{tablenotes}
 \end{table}
 
@@ -2112,7 +2122,7 @@ Summarization & 27.49 & \textbf{34.83} \\
 
 \textit{Note:} The MTEB scores are taken from different benchmark versions (v1 vs.\ v2) and evaluation setups and are therefore \textbf{not directly comparable}. We include them only to illustrate that both models are competitive across common embedding tasks.
 
-\textbf{Script:} \texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py}
+\textbf{Script:} \texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py}
 
 %==============================================================================
 \chapter{Algorithmic Descriptions}
