@@ -31,6 +31,7 @@ Neural Network & N/A & 0.709 $\pm$ 0.032 & 0.739 & 0.648 $\pm$ 0.211 & 0.092 \\
 Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
 \textbf{Uncertainty:} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{sec:uncertainty_rule}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
+\textbf{Exploratory chance test (Phase 6):} one-sample $t$-tests vs.\ AUC$=0.5$ on block-level AUCs (CLD$\times$run, $N=9$) yield Logistic Regression: $p<0.001$; Random Forest: $p=0.002$; Gradient Boosting: $p=0.004$; Neural Network: $p<0.001$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

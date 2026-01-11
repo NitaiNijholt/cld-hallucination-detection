@@ -29,7 +29,7 @@ from rq2_paths import rq2_dirs
 
 # Import shared data preparation module
 sys.path.insert(0, str(Path(__file__).parent))
-from rq2_data_preparation import load_rq2_combined_data, CI_METRICS
+from rq2_data_preparation import add_block_id, load_rq2_combined_data, CI_METRICS
 
 # Output directory
 OUTPUT_BASE, _unused_output = rq2_dirs()
@@ -203,11 +203,15 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             # Split data
             train_df = df[df['cld'] != test_cld]
             test_df = df[df['cld'] == test_cld]
+            # Add block_id (CLD × run) for block-level summaries
+            if 'block_id' not in test_df.columns:
+                test_df = add_block_id(test_df)
             
             X_train = train_df[features].values
             y_train = train_df['is_hallucination'].values
             X_test = test_df[features].values
             y_test = test_df['is_hallucination'].values
+            test_block_ids = test_df['block_id'].values
             
             train_clds = train_df['cld'].unique()
             
@@ -246,11 +250,16 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
                 'threshold': float(threshold),
                 'threshold_rule': 'p(hallucination) >= 0.5',
                 'n_test': int(len(test_df)),
-                'y_prob': y_prob,
-                'y_true': y_test
+                # Block-level breakdown (CLD × run)
+                'block_aucs': {
+                    bid: float(roc_auc_score(y_test[test_block_ids == bid], y_prob[test_block_ids == bid]))
+                    for bid in sorted(np.unique(test_block_ids))
+                    if len(np.unique(y_test[test_block_ids == bid])) > 1
+                },
+                'n_test_blocks': int(len(np.unique(test_block_ids))),
             })
         
-        # Summary for this classifier
+        # Summary for this classifier (CLD-level)
         mean_auc = np.mean([r['auc'] for r in results])
         std_auc = np.std([r['auc'] for r in results])
         mean_ap = np.mean([r['ap'] for r in results])
@@ -276,7 +285,7 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
     print("CLASSIFIER COMPARISON: CROSS-DOMAIN GENERALIZATION")
     print(f"{'='*80}\n")
     
-    # Compute and display all uncertainty metrics for each classifier
+    # Compute and display summary statistics for each classifier
     summary_stats = {}
     for clf_name, results in all_results.items():
         aucs = [r['auc'] for r in results]
@@ -292,6 +301,33 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
         best_cld = max(results, key=lambda x: x['auc'])['test_cld']
         worst_cld = min(results, key=lambda x: x['auc'])['test_cld']
         
+        # Block-level AUCs across all CLDs (N = 9 blocks) for hypothesis tests vs chance
+        block_auc_values = []
+        for r in results:
+            block_auc_values.extend(list(r.get('block_aucs', {}).values()))
+        block_auc_values = np.array(block_auc_values, dtype=float)
+        block_auc_values = block_auc_values[np.isfinite(block_auc_values)]
+
+        block_level = None
+        if len(block_auc_values) >= 2:
+            block_mean = float(np.mean(block_auc_values))
+            block_std = float(np.std(block_auc_values, ddof=1))
+            block_n = int(len(block_auc_values))
+            block_se = block_std / np.sqrt(block_n)
+            block_tcrit = float(stats.t.ppf(0.975, df=block_n - 1))
+            block_ci_lower = float(block_mean - block_tcrit * block_se)
+            block_ci_upper = float(block_mean + block_tcrit * block_se)
+            t_stat, p_val = stats.ttest_1samp(block_auc_values, 0.5)
+            block_level = {
+                'n': block_n,
+                'mean': block_mean,
+                'std': block_std,
+                'ci_lower': block_ci_lower,
+                'ci_upper': block_ci_upper,
+                'ttest_t': float(t_stat),
+                'ttest_p': float(p_val),
+            }
+
         summary_stats[clf_name] = {
             'n': n,
             'mean': float(mean_auc),
@@ -304,7 +340,8 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             'ci_upper': float(ci_upper),
             'best_cld': best_cld,
             'worst_cld': worst_cld,
-            'per_cld': {r['test_cld']: float(r['auc']) for r in results}
+            'per_cld': {r['test_cld']: float(r['auc']) for r in results},
+            'block_level': block_level,
         }
     
     # Print summary table
@@ -325,7 +362,7 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
     print(f"  - ±1 SD: Describes observed variability (no distributional assumptions)")
     print(f"  - 95% CI: Uses t-distribution (t-crit={t_crit_val:.3f} for df={n_obs-1})")
     print(f"  - [min, max]: Actual observed range")
-    print(f"  ⚠️  For n=3, [min, max] or ±1 SD is recommended over 95% CI (assumptions unverifiable)")
+    print(f"  ⚠️  For n=3, CLD-level intervals are approximate (assumptions hard to validate).")
     
     # Save summary stats to JSON
     with open(output_dir / "phase6_summary_stats.json", 'w') as f:

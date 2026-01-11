@@ -73,6 +73,12 @@ def generate_ensemble_table():
         preferred_file="phase6_leave_one_out_all_classifiers.json"
     )
     print(f"  Loaded from: {phase6_dir.name}")
+    # Also load Phase 6 summary stats if present (contains block-level tests vs chance)
+    phase6_summary = None
+    summary_path = phase6_dir / "phase6_summary_stats.json"
+    if summary_path.exists():
+        with open(summary_path, "r") as f:
+            phase6_summary = json.load(f)
     
     # Get CV method info
     cv_method = phase4_data.get('cv_method', 'GroupKFold (block = CLD × run)')
@@ -162,7 +168,7 @@ def generate_ensemble_table():
         table_rows.append(row)
     
     # Generate LaTeX
-    latex = generate_latex(table_rows, n_folds, n_blocks, cv_method)
+    latex = generate_latex(table_rows, n_folds, n_blocks, cv_method, phase6_summary=phase6_summary)
     
     # Save
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -190,7 +196,7 @@ def generate_ensemble_table():
     return table_rows
 
 
-def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str) -> str:
+def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phase6_summary: dict | None = None) -> str:
     """Generate the LaTeX table code."""
     
     def fmt_auc(mean, ci):
@@ -258,6 +264,28 @@ Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-perform
 \textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """
+
+    # Optional: add a hypothesis test vs chance for Phase 6 using block-level AUCs (N=9 blocks)
+    if phase6_summary:
+        def fmt_p(p):
+            if p is None:
+                return "N/A"
+            try:
+                p = float(p)
+            except Exception:
+                return "N/A"
+            if p < 0.001:
+                return "<0.001"
+            return f"{p:.3f}"
+
+        p_parts = []
+        for row in rows:
+            clf = row["classifier"]
+            blk = (phase6_summary.get(clf, {}) or {}).get("block_level", None)
+            pval = blk.get("ttest_p") if isinstance(blk, dict) else None
+            p_parts.append(f"{clf}: $p{('=' + fmt_p(pval)) if fmt_p(pval) != '<0.001' else '<0.001'}$")
+
+        latex += "\\textbf{Exploratory chance test (Phase 6):} one-sample $t$-tests vs.\\ AUC$=0.5$ on block-level AUCs (CLD$\\times$run, $N=9$) yield " + "; ".join(p_parts) + ".\n"
     
     latex += r"""\end{tablenotes}
 \end{threeparttable}
