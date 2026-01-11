@@ -31,55 +31,21 @@ For reader convenience, we provide a direct, concise answer to each research que
 \textbf{Answer: The original UQ-triggered judge+corrector design is not supported; a modified judge-triggered Deep Research strategy shows proof-of-concept efficiency gains.} Because (i) UQ metrics do not generalise reliably across CLDs (RQ2) and (ii) the corrector does not reliably improve GT Lit accuracy (RQ1b), the original ``adaptive triggering'' pathway is untenable as specified. However, selectively deploying higher-cost test-time compute for \textit{literature validation} (Deep Research) when a lower-cost signal flags uncertainty (e.g., the Mechanistic correctness judge score) recovers a substantial fraction of the full-deployment gains at roughly half the Deep Research cost in our exploratory analysis, albeit with strong assumptions and clear domain dependence.
 
 %------------------------------------------------------------------------------
-\section{Roadmap for the Detailed Discussion}
-\label{sec:discussion_positioning_preliminaries}
+\section{Framing: What Counts as a ``Hallucination'' in CLD Generation?}
+\label{sec:discussion_framing}
 %------------------------------------------------------------------------------
-The previous subsection gave direct answers to each research question. The remainder of this chapter focuses on the \textbf{recurring failure modes} that explain the observed patterns. We concentrate on: (i) \textbf{mechanisms of judge and corrector failure}---the structural blind spots that cause validation to fail (Section~\ref{sec:discussion_failure_mechanisms}), (ii) \textbf{synthesis across research questions}---cross-cutting implications (Section~\ref{sec:discussion_synthesis}), (iii) \textbf{practical recommendations} (Section~\ref{sec:discussion_recommendations}), and (iv) \textbf{limitations and future work} (Sections~\ref{sec:discussion_limitations} and~\ref{sec:discussion_future}).
+The Results chapter establishes generator baseline performance and the empirical behaviour of judges, correctors, uncertainty signals, and Deep Research. This chapter focuses on interpretation: \emph{why} performance shifts across evaluation settings and what those shifts imply for the construct validity of ``hallucination'' in CLD generation.
 
-%------------------------------------------------------------------------------
-\section{Preliminary Results: Generator Selection and Baseline Performance}
-\label{sec:discussion_preliminaries}
-%------------------------------------------------------------------------------
-These preliminaries establish the baseline context for interpreting downstream validation and correction.
+\subsection{Ground Truth Constructs: GT Lit vs.\ GT Synth}
+Two ground-truth choices in this thesis correspond to two different constructs.
+\textbf{Ground Truth from Literature (GT Lit)} treats published expert CLDs as the reference edge set over a fixed variable set: an edge \textit{present} in the expert CLD is treated as reference-positive; an edge \textit{absent} is treated as reference-negative. Under this operationalisation, ``hallucination'' is disagreement with the expert CLD: \textbf{FP} = generated edge absent from the expert CLD, and \textbf{FN} = expert edge the generator missed.
+\textbf{Ground Truth from Synthetic Corruption (GT Synth)} uses controlled corruptions (polarity flips, spurious edges, motivation changes) applied to LLM-generated CLDs, yielding known error labels (\texttt{corrupted=True}) with high internal validity.
 
-\subsection{Model Selection Rationale}
+\subsection{Interpretation Caveat: Error vs.\ Scope Disagreement}
+Treating expert CLDs as absolute ground truth is a practical operationalisation, but it conflates at least two sources of disagreement: (i) genuine model error and (ii) expert scope choices, construct mappings, or literature incompleteness. An edge absent from an expert CLD may reflect genuine non-causality, but it may also be omitted for scope or representation reasons. This ambiguity becomes central in the RQ3 Deep Research analysis, where many ``false positives'' admit retrievable causal evidence, suggesting that some FP mass may represent \emph{contested edges} rather than straightforward hallucinations.
 
-GPT-4.1 was selected as the primary generator over Sonar-Pro (F1=0.170) and Claude-Sonnet-4 (F1=0.154) for two principal reasons. First, GPT-4.1 achieved the best micro-average F1 (0.278) across all CLDs through balanced precision-recall trade-offs. While Claude-Sonnet-4 demonstrated extreme recall (0.932), its poor precision (0.084) indicated a tendency to generate many spurious edges. Second, GPT-4.1 was unique among the models in providing logprob access through its API, which was essential for the RQ2 experiments on uncertainty quantification.
-
-\subsection{Random Baseline Comparison}
-
-The generator's 2.2--3.4$\times$ F1 improvement over a Monte Carlo random baseline provides evidence that LLM-based CLD generation is not purely random and is partially aligned with our ground truth dataset of published CLDs. This improvement over random wiring is consistent with the interpretation that the generator leverages patterns captured in its learned representations. Whether the LLM can reproduce this performance across domains remains an open question; the health-domain focus of these CLDs limits the current evidence.
-
-\subsection{Definitions of Ground Truth, Hallucination, and Transfer Validity}
-
-Before discussing judge performance, we clarify the operational definitions used throughout this thesis.
-
-\textbf{Ground Truth from Literature (GT Lit):} Published expert CLDs define the reference edge set over a fixed variable set. Under this operationalisation, an edge \textit{present} in the expert CLD is treated as a reference-positive relationship; an edge \textit{absent} is treated as reference-negative. For evaluation we define ``hallucination'' as disagreement with this reference: \textbf{FP} = generated edge absent from the expert CLD, and \textbf{FN} = expert edge the generator missed.
-
-\textbf{Ground Truth from Synthetic Corruption (GT Synth):} Controlled corruptions (polarity flips, spurious edges, motivation changes) applied to LLM-generated CLDs provide known error labels (\texttt{corrupted=True}) with high internal validity.
-
-\textbf{Hallucination:} We operationalise hallucination as disagreement with the chosen ground truth. In GT Lit this includes both false positives and false negatives. This differs from the broader literature, which typically restricts ``hallucination'' to false positives (confabulations) rather than omissions.
-
-While necessary for quantitative evaluation, treating expert CLDs as absolute ground truth is an acknowledged oversimplification. Expert models inevitably encode biases, knowledge gaps, and scope decisions. An edge absent from an expert CLD may reflect genuine expert knowledge that the relationship does not exist, but it could also reflect scope limitations or construct/variable-mapping choices. RQ3 directly explores this issue, finding that 62.4\% of false positives have retrievable causal evidence---suggesting that the ground truth itself may be incomplete.
-
-%------------------------------------------------------------------------------
-\section{RQ1a (Correctness Judge): Judge Performance}
-\label{sec:discussion_rq1a_correctness}
-%------------------------------------------------------------------------------
-The key discussion-level implication is that correctness judging is informative as a \textit{screening signal}, but its reliability depends on the ground-truth construct (GT~Synth vs.\ GT~Lit) and the domain, motivating a mechanism-level analysis of where and why it fails.
-
-%------------------------------------------------------------------------------
-\section{RQ1a (Citation Judge): Judge Performance}
-\label{sec:discussion_rq1a_citation}
-%------------------------------------------------------------------------------
-Citation judging reframes edge validation as an \textit{evidence assessment} problem. Its practical limitations are therefore shaped by retrieval bias, evidence specificity, and aggregation choices---all of which motivate the failure-mode analysis below.
-
-\subsection{Implementation considerations and aggregation limitations}
-\label{sec:discussion_citation_aggregation}
-
-The citation-judge pipeline in this thesis uses a shallow, cost-constrained \emph{generate-then-search} approach: the model first generates a causal narrative and then retrieves and evaluates supporting snippets post hoc. This design increases recall (generation is not retrieval-bounded) but introduces several interpretation-relevant limitations. First, because queries are derived from the model's own narrative, retrieval is susceptible to confirmation bias and can preferentially surface topically aligned but non-causal evidence. Second, \texttt{NONE} (negative) claims are intrinsically hard to validate: absence of retrieved evidence can be misinterpreted as support (an ``evidence of absence'' asymmetry). Third, aggregation matters: in this thesis, per-citation verdicts are mapped to scores and aggregated by a simple mean, which is sensitive to citation count, search ranking, fetch failures (missing-at-random is not guaranteed), and redundant sources.
-
-Future work should therefore treat aggregation and selection as first-class design choices (not just implementation details), e.g., using median or top-$k$/max rules, or adding an explicit evidence-selection step (reranker/verifier) that chooses the single most informative citation for a more expensive causal judgement rather than averaging over mixed-quality evidence.
+\subsection{Where the Baselines Live}
+To avoid duplicating results, generator model selection and random-baseline comparisons are reported in the Results chapter (Sections~\ref{sec:results_generator_model_comparison} and~\ref{sec:results_generator_baseline_validation}). The discussion below assumes those baselines and focuses on mechanism-level interpretation.
 
 %------------------------------------------------------------------------------
 \section{Mechanisms of Judge Failure}
@@ -132,6 +98,25 @@ These cases demonstrate that citation judging is sensitive to retrieval artefact
 \subsection{Domain-Dependent Failure: The Social Norms Anomaly}
 
 In the Social Norms CLD, all prompts failed to reliably discriminate hallucinations from valid edges, with high variance and confidence intervals barely exceeding chance level in AUC. This could reflect the complexity of the Social Norms domain, where causal mechanisms are behavioural and context-dependent rather than physiological, or it could indicate limitations in the literature ground truth quality for this domain. This limitation may stem from the Bradford Hill Criteria themselves, which were originally designed to assess causality in epidemiology and health sciences. Future research should investigate whether domain-adapted prompts or alternative causal frameworks would improve performance in behavioural domains.
+
+%------------------------------------------------------------------------------
+\section{RQ1a (Correctness Judge): Judge Performance}
+\label{sec:discussion_rq1a_correctness}
+%------------------------------------------------------------------------------
+The key discussion-level implication is that correctness judging is informative as a \textit{screening signal}, but its reliability depends on the ground-truth construct (GT~Synth vs.\ GT~Lit) and the domain. The mechanisms in Section~\ref{sec:discussion_failure_mechanisms} explain why correctness-only judging can collapse into a coherence check under plausible corruptions and why this failure can intensify in behavioural domains.
+
+%------------------------------------------------------------------------------
+\section{RQ1a (Citation Judge): Judge Performance}
+\label{sec:discussion_rq1a_citation}
+%------------------------------------------------------------------------------
+Citation judging reframes edge validation as an \textit{evidence assessment} problem. Its practical limitations are therefore shaped by retrieval bias, evidence specificity, and aggregation choices---all of which are reflected in the failure mechanisms in Section~\ref{sec:discussion_failure_mechanisms}.
+
+\subsection{Implementation considerations and aggregation limitations}
+\label{sec:discussion_citation_aggregation}
+
+The citation-judge pipeline in this thesis uses a shallow, cost-constrained \emph{generate-then-search} approach: the model first generates a causal narrative and then retrieves and evaluates supporting snippets post hoc. This design increases recall (generation is not retrieval-bounded) but introduces several interpretation-relevant limitations. First, because queries are derived from the model's own narrative, retrieval is susceptible to confirmation bias and can preferentially surface topically aligned but non-causal evidence. Second, \texttt{NONE} (negative) claims are intrinsically hard to validate: absence of retrieved evidence can be misinterpreted as support (an ``evidence of absence'' asymmetry). Third, aggregation matters: in this thesis, per-citation verdicts are mapped to scores and aggregated by a simple mean, which is sensitive to citation count, search ranking, fetch failures (missing-at-random is not guaranteed), and redundant sources.
+
+Future work should therefore treat aggregation and selection as first-class design choices (not just implementation details), e.g., using median or top-$k$/max rules, or adding an explicit evidence-selection step (reranker/verifier) that chooses the single most informative citation for a more expensive causal judgement rather than averaging over mixed-quality evidence.
 
 %------------------------------------------------------------------------------
 \section{Empirical Validation: LLM--Human Agreement in CLD Evaluation}

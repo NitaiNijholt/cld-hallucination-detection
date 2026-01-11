@@ -1,26 +1,11 @@
 %==============================================================================
-% Discussion Intro (draft scratchpad)
+% Discussion chapter opening
 %==============================================================================
 %
-% Use this file to draft/iterate on the opening of the Discussion chapter.
-% It is NOT included anywhere by default.
-%
-% If you want to include it in the thesis build later, add one of:
-%   \input{Chapters/Discussion_intro}
-% or (if already inside Chapters/Discussion.tex):
-%   \input{Discussion_intro}
+% This file is included from Chapters/Discussion.tex.
+% Keep it focused on (i) framing and (ii) a single roadmap for the chapter.
 %
 % -----------------------------------------------------------------------------
-
-% === Start writing here ===
-
-% Example scaffold (delete/replace freely):
-% \noindent
-% This chapter synthesizes the results across RQ1--RQ3 and explains what they
-% imply for corpus-independent CLD generation, hallucination detection, and
-% evidence-grounded validation. We first restate the core empirical takeaways,
-% then interpret failure modes and boundary conditions, and finally discuss
-% practical deployment guidance and future work.
 
 \noindent
 This chapter synthesizes the results from RQ1--RQ3 on corpus-independent causal loop diagram (CLD) edge generation and hallucination mitigation. We evaluated two LLM-as-a-Judge approaches (correctness-based and citation-based), an LLM-as-a-corrector loop, and generator-side uncertainty quantification (UQ) metrics across three health-domain CLDs. To separate controlled from ecological settings, we test both synthetic ground truth (GT Synth; known corruptions) and literature ground truth (GT Lit; deviation from published expert CLDs). Finally, we explore adaptive test-time compute via an exploratory pilot of Deep Research (DR): multi-agent literature search for direct causal evidence, including a judge-triggered ``smart deployment'' estimate.
