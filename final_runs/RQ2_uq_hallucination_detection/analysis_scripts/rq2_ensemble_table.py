@@ -143,21 +143,11 @@ def generate_ensemble_table():
             p6_results = phase6_data[clf]
             aucs = [r['auc'] for r in p6_results]
             f1s = [r.get('f1') for r in p6_results if r.get('f1') is not None]
-            aps = [r.get('ap') for r in p6_results if r.get('ap') is not None]
             
             row['p6_mean'] = np.mean(aucs)
             p6_std = np.std(aucs, ddof=1)
             n_clds = len(aucs)
             row['p6_ci'] = calc_ci_hw(p6_std, n_clds) if n_clds > 1 else None
-            
-            # PR AUC
-            if len(aps) == len(aucs) and len(aps) > 0:
-                row['p6_ap_mean'] = float(np.mean(aps))
-                p6_ap_std = float(np.std(aps, ddof=1)) if len(aps) > 1 else 0.0
-                row['p6_ap_ci'] = calc_ci_hw(p6_ap_std, len(aps)) if len(aps) > 1 else None
-            else:
-                row['p6_ap_mean'] = None
-                row['p6_ap_ci'] = None
             
             # Deployment-aligned metric: F1 at fixed threshold t* (selected on Phase 5 training only)
             if len(f1s) == len(aucs) and len(f1s) > 0:
@@ -170,8 +160,6 @@ def generate_ensemble_table():
         else:
             row['p6_mean'] = None
             row['p6_ci'] = None
-            row['p6_ap_mean'] = None
-            row['p6_ap_ci'] = None
             row['p6_f1_mean'] = None
             row['p6_f1_ci'] = None
         
@@ -247,11 +235,11 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \begin{threeparttable}
 \setlength{\tabcolsep}{2pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Classifier} & \multicolumn{2}{c}{\textbf{Phase 5}} & \multicolumn{2}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} & \textbf{F1@t*} \\
- & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{(5$\rightarrow$6)} & \textbf{($\pm$ 95\% CI)} \\
- & \textbf{($\pm$ 95\% CI)} &  & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} &  &  \\
+\textbf{Classifier} & \multicolumn{2}{c}{\textbf{Phase 5}} & \textbf{Phase 6: Cross-CLD} & \textbf{Drop} & \textbf{F1@t*} \\
+ & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC ($\pm$ 95\% CI)} & \textbf{(5$\rightarrow$6)} & \textbf{($\pm$ 95\% CI)} \\
+ & \textbf{($\pm$ 95\% CI)} &  &  &  &  \\
 \midrule
 """
     
@@ -260,7 +248,6 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
         latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
         latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
-        latex += f"{fmt_auc(row['p6_ap_mean'], row['p6_ap_ci'])} & "
         latex += f"{fmt_drop(row['drop'])} & "
         latex += f"{fmt_f1(row['p6_f1_mean'], row['p6_f1_ci'])} \\\\\n"
         if i < len(rows) - 1:
@@ -275,7 +262,7 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
     latex += rf"""\item \textit{{Note.}} Block-level evaluation uses blocks = (CLD$\times$run, $N={n_blocks}$); entire blocks stay together in train/test splits to reduce pseudo-replication.
 \textbf{{Phase 5 (CV AUC):}} {n_folds}-fold GroupKFold over blocks ($\sim$67\% train / $\sim$33\% validation per fold); CI shown over folds ($n={n_folds}$).
 \textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); point estimate only (no CI shown in the table).
-\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out evaluation: for each held-out CLD, train on the other 2 CLDs and evaluate on that CLD's blocks; AUC/PR-AUC/F1 are reported as mean $\pm$ 95\% CI over the 3 held-out-CLD folds ($n=3$). F1 uses a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1, then frozen for Phase~6.
+\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out evaluation: for each held-out CLD, train on the other 2 CLDs and evaluate on that CLD's blocks; AUC and F1 are reported as mean $\pm$ 95\% CI over the 3 held-out-CLD folds ($n=3$). F1 uses a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1, then frozen for Phase~6.
 \textbf{{Uncertainty:}} Columns with $\pm$95\% CI use the $t$-distribution with $df=n-1$ over folds, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """

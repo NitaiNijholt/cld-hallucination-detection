@@ -254,7 +254,7 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir, thres
             f1 = f1_score(y_test, y_pred, zero_division=0)
             f1_05 = f1_score(y_test, y_pred_05, zero_division=0)
             
-            # Keep PR-AUC in saved results for the table, but avoid surfacing it in console output
+            # Keep PR-AUC computation available internally, but avoid surfacing it in console output
             # to reduce interpretation burden in iterative runs.
             print(f"  {test_cld:25s}: AUC={auc:.3f}, F1@t*={f1:.3f} (F1@0.5={f1_05:.3f})")
             
