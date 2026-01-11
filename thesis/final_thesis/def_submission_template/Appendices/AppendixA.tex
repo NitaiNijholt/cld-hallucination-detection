@@ -1015,6 +1015,89 @@ Statistical Test & One-sample $t$-test vs.\ 0.5 \\
 \end{tabular}
 \end{table}
 
+\begin{table}[H]
+\centering
+\caption{RQ2 Shared Experimental Configuration}
+\label{tab:rq2_shared_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+CI Metrics & Gen Perplexity, Gen Min Prob, Gen Max Window Entropy, Gen Cosine Similarity \\
+Block Definition & CLD $\times$ run ($N=9$: 3 CLDs $\times$ 3 runs) \\
+Hallucination Label & FP or FN w.r.t.\ GT Lit \\
+Scaler & StandardScaler \\
+Random State & 42 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Phases 1--3 (Single-Metric Analysis) Configuration}
+\label{tab:rq2_phases123_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Data Loading}} \\
+Input Files & 63 deduplicated experiment files (36 citation, 27 correctness) \\
+Filter & Exclude corruption experiments (\texttt{exp\_type $\in$ \{citation, correctness\}}) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Hallucination Labeling}} \\
+Label & \texttt{is\_hallucination} = True if Classification $\in$ \{FP, FN\} \\
+Ground Truth & GT Lit (literature-based correctness) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Data Cleaning}} \\
+Missing Values & Remove rows with NaN in CI metric columns \\
+Infinite Values & Replace $\pm\infty$ with NaN, then drop \\
+Min Edges/File & $\geq$10 edges required \\
+Min Class Size & $\geq$2 per class (hallucination / correct) required \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Block Aggregation}} \\
+Block Key & (CLD, run) $\Rightarrow$ $N=9$ blocks \\
+Aggregation & Mean AUC per block \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Statistical Testing}} \\
+Test & One-sample Wilcoxon signed-rank on (AUC $-$ 0.5) \\
+Alternative & Two-sided \\
+Bonferroni Correction & $m=4$ tests, $\alpha_{\text{adj}}=0.0125$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Analysis Pipeline Configuration}
+\label{tab:rq2_analysis_pipeline_config}
+\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Phase} & \textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multirow{3}{*}{Phase 4 (RFE)} & Classifiers & LogReg, RandomForest, GradientBoosting \\
+ & Cross-validation & GroupKFold ($n\_splits=3$) \\
+ & Feature range & $k \in \{1,2,3,4\}$ \\
+\midrule
+\multirow{4}{*}{Phase 5 (Ensemble)} & Classifiers & LogReg, RF, GB, MLP \\
+ & Train/Test Split & 67\%/33\% (GroupShuffleSplit) \\
+ & CV on training & 3-fold GroupKFold \\
+ & Class weighting & balanced (LogReg, RF) \\
+\midrule
+\multirow{2}{*}{Phase 6 (LOCO)} & Protocol & Leave-one-CLD-out \\
+ & Scaling & StandardScaler (fit on training CLDs) \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Classifier Hyperparameters}} \\
+Logistic Regression & & max\_iter=1000, class\_weight=balanced \\
+Random Forest & & n\_estimators=100, class\_weight=balanced \\
+Gradient Boosting & & n\_estimators=100 \\
+Neural Network (MLP) & & hidden\_layers=(32,16), max\_iter=2000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{RQ3 Deep Research Experiments}
 \label{sec:rq3_execution}
 
@@ -1119,6 +1202,59 @@ Eligible for Promotion & Edges with direct\_causal\_found=True \\
 \multicolumn{2}{@{}l}{\textit{Human Calibration (for extrapolation)}} \\
 Applicability Threshold & 0.7 (selected via elbow/gradient rule) \\
 Sample Size & 50 edges (stratified by CLD $\times$ classification) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ3 Human Validation Configuration}
+\label{tab:rq3_human_validation_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Sample Size & 50 edges (29.6\% of 169 eligible) \\
+Random Seed & 42 \\
+Sampling Method & Proportional stratified (CLD $\times$ classification) \\
+Filter & direct\_causal\_found = True \\
+Verdict Categories & causal, different\_vars, invalid \\
+Applicability Score & Continuous $\in [0, 1]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ3 Threshold Selection Configuration}
+\label{tab:rq3_threshold_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Thresholds Tested & $t \in \{0.5, 0.6, 0.7, 0.8, 0.9\}$ \\
+CI Method & Wilson score interval ($\alpha=0.05$) \\
+Elbow Rule & $\text{score} = \Delta x / |\Delta y|$ \\
+Selected Threshold & $t^* = 0.7$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ3 Smart Trigger Configuration}
+\label{tab:rq3_smart_trigger_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Trigger Threshold & mean(Aggregate Score) $\leq 0.5$ \\
+Judge Used & Mechanistic Correctness (GT Lit) \\
+Applicability Threshold & 0.7 \\
+Aggregation & Mean score across 9 runs \\
 \bottomrule
 \end{tabular}
 \end{table}

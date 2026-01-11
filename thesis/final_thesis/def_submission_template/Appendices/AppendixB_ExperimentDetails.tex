@@ -11,7 +11,7 @@ This appendix expands each row of Table~\ref{tab:master} into a reproducible spe
     \item \textbf{RQ \& Goal / Hypotheses:} What the experiment is testing and the expected direction of effects.
     \item \textbf{Source Data:} Which datasets/edge tables are used and how ground truth labels are defined (GT Lit vs.\ GT Synth, TP/FP/FN).
     \item \textbf{Simulation Parameters:} What varies vs.\ what is fixed (models, prompts, seeds, corruption rate, judge temperature), aligned with the \textbf{Varies/Fixed} columns in Table~\ref{tab:master}.
-    \item \textbf{Simulation Procedure:} The operational steps (generation $\rightarrow$ judging $\rightarrow$ correction / Deep Research) and any filtering/deduplication rules.
+    \item \textbf{Simulation/Analysis Procedure:} The operational steps (generation $\rightarrow$ judging $\rightarrow$ correction / Deep Research) and any filtering/deduplication rules.
     \item \textbf{Outputs:} The artefacts produced (Excel/JSON tables, scores, plots) and where they enter downstream analyses.
     \item \textbf{Metrics / Statistical Analysis:} The reported metrics and inference procedure (unit of analysis, tests, and multiple-comparison family).
     \item \textbf{Reproducibility:} The exact scripts/entry points and appendix pointers needed to rerun the experiment end-to-end.
@@ -362,6 +362,7 @@ Sensitivity output directory in Appendix~\ref{sec:data_availability} (Table~\ref
     \item \textbf{Prompt distance:} MPNet~\cite{song2020mpnet} embeddings (768-dim); cosine distance from baseline: $d(p_i) = 1 - \cos(\mathbf{e}_{\text{baseline}}, \mathbf{e}_i)$
     \item \textbf{Scope:} 4 experiments $\times$ 3--4 prompt variants
 \end{itemize}
+Full configuration in Appendix Table~\ref{tab:prompt_sensitivity_config}.
 
 \paragraph{Simulation Procedure.}
 Repeated-measures ANOVA with CLD$\times$run as subjects and prompt as within-subject factor.
@@ -646,7 +647,7 @@ Test whether UQ metrics captured during generation (Section~\ref{sec:uq_metrics_
 \textbf{Source Data:}\\
 63 deduplicated GT Lit files (36 citation, 27 correctness), 31{,}704 edges, hallucination rate 15.2\%. Hallucination label: (FP or FN) w.r.t.\ GT Lit. Ensemble phases use a 16{,}507-edge subset (35 citation files) where all four metrics are available. Outputs and GT files: Appendix~\ref{sec:data_availability} (Tables~\ref{tab:experiment_datasets},~\ref{tab:gt_files}).\\
 \textbf{UQ Metrics + Parameters:}\\
-Computed from generator logprobs (Algorithms~\ref{alg:uq_metrics},~\ref{alg:classification}). Perplexity uses capped NLL averaging (token cap 20.0; average cap 10.0, bounding PPL to $\le e^{10}\approx22{,}026$); $P_{\min}$ is the minimum token probability; $H_{\text{win}}$ is max sliding-window entropy (window size 5 over top-$k$ entropies with $k{=}5$); CosSim is the max narrative--citation-chunk embedding similarity for citation experiments (embedding model all-mpnet-base-v2 from \cite{muennighoff2023mteb}).\\
+Computed from generator logprobs (Algorithms~\ref{alg:uq_metrics},~\ref{alg:classification}). Perplexity uses capped NLL averaging (token cap 20.0; average cap 10.0, bounding PPL to $\le e^{10}\approx22{,}026$); $P_{\min}$ is the minimum token probability; $H_{\text{win}}$ is max sliding-window entropy (window size 5 over top-$k$ entropies with $k{=}5$); CosSim is the max narrative--citation-chunk embedding similarity for citation experiments (embedding model all-mpnet-base-v2 from \cite{muennighoff2023mteb}). Full shared configuration in Appendix Table~\ref{tab:rq2_shared_config}.\\
 \textbf{Outputs:}\\
 Per-edge metric values, per-file AUCs, and classifier predictions; schemas in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).\\
 \textbf{Metrics:}\\
@@ -712,11 +713,20 @@ Figure~\ref{fig:rq2_distributions_by_cld} (Chapter~\ref{ch:results}).
 %------------------------------------------------------------------------------
 
 \noindent\textbf{Simulation Procedure (6 phases):}\\
-\textbf{Phases 1--3 (single-metric):} compute per-file AUC-ROC, aggregate to blocks ($N{=}9$), and test above-chance discrimination via one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$.\\
+\textbf{Phases 1--3 (single-metric analysis):}\\
+\textit{Data loading:} Load 63 deduplicated experiment files from inventory (36 citation, 27 correctness); exclude corruption experiments.\\
+\textit{Hallucination labeling:} \texttt{is\_hallucination} = True if Classification $\in$ \{FP, FN\} w.r.t.\ GT Lit.\\
+\textit{Data cleaning:} Remove rows with missing or infinite CI metric values (dropna on feature columns + label).\\
+\textit{Per-file analysis:} Compute AUC-ROC for each file (hallucination vs.\ correct); require $\geq$10 edges and $\geq$2 per class.\\
+\textit{Block aggregation:} Group files by (CLD $\times$ run) to form $N{=}9$ blocks; compute mean AUC per block.\\
+\textit{Statistical test:} One-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ across blocks (Bonferroni: $m{=}4$, $\alpha_{\text{adj}}{=}0.0125$).\\
+Full configuration in Appendix Table~\ref{tab:rq2_phases123_config}.\\
 \textbf{Phase 4 (RFE):} Recursive Feature Elimination~\cite{pedregosa2011sklearn} with \texttt{GroupKFold(n\_splits=3)} over blocks; classifiers: LogReg, RF, GradBoost.\\
 \textbf{Phase 5 (ensemble):} block-level train/test split (67\%/33\%) via \texttt{GroupShuffleSplit} and model selection on training blocks via \texttt{GroupKFold}; four classifiers including a neural network.\\
 \textbf{Classifier families:} brief algorithm notes for LR/RF/GB/MLP appear in Appendix~\ref{sec:rq2_classifier_notes}.\\
 \textbf{Phase 6 (LOCO):} leave-one-CLD-out evaluation for cross-domain generalisation. Full formal specification in Appendix~\ref{alg:classification}.\\
+\textbf{Simulation Parameters:}\\
+Full pipeline configuration in Appendix Table~\ref{tab:rq2_analysis_pipeline_config}.\\
 \textbf{Reproducible splitting protocol (Phases 4--6):}\\
 Grouping key is \texttt{block\_id=cld\_run} (3 CLDs $\times$ 3 runs $\Rightarrow N{=}9$); rows are deterministically sorted by \((\texttt{block\_id}, \texttt{source\_file})\) prior to any group split; scaling uses \texttt{StandardScaler} fit on training blocks only.\\
 Phase 4 holds out 3 blocks and trains on 6; evaluates \(k \in \{1,2,3,4\}\) and selects the \(k\) maximizing validation AUC per fold.\\
@@ -817,6 +827,9 @@ Two enrichment scenarios:
     \item \textbf{Scenario 2 (LLM+DR):} Additionally add DR-validated FNs to system output.
 \end{itemize}
 
+\paragraph{Simulation Parameters.}
+Full configuration in Appendix Table~\ref{tab:gt_enrichment_config}.
+
 \paragraph{Caveats.}
 Domain variation (28\% Depressive Symptoms vs 76\% Emergency Department FP promotion), evidence specificity concerns, circularity risk (LLM validating LLM), no expert review. Results exploratory.
 
@@ -839,6 +852,9 @@ Validate DR verdicts via human review to establish applicability thresholds and 
 
 \paragraph{Annotation Procedure.}
 Human reviewer assigns categorical verdict (\texttt{causal}, \texttt{different\_vars}, \texttt{invalid}) and continuous applicability score $\in[0,1]$ using the applicability rubric in Appendix Table~\ref{tab:human-validation-rubric-rq3}: 1.0 = exact match; 0.8--0.9 = different operationalisations; $\approx$0.7 = partial claim; $\approx$0.6 = proxy constructs; $\leq$0.5 = weak/non-causal evidence.
+
+\paragraph{Simulation Parameters.}
+Full configuration in Appendix Table~\ref{tab:rq3_human_validation_config}.
 
 \paragraph{Results.}
 Figure~\ref{fig:rq3_human_validation_elbow}, Table~\ref{tab:rq3_human_validation_tradeoff}, Table~\ref{tab:rq3_verdict_distribution} (Chapter~\ref{ch:results}).
@@ -864,6 +880,9 @@ Determine applicability threshold for filtering DR verdicts and extrapolate enri
 
 \paragraph{Extrapolation Procedure.}
 Sensitivity analysis across $t \in \{0.5, 0.6, 0.7, 0.8, 0.9\}$. For each threshold, compute coverage (pass rate) and correct-causal rate with Wilson 95\% CI. Select threshold via gradient-based elbow rule on coverage--correctness curve.
+
+\paragraph{Simulation Parameters.}
+Full configuration in Appendix Table~\ref{tab:rq3_threshold_config}.
 
 \paragraph{Metrics.}
 \begin{itemize}[noitemsep]
@@ -892,7 +911,7 @@ Figure~\ref{fig:rq3_human_validation_elbow}, Table~\ref{tab:rq3_human_validation
 
 \subsubsection{Smart Trigger}
 \label{sec:rq3_smart_trigger}
-Estimate a cost-efficient DR deployment policy by triggering DR only on edges flagged as uncertain by the strongest GT Lit Correctness Judge (Mechanistic prompt). We compute an aggregate per-edge judge score (mean over runs) and mark edges with score $\leq 0.5$ as triggered. We then evaluate the triggered subset using DR outputs and extrapolate expected $\Delta$F1/\$ under human-calibrated applicability thresholds (see Results Figure~\ref{fig:rq3_dr_cost_efficiency} and Methods Section~\ref{sec:rq3_threshold_selection}).\\
+Estimate a cost-efficient DR deployment policy by triggering DR only on edges flagged as uncertain by the strongest GT Lit Correctness Judge (Mechanistic prompt). We compute an aggregate per-edge judge score (mean over runs) and mark edges with score $\leq 0.5$ as triggered. We then evaluate the triggered subset using DR outputs and extrapolate expected $\Delta$F1/\$ under human-calibrated applicability thresholds (see Results Figure~\ref{fig:rq3_dr_cost_efficiency} and Methods Section~\ref{sec:rq3_threshold_selection}). Full configuration in Appendix Table~\ref{tab:rq3_smart_trigger_config}.\\
 \textbf{Reproducibility:} Scripts in \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/} (see Appendix~\ref{sec:code_availability}).
 
 \endgroup
