@@ -49,16 +49,25 @@ Table~\ref{tab:function_mapping} provides the complete tracing from result direc
 
 This appendix provides comprehensive information for replicating all experiments, including data availability, code locations, software environment specifications, and exact execution commands.
 
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Reproduction Scope.} A public reproduction snapshot is available at \url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction}). This repository supports \textbf{analysis reproduction}---regenerating all thesis figures and tables from the included experimental result datasets using the unified analysis pipelines. \textbf{Simulation/data-generation} (i.e., re-running the original experiments to produce new result datasets) requires the private platform repository (\texttt{CausalixAI/platform}, branch: \texttt{thesis-nitai}), which contains proprietary infrastructure and external API dependencies not included in the public snapshot.
+
+Paths in this appendix reference the public reproduction repository structure unless otherwise noted. Execution scripts for simulation (Section~\ref{sec:execution_commands}, Tables~\ref{tab:exec_scripts}) are documented for completeness but require access to the private platform.
+}}
+\end{center}
+
 \section{Data Availability}
 \label{sec:data_availability}
 
 \subsection{Ground Truth CLD Datasets}
 
-The three ground truth CLD datasets used in all experiments are located in:
+The three ground truth CLD datasets used in all experiments are available in JSON format within the public reproduction repository:
 \begin{verbatim}
-data_science/parameter_tuning_experiments/
-    ground_truth_clds_for_experiments/
+final_runs/analysis_lib/data/ground_truth_clds/
 \end{verbatim}
+
+\noindent These JSON files contain edge definitions, variable sets, and context data extracted from the original literature-derived CLDs. The analysis scripts use these files to compute ground-truth labels (TP/FP/FN) for edge evaluation.
 
 \begin{table}[H]
 \centering
@@ -144,23 +153,23 @@ Water Tank & 6 & 7 & Pascal's Law~\cite{pascal1663equilibre}; Torricelli's Law~\
 \textbf{RQ} & \textbf{Experiment} & \textbf{Files} & \textbf{Location} \\
 \midrule
 \multirow{4}{*}{RQ1a} 
-  & GT Lit Correctness & 27 & \texttt{final\_runs/RQ1a\_ground\_truth\_correctness/} \\
-  & GT Lit Citation & 36 & \texttt{final\_runs/RQ1a\_ground\_truth\_citation/} \\
-  & GT Synth Correctness & 27 & \texttt{final\_runs/RQ1a\_corruption\_detection\_correctness\_final/} \\
-  & GT Synth Citation & 36 & \texttt{final\_runs/RQ1a\_corruption\_detection\_citation\_gpt5mini/} \\
+  & GT Lit Correctness & 27 & \texttt{final\_runs/RQ1a\_gt\_lit\_correctness/} \\
+  & GT Lit Citation & 36 & \texttt{final\_runs/RQ1a\_gt\_lit\_citation/} \\
+  & GT Synth Correctness & 27 & \texttt{final\_runs/RQ1a\_gt\_synth\_correctness/} \\
+  & GT Synth Citation & 36 & \texttt{final\_runs/RQ1a\_gt\_synth\_citation/} \\
 \midrule
 \multirow{2}{*}{RQ1b}
-  & Correction GT Synth & 27 & \texttt{final\_runs/RQ1b\_correction\_experiment\_corruption/} \\
-  & Correction GT Lit & 27 & \texttt{final\_runs/RQ1b\_correction\_experiment\_ground\_truth/} \\
+  & Correction GT Synth & 27 & \texttt{final\_runs/RQ1b\_corrector\_experiment\_corruption\_*/} \\
+  & Correction GT Lit & 27 & \texttt{final\_runs/RQ1b\_corrector\_experiment\_ground\_truth\_*/} \\
 \midrule
-RQ2 & UQ Metrics Analysis & 63 & \texttt{final\_runs/RQ2\_hallucination\_detection/} \\
+RQ2 & UQ Metrics Analysis & 63 & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/} \\
 \midrule
-RQ3 & Deep Research & 285 edges & \texttt{final\_runs/RQ3\_deep\_research/} \\
+RQ3 & Deep Research & 285 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/} \\
 \midrule
 \multirow{3}{*}{Prelim.}
-  & Generator Comparison & 9 & \texttt{final\_runs/generator\_model\_comparison\_analysis/} \\
-  & Temperature Sensitivity & 45 & \texttt{final\_runs/temperature\_sensitivity/} \\
-  & Random Baseline & 3,000 & \texttt{final\_runs/random\_baseline\_generator/} \\
+  & Generator Comparison & 9 & \texttt{final\_runs/prelim\_generator\_model\_comparison/} \\
+  & Temperature Sensitivity & 45 & \texttt{final\_runs/prelim\_temperature\_sensitivity/} \\
+  & Random Baseline & 3,000 & \texttt{final\_runs/prelim\_random\_baseline\_generator/} \\
 \midrule
 Sens. & Prompt Sensitivity & 4 exp. & \texttt{final\_runs/Sensitivity\_analysis\_simple/} \\
 \bottomrule
@@ -173,29 +182,36 @@ All experimental results are stored in the \texttt{final\_runs/} directory:
 
 \begin{verbatim}
 final_runs/
-+-- RQ1a_gt_lit_correctness/          [Ground Truth Literature - Correctness Judge]
-|   +-- Data/depressive/run_{1,2,3}/
-|   +-- Data/emergency_department/run_{1,2,3}/
-|   +-- Data/social_norms/run_{1,2,3}/
-|   +-- Output/                       [analysis outputs]
-+-- RQ1a_gt_lit_citation/             [Ground Truth Literature - Citation Judge]
-+-- RQ1a_gt_synth_correctness/        [Ground Truth Synthetic - Correctness Judge]
-+-- RQ1a_gt_synth_citation/           [Ground Truth Synthetic - Citation Judge]
-+-- RQ1b_corrector_ablation/          [Corrector ablation analysis]
-+-- RQ1b_corrector_gt_lit_correctness/    [Corrector GT Lit experiments]
-+-- RQ1b_corrector_gt_synth_correctness/  [Corrector GT Synth experiments]
++-- reproduce_all_thesis_assets.py    [Master reproduction script]
++-- RQ1_unified_analysis.py           [RQ1 analysis pipeline]
++-- RQ2_unified_analysis.py           [RQ2 analysis pipeline]
++-- RQ3_unified_analysis.py           [RQ3 analysis pipeline]
++-- SUPP_unified_analysis.py          [Supplementary analyses]
++-- PRELIM_unified_analysis.py        [Preliminary analyses]
++-- create_thesis_figure_structure.py [Maps outputs to thesis paths]
++-- analysis_lib/                     [Self-contained analysis code]
+|   +-- analyze_rq1a_*.py             [RQ1a analysis scripts]
+|   +-- logit_metrics.py              [Embedding utilities]
+|   +-- data/ground_truth_clds/       [Ground truth CLD JSON files]
++-- RQ1a_gt_lit_correctness/          [GT Lit - Correctness Judge]
+|   +-- depressive/run_{1,2,3}/       [Per-CLD result files]
+|   +-- emergency_department/run_{1,2,3}/
+|   +-- social_norms/run_{1,2,3}/
++-- RQ1a_gt_lit_citation/             [GT Lit - Citation Judge]
++-- RQ1a_gt_synth_correctness/        [GT Synth - Correctness Judge]
++-- RQ1a_gt_synth_citation/           [GT Synth - Citation Judge]
++-- RQ1b_corrector_experiment_*/      [Corrector experiments (by prompt)]
 +-- RQ2_uq_hallucination_detection/   [UQ metrics analysis]
 +-- RQ3_deep_research_validation/     [Deep Research validation]
 +-- validation_RQ1_truthfulqa_judge/  [TruthfulQA benchmark]
-+-- validation_RQ1a_physics_clds/     [physics CLD judge validation]
-+-- validation_RQ1a_ulemans_external/ [external CLD validation]
-+-- prelim_generator_model_comparison/    [generator model selection]
-+-- prelim_random_baseline_generator/     [random graph baseline]
-+-- supp_cost_analysis/               [API cost computations]
-+-- supp_embedding_benchmark/         [embedding model comparison]
-+-- supp_parallelization_benchmark/   [parallelization speedup]
-+-- supp_prompt_sensitivity/          [prompt sensitivity]
-+-- supp_time_cost_scaling/           [scaling analysis]
++-- validation_RQ1a_physics_clds/     [Physics CLD validation]
++-- validation_RQ1a_ulemans_external/ [Uleman's CLD validation]
++-- prelim_generator_model_comparison/    [Generator model selection]
++-- prelim_random_baseline_generator/     [Random graph baseline]
++-- prelim_temperature_sensitivity/       [Temperature sensitivity]
++-- supp_parallelization_benchmark/       [Parallelization speedup]
++-- supp_prompt_sensitivity/              [Prompt sensitivity]
++-- supp_time_cost_scaling/               [Time/cost scaling]
 \end{verbatim}
 
 \section{Code Availability}
@@ -237,15 +253,15 @@ All execution scripts located in: \texttt{data\_science/parameter\_tuning\_exper
 \textbf{Analysis} & \textbf{Script Path} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1a: LLM-as-Judge}} \\
-RQ1a Aggregate Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyse\_rq1a\_aggregate\_enhanced.py} \\
-RQ1a Ground Truth Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyse\_rq1a\_ground\_truth\_enhanced.py} \\
+RQ1a Aggregate Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_aggregate\_enhanced.py} \\
+RQ1a Ground Truth Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_ground\_truth\_enhanced.py} \\
 Physics CLD Validation & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/analyse\_physics\_cld\_results.py} \\
 Physics CLD Test Runner & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} \\
 Uleman's Provider Comparison & \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} \\
 TruthfulQA Verification & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/runner/truthqa\_judge\_baseline\_correctness.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1b: Corrector}} \\
-RQ1b Results Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyse\_corrector\_ablation.py} \\
+RQ1b Results Analysis & \texttt{final\_runs/RQ1b\_corrector\_ablation\_analysis/scripts/analyze\_corrector\_ablation.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: UQ Metrics}} \\
 RQ2 Master Report & \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
@@ -290,7 +306,9 @@ Temperature Assumption Tests & \texttt{final\_runs/temperature\_sensitivity\_ass
 \subsection{Complete \texttt{final\_runs/} Script and Command Inventory}
 \label{sec:final_runs_script_inventory}
 
-To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_inventory} enumerates every runnable Python script present under \texttt{final\_runs/} at thesis submission time, together with its canonical invocation from the repository root.
+To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_inventory} enumerates the key runnable Python scripts present under \texttt{final\_runs/} in the public reproduction repository, together with canonical invocations from the repository root.
+
+\noindent\textbf{Note:} Some scripts listed (particularly those requiring external API calls or database connections) may require additional configuration not included in the public snapshot. The unified analysis entry points are the recommended entry points for reproduction.
 
 \begin{table}[H]
 \centering
@@ -303,9 +321,13 @@ To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \textbf{Script} & \textbf{Canonical command (from repo root)} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Unified analysis entry points}} \\
-\texttt{final\_runs/RQ1\_unified\_analysis.py} & \texttt{python final\_runs/RQ1\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ2\_unified\_analysis.py} & \texttt{python final\_runs/RQ2\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ3\_unified\_analysis.py} & \texttt{python final\_runs/RQ3\_unified\_analysis.py} \\
+\texttt{final\_runs/reproduce\_all\_thesis\_assets.py} & \texttt{uv run python final\_runs/reproduce\_all\_thesis\_assets.py} \\
+\texttt{final\_runs/RQ1\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ1\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ2\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ2\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ3\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ3\_unified\_analysis.py} \\
+\texttt{final\_runs/SUPP\_unified\_analysis.py} & \texttt{uv run python final\_runs/SUPP\_unified\_analysis.py} \\
+\texttt{final\_runs/PRELIM\_unified\_analysis.py} & \texttt{uv run python final\_runs/PRELIM\_unified\_analysis.py} \\
+\texttt{final\_runs/VALIDATION\_unified\_analysis.py} & \texttt{uv run python final\_runs/VALIDATION\_unified\_analysis.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Top-level utilities}} \\
 \texttt{final\_runs/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/aggregate\_time\_cost\_scaling.py} \\
@@ -338,19 +360,12 @@ To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} & \texttt{python final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ3: Deep Research analysis}} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/analyse\_deep\_research\_results.py} & \texttt{python final\_runs/RQ3\_deep\_research/analyse\_deep\_research\_results.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} & \texttt{python final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/generate\_figures.py} & \texttt{python final\_runs/RQ3\_deep\_research/generate\_figures.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/run\_rq3\_analysis.py} & \texttt{python final\_runs/RQ3\_deep\_research/run\_rq3\_analysis.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/compute\_enriched\_f1\_from\_validation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/compute\_enriched\_f1\_from\_validation.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/rq3\_unified\_analysis.py} & \texttt{python ...rq3\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/analyze\_deep\_research\_results.py} & \texttt{python ...analyze\_deep\_research\_results.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/rq3\_statistical\_test.py} & \texttt{python ...rq3\_statistical\_test.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/generate\_figures.py} & \texttt{python ...generate\_figures.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/enrichment\_extrapolation.py} & \texttt{python ...enrichment\_extrapolation.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/plot\_dr\_cost\_efficiency.py} & \texttt{python ...plot\_dr\_cost\_efficiency.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost, scaling, and diagnostics}} \\
 \texttt{final\_runs/cost\_analysis/calculate\_all\_costs.py} & \texttt{python final\_runs/cost\_analysis/calculate\_all\_costs.py} \\
@@ -370,13 +385,11 @@ To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} \\
 \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} \\
 \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} \\
-\texttt{final\_runs/parallelization\_benchmark/scripts/run\_parallelization\_benchmark.py} & \texttt{python final\_runs/parallelization\_benchmark/scripts/run\_parallelization\_benchmark.py} \\
-\texttt{final\_runs/parallelization\_benchmark/scripts/analyse\_parallelization\_results.py} & \texttt{python final\_runs/parallelization\_benchmark/scripts/analyse\_parallelization\_results.py} \\
+\texttt{final\_runs/supp\_parallelization\_benchmark/analysis\_scripts/analyze\_parallelization\_results.py} & \texttt{python ...analyze\_parallelization\_results.py} \\
 \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} & \texttt{python final\_runs/power\_analysis/compute\_power\_analysis.py} \\
-\texttt{final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} & \texttt{python final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} \\
-\texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} & \texttt{python final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} \\
-\texttt{final\_runs/generator\_model\_comparison\_analysis/run\_generator\_model\_comparison.py} & \texttt{python final\_runs/generator\_model\_comparison\_analysis/run\_generator\_model\_comparison.py} \\
-\texttt{final\_runs/generator\_model\_comparison\_analysis/analyse\_generator\_models.py} & \texttt{python final\_runs/generator\_model\_comparison\_analysis/analyse\_generator\_models.py} \\
+\texttt{final\_runs/prelim\_random\_baseline\_generator/analysis\_scripts/compute\_random\_baseline.py} & \texttt{python ...compute\_random\_baseline.py} \\
+\texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py} & \texttt{python ...embedding\_benchmark\_real\_cld.py} \\
+\texttt{final\_runs/prelim\_generator\_model\_comparison/analysis\_scripts/analyze\_generator\_models.py} & \texttt{python ...analyze\_generator\_models.py} \\
 \bottomrule
 \end{tabular}%
 }% end resizebox
@@ -441,9 +454,9 @@ All dependencies are managed using \texttt{uv}, a fast Python package manager wi
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone repository and install dependencies
-git clone https://github.com/[repository]/causalix.ai.git
-cd causalix.ai
+# Clone public reproduction repository
+git clone https://github.com/NitaiNijholt/cld-hallucination-detection.git
+cd cld-hallucination-detection
 
 # Sync exact versions from lockfile
 uv sync
@@ -522,7 +535,13 @@ uv run python final_runs/RQ3_unified_analysis.py \
   --run-dir final_runs/_runs/RQ3_<timestamp>
 \end{verbatim}
 
-For a complete directory-level overview, see \texttt{final\_runs/README\_DIRECTORY\_MAP.md}.
+For a complete directory-level overview, see \texttt{final\_runs/README\_DIRECTORY\_MAP.md}. The master reproduction script \texttt{reproduce\_all\_thesis\_assets.py} orchestrates all unified analyses and maps outputs to thesis figure paths.
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Note on Execution Scripts.} The subsections below (RQ1a--RQ3 execution commands) document the original simulation scripts used to generate experimental data. These scripts reside in the private platform repository (\texttt{data\_science/parameter\_tuning\_experiments/}) and are \textbf{not included} in the public reproduction snapshot. They are documented here for completeness and to enable full replication by examiners with platform access. For analysis reproduction using pre-computed result datasets, use the unified entry points above.
+}}
+\end{center}
 
 \subsection{RQ1 Judge Verification (TruthfulQA)}
 \label{sec:truthqa_verification}
