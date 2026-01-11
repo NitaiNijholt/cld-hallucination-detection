@@ -215,19 +215,25 @@ The original RQ3 design proposed \textit{adaptive test-time compute allocation}:
 \end{enumerate}
 Our findings undermined both prerequisites. We therefore pivoted RQ3 to address: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature.''
 
-\subsection{Detection Rate Findings and Human Validation}
+\subsection{Interpretation: Why Literature Validation Has Weak Discriminative Power}
 
-Deep Research found direct causal evidence for 70.5\% of true positives versus 62.4\% of false positives---a moderate aggregate TP--FP discrimination gap of 8.1 percentage points (Cohen's $h=0.17$). The high FP validation rate reinforces the central interpretive claim (Section~\ref{sec:discussion_framing}): many ``false positives'' have retrievable causal evidence and may represent contested edges rather than straightforward hallucinations. Detection rates varied substantially by domain, with the largest gap in Depressive Symptoms (+36~pp) and the smallest in Emergency Department (+6~pp); full breakdowns are in Results Section~\ref{sec:rq3_results}.
+The moderate TP--FP discrimination gap (Results Section~\ref{sec:rq3_results}) reflects a fundamental limitation of literature-based validation: retrievable causal evidence is a necessary but not sufficient condition for expert-grounded correctness. Deep Research finds supporting literature for a majority of both true positives \emph{and} false positives because the biomedical and social-science literatures are vast, contradictory, and often report correlational or context-specific relationships that do not transfer to the expert's CLD scope. The implication is that literature retrieval cannot serve as an oracle for hallucination detection---it can only shift the burden from ``does this claim sound plausible?'' to ``does this claim have \emph{some} published support?''
 
-Human validation on 50 edges revealed that the dominant failure mode was variable mismatch: Deep Research often found causal evidence for related but different constructs (10/50 edges). Applying an applicability threshold ($\geq$0.7), 66\% of edges passed; among passing edges, 90.9\% were judged correct-causal. This suggests that with appropriate calibration, Deep Research can provide high-precision evidence support for a substantial fraction of generated edges.
+Domain variation in the TP--FP gap reinforces this interpretation. Depressive Symptoms showed the largest gap, likely because its causal claims span both well-evidenced biomedical mechanisms (where TP validation is high) and contested psychosocial relationships (where FP validation is lower). Emergency Department, by contrast, showed the smallest gap---consistent with a domain where most causal claims, whether expert-included or generator-added, can find \emph{some} healthcare-operations literature support.
 
-\subsection{Ground Truth Enrichment Analysis}
+\subsection{The Variable-Mismatch Problem}
 
-Under the strong assumption that DR-validated edges represent genuine causal relationships that experts omitted, enrichment scenarios yield substantial F1 gains (Results Table~\ref{tab:enriched_gt}). However, these represent upper bounds; human-calibrated estimates using the applicability threshold yield more conservative but still notable improvements (Results Table~\ref{tab:enriched_gt_validated}). These extrapolations should be interpreted cautiously given limited inter-rater reliability on the calibration sample.
+Human validation revealed that the dominant Deep Research failure mode was construct mismatch: retrieved evidence often supported a \emph{related} causal relationship rather than the specific variable pair in question (Results Section~\ref{sec:rq3_results}). This failure mode is not a retrieval bug but a structural consequence of LLM-based search: the system queries for semantic neighbours, and the literature rarely uses identical variable operationalisations. The practical implication is that high-confidence DR validation still requires expert review to confirm construct alignment---a bottleneck that limits full automation.
 
-\subsection{Adaptive-Trigger Deployment Analysis}
+Applying an applicability threshold ($\geq$0.7) trades recall for precision: fewer edges pass, but those that do achieve high correctness rates. This calibration approach offers a pragmatic path forward---treating DR as a \emph{triage} tool that elevates high-confidence candidates for streamlined expert review rather than as a standalone validator.
 
-To evaluate selective deployment efficiency, we triggered Deep Research only on edges flagged by the Mechanistic Correctness Judge (score $\leq$0.5). This triggered 50\% of edges while achieving 57\% of the full-deployment F1 gain---a 15\% relative efficiency improvement. This proof-of-concept demonstrates that judge-triggered Deep Research can improve cost-efficiency while retaining most validation benefit.
+\subsection{What Ground Truth Enrichment Reveals}
+
+The enrichment analysis (Results Tables~\ref{tab:enriched_gt} and~\ref{tab:enriched_gt_validated}) should be interpreted as an \emph{upper bound on potential value} rather than a validated performance gain. Under the strong assumption that DR-validated FPs represent genuine causal relationships that experts omitted, F1 gains are substantial---but this assumption conflates ``has literature support'' with ``should be in the expert CLD.'' Expert exclusion may reflect deliberate scoping, parsimony, or domain-specific validity judgements that literature retrieval cannot recapitulate. The more conservative human-calibrated estimates are therefore more realistic, though still tentative given limited inter-rater reliability on the calibration sample.
+
+\subsection{Efficiency Implications of Judge-Triggered Deployment}
+
+Selective deployment using judge scores as a trigger demonstrates that not all edges require expensive multi-agent validation. The finding that half the edges can be skipped while retaining most of the validation benefit suggests a practical cost-saving strategy: reserve Deep Research for edges where the judge is uncertain or negative, and accept generator output directly for high-confidence edges. However, this efficiency gain is contingent on judge quality---if the judge systematically passes hallucinations (as in Social Norms), triggering logic inherits those blind spots.
 
 \subsection{Limitations of the Pivot}
 
