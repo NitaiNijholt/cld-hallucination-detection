@@ -133,6 +133,9 @@ Human validation (72 edges, two judge models) yielded substantial LLM--human agr
 %------------------------------------------------------------------------------
 The key implication from RQ1b is that judge-guided correction can exhibit setting dependence and can improve judge scores without reliably improving expert-grounded alignment. This motivates conservative, human-in-the-loop deployment for correction: treat the corrector as an assistive drafting tool rather than an autonomous repair mechanism.
 
+\paragraph{Summary of corrector findings.}
+Corrector action logs show a plausible action mix (revision, type-change) that broadly matches the expected distribution given the corruption process, but action execution does not reliably translate into quality improvement. The corrector exhibits clear setting dependence: modest GT~Synth improvements do not generalise to GT~Lit, and judge score gains are more consistent than F1 gains---consistent with a Goodhart-like dynamic where the corrector satisfies the judge rather than reliably improving expert-grounded accuracy. Prompt variants showed no significant performance differences, indicating limited leverage from prompt engineering alone. Effectiveness also varied substantially across CLDs (e.g., F1 improvement on Emergency Department, F1 degradation on Social Norms and Depressive Symptoms), which is expected because the corrector is supervised by judge feedback: when judge discrimination is weak (as in Social Norms), correction becomes a noisy-label learning problem and can amplify judge biases rather than repair genuine errors.
+
 \subsection{Mechanisms of Corrector Failure (Analogous Failure-Mode Analysis)}
 \label{sec:discussion_corrector_failure_mechanisms}
 
