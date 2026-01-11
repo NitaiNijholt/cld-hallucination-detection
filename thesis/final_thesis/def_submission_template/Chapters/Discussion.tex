@@ -163,10 +163,12 @@ Corrector effectiveness varied substantially across CLDs: Emergency Department s
 
 This interpretation is consistent with the RQ1a results: Social Norms is a boundary case where even the Mechanistic correctness judge fails to discriminate on GT~Lit, while Emergency Department retains meaningful discrimination. In such a setting, the corrector is more likely to perform harmful edits (e.g., over-pruning plausible edges or rewriting relationships toward generic-but-judge-pleasing formulations), reducing GT~Lit F1 even as judge scores improve. Depressive Symptoms sits between these extremes: it contains a mixture of more ``biomedical/mechanistic'' relationships (where judge feedback may be useful) and more context-dependent psychosocial relationships (where the judge may be less reliable), making net effects prompt- and edge-mix-dependent.
 
-\paragraph{Summary of corrector findings.}
+\subsection{When Correction Helps vs.\ Harms}
+
 Corrector action logs show a plausible action mix (revision, type-change) that broadly matches the expected distribution given the corruption process, but action execution does not reliably translate into quality improvement. The corrector exhibits clear setting dependence: modest GT~Synth improvements do not generalise to GT~Lit, and judge score gains are more consistent than F1 gains---consistent with a Goodhart-like dynamic where the corrector satisfies the judge rather than reliably improving expert-grounded accuracy. Prompt variants showed no significant performance differences, indicating limited leverage from prompt engineering alone. Effectiveness also varied substantially across CLDs (e.g., F1 improvement on Emergency Department, F1 degradation on Social Norms and Depressive Symptoms), which is expected because the corrector is supervised by judge feedback: when judge discrimination is weak (as in Social Norms), correction becomes a noisy-label learning problem and can amplify judge biases rather than repair genuine errors.
 
-\paragraph{Future work on corrector--judge coupling.}
+\subsection{Diagnosing Judge--Corrector Coupling}
+
 Two concrete analyses could strengthen this explanation. First, test whether per-CLD $\Delta$F1 correlates with judge quality (e.g., AUC on GT~Lit) and whether the correlation is mediated by which component of F1 moves (precision vs.\ recall). Second, characterise correction edits by outcome class: for each CLD, measure how often edits convert FP$\rightarrow$TN or FN$\rightarrow$TP versus causing regressions (TP$\rightarrow$FN, TN$\rightarrow$FP), and relate these transitions to judge confidence and error type (polarity, spurious edge, motivation/revision). Together, these analyses would directly validate whether correction success is primarily limited by judge signal quality and domain-specific causal ambiguity.
 
 %------------------------------------------------------------------------------
