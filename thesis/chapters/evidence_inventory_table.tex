@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{pdflscape}
+\usepackage[margin=1cm]{geometry}
+\usepackage{array}
+\usepackage{xcolor}
+
+\begin{document}
+
+\begin{landscape}
+
+\section*{Evidence Inventory: Complete Overview of All Experiments}
+
+{\footnotesize
+\begin{longtable}{@{}p{1.8cm}p{1.2cm}p{1.5cm}p{1.8cm}p{1.2cm}p{2.8cm}p{0.5cm}p{1.5cm}p{1cm}p{2cm}p{0.6cm}p{0.6cm}p{0.8cm}p{1.5cm}p{1.2cm}p{2cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Judging} & \textbf{Target Variable} & \textbf{Comparison} & \textbf{Metric Type} & \textbf{Key Metrics} & \textbf{\#} & \textbf{CLDs} & \textbf{Size} & \textbf{Breakdown} & \textbf{Runs} & \textbf{Prom.} & \textbf{Mod.} & \textbf{Search} & \textbf{Quality} & \textbf{Path} \\
+\midrule
+\endfirsthead
+
+\multicolumn{16}{c}{\textit{(Continued from previous page)}} \\
+\toprule
+\textbf{RQ} & \textbf{Judging} & \textbf{Target Variable} & \textbf{Comparison} & \textbf{Metric Type} & \textbf{Key Metrics} & \textbf{\#} & \textbf{CLDs} & \textbf{Size} & \textbf{Breakdown} & \textbf{Runs} & \textbf{Prom.} & \textbf{Mod.} & \textbf{Search} & \textbf{Quality} & \textbf{Path} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{16}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+RQ1a: Synthetic Corruption & Correct. & Corrupted vs Clean edges & Judge verdict vs corruption status & Correlation, Classification & r=-0.354 (p<0.01); Prec. 100\%, Rec. 29-46\% & 2 & Dep, Soc & 155 & Dep: 110, Soc: 45 & 1 & 1 & 1 & --- & \textcolor{orange}{INCOMP.} & \texttt{rq1\_combined/} \\
+\addlinespace
+
+RQ1a: TruthQA & Correct. & Halluc. vs Truth. & Judge verdict vs GT & Classification & Acc. 89.7\%, F1=0.900, Rec. 92.8\% & N/A & TruthQA & 1,634 & H: 817, T: 817 & 1 & 1 & 1 & --- & \textcolor{green}{STRONG} & \texttt{truthqa\_judge/} \\
+\addlinespace
+
+RQ1a: Citation Providers & Cit.-based & Edge correctness & Judge scores across providers & Aggr. score & PubMed 0.306, Brave 0.296, Perp. 0.278, OpenAlex 0.232 & 1 & Ulemans & 600 & 150 × 4 prov. & 1 & 1 & 1 & 4 & \textcolor{green}{GOOD} & \texttt{judge\_cit\_prov/} \\
+\addlinespace
+
+RQ1a: Human Valid. & Cit.-based & Judge-Human agree. & LLM vs expert & Inter-rater & $\kappa$=0.618 (Sub.); Agr.=80.6\%; r=0.732 & 2 & Dep,Soc & 72 & 30+30+12; 2 CLDs, 2 gens & 3 & 1 & 2 & --- & \textcolor{green}{STRONG} & \texttt{combined/} \\\\
+\\addlinespace
+
+RQ1a: TP vs FP & Correct. & TP vs FP edges & Judge score TP vs FP & Mann-Whitney U & FP=0.873 vs TP=0.869, p=0.52 (n.s.), d=0.015 & 3 & Dep,Soc,Old & 1,394 & TP=42, FP=161, TN=1126, FN=65 & 1 & 1 & 1 & --- & \textcolor{green}{STRONG} & \texttt{rq1\_combined\_3clds/} \\
+\addlinespace
+
+RQ1b: Corrector & Correct. & Edge validity vs GT & Before vs After correction & F1 improve. & $\Delta$F1 +0.012 avg (Soc +0.030, Dep -0.006) & 2 & Dep, Soc & 155 & Dep: 110, Soc: 45 & 1 & 1 & 1 & --- & \textcolor{red}{WEAK} & \texttt{rq1\_multi\_cld/} \\
+\addlinespace
+
+RQ2: CI Metrics & N/A & TP vs FP edges & CI metrics as predictors & AUC (discrim.) & Best AUC=0.564; TP=88, FP=319, FN=126, TN=2252 & 3 & Dep,Soc,Old & 2,785 & D:364, S:180, O:2,241 & 2 & 1 & 1 & --- & \textcolor{green}{STRONG} & \texttt{exp\_20251008/} \\
+\addlinespace
+
+RQ2: Ensemble & N/A & TP vs FP edges & Ensemble classifier & AUC (discrim.) & AUC=0.725 (Logistic); Gen-only 0.695 & 3 & Dep,Soc,Old & 1,373 & From RQ1 base & 1 & 1 & Mult. & --- & \textcolor{green}{GOOD} & \texttt{rq2\_ens/} \\
+\addlinespace
+
+RQ2: Nested CV & N/A & TP vs FP edges & Nested CV valid. & Unbiased AUC+CI & AUC=0.624 [0.478, 0.824] & 3 & Dep,Soc,Old & 219 & Subset valid. & 5×3 & 1 & 1 & --- & \textcolor{green}{STRONG} & \texttt{rq2\_nest\_cv/} \\
+\addlinespace
+
+RQ2: Cross-Domain & N/A & TP vs FP edges & Train 2, test 3rd & Leave-one-out AUC & AUC=0.51 (random) & 3 & Dep,Soc,Old & 210 & TP+FP (9 runs) & Var. & 1 & 1 & --- & \textcolor{green}{STRONG} (neg) & \texttt{exp\_20251019/} \\
+\addlinespace
+
+RQ3: Deep Research & Cit.-based & Evidence detection & TP vs FP vs FN rates & Detect. \% & TP 70.5\%, FP 62.4\%, FN 42.9\%; gap 8.1pp & 3 & Dep,Soc,Old & 285 & O:184, D:84, S:17 & 1 & 1 & 1 & Mult. & \textcolor{orange}{MODER.} & Multiple JSON \\
+
+\end{longtable}
+}
+
+\vspace{0.3cm}
+
+\noindent\textbf{Legend:} 
+\textcolor{green}{Green} = Strong/Good evidence; 
+\textcolor{orange}{Orange} = Incomplete/Moderate; 
+\textcolor{red}{Red} = Weak/Undocumented. \\
+\textbf{Abbrev.:} GT = Ground Truth, Correct. = Correctness, Cit. = Citation, Dep = Depressive, Soc = Social Norms, Old = Older Persons, Aggr. = Aggregate, Prom. = Prompts, Mod. = Models, Mult. = Multiple, Prec. = Precision, Rec. = Recall, Acc. = Accuracy, Perp. = Perplexity, H = Hallucinated, T = Truthful, Var. = Varies, n.s. = non-significant.
+
+\end{landscape}
+
+\end{document}

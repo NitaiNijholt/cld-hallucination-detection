@@ -1,0 +1,356 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Masters/Doctoral Thesis 
+% LaTeX Template
+% Version 1.43 (17/5/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original authors:
+% Steven Gunn 
+% http://users.ecs.soton.ac.uk/srg/softwaretools/document/templates/
+% and
+% Sunil Patel
+% http://www.sunilpatel.co.uk/thesis-template/
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Note:
+% Make sure to edit document variables in the Thesis.cls file
+%
+%
+% Modified and Adapted by Michael Lees 2020
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt, oneside]{Thesis} % The default font size and one-sided printing (no margin offsets)
+
+\graphicspath{{Pictures/}} % Specifies the directory where pictures are stored
+
+\usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
+\usepackage[section]{placeins}% keeps floats within their section
+\usepackage{csquotes} % For enquote command
+% \usepackage[ruled,vlined]{algorithm2e} % Commented out - package not available
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{xcolor} % For colored text
+\usepackage{tcolorbox} % For colored boxes
+\usepackage{tikz} % For drawing diagrams
+\usetikzlibrary{positioning, shapes, arrows} % TikZ libraries for diagrams
+\usepackage{listings} % For code listings
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single
+}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\CLD}{CLD} % Define CLD abbreviation command
+\newcommand{\pa}{\text{pa}} % Define parents abbreviation for mathematical notation
+\hypersetup{urlcolor=blue, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
+\title{\ttitle} % Defines the thesis title - don't touch this
+
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+\setstretch{1.3} % Line spacing of 1.3
+
+% Define the page headers using the FancyHdr package and set up for one-sided printing
+\fancyhead{} % Clears all page headers and footers
+\rhead{\thepage} % Sets the right side header to show the page number
+\lhead{} % Clears the left side page header
+
+\pagestyle{fancy} % Finally, use the "fancy" page style to implement the FancyHdr headers
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
+
+% PDF meta-data
+\hypersetup{pdftitle={\ttitle}}
+\hypersetup{pdfsubject=\subjectname}
+\hypersetup{pdfauthor=\authornames}
+\hypersetup{pdfkeywords=\keywordnames}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\textsc{\LARGE \univname}\\[1.5cm] % University name
+\textsc{\Large Masters Thesis}\\[0.5cm] % Thesis type
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries \ttitle}\\[0.4cm] % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+ 
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author: Nitai Nijholt}\\
+\href{http://yourwebaddress.com}{\authornames} % Author name - remove the \href bracket to remove the link
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Examiner: dr. Debraj Roy} \\
+{\exname}\\
+\emph{Supervisor: 	dr. Rick Quax} \\
+{\supname}\\
+\emph{Assessor: dr. Caspar van Lissa} \\
+{\assessorname}
+\end{flushright}
+\end{minipage}\\[1cm]
+ 
+\large \textit{A thesis submitted in partial fulfilment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
+\textit{in the}\\[0.4cm]
+\groupname\\\deptname\\[2cm] % Research group name and department name
+ 
+{\large \today}\\[2cm] % Date
+\includegraphics[width=0.6\textwidth]{clslogo.png} % Include Computational Science Logo
+ 
+\vfill
+\end{center}
+
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%	Your institution may give you a different text to place here
+%----------------------------------------------------------------------------------------
+
+\Declaration{
+
+\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+
+I, \authornames, declare that this thesis, entitled `\ttitle' and the work presented in it are my own. I confirm that:
+
+\begin{itemize} 
+\item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for a research degree at the University of Amsterdam.
+\item[\tiny{$\blacksquare$}] Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
+\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
+\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this thesis is entirely my own work.
+\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
+\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
+\end{itemize}
+
+
+Signed: \\\\\includegraphics[width=3cm]{Pictures/yoursignature.pdf} \\
+%\rule[1em]{25em}{0.5pt} % This prints a line for the signature
+ 
+Date: 1 August 2025\\
+%\rule[1em]{25em}{0.5pt} % This prints a line to write the date
+}
+
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+\pagestyle{empty} % No headers or footers for the following pages
+
+\null\vfill % Add some space to move the quote down the page a bit
+
+\textit{``What I cannot create, I do not understand."}
+
+\begin{flushright}
+Richard P. Feynman
+\end{flushright}
+
+\vfill\vfill\vfill\vfill\vfill\vfill\null % Add some space at the bottom to position the quote just right
+
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\addtotoc{Abstract} % Add the "Abstract" page entry to the Contents
+
+\abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+
+% Include your abstract here 
+% Abstracts must include sufficient information for reviewers to judge the nature and significance
+% of the topic, the adequacy of the investigative strategy, the nature of the results, and the
+% conclusions. The abstract should summarize the substantive results of the work and not merely
+% list topics to be discussed. 
+
+ We propose a multi-agent LLM research system for generating initial Causal Loop Di
+agrams (CLDs), harnessing LLMs as low-cost information retrievers to addresses the
+ knowledge synthesis challenges due to rapidly expanding research literature. Using gen
+erated initial, literature-grounded CLDs, domain experts can focus on adding specialized
+ knowledge rather than reiterating consensus during model building sessions. To address
+ LLM hallucinations threatening CLD accuracy, we integrate a context-sensitive veri
+f
+ ication approach (LLM-as-a-judge) with context-insensitive metrics (cosine similarity,
+ perplexity), investigating whether applying these techniques—first separately, and then
+ uniquely, in combination—can mitigate hallucinations, quantify uncertainty and increase
+ f
+ inal CLD accuracy more efficiently than regular test-time compute.
+
+Length 200-400 words.
+}
+
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
+
+\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+
+Thank the people that have helped, supervisors family etc.
+
+}
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy} % The page style headers have been "empty" all this time, now use the "fancy" headers as defined before to bring them back
+
+\lhead{\emph{Contents}} % Set the left side page header to "Contents"
+\tableofcontents % Write out the Table of Contents
+
+\lhead{\emph{List of Figures}} % Set the left side page header to "List of Figures"
+\listoffigures % Write out the List of Figures
+
+\lhead{\emph{List of Tables}} % Set the left side page header to "List of Tables"
+\listoftables % Write out the List of Tables
+
+% \lhead{\emph{List of Algorithms}} % Set the left side page header to "List of Algorithms"
+% \addtotoc{List of Algorithms}
+% \listofalgorithms % Write out the List of Tables
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\clearpage % Start a new page
+
+\setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
+
+\lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
+\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
+{
+\textbf{CSL} & \textbf{C}omputational \textbf{S}ceince \textbf{L}ab\\
+\textbf{UvA} & \textbf{U}niversitiet \textbf{v}an \textbf{A}msterdam\\
+%\textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
+}
+
+%----------------------------------------------------------------------------------------
+%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
+%----------------------------------------------------------------------------------------
+
+\clearpage % Start a new page
+
+%\lhead{\emph{Physical Constants}} % Set the left side page header to "Physical Constants"
+
+%\listofconstants{lrcl} % Include a list of Physical Constants (a four column table)
+%{
+%Speed of Light & $c$ & $=$ & $2.997\ 924\ 58\times10^{8}\ \mbox{ms}^{-\mbox{s}}$ (exact)\\
+%% Constant Name & Symbol & = & Constant Value (with units) \\
+%}
+
+%----------------------------------------------------------------------------------------
+%	SYMBOLS
+%----------------------------------------------------------------------------------------
+
+%\clearpage % Start a new page
+
+%\lhead{\emph{Symbols}} % Set the left side page header to "Symbols"
+
+%\listofnomenclature{lll} % Include a list of Symbols (a three column table)
+%{
+%$a$ & distance & m \\
+%$P$ & power & W (Js$^{-1}$) \\
+%% Symbol & Name & Unit \\
+
+%& & \\ % Gap to separate the Roman symbols from the Greek
+%
+%$\omega$ & angular frequency & rads$^{-1}$ \\
+%% Symbol & Name & Unit \\
+%}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+\setstretch{1.3} % Return the line spacing back to 1.3
+
+\pagestyle{empty} % Page style needs to be empty for this page
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{fancy} % Return the page headers back to the "fancy" style
+
+% Include the chapters of the thesis as separate  tex files from the Chapters folder
+% Change the file names if you prefer
+
+%This structure provides a bare bones essentials of the thesis and some indicative length
+%This structure may not fit your thesis perfectly, but be sure to include these components somehow.
+%It is possible to split the chapters up (E.g., 2 methods chapter, Experiment and Results as two, etc.)
+
+% The typical length may be between 43 - 64 pages. Do not worry if you go slightly larger or smaller than this. 
+% But a thesis of 20 pages, or 100 pages may suggest you've been to brief or too verobse.
+%NOTE - there is not strict limit/minimum.
+
+\input{Chapters/Introduction} %Set out your thesis and state your research question (5-8 pages)
+\input{Chapters/LiteratureReview} %Related literature and material (8-12 pages)
+\input{Chapters/HallucinationAndTestTimeCompute} %Hallucination taxonomy and test-time compute theory (6-8 pages)
+\input{Chapters/Methods} %Details of your approach (10-15 pages)
+%\input{Chapters/DeepResearch} %Multi-agent deep research system for enhanced verification (25-30 pages) - DEPRECATED
+\input{Chapters/SensitivityAnalysis} %Global sensitivity analysis methodology and results (12-18 pages)
+\input{chapters/prompt_ablation_results} %Prompt engineering ablation study - FIRST RESULTS CHAPTER (8-10 pages)
+\input{Chapters/ExperimentsAndResults} %Evaluation/testing of your hypothesis (10-15 pages)
+\input{chapters/rq2_cross_cld_results} %RQ2 multi-CLD meta-analysis results (12-15 pages)
+\input{Chapters/Discussion} %Evaluation/testing of your hypothesis (5-8 pages)
+\input{Chapters/ConclusionsAndFutureWork} % (5-6 pages)
+\input{Chapters/EthicsandDatamanagemnt}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
+
+% Include the appendices of the thesis as separate files from the Appendices folder
+
+\input{appendices/rq2_detailed_statistics} % RQ2 detailed per-CLD statistics and analysis
+
+%\input{Appendices/AppendixB}
+%\input{Appendices/AppendixC}
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+\backmatter
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\label{References}
+
+\lhead{\emph{References}} % Change the page header to say "Bibliography"
+
+\bibliographystyle{unsrtnat} % Use the "unsrtnat" BibTeX style for formatting the Bibliography
+
+\bibliography{final_thesis/references} % The references (bibliography) information are stored in the file named "references.bib"
+
+\end{document}  

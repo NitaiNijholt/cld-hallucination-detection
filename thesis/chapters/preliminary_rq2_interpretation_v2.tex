@@ -1,0 +1,120 @@
+\chapter{Preliminary Results: Context-Insensitive Metrics for Hallucination Detection}
+\label{ch:preliminary_rq2}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=orange!75!black,title=Preliminary Results]
+\textbf{Note:} Results from single CLD (N=182 edges). Full cross-validation pending.
+\end{tcolorbox}
+
+\section{Baseline Performance (RQ1a)}
+
+\textbf{Dataset:} ``Depressive symptoms in response to a stressor in healthy adults'' \\
+\textbf{Classification:} TP=26 (14.3\%), FP=35 (19.2\%), FN=8 (4.4\%), TN=113 (62.1\%) \\
+\textbf{Performance:} Precision=0.426, Recall=0.765, F1=0.548, Hallucination Rate=19.2\%
+
+\textbf{Interpretation:} System demonstrates moderate performance with high recall but low precision. The 19.2\% false positive rate indicates substantial hallucination challenge requiring detection mechanisms.
+
+\section{CI Metrics for Hallucination Prediction (RQ2)}
+
+\subsection{Correlation Analysis}
+
+Table~\ref{tab:rq2_correlations} presents correlations between CI metrics and ground truth hallucination status (FP classification).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Metric} & \textbf{Pearson r} & \textbf{p-value} & \textbf{AUC} & \textbf{Sig.} \\
+\midrule
+\multicolumn{5}{l}{\textit{Generator Uncertainty Metrics}} \\
+Perplexity & +0.331 & <0.001 & 0.747 & *** \\
+Min Probability & -0.175 & 0.018 & 0.602 & * \\
+Max Window Entropy & +0.327 & <0.001 & \textbf{0.762} & *** \\
+\midrule
+\multicolumn{5}{l}{\textit{Generator Similarity Metrics}} \\
+Cosine Similarity & +0.293 & <0.001 & 0.224 & *** \\
+\midrule
+\multicolumn{5}{l}{\textit{Judge Uncertainty Metrics}} \\
+Judge Perplexity & -0.036 & 0.627 & 0.734 & ns \\
+Judge Min Probability & -0.138 & 0.063 & 0.606 & ns \\
+Judge Max Window Entropy & +0.232 & 0.002 & 0.655 & ** \\
+\midrule
+\multicolumn{5}{l}{\textit{Judge Similarity \& Assessment}} \\
+Judge Cosine Similarity & +0.322 & <0.001 & 0.255 & *** \\
+Aggregate Score & +0.134 & 0.072 & 0.367 & ns \\
+\bottomrule
+\end{tabular}
+\caption{CI metrics correlation with ground truth hallucinations. AUC < 0.5 indicates inverse relationship. Significance: * p<0.05, ** p<0.01, *** p<0.001, ns = not significant}
+\label{tab:rq2_correlations}
+\end{table}
+
+\subsection{Group Comparison}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Metric} & \textbf{FP Mean} & \textbf{Non-FP Mean} & \textbf{$\Delta$} & \textbf{Cohen's d} & \textbf{p} \\
+\midrule
+Perplexity & 1.388 & 1.277 & +0.111 & 0.94 & <0.001 \\
+Max Window Entropy & 1.067 & 0.829 & +0.238 & 1.02 & <0.001 \\
+Cosine Similarity & 0.713 & 0.603 & +0.110 & 0.95 & <0.001 \\
+Judge Cosine Similarity & 0.672 & 0.622 & +0.050 & 0.96 & <0.001 \\
+Aggregate Score & 0.222 & 0.158 & +0.064 & 0.36 & 0.044 \\
+\bottomrule
+\end{tabular}
+\caption{Mean CI metric values by classification. Positive $\Delta$ indicates FP > Non-FP.}
+\label{tab:rq2_group_comparison}
+\end{table}
+
+\subsection{Classification Performance}
+
+At optimal F1 thresholds:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Metric} & \textbf{Threshold} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Max Window Entropy & 0.977 & 0.342 & 0.714 & \textbf{0.463} \\
+Perplexity & 1.334 & 0.342 & 0.714 & \textbf{0.463} \\
+Judge Perplexity & 1.473 & 0.486 & 0.514 & 0.500 \\
+\bottomrule
+\end{tabular}
+\caption{Optimal thresholds for top-performing CI metrics (by F1 score)}
+\label{tab:rq2_thresholds}
+\end{table}
+
+\subsection{Statistical Validation}
+
+Permutation tests with Holm-Bonferroni correction (n=10,000):
+\begin{itemize}
+    \item \textbf{Significant:} Perplexity (p<0.001), Max Window Entropy (p<0.001), Cosine Similarity (p=0.001), Judge Max Window Entropy (p=0.010), Judge Cosine Similarity (p<0.001)
+    \item \textbf{Not significant:} Min Probability (p=0.059), Judge Perplexity (p=1.000), Judge Min Probability (p=0.200), Aggregate Score (p=0.200)
+\end{itemize}
+
+\section{Key Findings}
+
+\textbf{RQ2 Answer:} Yes, CI metrics can predict hallucinations with moderate accuracy (AUC=0.762 for max window entropy).
+
+\textbf{Uncertainty metrics} (perplexity, entropy) show robust positive correlations: higher uncertainty $\rightarrow$ more hallucinations (as expected).
+
+\textbf{Similarity metrics} show unexpected \textit{positive} correlations: higher cosine similarity $\rightarrow$ more hallucinations. This paradox suggests either:
+\begin{enumerate}
+    \item Ground truth CLD incompleteness (FP edges may be valid but missing from validation)
+    \item Max-aggregation rewards cherry-picking (LLM finds one topically-similar chunk, ignores causal mechanism)
+    \item Confident confabulation (LLM generates higher citation alignment for uncertain claims)
+\end{enumerate}
+
+\textbf{Judge metrics} show poor discrimination: aggregate score correlation with ground truth FP is weak (r=0.134, ns) and AUC below chance (0.367), suggesting judge evaluates citation quality rather than causal correctness.
+
+\textbf{Best single predictor:} Max window entropy (AUC=0.762, 95\% CI [0.681, 0.837])
+
+\textbf{Practical threshold performance:} Insufficient for automated filtering (max F1=0.463). Suitable for triage/flagging high-risk edges for human review.
+
+\section{Limitations}
+
+Single CLD analysis (N=182). Generalization requires cross-domain validation. Ground truth paradox unresolved without expert review of high-cosine FP edges. Max-aggregation method for cosine similarity may be fundamentally flawed for causal assessment.

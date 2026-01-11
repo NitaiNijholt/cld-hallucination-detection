@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{threeparttable}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\begin{document}
+
+\section{RQ1b: Corrector Experiments}
+
+\subsection{Ground Truth Correctness: Baseline Results}
+
+\begin{table}[htbp]
+\centering
+\caption{Corrector Performance on Ground Truth Data Using Correctness-Based Validation}
+\label{tab:rq1b_groundtruth_correctness}
+\begin{threeparttable}
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Model} & \textbf{F1 $\uparrow$} & \textbf{Precision} & \textbf{Recall} & \textbf{Judge} & \textbf{Total} & \textbf{Revised} & \textbf{Change} \\
+ & & & & \textbf{F1 $\uparrow$} & \textbf{Edges} & \textbf{Edges} & \textbf{Rate} \\
+\midrule
+Social        & 0.44 $\pm$ 0 & 0.53 $\pm$ 0 & 0.40 $\pm$ 0.01 & 0.48 $\pm$ 0 & 64 $\pm$ 0 & 2.3 $\pm$ 1 & 0.9 $\pm$ 0 \\
+Norms         &              &              &                 &               &            &              &             \\
+\midrule
+Depressive    & 0.36 $\pm$ 0.03 & 0.45 $\pm$ 0.04 & 0.30 $\pm$ 0.05 & 0.34 $\pm$ 0.02 & 94.7 $\pm$ 1.5 & 30.3 $\pm$ 3 & 9.6 $\pm$ 1 \\
+\midrule
+Emergency     & 0.41 $\pm$ 0.02 & 0.49 $\pm$ 0.02 & 0.36 $\pm$ 0.04 & 0.42 $\pm$ 0 & 212.3 $\pm$ 2.1 & 24.3 $\pm$ 4 & 2.3 $\pm$ 0 \\
+Department    &              &              &                 &               &            &              &             \\
+\midrule
+\textbf{Aggregate} & \textbf{0.39 $\pm$ 0.03} & \textbf{0.48 $\pm$ 0.03} & \textbf{0.34 $\pm$ 0.05} & \textbf{0.40 $\pm$ 0.07} & \textbf{123.7 $\pm$ 74} & \textbf{19.0 $\pm$ 13.9} & \textbf{4.3 $\pm$ 4.4} \\
+(n=3 CLDs)    &              &              &                 &               &            &              &             \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Results show corrector performance using correctness-based evaluation (1 run per CLD, 3 total). 
+F1 = harmonic mean of precision and recall; Judge F1 = pre-correction judge performance; Total Edges = number of edges in corrected CLD; 
+Revised Edges = number of edges modified by corrector; Change Rate = percentage of edges revised. 
+Values presented as mean $\pm$ SD across CLDs. $\uparrow$ indicates higher is better.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Synthetic Corruption Correctness Results}
+
+\begin{table}[htbp]
+\centering
+\caption{Corrector Performance on Synthetically Corrupted Data (Baseline Prompt)}
+\label{tab:rq1b_synthetic_correctness}
+\begin{threeparttable}
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{CLD} & \textbf{F1 $\uparrow$} & \textbf{Precision} & \textbf{Recall} & \textbf{Judge} & \textbf{Edges} & \textbf{Revised} & \textbf{Change} \\
+ & & & & \textbf{F1 $\uparrow$} & \textbf{Retained} & \textbf{Edges} & \textbf{Rate} \\
+\midrule
+Social       & 0.383 & 0.273 & 0.643 & 0.146 & 33 & 9 & 21.4\% \\
+Norms        &       &       &       &       &    &   &        \\
+\midrule
+Depressive   & 0.556 & 0.500 & 0.625 & 0.240 & 90 & 23 & 20.4\% \\
+\midrule
+Emergency    & 0.550 & 0.408 & 0.841 & 0.241 & 272 & 177 & 39.4\% \\
+Department   &       &       &       &       &     &     &        \\
+\midrule
+\textbf{Aggregate} & \textbf{0.538} & \textbf{0.418} & \textbf{0.757} & \textbf{0.221} & \textbf{395} & \textbf{209} & \textbf{34.6\%} \\
+(n=3 CLDs)   &       &       &       &       &     &     &        \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Results show corrector performance on synthetically corrupted data (30\% corruption rate). 
+F1 = harmonic mean of precision and recall for recovering base CLD edges; Judge F1 = pre-correction judge performance; 
+Edges Retained = edges kept after correction; Revised Edges = edges modified or removed; 
+Change Rate = percentage of corrupted edges changed. 
+Aggregates computed across 3 CLDs (Social Norms, Depressive, Emergency Department). $\uparrow$ indicates higher is better.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+

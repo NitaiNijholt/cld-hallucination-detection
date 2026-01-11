@@ -27,16 +27,9 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% REPRODUCIBILITY MODE TOGGLE
-% -------------------------------------------------------------------------
-% BEFORE running reproduction: Use 'draft' to show placeholder boxes for missing figures
-% AFTER running reproduction:  Remove 'draft' to show actual figures
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[11pt, oneside, draft]{Thesis} % DRAFT MODE: shows placeholders for missing figures
-% \documentclass[11pt, oneside]{Thesis}      % FINAL MODE: shows actual figures (use after reproduction)
+\documentclass[11pt, oneside]{Thesis} % The default font size and one-sided printing (no margin offsets)
 
-\graphicspath{{./}{Pictures/}{Figures/}{figures/}} % ISOLATED: only local paths % Search paths for figures (template + thesis_full assets)
+\graphicspath{{./}{Pictures/}{Figures/}{figures/}{../}{../figures/}{../Figures/}{../generated/}{../../final_runs/}{../../final_runs/latex/}} % Search paths for figures (template + thesis_full assets)
 \makeatletter
 % Allow \input{generated/...}, \input{Figures/...}, etc. inside docmute thesis_full
 % sources to resolve relative to the parent thesis directory.
@@ -48,6 +41,10 @@
 \usepackage[labelfont=bf]{caption}
 \captionsetup[figure]{listformat=simple}
 \captionsetup[table]{listformat=simple}
+% Ensure long captions wrap instead of overflowing margins.
+\captionsetup{justification=raggedright,singlelinecheck=false}
+% Center table captions and allow full width
+\captionsetup[table]{justification=centering,singlelinecheck=true,width=\textwidth}
 \setlength{\cftsecnumwidth}{3em}
 \setlength{\cftsubsecnumwidth}{4em}
 \setlength{\cftsubsubsecnumwidth}{5em}
@@ -71,6 +68,9 @@
 \usepackage{array}
 \usepackage[table]{xcolor}
 \usepackage{colortbl}
+\usepackage{pifont}% For checkmarks and x-marks in tables
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
 \usepackage{enumitem}
 \usepackage{subcaption}
 \usepackage{capt-of}
@@ -86,13 +86,46 @@
 \makeatother
 % Helper for breakable monospace paths in footnotes (uses \path from url package)
 \newcommand{\fnpath}[1]{\path{#1}}
+
+% -----------------------------------------------------------------------------
+% Shrink-only resizebox (prevents tables from being upscaled)
+% -----------------------------------------------------------------------------
+% Some tables use \resizebox{\textwidth}{!}{...}. If the content is narrower than
+% \textwidth, LaTeX will *enlarge* it, making the font appear larger than other
+% tables. This redefinition keeps the common "shrink to fit" behavior but avoids
+% upscaling.
+\makeatletter
+\let\causalix@orig@resizebox\resizebox
+\renewcommand{\resizebox}[3]{%
+  \sbox\z@{#3}%
+  \ifdim\wd\z@>#1\relax
+    \causalix@orig@resizebox{#1}{#2}{\usebox\z@}%
+  \else
+    \usebox\z@%
+  \fi
+}%
+\makeatother
+
+% -----------------------------------------------------------------------------
+% Prompt variant naming (canonical display names used throughout the thesis)
+% -----------------------------------------------------------------------------
+\newcommand{\PromptBaseline}{Baseline}
+\newcommand{\PromptCoT}{CoT}
+\newcommand{\PromptMechanistic}{Mechanistic}
+\newcommand{\PromptMechanisticLit}{Mechanistic-Lit}
 %\usepackage[ruled,vlined]{algorithm2e}
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins,breakable}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
-\hypersetup{urlcolor=blue, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
+\hypersetup{urlcolor=blue, colorlinks=true} % Colours hyperlinks in blue - change to black if annoying
 \title{\ttitle} % Defines the thesis title - don't touch this
+
+% Enable numbering for subsubsections (section.subsection.subsubsection format)
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 \begin{document}
 
@@ -149,7 +182,7 @@
 \end{flushright}
 \end{minipage}\\[0.3cm]
  
-\large \textit{A thesis submitted in partial fulfilment of the requirements\\ for the degree of \degreename}\\[0.1cm] % University requirement text
+\large \textit{A thesis submitted in partial fulfillment of the requirements\\ for the degree of \degreename}\\[0.1cm] % University requirement text
 \textit{in the}\\[0.1cm]
 \groupname\\\deptname\\[0.5cm] % Research group name and department name
  
@@ -183,13 +216,13 @@ I, \authornames, declare that this thesis, entitled `\ttitle' and the work prese
 
 \vspace{1em}
 
-Because this thesis conducts research within a software environment which is property of Causalix, actively using parts of the code and intellectual property developed by others, a clear definition of scope (what was developed as part of the thesis, what was not) is in order.
-The main CLD generation algorithm was conceived by Rick Quax with feedback from Cillian Hourican and implemented by Andrew Crossley. Contributions from the author of this thesis (Nitai Nijholt) are limited to adding a mediation check, developing a testing infrastructure for different prompts, adding multiple LLM providers with rate limiting and model fallbacks and conceiving a number of these prompts, in addition to other prompts being contributed by Rick, Andrew and Cillian.
-The main backend of the software including \texttt{Neo4j} database and other backend containers and frontend, was built by Andrew Crossley, including the \texttt{brave-search} API.
-Validation datasets (Depressive, Social Norms, Emergency) were contributed by Cillian Hourican.
-The work as part of this thesis was: LLM-as-a-judge, LLM-as-a-corrector, generator UQ metrics, and Deep Research multi-agent system, as well as simulation framework, evaluation framework (for both Generator, Deep Research and Judge), and the generate-then-search methodology, as well as parallelization, inference time and cost tracking which was developed by the author Nitai Nijholt. Any other part of the thesis is developed by Nitai Nijholt unless otherwise stated.
+The research for this thesis was conducted within a software environment which is property of Causalix, actively using parts of the code and intellectual property developed by others, therefore, a clear definition of scope (what was developed as part of the thesis, what was not) is in order. The main CLD generator algorithm was conceived by Rick Quax with feedback from Cillian Hourican and implemented by Andrew Crossley. Contributions from the author of this thesis (Nitai Nijholt) on the generation algorithm limited to adding a mediation check and conceiving a number of these prompts, in addition to other prompts being contributed by Rick, Andrew and Cillian.
+
+The gathering and transcribing of validation datasets into computational format of the CLD's Depressive Disorder, Social Norms, and Emergency Response datasets---was done by Cillian Hourican.
 
 The underlying software environment contains substantially more features and potential analysis outputs than are required for the research presented in this thesis; accordingly, only a subset of the available functionality is used. Where any algorithm or script executed within this environment produced additional intermediate artefacts or auxiliary outputs, only the artefacts explicitly referenced in the thesis were used in the reported analyses and to support the thesis conclusions.
+
+The contributions presented in this thesis, developed by the author, encompass: the LLM-as-a-Judge framework, the LLM-as-a-Corrector, the Deep Research multi-agent system uncertainty quantification metrics for the generator component, and the simulation framework. Additionally, the author developed the comprehensive evaluation frameworks for the Generator, Deep Research, and Judge components, the generate-then-search methodology, as well as the parallelization architecture, inference time benchmarking, and cost tracking instrumentation. Any other part of the thesis is developed by Nitai Nijholt unless otherwise stated.
 
 
 Signed: \\\\\includegraphics[width=4.5cm]{Signature_nitai.png} \\
@@ -227,11 +260,12 @@ George E. P. Box
 
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-Causal loop diagrams (CLDs) can map cause and effect in complex systems but are costly for experts to produce, as cost scales with the square of the number of variables. LLMs can generate initial CLDs, reducing costs, but suffer from hallucinations. LLM-powered text-to-CLD extraction is the gold standard for grounding but is constrained by source text availability. The alternative, LLM-based CLD generation, loses grounding, increasing the risk of hallucinations.
+Causal loop diagrams (CLDs) can map cause and effect in complex systems but are costly for experts to produce through usual tools such as qualitative interview, literature study and group model building, as edge deliberation cost scales with number of variables squared. LLMs offer a solution by generating initial CLDs, reducing costs, but suffer from hallucinations. LLM-powered text-to-CLD extraction provides grounding but is constrained by source text availability. The alternative, LLM-based CLD generation, loses grounding, increasing the risk of hallucinations.
 
-Applying established hallucination mitigation methods at test time---through LLM-as-a-judge, LLM-as-a-corrector, and UQ metrics (cosine similarity and logprob-derived measures)---previously untested in CLD generation, we ask: (1) Can LLM-as-a-judge and LLM-as-a-corrector improve CLD F1 versus literature ground truth? (2) Can UQ metrics detect hallucinations? (3) Can adaptive test-time compute, guided by UQ metrics, improve the cost--accuracy trade-off?
-Findings show, in our dataset of three health CLDs, LLM-based CLD generation performance exceeds a random baseline. In a controlled synthetic hallucination setting (GT Synth), Correctness Judge performance is high, but it drops in the literature ground-truth setting (GT Lit), with only our causal mechanistic prompt beating random baselines. The Citation Judge, which retrieves supporting articles post hoc, fails to exceed random baselines despite reaching 80\% alignment with human validators. LLM-as-a-corrector improves judge scores and slightly improves CLD quality vs GT Synth, but not vs GT Lit.  
-UQ metrics (perplexity, min probability, max window entropy, cosine similarity) do not effectively flag hallucinations independently but do as ensemble input to supervised classifiers in-distribution; however, they fail to generalize out-of-CLD. As UQ and corrector were ineffective, we pilot a multi-agent deep research (DR) system that finds direct causal evidence for 62.4\% of false positives and 42.9\% of false negatives. Human validation (n=50) suggests that at applicability threshold $t=0.7$, 66\% of DR-evidenced edges pass the threshold and, among passing edges, 90.9\% are correct-causal. Under this calibration, extrapolated ground-truth enrichment yields large gains in aggregate edge F1: $0.267 \to 0.527$ (Scenario 1: FP$\to$TP) and $0.267 \to 0.582$ (Scenario 2: LLM+DR system), with conservative estimates of 0.472 and 0.500. Using a mechanistic Correctness Judge to flag hallucinations for adaptive deployment of DR delivers a 15\% accuracy-per-dollar increase. Results suggest that LLM-based CLD generation and multi-agent validation-driven research can assist experts in CLD creation; future work includes validating the system across additional CLD domains and conducting component-wise ablation studies of DR to find more efficient compute--accuracy trade-offs.
+This thesis tackles this problem by applying established hallucination mitigation methods at test time---through LLM-as-a-judge, LLM-as-a-corrector, and UQ metrics (cosine similarity and logprob-derived measures)---previously untested in CLD generation. We ask: (1) Can LLM-as-a-judge and LLM-as-a-corrector improve CLD F1 versus literature ground truth? (2) Can UQ metrics detect hallucinations? (3) Can adaptive test-time compute, guided by UQ metrics, improve the cost--accuracy trade-off? Findings show, in our dataset of three health CLDs, LLM-based CLD generation performance exceeds a random baseline. In a controlled synthetic hallucination setting (GT Synth), Correctness Judge performance is high, but it drops in the literature ground-truth setting (GT Lit), with only our causal mechanistic prompt beating random baselines. The Citation Judge, which retrieves supporting articles post hoc, fails to exceed random baselines despite substantial agreement with a human rater (80.6\%; $\kappa=0.618$), and high performance on causally unambiguous physics CLDs, suggesting weak discrimination is driven primarily by evidence type and retrieval quality rather than judge malfunction. LLM-as-a-corrector improves judge scores and slightly improves CLD quality vs GT Synth, but not vs GT Lit. UQ metrics (perplexity, min probability, max window entropy, cosine similarity) do not effectively flag hallucinations independently but do as ensemble input to supervised classifiers in-distribution; however, fail to generalise out-of-CLD. As UQ hallucination flagging and Corrector were ineffective, we pilot a multi-agent deep research (DR) system that finds causal evidence for 62.4\% of false positives and 42.9\% of false negatives. Preliminary human validation suggests 90.9\% precision among applicable edges; however, limited inter-rater agreement (n=13) means extrapolated F1 gains ($0.267 \to 0.472$) should be interpreted as exploratory. Using a mechanistic Correctness Judge to flag hallucinations for adaptive deployment of DR yields an estimated 15\% accuracy-per-dollar increase. Results suggest that LLM-based CLD generation and multi-agent validation-driven research can assist experts in CLD creation; future work includes validating the system across additional CLD domains and conducting component-wise ablation studies of DR to find more efficient compute--accuracy trade-offs.
+
+\vspace{0.75em}
+\noindent\textbf{Keywords:} \keywordnames
 }
 
 \clearpage % Start a new page
@@ -285,6 +319,8 @@ Lastly, I want to thank Andrew Crossley especially, for building the software fr
 {
 \textbf{CLD} & \textbf{C}ausal \textbf{L}oop \textbf{D}iagram\\
 \textbf{LLM} & \textbf{L}arge \textbf{L}anguage \textbf{M}odel\\
+\textbf{Judge} & \textbf{LLM}-as-a-\textbf{J}udge\\
+\textbf{Corrector} & \textbf{LLM}-as-a-\textbf{C}orrector\\
 \textbf{UQ} & \textbf{U}ncertainty \textbf{Q}uantification\\
 \textbf{RAG} & \textbf{R}etrieval-\textbf{A}ugmented \textbf{G}eneration\\
 \textbf{DR} & \textbf{D}eep \textbf{R}esearch\\
@@ -373,7 +409,7 @@ Lastly, I want to thank Andrew Crossley especially, for building the software fr
 % Chapter 1 – Introduction
 \input{Chapters/Introduction}
 
-% Chapter 2 – Background: Formalizes CLDs as signed directed graphs, situates them within the modeling
+% Chapter 2 – Background: Formalizes CLDs as signed directed graphs, situates them within the modelling
 % simulation cycle, gives an overview of LLM architecture, used prompting techniques, hallucination issues,
 % and established solutions from other fields.
 \input{Chapters/Background}
@@ -382,22 +418,21 @@ Lastly, I want to thank Andrew Crossley especially, for building the software fr
 % surveys LLM-as-a-Judge, LUQ metrics, and test-time compute strategies in more detail.
 \input{Chapters/LiteratureReview}
 
-% Chapters 4-7 are all in Methods.tex:
-% Chapter 4 – Problem Setup: Defines the CLD generation task, formalizes hallucination types (FP/FN,
-%   polarity, direction, mechanistic validity), and specifies the GT Lit and GT Synth ground-truth settings.
-% Chapter 5 – System Architecture: Describes the end-to-end system components: generator, correctness
+% Chapters 4-6 are all in Methods.tex:
+% Chapter 4 – System Architecture: Describes the end-to-end system components: generator, correctness
 %   and citation judges, the corrector, and the Deep Research (DR) multi-agent literature validation pipeline.
-% Chapter 6 – Experimental Data: Details evaluation datasets (GT Lit, LLM simulations, GT Synth), validation
+% Chapter 5 – Experimental Data: Details evaluation datasets (GT Lit, LLM Predictions, GT Synth), validation
 %   and auxiliary datasets, CLD domains, context parameters, and edge structure conventions.
-% Chapter 7 – Experimental Design: Specifies the design framework, evaluation metrics, baselines, statistical
-%   analysis plan, and master experimental overview across RQ1–RQ3.
+% Chapter 6 – Experimental Design: Defines task and hallucination operationalisation (GT Lit/GT Synth),
+%   specifies the design framework, evaluation metrics, baselines, statistical analysis, and master
+%   experimental overview across RQ1–RQ3.
 \input{Chapters/Methods}
 
-% Chapter 8 – Experiments and Results: Reports generator baseline comparisons; judge performance on
+% Chapter 8 – Results: Reports generator baseline comparisons; judge performance on
 % synthetic versus literature ground truth; corrector effects on CLD F1 and judge scores; cross-domain UQ
-% metric generalization failure; ensemble classifier performance; and DR found causal evidence for 62% of
+% metric generalisation failure; ensemble classifier performance; and DR found causal evidence for 62% of
 % "hallucinations."
-\input{Chapters/ExperimentsandResults}
+\input{Chapters/Results}
 
 % Chapter 9 – Discussion: Interprets the GT Synth–GT Lit performance gap; identifies judge and corrector
 % failure mechanisms; discusses UQ metric results and the pivot to DR that reframes many false positives
@@ -424,8 +459,9 @@ Lastly, I want to thank Andrew Crossley especially, for building the software fr
 % Include the appendices of the thesis as separate files from the Appendices folder
 % Uncomment the lines as you write the Appendices
 
+\input{appendix_sensitivity}
 \input{Appendices/AppendixA}
-%\input{Appendices/AppendixB}
+\input{Appendices/AppendixB_ExperimentDetails}
 %\input{Appendices/AppendixC}
 
 \addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics

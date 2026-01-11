@@ -260,6 +260,9 @@ $A \xrightarrow{\texttt{NONE}} B$ (remove wrong) + $B \xrightarrow{\texttt{POS}}
 
 \textbf{Algorithm reference:} Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:corrector}). \textbf{Input parameters (prompts):} Appendix~\ref{sec:corrector_prompts}.
 
+\paragraph{Temperature defaults.}
+Other temperature defaults (judge T=0.0) were chosen based on established recommendations from the LLM-as-a-Judge literature~\citep{liu2023gevalnlgevaluationusing, zheng2024judging}. The corruptor temperature default was chosen to be the same as the generator temperature (T=0.7) to minimise stylistic distributional shifts, ensuring that hallucinations must be detected based on content rather than stylistic artefacts. The corrector's temperature default was also chosen to be T=0.7 to align with the generator, in line with the Self-Refine framework which also selects similar temperatures for generator and corrector~\citep{madaan2023selfrefineiterativerefinementselffeedback}.
+
 %------------------------------------------------------------------------------
 \section{Deep Research System}
 \label{sec:deep_research_system}
@@ -337,13 +340,13 @@ This section documents the CLD domains, context parameters, and validation datas
 
 Across experiments we distinguish between (i) \textbf{ground-truth datasets} that define evaluation labels and (ii) \textbf{prediction artefacts} produced by the model that are scored against those labels.
 
-\noindent\textbf{Ground truth datasets.}
+\noindent\textbf{Ground truth datasets}
 \begin{itemize}[noitemsep]
     \item \textbf{GT Lit (literature ground truth):} The published CLDs (nodes and edges) extracted from peer-reviewed sources (Appendix~\ref{sec:data_availability}, Table~\ref{tab:gt_files}). For each domain, GT Lit defines the validation node set \(V\) and the validation edge labels used for scoring (see edge definition below). In GT Lit experiments, hallucinations are operationalised as FP/FN relative to this literature CLD.
     \item \textbf{GT Synth (synthetic corruption ground truth):} A controlled dataset constructed by taking an LLM Prediction edge table produced by Phase 1: Generation (Section~\ref{sec:generator}; Figure~\ref{fig:cld_pipeline}) and applying the Corruptor (Section~\ref{sec:corruptor}) to introduce known errors at a fixed corruption rate. As in all edge-level experiments, the node set is fixed to the validation node set \(V\), so corruption is defined over the same ordered-edge universe. Ground truth is the per-edge \texttt{corrupted} flag (rather than agreement with GT Lit). GT Synth is used to validate judge detection under fully known, injected error labels.
 \end{itemize}
 
-\noindent\textbf{Model predictions.}
+\noindent\textbf{Model predictions}
 \begin{itemize}[noitemsep]
     \item \textbf{LLM Predictions (generated edges over GT Lit nodes):} For each domain and run seed, we generate a CLD by fixing the node set to the GT Lit validation variables \(V\) and generating edges only. These generated edge tables are produced by the Phase 1: Generation pipeline (Section~\ref{sec:generator}; Figure~\ref{fig:cld_pipeline}) and are the primary predictions evaluated in RQ1--RQ3 (Figure~\ref{fig:experimental_pipeline_overview}). We compute accuracy/FP/FN metrics by comparing these predictions against either (i) GT Lit labels (deviation from literature) or (ii) GT Synth corruption labels when synthetic corruption is applied. Per-RQ output directories for these run artefacts (under \texttt{final\_runs/}) are listed in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}); file types and naming conventions are in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
 \end{itemize}
@@ -505,10 +508,7 @@ This chapter defines the experimental task, operationalises hallucination for ev
 Experiments operate on ordered edges \((A,B)\) over a fixed node set \(V\) obtained from ground-truth literature CLDs. For each edge, an LLM generator outputs a relationship label in \{\texttt{POSITIVE}, \texttt{NEGATIVE}, \texttt{NONE}\} plus a short mechanistic narrative (and, where applicable, citations). These edge tables constitute the input to all RQ1--RQ3 experiments. Full generation details are in Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}); data specifications are in Appendix~\ref{sec:data_availability}.
 
 \paragraph{Scope}
-The primary task evaluated is detecting and mitigating hallucinations in CLD edge predictions. Hallucination detection assigns each edge a binary label (hallucinated vs.\ non-hallucinated) under a specified ground-truth construct (GT Lit vs.\ GT Synth). Mitigation mechanisms (corrector / Deep Research) attempt to improve alignment. Generation itself is treated as a given input process and is outside evaluation scope.
-
-\paragraph{Rationale}
-By fixing the node set \(V\) to the GT Lit variables and evaluating downstream methods on the resulting edge tables, we isolate detection/mitigation performance from confounds due to differing node sets or generation variance.
+The primary task evaluated is detecting and mitigating hallucinations in CLD edge predictions. Hallucination detection assigns each edge a binary label (hallucinated vs.\ non-hallucinated) under a specified ground-truth construct (GT Lit vs.\ GT Synth). Mitigation mechanisms (corrector / Deep Research) attempt to improve alignment. Generation itself is treated as a given input process and is outside evaluation scope. By fixing the node set \(V\) to the GT Lit variables and evaluating downstream methods on the resulting edge tables, we isolate detection/mitigation performance from confounds due to differing node sets or generation variance.
 
 %------------------------------------------------------------------------------
 \section{Hallucination Operationalisation}
@@ -621,6 +621,8 @@ The design framework is instantiated in four main experiments (RQ1a, RQ1b, RQ2, 
 \textbf{Unit of Analysis:} Block-level (CLD$\times$run) means ($N=9$).\\
 \textbf{Datasets:} deduplicated \textbf{GT Lit} runs (see Section~\ref{sec:evaluation_datasets}). Hallucination labels defined as FP/FN w.r.t.\ GT Lit.\\
 \textbf{Outputs:} per-edge UQ metrics (perplexity, min probability, max window entropy; plus cosine similarity for citation runs), per-file and per-block AUCs, and (optionally) ensemble classifier performance under group-aware splits.
+
+\textbf{Analysis pipeline (Phases 1--3: single-metric).} Phase~1 computes \textbf{per-file} AUC-ROC for each UQ metric by treating the raw metric as a univariate classifier score (hallucinated vs.\ correct edges). Phase~2 aggregates those per-file AUCs into \textbf{block-level} AUCs (blocks = CLD$\times$run, $N=9$). Phase~3 tests above-chance discrimination using a one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$ across the 9 blocks and reports mean $\pm$ 95\% CI over blocks. (Phases~4--6 extend this to multivariate ensembles under group-aware splits; see below and Appendix~\ref{sec:rq2_analysis}.)
 
 \paragraph{RQ3 (Deep Research literature validation).}
 \begin{center}
@@ -779,6 +781,14 @@ The correct-causal rate quantifies the proportion of edges passing the applicabi
 \end{equation}
 Together, coverage and correct-causal rate characterise the precision--recall trade-off as a function of the applicability threshold.
 
+\paragraph{Applicability threshold selection (elbow/gradient rule).}
+\label{sec:rq3_applicability_threshold_selection}
+To select a single operating-point threshold \(t^\star\) for extrapolation, we identify the knee of the trade-off between coverage and correct-causal rate. Let \(\mathcal{T}=\{t_1,\dots,t_m\}\) be a grid of candidate thresholds with adjacent pairs ordered from stricter to looser (\(t_h > t_\ell\)). For each adjacent segment \(t_h \rightarrow t_\ell\), define the marginal trade-off score:
+\begin{equation}
+    S(t_h \rightarrow t_\ell)=\frac{\text{Coverage}(t_\ell)-\text{Coverage}(t_h)}{\left|\text{Correct-causal}(t_\ell)-\text{Correct-causal}(t_h)\right|+\epsilon},
+\end{equation}
+where \(\epsilon>0\) is a small constant to avoid division by zero. We select \(t^\star\) as the lower (looser) threshold \(t_\ell\) that maximises \(S\), corresponding to the largest gain in coverage per unit loss in correct-causal rate (diminishing returns point).
+
 \paragraph{Aggregation Methods (Generator Evaluation).}
 When aggregating classification metrics across multiple CLDs, we employ two complementary strategies. Micro-averaging pools all true positives, false positives, and false negatives across CLDs before computing Precision, Recall, and F1, thereby assigning equal weight to each edge regardless of which CLD it belongs to. Macro-averaging computes Precision, Recall, and F1 separately for each CLD and then averages these per-CLD scores, giving equal weight to each CLD irrespective of its size. The choice between micro- and macro-averaging affects interpretation when CLD sizes differ substantially. To contextualise random baseline performance, we report graph density---the fraction of possible directed edges that are present in the ground-truth CLD:
 \begin{equation}
@@ -817,10 +827,21 @@ For \textbf{prompt sensitivity} (RQ1a, RQ1b), we employ non-parametric repeated-
 
 This framework is robust to small sample sizes, non-normality, and outliers. The trade-off is that it primarily answers \textit{whether prompts differ} (in a rank-based sense), but it does not yield the same kind of variance decomposition and sensitivity measures as parametric repeated-measures models.
 
-\textbf{Sensitivity Analysis (Appendix~\ref{app:sensitivity_analysis}; Methods~\S\ref{sec:rq1a_sensitivity}).} For sensitivity-style interpretation (e.g., ``how much variability is explained by prompts''), we also report \textbf{Repeated-Measures ANOVA} (RM-ANOVA) with variance decomposition (e.g., $\eta^2_p$). The trade-off is the opposite of the non-parametric approach: RM-ANOVA is more interpretable for sensitivity, but it relies on stronger distributional assumptions that are hard to validate convincingly at $n=9$. We therefore treat RM-ANOVA as a \textit{secondary} sensitivity summary (reporting $F$, df, $p$, and $\eta^2_p$), and keep the non-parametric results as the primary inferential evidence for prompt differences.
+\paragraph{Sensitivity analysis (supplementary RM-ANOVA).}
+\label{sec:prompt_sensitivity_rationale}
+For sensitivity-style interpretation (e.g., ``how much variability is explained by prompts''), we also report \textbf{Repeated-Measures ANOVA} (RM-ANOVA) with variance decomposition (partial $\eta^2_p$; Appendix~\ref{app:sensitivity_analysis}). The trade-off is the opposite of the non-parametric approach: RM-ANOVA is more interpretable for sensitivity, but it relies on stronger distributional assumptions that are hard to validate convincingly at $n=9$. We therefore treat RM-ANOVA as a \textit{secondary} sensitivity summary (reporting $F$, df, $p$, and $\eta^2_p$), and keep the non-parametric results as the primary inferential evidence for prompt differences.
 
-\paragraph{RQ2 hypothesis tests (single-metric UQ detection).}
-For each UQ metric, we compute a \textbf{block-level} AUC-ROC (blocks = CLD$\times$run, $n=9$) and test whether discrimination exceeds chance. The primary test is a one-sample $t$-test on block-level AUCs against the null hypothesis $H_0:\mu_{\text{AUC}}=0.5$ (see Appendix~\ref{app:statistical_procedures_reference}). Distributional assumptions are checked using the Shapiro--Wilk test on block-level AUCs; when normality is questionable, we additionally report a one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ as a robustness check. To compare hallucinated versus correct edge distributions within each CLD, we employ Mann--Whitney U tests with rank-biserial $r$ as the effect size measure. Correlation analyses use Pearson's $r$ (including point-biserial correlation for binary labels) computed per experimental file and aggregated across files using the Fisher $z$-transformation (see Appendix~\ref{app:statistical_procedures_reference}).
+\paragraph{RQ2 (single-metric UQ detection): block-level hypothesis tests.}
+For each UQ metric, we treat the raw metric as a univariate classifier score, compute \textbf{block-level} AUC-ROC (blocks = CLD$\times$run, $n=9$), and test whether discrimination exceeds chance. To remain robust under small-$n$ aggregation, the primary test is a one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$ against $H_0:\mathrm{median}(\mathrm{AUC}-0.5)=0$ (see Appendix~\ref{app:statistical_procedures_reference}). This yields \textbf{one p-value per metric} (a single test across the 9 block values), not one p-value per block. For uncertainty reporting, we additionally report mean $\pm$ 95\% CI using the $t$-distribution over blocks.
+
+For within-domain distribution diagnostics, we compare hallucinated versus correct edge distributions using Mann--Whitney U tests and report rank-biserial $r$ as an effect size; these edge-level results are treated as \textbf{descriptive diagnostics} rather than confirmatory inference. Correlation analyses use Pearson's $r$ (equivalently point-biserial correlation for binary labels) computed at the \textbf{file level} and then summarised at the \textbf{block level} (mean across files within each CLD$\times$run block); block-level correlations are aggregated across blocks using the Fisher $z$-transformation, and any correlation significance markers likewise correspond to \textbf{one block-level test per metric} (Appendix~\ref{app:statistical_procedures_reference}).
+
+\paragraph{RQ2 (ensemble UQ detection): group-aware predictive evaluation (Phases 4--6).}
+For multivariate detection, we fit supervised classifiers on the UQ feature vector and evaluate performance under group-aware splits designed to reduce pseudo-replication. Phase 5 uses GroupKFold/GroupShuffleSplit with blocks = CLD$\times$run to estimate in-distribution performance; Phase 6 uses leave-one-CLD-out evaluation to estimate cross-domain generalisation. We report AUC-ROC as a threshold-free ranking metric, and fixed-threshold F1 as an operational metric.
+
+\textbf{Threshold policy (comparability).} Because UQ classifier scores do not have intrinsic semantics, we do not treat 0.5 as a meaningful default threshold under domain shift. Instead, we select a fixed threshold $t^*$ per classifier on Phase 5 \textbf{training blocks only} by maximizing out-of-fold F1, and then freeze $t^*$ for Phase 6 evaluation.
+
+\textbf{No Phase 6 chance test.} We do not perform a formal hypothesis test of Phase~6 AUC vs.\ chance because the leave-one-CLD-out procedure reuses the same CLDs across folds; blocks within a held-out CLD share the same trained model; and training sets overlap heavily across folds. These dependencies violate i.i.d.\ assumptions, so p-values would be easy to over-interpret. Accordingly, Phase~6 results are interpreted as predictive performance estimates rather than confirmatory hypothesis tests.
 
 \paragraph{RQ3 hypothesis tests (Deep Research discrimination).}
 RQ3 compares \textbf{detection rates} (Found vs.\ Not Found for \texttt{direct\_causal\_found}) between edge classes. The primary test employs Fisher's exact test on $2\times2$ contingency tables for the TP--FP, TP--FN, and FP--FN class pairs (see Appendix~\ref{app:statistical_procedures_reference}); $p$-values are Bonferroni-adjusted within this family. Uncertainty in detection-rate proportions is quantified using Wilson score 95\% confidence intervals. Effect sizes are reported as Cohen's $h$ for proportion differences and as odds ratios with 95\% confidence intervals derived from the contingency tables.
@@ -853,7 +874,19 @@ Following Cohen~\cite{cohen1988statistical}, all significant findings are accomp
 
 For repeated measurements (across CLDs, runs/seeds, or CV folds), we report \textbf{mean $\pm$ 95\% CI} using the $t$-distribution with $df = N-1$. This accounts for variance uncertainty in small samples (e.g., $N=3$ runs or $N=9$ blocks). For proportions (e.g., detection rates), we use Wilson score 95\% intervals.
 
-Interpretation: Readers should interpret small-$N$ intervals ($N < 10$) as approximate rather than precise; confirmatory conclusions rely on block-based non-parametric tests (Friedman/Wilcoxon) rather than visual CI overlap. CV fold scores are not independent draws (folds share training data), so fold-based intervals should not be interpreted as strict confidence intervals.
+\noindent\textbf{Normal $t$-based confidence interval.} For a sample of $N$ observations with mean $\bar{x}$ and sample standard deviation $s$, the 95\% confidence interval is:
+\begin{equation}
+    \bar{x} \pm t_{0.975,\,N-1} \cdot \frac{s}{\sqrt{N}}
+\end{equation}
+where $t_{0.975,\,N-1}$ is the critical value from the $t$-distribution with $N-1$ degrees of freedom. This interval is appropriate for continuous metrics (e.g., AUC, F1) when block-level means are approximately normal.
+
+\noindent\textbf{Wilson score confidence interval.} For a proportion $\hat{p} = k/n$ based on $k$ successes in $n$ trials, the Wilson score 95\% interval~\cite{wilson1927probable} is:
+\begin{equation}
+    \frac{\hat{p} + \frac{z^2}{2n} \pm z\sqrt{\frac{\hat{p}(1-\hat{p})}{n} + \frac{z^2}{4n^2}}}{1 + \frac{z^2}{n}}
+\end{equation}
+where $z = 1.96$ for 95\% confidence. Unlike the normal approximation (Wald interval), the Wilson interval avoids overshoot beyond $[0,1]$ and provides better coverage for proportions near 0 or 1, making it suitable for detection rates and accuracy metrics.
+
+\textbf{Interpretation:} Readers should interpret small-$N$ intervals ($N < 10$) as approximate rather than precise; confirmatory conclusions rely on block-based non-parametric tests (Friedman/Wilcoxon) rather than visual CI overlap. CV fold scores are not independent draws (folds share training data), so fold-based intervals should not be interpreted as strict confidence intervals.
 
 \textbf{Statistical Power.} Given the small number of independent blocks ($N=9$), our main repeated-measures analyses have limited sensitivity to small effects; null results should therefore not be over-interpreted as evidence of no effect. We emphasise standardised effect sizes alongside $p$-values (Table~\ref{tab:effect_size_summary}, Results).
 
@@ -862,9 +895,9 @@ Interpretation: Readers should interpret small-$N$ intervals ($N < 10$) as appro
 \label{sec:computational_efficiency}
 %------------------------------------------------------------------------------
 
-Time and cost scaling characterise: (1) CLD size vs.\ computational requirements, (2) correctness vs.\ citation cost trade-off, (3) model efficiency (GPT-4.1 vs.\ GPT-5-mini). Since each edge is judged independently, time complexity is $O(E)$ where $E$ is edges; for dense CLDs, $O(N^2)$ w.r.t.\ nodes.
+Time and cost scaling characterise: (1) CLD size vs.\ computational requirements, (2) correctness vs.\ citation cost trade-off, and (3) model efficiency (e.g., GPT-4.1 vs.\ GPT-5-mini). Since each edge is judged independently, time complexity is $O(E)$ where $E$ is edges; for dense CLDs, $O(N^2)$ w.r.t.\ nodes.
 
-Cost estimates are based on December 2024 OpenAI API pricing: GPT-4.1 costs \$2.00 per million input tokens and \$8.00 per million output tokens, whereas GPT-5-mini costs \$0.15 per million input tokens and \$0.60 per million output tokens---approximately 97\% cheaper than GPT-4.1.
+Cost estimates use the OpenAI API pricing assumed in our cost analysis scripts (December 2025): GPT-4.1 costs \$2.00 per million input tokens and \$8.00 per million output tokens; GPT-5 costs \$1.25/\$10.00 per million input/output tokens; and GPT-5-mini costs \$0.25/\$2.00 per million input/output tokens. These differences make the choice of provider and model tier a major driver of end-to-end cost.
 
 Full scaling results in Appendix~\ref{sec:time_cost_scaling}.
 
@@ -884,7 +917,7 @@ Table~\ref{tab:master} provides a complete overview of all experimental configur
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}l l l l l l l l c l l l l l l@{}}
 \toprule
-\textbf{RQ} & \textbf{Task} & \textbf{Dataset} & \textbf{GT} & \textbf{Varies} & \textbf{Fixed} & \textbf{Model} & \textbf{Design} & \textbf{N} & \textbf{Unit} & \textbf{Metric} & \textbf{Test} & \textbf{Details} & \textbf{Out} & \textbf{Hypothesis} \\
+\textbf{RQ} & \textbf{Task} & \textbf{Dataset} & \textbf{GT} & \textbf{Varies} & \textbf{Fixed} & \textbf{Model} & \textbf{Design} & \textbf{N} & \textbf{Unit} & \textbf{Metric} & \textbf{Test} & \textbf{Details} & \textbf{Result Output} & \textbf{Hypothesis} \\
 \midrule
 \multicolumn{15}{l}{\textit{Preliminary \& Validation Studies}} \\
 \midrule
@@ -906,16 +939,17 @@ Val & Physics sanity check & Physics CLDs & Phys. & 4 CLDs & Laws fixed & 4.1 & 
   & Correctness corrector (Synth) & Judge-flagged LLM preds + GT Synth & Synth & Prompt (3) & baseline judge: Tj=0; sj=42 & 4.1 & 3C$\times$3r$\times$3p & 27 & CLD$\times$run & $\Delta$F1 & Fried.+Wilc. & \S\ref{sec:rq1b_corrector_synth} & Tab.~\ref{tab:rq1b_synthetic_correctness} & \multirow{2}{*}{H3: Corr.$\uparrow$F1} \\
   & Correctness corrector (Lit) & Judge-flagged LLM preds + GT CLDs & Lit & Prompt (3) & baseline judge: Tj=0; sj=42 & 4.1 & 3C$\times$3r$\times$3p & 27 & CLD$\times$run & $\Delta$F1 & Fried.+Wilc. & \S\ref{sec:rq1b_corrector_lit} & Tab.~\ref{tab:rq1b_groundtruth_correctness} & \\
 \midrule
-Sens. & Prompt sensitivity analysis & LLM preds + GT CLDs & Lit & Prompt ($k$=3--4) & blocks=CLD$\times$run & 4.1 & 9blk$\times k$p & 9 & CLD$\times$run & $\eta^2_p$ & RM-ANOVA & \S\ref{sec:rq1a_sensitivity} & Fig.~\ref{fig:sensitivity_analysis_app} & Sensitivity \\
+Sens. & Prompt sensitivity analysis & LLM preds + GT CLDs & Lit & Prompt ($k$=3--4) & blocks=CLD$\times$run & 4.1 & 9blk$\times k$p & 9 & CLD$\times$run & $\eta^2_p$ & RM-ANOVA & \S\ref{sec:prompt_sensitivity_rationale} & Fig.~\ref{fig:sensitivity_analysis_app} & Sensitivity \\
 \midrule
-\multirow{2}{*}{2}
-  & UQ (logprobs) & LLM preds (RQ2 dedup) & Lit & CLD s$\in$\{10,20,30\} & Tj=0; sj=42 & 4.1 & 3C$\times$3r$\times$(3--4)p & 63 & CLD$\times$run & AUC vs.\ 0.5 & $t$ (blocks) & \S\ref{sec:rq2_uq_logprobs} & Fig.~\ref{fig:rq2_distributions_by_cld}; Tab.~\ref{tab:rq2_single_metrics} & H4: $\uparrow$PPL/$\downarrow$Pmin/$\uparrow$Hwin$\Rightarrow$halluc. \\
-  & CosSim (embeddings) & LLM preds (RQ2 dedup) & Lit & CLD s$\in$\{10,20,30\} & mpnet & mpnet & 3C$\times$3r$\times$4p & 36 & CLD$\times$run & AUC vs.\ 0.5 & $t$ (blocks) & \S\ref{sec:rq2_cossim_embeddings} & Fig.~\ref{fig:rq2_distributions_by_cld}; Tab.~\ref{tab:rq2_single_metrics} & H5: Low sim.$\Rightarrow$halluc. \\
+\multirow{3}{*}{2}
+  & UQ (logprobs) & LLM preds (RQ2 dedup) & Lit & CLD s$\in$\{10,20,30\} & Tj=0; sj=42 & 4.1 & 3C$\times$3r$\times$(3--4)p & 63 & CLD$\times$run & AUC vs.\ 0.5 & Wilc. (blocks) & \S\ref{sec:rq2_uq_logprobs} & Fig.~\ref{fig:rq2_distributions_by_cld}; Tab.~\ref{tab:rq2_single_metrics} & H4: $\uparrow$PPL/$\downarrow$Pmin/$\uparrow$Hwin$\Rightarrow$halluc. \\
+  & CosSim (embeddings) & LLM preds (RQ2 dedup) & Lit & CLD s$\in$\{10,20,30\} & mpnet & mpnet & 3C$\times$3r$\times$4p & 36 & CLD$\times$run & AUC vs.\ 0.5 & Wilc. (blocks) & \S\ref{sec:rq2_cossim_embeddings} & Fig.~\ref{fig:rq2_distributions_by_cld}; Tab.~\ref{tab:rq2_single_metrics} & H5: Low sim.$\Rightarrow$halluc. \\
+  & Ensemble UQ (Phases 4--6) & LLM preds (RQ2 dedup) & Lit & CLD s$\in$\{10,20,30\} & blocks=CLD$\times$run; LOCO & 4.1 & GroupKFold/LOCO & 9 blk / 3 CLDs & Block/CLD & AUC, F1@$t^*$ & Pred.\ eval & \S\ref{sec:rq2_analysis} & Fig.~\ref{fig:rq2_rfe}; Tab.~\ref{tab:rq2_ensemble_performance} & --- \\
 \midrule
 \multirow{3}{*}{3}
-  & Deep Research & DR outputs & Lit & TP/FP/FN strata & 1 iter, 5 src & GPT-5 & 3 CLDs $\times$ TP/FP/FN & 285 & Edge & Det.\ rate & Fisher & \S\ref{sec:rq3_deep_research} & Tab.~\ref{tab:rq3_results}; Fig.~\ref{fig:rq3_combined} & H6: Det$_{\text{TP}}$$>$Det$_{\text{FP}}$ \\
+  & Deep Research & DR outputs & Lit & TP/FP/FN strata & 1 iter, 5 src & 5/5m & 3 CLDs $\times$ TP/FP/FN & 285 & Edge & Det.\ rate & Fisher & \S\ref{sec:rq3_deep_research} & Tab.~\ref{tab:rq3_results}; Fig.~\ref{fig:rq3_combined} & H6: Det$_{\text{TP}}$$>$Det$_{\text{FP}}$ \\
   & Human validation & Val.\ sample & DR+ & $t\in$\{0.5--0.9\} & Stratified & Human & strat.\ (TP/FP/FN$\times$CLD) & 50 & Edge & Applic., valid. & Wilson & \S\ref{sec:rq3_human_validation} & Fig.~\ref{fig:rq3_human_validation_elbow}; Tab.~\ref{tab:rq3_human_validation_tradeoff} & H7: Thresh$\Rightarrow$valid. \\
-  & Smart trigger & DR outputs & Lit & Judge score & mech. $\leq$ 0.5 & GPT-5 & triggered DR subset & 142 & Edge & $\Delta$F1/\$ & Extrap. & \S\ref{sec:rq3_smart_trigger} & Fig.~\ref{fig:rq3_dr_cost_efficiency} & H8: Sel.\ DR$\uparrow$eff. \\
+  & Smart trigger & DR outputs & Lit & Judge score & mech. $\leq$ 0.5 & 4.1+5/5m & triggered DR subset & 142 & Edge & $\Delta$F1/\$ & Extrap. & \S\ref{sec:rq3_smart_trigger} & Fig.~\ref{fig:rq3_dr_cost_efficiency} & H8: Sel.\ DR$\uparrow$eff. \\
 \bottomrule
 \end{tabular}}%
 
@@ -924,7 +958,7 @@ Sens. & Prompt sensitivity analysis & LLM preds + GT CLDs & Lit & Prompt ($k$=3-
 \scriptsize
 \textit{Legend.} 
 \textbf{RQ:} Pre=Preliminary, Val=Validation, Sens.=Sensitivity.
-\textbf{Models:} 4.1=GPT-4.1, 5m=GPT-5-mini, GPT-5=GPT-5 (heavy), mpnet=all-mpnet-base-v2, Human=human rater.
+\textbf{Models:} 4.1=GPT-4.1, 5m=GPT-5-mini, 5/5m=GPT-5 + GPT-5-mini mix (Deep Research), mpnet=all-mpnet-base-v2, Human=human rater.
 \textbf{GT:} Lit=literature GT, Synth=synthetic corruption (30\%), TQA=TruthfulQA, Expert=Uleman's GMB, Phys.=physics laws, DR+=DR output with human applicability.
 \textbf{Datasets:} LLM preds=LLM Prediction edge tables (Phase 1 outputs) used throughout RQ1--RQ3; RQ2 dedup=deduplicated RQ1a GT Lit LLM preds; DR outputs=Deep Research edges; Val.\ sample=stratified validation sample.
 \textbf{Varies/Fixed:} sj=judge seed (fixed at 42), Corr seed=run number, Tj=judge temperature, cr=corruption rate.
@@ -934,9 +968,12 @@ Sens. & Prompt sensitivity analysis & LLM preds + GT CLDs & Lit & Prompt ($k$=3-
 \textbf{Multiple-comparison families:} Bonferroni corrections are defined per research question (RQ); for prompt-sensitivity analyses (RQ1a/RQ1b), post-hoc prompt comparisons are corrected within each experiment/metric family (e.g., per judge$\times$GT setting and metric).
 \textbf{Design:} C=CLDs, r=runs, p=prompts, m=models, q=questions, v=variants, e=edges, blk=blocks, prov=providers, fetch=fetchers; strat.=stratified. \textbf{Task:} Prov.=Provider. \textbf{Symbols:} $\uparrow$/$\downarrow$=increase/decrease; $\Rightarrow$=implies.
 \textbf{Common:} Generator T=0.7, Judge T=0.0, Corruptor T=0.7. halluc.=hallucination (FP$\lor$FN w.r.t.\ GT).
-\textbf{Details:} section with experiment design/procedure (see Appendix~\ref{sec:reproducibility} for scripts/data). \textbf{Out:} key Result figure/table links.
+\textbf{Details:} section with experiment design/procedure (see Appendix~\ref{sec:reproducibility} for scripts/data). \textbf{Result Output:} key Result figure/table links.
 \textbf{Seed structure:} GT Lit uses CLD seeds 10/20/30 (varies generation); GT Synth uses corruption seeds 1/2/3 with base CLD fixed (isolates corruption detection).
 \textbf{Data access:} All datasets, run artefacts, and analysis code are in the project repository (\url{https://github.com/causalix/causalix.ai}); see also \texttt{final\_runs/DATA\_README.md}.
+
+\medskip
+\textbf{Companion table:} For a consolidated summary of effect sizes, statistical test outcomes, and hypothesis conclusions across all experiments, see Table~\ref{tab:effect_size_summary} (Results Chapter).
 \end{minipage}
 \end{table}
 \end{landscape}
@@ -949,7 +986,8 @@ For readability, the complete, reproducible specifications for every experiment 
     \item \textbf{RQ \& Goal / Hypotheses:} What the experiment tests and the expected direction of effects.
     \item \textbf{Source Data:} Datasets used and ground truth label definitions (GT Lit vs.\ GT Synth).
     \item \textbf{Simulation Parameters:} What varies vs.\ what is fixed (models, prompts, seeds, temperatures).
-    \item \textbf{Simulation Procedure:} Operational steps (generation $\rightarrow$ judging $\rightarrow$ correction).
+    \item \textbf{Simulation/Analysis Procedure:} Operational steps (generation $\rightarrow$ judging $\rightarrow$ correction).
+    \item \textbf{Outputs:} The artefacts produced and where they enter downstream analyses.
     \item \textbf{Metrics / Statistical Analysis:} Reported metrics, unit of analysis, and inference procedure.
     \item \textbf{Reproducibility:} Exact scripts and entry points to rerun the experiment.
 \end{itemize}

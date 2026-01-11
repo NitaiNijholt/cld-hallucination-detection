@@ -1,0 +1,40 @@
+% =============================================================================
+% Notes file: Hallucination operationalization for CLD generation
+% This content has been integrated into ch2_background.tex, Section 2.7
+% Kept here as reference notes
+% =============================================================================
+
+% EDGE-LEVEL FOCUS
+% - Hallucinations operationalized at causal link (edge) level
+% - Enables precise quantification
+% - Aligns with atomic unit that judges can evaluate
+
+% HALLUCINATION TAXONOMY (adapted from SD-AI benchmark)
+% Reference: \cite{schoenberg2025aibuildsdmodels}
+% Leaderboard: https://ub-iad.github.io/sd-ai/#/leaderboard/cld
+
+% Types addressed in this thesis:
+% 1. Spurious edge (FP) - fabricated causal relationship
+% 2. Missing edge (FN) - omitted valid relationship  
+% 3. Polarity error - wrong sign (+/-)
+% 4. Wrong causal narrative - low judge score
+
+% Types NOT primary focus:
+% - Lack of conformance - solved via structured outputs (JSON schema)
+% - Variable extraction failures - see Appendix D
+
+% GROUND TRUTH DEFINITIONS
+% 1. GT Lit: FP/FN w.r.t. literature CLD (peer-reviewed)
+% 2. GT Synth: Corrupted edges = hallucinations (HaluEval approach)
+
+% CORRUPTION PROCESS (GT Synth)
+% Reference: \cite{li2023halueval}
+% - Same model family as generator/judge (GPT-4.1) for self-preference bias
+% - Corruption rate: 0.3 (30% of eligible edges)
+% - Balanced distribution across types:
+%   a) Motivation corruption: plausible-but-flawed reasoning
+%   b) Spurious edge injection: NONE -> false positive
+%   c) Polarity flip: POSITIVE <-> NEGATIVE
+
+% CORRUPTOR PARAMETERS
+% model=gpt-4.1, temperature=0.7, top_p=1.0, corruption_rate=0.3

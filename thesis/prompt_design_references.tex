@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{Prompt Design References for RQ1a Judge Evaluation}
+\author{}
+\date{November 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+This document provides citations for the three prompt variants used in the RQ1a corruption detection experiments. Each prompt type is grounded in established research on LLM-as-a-judge evaluation strategies and causal reasoning.
+
+\section{Prompt Design Variants}
+
+\subsection{Baseline Prompt}
+
+\textbf{Design Philosophy}: Simple, direct evaluation approach asking ``Does this relationship make sense?''
+
+\textbf{Purpose}: Serves as a control condition and simplicity benchmark for comparison with more sophisticated prompting strategies.
+
+\textbf{Theoretical Grounding}:
+\begin{itemize}[noitemsep]
+    \item Monte Carlo Data (2024) establishes best practices for LLM-as-a-judge systems, recommending clear evaluation criteria and structured output formats~\cite{montecarlo2024}.
+    \item EvidentlyAI (2024) provides comprehensive guidance on implementing LLM-based evaluation systems, emphasizing the importance of baseline comparisons~\cite{evidentlyai2024}.
+\end{itemize}
+
+\subsection{Mechanistic Prompt}
+
+\textbf{Design Philosophy}: Domain-specific causal reasoning evaluation focusing on mechanistic evidence.
+
+\textbf{Evaluation Focus}: Assesses \textit{how} the source variable affects the target, including:
+\begin{itemize}[noitemsep]
+    \item Mechanism description (causal pathway)
+    \item Causal direction support
+    \item Temporal precedence
+    \item Logical coherence
+\end{itemize}
+
+\textbf{Theoretical Grounding}:
+\begin{itemize}[noitemsep]
+    \item MDPI Electronics (2024) demonstrates that large language models require specialized prompting strategies for causal reasoning tasks, as they often conflate correlation with causation without explicit guidance~\cite{mdpi2024}.
+    \item TechRxiv (2024) introduces the Logic-of-Thought framework, which emphasizes verification-based reasoning for causal inference tasks~\cite{techrxiv2024}.
+    \item ArXiv (2024) presents PC-SubQ (Prompting with Causal Subquestions), showing that fixed, domain-specific subquestions outperform general prompting strategies for enabling LLMs to infer causation from correlation~\cite{arxiv2024pcsubq}.
+\end{itemize}
+
+\subsection{SCE (Structured Criteria Evaluation) Prompt}
+
+\textbf{Design Philosophy}: Multi-dimensional structured evaluation with explicit, independent criteria.
+
+\textbf{Evaluation Framework}: Four-dimensional assessment:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Mechanism Specificity}: Does the explanation describe \textit{how} the causal relationship operates?
+    \item \textbf{Causal Direction}: Is the direction of influence (source $\rightarrow$ target) clearly justified?
+    \item \textbf{Temporal Order}: Is temporal precedence (cause before effect) addressed?
+    \item \textbf{Logical Coherence}: Is the reasoning internally consistent and plausible?
+\end{enumerate}
+
+\textbf{Theoretical Grounding}:
+\begin{itemize}[noitemsep]
+    \item \textbf{Wolfe (2024)} introduces the G-Eval framework, demonstrating that structured criteria-based evaluation significantly outperforms unstructured chain-of-thought approaches for LLM evaluation tasks. This serves as the primary theoretical foundation for SCE~\cite{wolfe2024geval}.
+    \item Arize AI (2024) provides evidence-based strategies for LLM-as-a-judge systems, emphasizing the importance of explicit evaluation dimensions~\cite{arizeai2024}.
+    \item Monte Carlo Data (2024) establishes that combining explicit criteria with low-precision scoring (e.g., 0.0, 0.5, 1.0) and structured output formats improves reliability and interpretability~\cite{montecarlo2024}.
+    \item Medium/Data Science Collective (2024) analyzes when to use reasoning steps versus explanations, finding that structured verification questions are more effective than verbose chain-of-thought for evaluation tasks~\cite{medium2024}.
+\end{itemize}
+
+\section{Key Research Insights}
+
+\begin{enumerate}
+    \item \textbf{Structured criteria outperform unstructured CoT}: G-Eval (Wolfe, 2024) demonstrates that explicit evaluation dimensions yield more reliable and interpretable judgments than asking LLMs to ``think step by step''~\cite{wolfe2024geval}.
+    
+    \item \textbf{Domain-specific prompts improve causal reasoning}: PC-SubQ (ArXiv, 2024) shows that fixed, causal-specific subquestions significantly improve LLM performance on causal inference tasks compared to general prompting~\cite{arxiv2024pcsubq}.
+    
+    \item \textbf{Verification beats generation}: Logic-of-Thought framework (TechRxiv, 2024) demonstrates that verification-based reasoning (checking specific criteria) is more reliable than generation-based reasoning for complex inference tasks~\cite{techrxiv2024}.
+    
+    \item \textbf{Best practices for LLM judges}: Research consensus (Monte Carlo, 2024; EvidentlyAI, 2024) recommends explicit criteria, structured outputs, and low-precision scoring for robust LLM-as-a-judge systems~\cite{montecarlo2024,evidentlyai2024}.
+\end{enumerate}
+
+\section{Methodological Justification}
+
+The three-prompt design tests sensitivity of judge performance across a spectrum of prompting strategies:
+
+\begin{itemize}
+    \item \textbf{Baseline}: Minimal scaffolding (control condition)
+    \item \textbf{Mechanistic}: Domain-specific guidance (causal reasoning focus)
+    \item \textbf{SCE}: Structured multi-criteria evaluation (maximum rigor)
+\end{itemize}
+
+This design allows systematic investigation of whether judge agreement and accuracy improve with increasingly sophisticated prompting strategies, grounded in established LLM evaluation research.
+
+\begin{thebibliography}{9}
+
+\bibitem{arizeai2024}
+Arize AI.
+\textit{Evidence-Based Prompting Strategies for LLM-as-a-Judge}.
+2024.
+\url{https://arize.com/blog-course/llm-as-judge-prompting-strategies/}
+
+\bibitem{arxiv2024pcsubq}
+ArXiv.
+\textit{PC-SubQ: Prompting Strategies for Enabling Large Language Models to Infer Causation from Correlation}.
+2024.
+\url{https://arxiv.org/abs/2410.01420}
+
+\bibitem{evidentlyai2024}
+EvidentlyAI.
+\textit{LLM-as-a-Judge: A Complete Guide}.
+2024.
+\url{https://www.evidentlyai.com/llm-as-a-judge}
+
+\bibitem{mdpi2024}
+MDPI Electronics.
+\textit{Evaluating Causal Reasoning Capabilities of Large Language Models}.
+2024.
+\url{https://www.mdpi.com/2079-9292/13/18/3618}
+
+\bibitem{medium2024}
+Medium/Data Science Collective.
+\textit{LLM-as-a-Judge: When to Use Reasoning, Chain-of-Thought, and Explanations}.
+2024.
+\url{https://medium.com/data-science-collective/}
+
+\bibitem{montecarlo2024}
+Monte Carlo Data.
+\textit{LLM-As-Judge: 7 Best Practices for Building Robust Evaluation Systems}.
+2024.
+\url{https://www.montecarlodata.com/blog-llm-as-judge-best-practices/}
+
+\bibitem{techrxiv2024}
+TechRxiv.
+\textit{Logic-of-Thought Framework for Causal Inference with Large Language Models}.
+2024.
+\url{https://www.techrxiv.org/}
+
+\bibitem{wolfe2024geval}
+Wolfe, C.
+\textit{Using Large Language Models for Evaluation: The G-Eval Framework}.
+2024.
+\url{https://cameronrwolfe.substack.com/p/using-llms-for-evaluation}
+
+\end{thebibliography}
+
+\end{document}

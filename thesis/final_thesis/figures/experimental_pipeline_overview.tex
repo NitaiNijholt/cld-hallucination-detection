@@ -1,0 +1,125 @@
+% Experimental Pipeline Overview (Preliminaries → Main RQs → Validation)
+% Usage: \input{figures/experimental_pipeline_overview.tex}
+\begin{tikzpicture}[
+    font=\scriptsize,
+    % Styles
+    phase_box/.style={draw=#1!70!black, fill=#1!6, rounded corners=6pt, line width=0.8pt, inner sep=10pt},
+    phase_title/.style={font=\small\bfseries, text=#1!70!black},
+    step_box/.style={draw=black!45, fill=white, rounded corners=3pt, line width=0.6pt, inner sep=5pt, align=left, text width=4.15cm},
+    step_title/.style={font=\scriptsize\bfseries},
+    data_box/.style={draw=gray!55, fill=gray!10, rounded corners=3pt, line width=0.6pt, inner sep=5pt, align=left, text width=3.65cm},
+    data_title/.style={font=\scriptsize\bfseries, text=gray!70},
+    arrow/.style={-{Stealth[length=2.0mm, width=1.5mm]}, line width=0.55pt, draw=gray!70},
+    legend_box/.style={draw=gray!60, fill=gray!5, rounded corners=3pt, line width=0.5pt, inner sep=6pt},
+]
+
+% Color definitions for data sources
+\definecolor{llmsim}{RGB}{0,180,180}      % cyan for LLM simulations
+\definecolor{gtlit}{RGB}{180,0,180}       % magenta for GT Lit
+\definecolor{gtsynth}{RGB}{180,100,0}     % orange for GT Synth
+\definecolor{tqa}{RGB}{0,150,0}           % green for TruthfulQA
+\definecolor{ulemans}{RGB}{0,100,180}     % blue for Ulemans CLD
+\definecolor{physics}{RGB}{130,0,130}     % purple for Physics CLDs
+\definecolor{humanval}{RGB}{180,0,100}    % pink for Human validation
+
+% === LAYOUT ANCHORS (explicit to prevent overlap) ===
+\def\xPrelim{0}
+\def\xMain{6.6}
+\def\xValid{13.2}
+\def\yTop{3.9}
+\def\yData{-12.2}
+\def\yLegend{-14.0}
+
+\node[inner sep=0pt] (prelim_top) at (\xPrelim,\yTop) {};
+\node[inner sep=0pt] (main_top) at (\xMain,\yTop) {};
+\node[inner sep=0pt] (valid_top) at (\xValid,\yTop) {};
+
+% === PRELIM STEPS ===
+\node[step_box, anchor=north] (p1) at (prelim_top) {\textbf{P1: Generator configuration}\\
+\textit{Model selection} + \textit{prompt ablation} + \textit{temperature sensitivity}\\
+\textbf{Data:} \textcolor{gtlit}{GT Lit CLDs} (3)\\
+\textbf{Outputs:} \textcolor{llmsim}{LLM simulations} (edge tables/runs) + best model/prompt};
+
+\node[step_box, anchor=north] (p2) at ([yshift=-10pt]p1.south) {\textbf{P2: Random baseline}\\
+Erd\H{o}s--R\'enyi graphs \(G(n,m)\) matched to each CLD\\
+\textbf{Data:} \textcolor{gtlit}{GT Lit CLDs} (3)\\
+\textbf{Outputs:} random baseline CLD edge tables + baseline F1 distribution};
+
+\node[step_box, anchor=north] (p3) at ([yshift=-10pt]p2.south) {\textbf{P3: Judge sanity check}\\
+TruthfulQA verification (general-domain hallucination detection)\\
+\textbf{Data:} \textcolor{tqa}{TruthfulQA} (1,634 Q\&A)\\
+\textbf{Outputs:} Accuracy / F1 sanity-check};
+
+% === MAIN RQ STEPS ===
+\node[step_box, anchor=north] (rq1a) at (main_top) {\textbf{RQ1a: LLM-as-a-Judge}\\
+Detect hallucinations in CLD edges\\
+\textbf{Data:} \textcolor{llmsim}{LLM simulations} + \textcolor{gtlit}{GT Lit} + \textcolor{gtsynth}{GT Synth corruptions}\\
+\textbf{Outputs:} AUC/F1 by prompt (blocked design)};
+
+\node[step_box, anchor=north] (rq1b) at ([yshift=-10pt]rq1a.south) {\textbf{RQ1b: LLM-as-a-Corrector}\\
+Repair judge-flagged edges and re-evaluate\\
+\textbf{Data:} \textcolor{llmsim}{LLM simulations} + \textcolor{gtlit}{GT Lit} + \textcolor{gtsynth}{GT Synth} (from RQ1a)\\
+\textbf{Outputs:} \(\Delta\)F1, action breakdowns};
+
+\node[step_box, anchor=north] (rq2) at ([yshift=-10pt]rq1b.south) {\textbf{RQ2: Context-insensitive detection (UQ)}\\
+Use generation-time UQ signals to predict hallucinations\\
+\textbf{Data:} \textcolor{llmsim}{LLM simulations} (deduplicated runs); logprobs/embeddings\\
+\textbf{Outputs:} single-metric AUCs + ensemble results};
+
+\node[step_box, anchor=north] (rq3) at ([yshift=-10pt]rq2.south) {\textbf{RQ3a: Deep Research validation}\\
+Find direct causal evidence for edge claims\\
+\textbf{Data:} Stratified edges from \textcolor{llmsim}{LLM simulations} labeled vs \textcolor{gtlit}{GT Lit} (TP/FP/FN)\\
+\textbf{Outputs:} detection rates, enrichment analysis};
+
+% === VALIDATION STEPS ===
+\node[step_box, anchor=north] (v1) at (valid_top) {\textbf{V1: Search provider comparison}\\
+Citation-judge reliability on external expert CLD\\
+\textbf{Data:} \textcolor{ulemans}{Ulemans CLD} (150 edges)\\
+\textbf{Outputs:} coverage/score by provider};
+
+\node[step_box, anchor=north] (v2) at ([yshift=-10pt]v1.south) {\textbf{V2: Human--LLM agreement}\\
+Inter-rater agreement on citation judging\\
+\textbf{Data:} \textcolor{humanval}{Human validation set} (72 edges)\\
+\textbf{Outputs:} \(\kappa\), agreement \%, \(r\)};
+
+\node[step_box, anchor=north] (v3) at ([yshift=-10pt]v2.south) {\textbf{V3: Physics sanity check}\\
+Judge behavior on unambiguous causal edges\\
+\textbf{Data:} \textcolor{physics}{Physics CLDs} (31 edges)\\
+\textbf{Outputs:} score distributions};
+
+\node[step_box, anchor=north] (v4) at ([yshift=-10pt]v3.south) {\textbf{V4: Retrieval success analysis}\\
+Separate infrastructure failures vs evidence failures\\
+\textbf{Data:} \textcolor{physics}{Physics}/\textcolor{ulemans}{Ulemans} + \textcolor{gtlit}{GT Lit} retrieval logs\\
+\textbf{Outputs:} fetch success rates};
+
+\node[step_box, anchor=north] (v5) at ([yshift=-10pt]v4.south) {\textbf{V5: Deep Research human validation}\\
+Applicability calibration + threshold extrapolation\\
+\textbf{Data:} \textcolor{humanval}{Human DR sample} (50 edges)\\
+\textbf{Outputs:} calibrated enrichment bounds};
+
+% Fit boxes around content
+\begin{scope}[on background layer]
+    \node[phase_box=blue, fit=(p1)(p2)(p3), inner sep=12pt] (prelim_fit) {};
+    \node[phase_box=green, fit=(rq1a)(rq1b)(rq2)(rq3), inner sep=12pt] (main_fit) {};
+    \node[phase_box=orange, fit=(v1)(v2)(v3)(v4)(v5), inner sep=12pt] (valid_fit) {};
+\end{scope}
+
+\node[phase_title=blue]  at (prelim_fit.north) [yshift=10pt] {Preliminaries (setup \& baselines)};
+\node[phase_title=green] at (main_fit.north)   [yshift=10pt] {Main Experiments (RQ1--RQ3)};
+\node[phase_title=orange] at (valid_fit.north) [yshift=10pt] {Validation \& Robustness Checks};
+
+% === ARROWS: phase flow removed per user request ===
+
+% === DATASET LEGEND (bottom) ===
+\node[legend_box, anchor=north] (legend) at (8.0,\yLegend) {%
+    \textbf{Dataset legend:}~%
+    \textcolor{llmsim}{LLM simulations}~$\vert$~%
+    \textcolor{gtlit}{GT Lit}~$\vert$~%
+    \textcolor{gtsynth}{GT Synth}~$\vert$~%
+    \textcolor{tqa}{TruthfulQA}~$\vert$~%
+    \textcolor{ulemans}{Ulemans CLD}~$\vert$~%
+    \textcolor{physics}{Physics CLDs}~$\vert$~%
+    \textcolor{humanval}{Human validation}%
+};
+
+\end{tikzpicture}

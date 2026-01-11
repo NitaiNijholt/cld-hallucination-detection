@@ -1,1 +1,36 @@
-% Placeholder - run reproduction to generate this table
+\begin{table}[H]
+\centering
+\begin{minipage}{\linewidth}
+\centering
+\caption{Per-CLD Pairwise Discrimination Tests (Fisher's Exact, Bonferroni $m=3$)}
+\label{tab:rq3_per_cld}
+\begin{threeparttable}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llccccc}
+\toprule
+\textbf{CLD} & \textbf{Comparison} & \textbf{$\Delta$pp} & \textbf{Cohen's $h$} & \textbf{Interpretation} & \textbf{$p$} & \textbf{$p_{\text{adj}}$} \\
+\midrule
+Depressive & TP--FP & +36.3 & 0.75 & medium & .004** & .01* \\
+ & TP--FN & +31.0 & 0.63 & medium & .20 & .61 \\
+ & FP--FN & -5.3 & -0.12 & negligible & 1.00 & 1.00 \\
+\midrule
+Social Norms & TP--FP & +13.3 & 0.30 & small & 1.00 & 1.00 \\
+ & TP--FN & +30.0 & 0.64 & medium & .55 & 1.00 \\
+ & FP--FN & +16.7 & 0.34 & small & 1.00 & 1.00 \\
+\midrule
+Older Persons & TP--FP & +5.6 & 0.14 & negligible & 1.00 & 1.00 \\
+ & TP--FN & +38.7 & 0.83 & large & .04* & .13 \\
+ & FP--FN & +33.1 & 0.69 & medium & <.001*** & <.001*** \\
+\bottomrule
+\end{tabular}}
+\end{threeparttable}
+
+\vspace{0.25em}
+\scriptsize
+\textit{Note.} All pairwise comparisons (TP--FP, TP--FN, FP--FN) within each CLD using Fisher's exact test; Bonferroni correction applied within each CLD ($m=3$, $\alpha_{\text{adj}}=0.017$). Effect size interpretation: $|h|<0.2$ negligible, $0.2$--$0.5$ small, $0.5$--$0.8$ medium, $>0.8$ large. Detection rates and confidence distributions shown in Figure~\ref{fig:rq3_combined}.
+
+\end{minipage}
+\end{table}

@@ -1,0 +1,385 @@
+\chapter{Preliminary Interpretation: Context-Insensitive Metrics and Hallucination Detection}
+\label{ch:preliminary_rq2_interpretation}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=orange!75!black,title=Preliminary Results Notice]
+\textbf{Note:} This chapter presents preliminary results from ongoing experiments. The findings discussed here are subject to further validation and refinement. Final conclusions will be integrated into the main results chapter upon completion of all experimental runs.
+\end{tcolorbox}
+
+\section{Overview}
+
+This chapter critically examines the relationship between context-insensitive (CI) metrics and hallucination detection in LLM-based causal discovery systems. We present findings from Research Question 2 (RQ2), which investigates whether metrics computed without explicit consideration of causal reasoning can predict when the system generates spurious causal relationships.
+
+Our analysis reveals unexpected patterns that challenge conventional assumptions about how language models produce and validate causal claims. Most notably, we observe systematic differences depending on how ``hallucinations'' are defined, suggesting deeper issues with either ground truth validation or metric interpretation.
+
+\section{Baseline Performance (RQ1a)}
+
+Before examining hallucination prediction, we establish the baseline performance of the LLM-based causal discovery system on the ``Depressive symptoms in response to a stressor in healthy adults'' CLD.
+
+\subsection{Classification Results}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Percentage} \\
+\midrule
+True Positives (TP) & 26 & 14.3\% \\
+False Positives (FP) & 35 & 19.2\% \\
+False Negatives (FN) & 8 & 4.4\% \\
+True Negatives (TN) & 113 & 62.1\% \\
+\midrule
+\textbf{Total} & \textbf{182} & \textbf{100.0\%} \\
+\bottomrule
+\end{tabular}
+\caption{Ground truth classification of discovered causal relationships (N=182 edges)}
+\label{tab:baseline_classification}
+\end{table}
+
+\subsection{Performance Metrics}
+
+The system achieves the following performance metrics:
+
+\begin{itemize}
+    \item \textbf{Precision}: $\frac{26}{26+35} = 0.426$ (42.6\%)
+    \item \textbf{Recall}: $\frac{26}{26+8} = 0.765$ (76.5\%)
+    \item \textbf{F1-Score}: $2 \times \frac{0.426 \times 0.765}{0.426 + 0.765} = 0.548$
+    \item \textbf{Hallucination Rate}: $\frac{35}{182} = 0.192$ (19.2\%)
+\end{itemize}
+
+\subsection{Interpretation}
+
+The baseline system demonstrates \textbf{moderate performance} with a concerning imbalance: while it successfully identifies most true causal relationships (76.5\% recall), it also generates substantial noise (57.4\% of proposed relationships are false positives). This represents a classic precision-recall tradeoff where the system errs on the side of over-generation rather than under-generation.
+
+The 19.2\% hallucination rate indicates that approximately one in five proposed causal edges has no support in the ground truth CLD. This false positive rate poses significant challenges for practical deployment, as users would need to manually filter through considerable noise to identify valid causal relationships.
+
+\section{The Hallucination Definition Problem}
+
+\subsection{Two Definitions, Two Realities}
+
+A critical methodological issue emerged during analysis: the choice of hallucination definition fundamentally alters the observed relationship between CI metrics and prediction outcomes. We examined two definitions:
+
+\begin{enumerate}
+    \item \textbf{Ground Truth Definition}: Hallucination = (Classification == FP)
+    \begin{itemize}
+        \item Based on comparison with expert-curated validation CLD
+        \item Identifies 35/182 edges (19.2\%) as hallucinations
+        \item Assumes ground truth CLD is complete and accurate
+    \end{itemize}
+    
+    \item \textbf{Judge-Based Definition}: Hallucination = (Aggregate Score < 0.5)
+    \begin{itemize}
+        \item Based on LLM judge's assessment of citation support
+        \item Identifies 168/182 edges (92.3\%) as hallucinations
+        \item Assumes judge LLM can reliably assess evidence quality
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Divergence in Hallucination Rates}
+
+The stark difference in hallucination rates (19.2\% vs 92.3\%) immediately signals a fundamental disagreement between these two assessment methods. This disparity suggests either:
+
+\begin{itemize}
+    \item The ground truth CLD is substantially incomplete, missing many valid causal relationships
+    \item The judge LLM applies overly stringent criteria for citation support
+    \item The notion of ``hallucination'' conflates multiple distinct failure modes
+\end{itemize}
+
+\section{Context-Insensitive Metric Performance}
+
+\subsection{Correlation Analysis: The Sign-Flip Phenomenon}
+
+Table~\ref{tab:correlation_comparison} presents correlations between CI metrics and hallucination status under both definitions. A remarkable pattern emerges: \textbf{correlations systematically flip signs} depending on the hallucination definition.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Ground Truth} & \textbf{Judge-Based} & \textbf{Expected} \\
+ & \textbf{Correlation (r)} & \textbf{Correlation (r)} & \textbf{Sign} \\
+\midrule
+\multicolumn{4}{l}{\textit{Uncertainty Metrics (Generator)}} \\
+Perplexity & +0.331*** & +0.324*** & + \\
+Min Probability & -0.175* & +0.149* & - \\
+Max Window Entropy & +0.327*** & +0.273*** & + \\
+\midrule
+\multicolumn{4}{l}{\textit{Similarity Metrics}} \\
+Gen Cosine Similarity & \textcolor{red}{+0.293***} & \textcolor{blue}{-0.163*} & \textcolor{blue}{-} \\
+Judge Cosine Similarity & \textcolor{red}{+0.322***} & \textcolor{blue}{-0.213**} & \textcolor{blue}{-} \\
+\midrule
+\multicolumn{4}{l}{\textit{Judge Assessment}} \\
+Aggregate Score & \textcolor{red}{+0.134 (ns)} & \textcolor{blue}{-0.660***} & \textcolor{blue}{-} \\
+\bottomrule
+\end{tabular}
+\caption{Correlation between CI metrics and hallucination status. \textcolor{red}{Red} indicates unexpected positive correlations; \textcolor{blue}{blue} indicates expected negative correlations. Significance: * p<0.05, ** p<0.01, *** p<0.001}
+\label{tab:correlation_comparison}
+\end{table}
+
+\subsection{The Cosine Similarity Paradox}
+
+The most striking finding concerns cosine similarity metrics:
+
+\begin{itemize}
+    \item \textbf{Intuitive expectation}: Higher similarity between LLM-generated motivation and citation text should indicate better support, thus \textit{fewer} hallucinations (negative correlation)
+    
+    \item \textbf{Ground truth observation}: \textcolor{red}{Positive correlation} (r = +0.29 to +0.32) --- higher similarity predicts \textit{more} hallucinations
+    
+    \item \textbf{Judge-based observation}: \textcolor{blue}{Negative correlation} (r = -0.16 to -0.21) --- higher similarity predicts \textit{fewer} hallucinations (as expected)
+\end{itemize}
+
+\subsection{ROC-AUC Performance}
+
+Classification performance (treating CI metrics as binary predictors) shows similar patterns:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Ground Truth} & \textbf{Judge-Based} \\
+ & \textbf{AUC} & \textbf{AUC} \\
+\midrule
+Max Window Entropy & 0.762*** & 0.697*** \\
+Perplexity & 0.747*** & 0.705*** \\
+Gen Cosine Similarity & \textcolor{red}{0.224***} & \textcolor{blue}{0.616**} \\
+Judge Cosine Similarity & \textcolor{red}{0.255***} & \textcolor{blue}{0.709***} \\
+\textbf{Aggregate Score} & \textcolor{red}{0.367} & \textcolor{blue}{\textbf{1.000***}} \\
+\bottomrule
+\end{tabular}
+\caption{ROC-AUC scores for CI metrics as hallucination predictors. AUC < 0.5 indicates inverse relationship. Bold indicates best predictor per definition.}
+\label{tab:auc_comparison}
+\end{table}
+
+The aggregate score achieves \textbf{perfect classification} (AUC = 1.000) under the judge-based definition, which is unsurprising given the definition is derived from this score. However, its poor performance (AUC = 0.367) under ground truth definition reveals fundamental disagreement between judge assessments and ground truth labels.
+
+\section{Critical Interpretation}
+
+\subsection{Hypothesis 1: Ground Truth Incompleteness}
+
+The positive correlation between cosine similarity and ground truth FP classification may indicate that many ``false positives'' are actually \textit{correct causal relationships} not captured in the validation CLD. Under this interpretation:
+
+\begin{itemize}
+    \item The LLM discovers valid relationships with strong citation support
+    \item These relationships are marked FP only because the ground truth CLD is incomplete
+    \item Higher cosine similarity correctly indicates better evidence, but this appears paradoxical due to mislabeling
+\end{itemize}
+
+\textbf{Supporting evidence}:
+\begin{itemize}
+    \item Judge-based definition (which evaluates citation quality directly) shows expected negative correlations
+    \item Many FP edges have high aggregate scores and extensive citation support
+    \item The validation CLD may represent a simplified or dated understanding of the domain
+\end{itemize}
+
+\subsection{Hypothesis 2: Confident Confabulation}
+
+Alternatively, the LLM may exhibit ``confident confabulation'' --- generating plausible-sounding but incorrect claims with artificially high citation alignment. Under this interpretation:
+
+\begin{itemize}
+    \item When uncertain, the LLM ``tries harder'' to justify claims
+    \item It cherry-picks specific citation chunks with high semantic similarity
+    \item The max-aggregation method rewards this cherry-picking behavior
+    \item True relationships require nuanced synthesis, yielding lower peak similarities
+\end{itemize}
+
+\textbf{Supporting evidence}:
+\begin{itemize}
+    \item The cosine similarity computation uses \texttt{max()} over chunks, rewarding any single highly similar chunk
+    \item Hallucinations show high similarity but concentrated in narrow text spans
+    \item True relationships show more distributed, multi-source support
+\end{itemize}
+
+\subsection{Hypothesis 3: Max vs. Mean Aggregation}
+
+The current implementation computes cosine similarity as:
+
+\begin{equation}
+\text{cosine\_sim} = \max_{i \in \text{chunks}} \cos(\text{motivation}, \text{chunk}_i)
+\end{equation}
+
+This max-aggregation may be fundamentally flawed for assessing citation quality. Consider:
+
+\begin{itemize}
+    \item \textbf{Hallucination}: LLM finds \textit{one} topically-relevant chunk with high similarity, ignores lack of causal evidence
+    \item \textbf{True relationship}: LLM synthesizes evidence from \textit{multiple} sources, no single chunk has perfect alignment
+\end{itemize}
+
+Alternative aggregation strategies might reverse the paradox:
+
+\begin{align}
+\text{mean\_sim} &= \frac{1}{n} \sum_{i=1}^{n} \cos(\text{motivation}, \text{chunk}_i) \\
+\text{consistency} &= \text{mean\_sim} - \text{std}(\{\cos(\cdot, \text{chunk}_i)\})
+\end{align}
+
+High mean with low variance would indicate \textit{consistent} support across sources, while high max with low mean suggests cherry-picking.
+
+\subsection{The Judge LLM's Perspective}
+
+The judge-based analysis reveals what happens when using the \textit{LLM's own assessment} as ground truth:
+
+\begin{itemize}
+    \item Aggregate score becomes a near-perfect predictor (AUC = 1.000) by definition
+    \item Cosine similarity metrics show expected negative correlations
+    \item 92.3\% of edges classified as ``hallucinations'' (aggregate score < 0.5)
+\end{itemize}
+
+This high hallucination rate suggests the judge LLM applies stricter standards than the ground truth CLD. Notably:
+
+\begin{itemize}
+    \item 26 ground truth TP edges: Mean aggregate score = 0.30
+    \item 35 ground truth FP edges: Mean aggregate score = 0.22
+    \item Difference = only 0.08 (8 percentage points)
+\end{itemize}
+
+The judge LLM shows limited ability to distinguish between ground truth TP and FP edges, suggesting it evaluates citation quality rather than causal correctness.
+
+\section{Implications for RQ2}
+
+\subsection{Answer to RQ2}
+
+\textbf{Can context-insensitive metrics predict hallucinations?}
+
+\textit{Answer}: \textbf{Yes, but with critical caveats regarding ground truth validity.}
+
+\begin{itemize}
+    \item \textbf{Uncertainty metrics} (perplexity, max window entropy) reliably predict hallucinations regardless of definition (r $\approx$ +0.33, AUC $\approx$ 0.75)
+    
+    \item \textbf{Similarity metrics} (cosine similarity, aggregate score) show \textit{definition-dependent} performance:
+    \begin{itemize}
+        \item With ground truth: Paradoxical positive correlations
+        \item With judge-based: Expected negative correlations
+    \end{itemize}
+    
+    \item \textbf{Best predictor} (ground truth): Max window entropy (AUC = 0.762)
+    
+    \item \textbf{Best predictor} (judge-based): Aggregate score (AUC = 1.000)
+\end{itemize}
+
+\subsection{Practical Recommendations}
+
+Based on these findings, we recommend:
+
+\begin{enumerate}
+    \item \textbf{For hallucination detection in practice:}
+    \begin{itemize}
+        \item Use \textit{uncertainty metrics} (perplexity, entropy) as primary indicators
+        \item Treat high cosine similarity with caution --- it may indicate cherry-picking
+        \item Combine multiple metrics rather than relying on any single indicator
+    \end{itemize}
+    
+    \item \textbf{For future work:}
+    \begin{itemize}
+        \item Investigate alternative aggregation methods (mean, consistency)
+        \item Develop causal-specific similarity metrics beyond topical overlap
+        \item Validate ground truth CLDs more extensively
+        \item Consider multi-level hallucination definitions
+    \end{itemize}
+    
+    \item \textbf{For threshold-based filtering:}
+    \begin{itemize}
+        \item Max window entropy > 0.977 suggests hallucination (F1 = 0.463)
+        \item Perplexity > 1.334 suggests hallucination (F1 = 0.463)
+        \item Performance insufficient for fully automated filtering
+    \end{itemize}
+\end{enumerate}
+
+\section{Limitations}
+
+\subsection{Sample Size and Generalization}
+
+This analysis examines a single CLD (``Depressive symptoms'') with 182 edges. Patterns observed may not generalize to:
+
+\begin{itemize}
+    \item Other domain areas with different causal complexity
+    \item Larger or smaller graph structures
+    \item Different LLM architectures or prompting strategies
+\end{itemize}
+
+\subsection{Ground Truth Validity}
+
+The paradoxical findings cast doubt on either:
+
+\begin{itemize}
+    \item The \textbf{completeness} of the validation CLD
+    \item The \textbf{metric design} (especially max-aggregation for cosine similarity)
+    \item The \textbf{fundamental assumption} that topical similarity indicates causal support
+\end{itemize}
+
+Without external validation (e.g., expert review of high-cosine FP edges), we cannot definitively resolve which explanation is correct.
+
+\subsection{Confounding Factors}
+
+Several confounds remain uncontrolled:
+
+\begin{itemize}
+    \item \textbf{Citation quality vs. quantity}: Edges with more citations may have higher max similarity by chance
+    \item \textbf{Domain difficulty}: Some causal relationships may be inherently harder to document
+    \item \textbf{Prompt engineering}: Different prompting strategies might alter metric distributions
+\end{itemize}
+
+\section{Contributions}
+
+Despite these limitations, this preliminary analysis makes several contributions:
+
+\begin{enumerate}
+    \item \textbf{First systematic evaluation} of context-insensitive metrics for hallucination detection in causal discovery
+    
+    \item \textbf{Discovery of the cosine similarity paradox}, suggesting that max-aggregation may reward cherry-picking
+    
+    \item \textbf{Demonstration of definition-dependency}, highlighting the critical importance of how ``hallucination'' is operationalized
+    
+    \item \textbf{Baseline performance metrics} for LLM-based causal discovery (42.6\% precision, 76.5\% recall)
+    
+    \item \textbf{Evidence for uncertainty metrics} as robust hallucination indicators across definitions
+\end{enumerate}
+
+\section{Future Directions}
+
+\subsection{Methodological Improvements}
+
+\begin{itemize}
+    \item \textbf{Causal-aware embeddings}: Develop embedding methods that explicitly capture causal semantics rather than topical similarity
+    
+    \item \textbf{Alternative aggregation}: Test mean, median, variance, and consistency-based similarity metrics
+    
+    \item \textbf{Multi-citation synthesis}: Assess whether evidence is synthesized from multiple sources vs. cherry-picked from one
+    
+    \item \textbf{Expert validation}: Manual review of high-cosine FP edges to determine ground truth accuracy
+\end{itemize}
+
+\subsection{Extended Analysis}
+
+\begin{itemize}
+    \item \textbf{Cross-CLD validation}: Replicate analysis across multiple domains
+    
+    \item \textbf{Temporal analysis}: Examine whether metric patterns change as LLM ``learns'' the domain
+    
+    \item \textbf{Prompt sensitivity}: Test whether different prompting strategies alter CI metric distributions
+    
+    \item \textbf{Model comparison}: Compare CI metric patterns across different LLM architectures
+\end{itemize}
+
+\subsection{Theoretical Development}
+
+\begin{itemize}
+    \item \textbf{Formalize ``confident confabulation''}: Develop theoretical framework for why LLMs might over-align citations for uncertain claims
+    
+    \item \textbf{Cherry-picking detection}: Create formal metrics that distinguish between synthesis and selective citation
+    
+    \item \textbf{Multi-level hallucination taxonomy}: Distinguish topical, mechanistic, and directional hallucinations
+\end{itemize}
+
+\section{Conclusion}
+
+This preliminary investigation reveals a complex relationship between context-insensitive metrics and hallucination detection in LLM-based causal discovery. While uncertainty metrics (perplexity, max window entropy) show promise as robust indicators, similarity-based metrics exhibit paradoxical behavior that challenges our understanding of how LLMs generate and justify causal claims.
+
+The systematic sign-flip in correlations depending on hallucination definition suggests deeper issues with either ground truth validation or metric design. Most likely, both factors contribute: the ground truth CLD may be incomplete, \textit{and} the max-aggregation method for cosine similarity may inadvertently reward cherry-picking behavior.
+
+For practical deployment, we recommend:
+\begin{itemize}
+    \item Using uncertainty metrics as primary hallucination indicators
+    \item Treating high cosine similarity with skepticism rather than confidence
+    \item Combining multiple complementary metrics for robust detection
+    \item Maintaining human oversight for critical causal discovery tasks
+\end{itemize}
+
+The findings presented here motivate continued investigation into causal-aware assessment methods that go beyond surface-level topical similarity to evaluate genuine mechanistic reasoning.

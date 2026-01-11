@@ -1,0 +1,36 @@
+We selected a 30\% corruption rate based on experimental design principles 
+rather than domain-specific precedent, as causal loop diagram corruption 
+detection represents a novel evaluation task without established benchmarks.
+
+Our primary objective is to compare judge prompt variants (Baseline, 
+Mechanistic, SCE) rather than establish absolute performance thresholds. 
+For this comparative analysis, we optimized for:
+
+1. Statistical Power: With 3 CLDs × 3 runs = 9 sessions, a 30\% rate 
+   yields ~60 corruptions per session (540 total), providing 180 examples 
+   per corruption type after stratified balancing. This exceeds the 
+   minimum 30 samples per condition recommended for parametric tests 
+   \cite{cohen1988} and provides >0.8 power to detect medium effects 
+   (d=0.5) at α=0.05.
+
+    Discriminative Range: Too low (<10\%): insufficient signal, judges 
+   may perform at ceiling. Too high (>50\%): majority-corrupt scenario 
+   where judges could succeed via random "reject all" strategy. The 
+   30\% rate ensures judges must discriminate rather than apply heuristics.
+
+   We acknowledge this rate is not validated against ground truth optimal 
+rates (which would require testing multiple rates - infeasible given 
+computational constraints). However, our research question focuses on 
+relative judge performance, which we expect to be robust to rate 
+variations within the discriminative range (15-45\%).
+
+\textbf{Ecological Validity:} Our 30\% corruption rate aligns with 
+documented hallucination rates in LLM-generated structured outputs. 
+Studies of GPT-4 on systematic review generation report 28.6\% 
+hallucination rates \cite{pmc2024-hallucination}, while research on 
+LLM-generated causal loop diagrams notes that outputs "approach but 
+do not match expert baselines" \cite{mdpi2024-llm-cld}, suggesting 
+non-trivial error rates in practice.
+
+MDPI 2024 - "LLM-Powered, Expert-Refined Causal Loop Diagramming" - confirms LLMs generate CLDs but need expert refinement
+PMC 2024 - "Hallucination Rates of ChatGPT and Bard for Systematic Reviews" - 28.6-39.6% for scientific references

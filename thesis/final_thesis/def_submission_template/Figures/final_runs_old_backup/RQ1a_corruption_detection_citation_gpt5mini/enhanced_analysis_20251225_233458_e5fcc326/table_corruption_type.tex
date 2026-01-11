@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centreing
+\caption{RQ1a: Detection Recall by Corruption Type}
+\label{tab:rq1a_corruption_type}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Prompt} & \textbf{Corruption Type} & \textbf{N} & \textbf{Recall} & \textbf{Detected} & \textbf{Missed} \\
+\midrule
+Baseline & spurious_motivation & 288 & 0.998±0.005 & 287 & 1 \\
+Baseline & polarity_flip & 291 & 0.994±0.013 & 287 & 4 \\
+Baseline & spurious_edge & 450 & 0.996±0.009 & 446 & 4 \\
+Mechanistic & spurious_motivation & 288 & 0.997±0.006 & 286 & 2 \\
+Mechanistic & polarity_flip & 291 & 0.992±0.013 & 286 & 5 \\
+Mechanistic & spurious_edge & 450 & 0.995±0.007 & 445 & 5 \\
+CoT & spurious_motivation & 288 & 0.997±0.006 & 286 & 2 \\
+CoT & polarity_flip & 291 & 0.994±0.011 & 287 & 4 \\
+CoT & spurious_edge & 450 & 0.998±0.004 & 448 & 2 \\
+Mech-Lit & polarity_flip & 291 & 0.994±0.013 & 287 & 4 \\
+Mech-Lit & spurious_motivation & 288 & 0.997±0.010 & 286 & 2 \\
+Mech-Lit & spurious_edge & 450 & 0.986±0.030 & 445 & 5 \\
+\bottomrule
+\end{tabular}
+\end{table}

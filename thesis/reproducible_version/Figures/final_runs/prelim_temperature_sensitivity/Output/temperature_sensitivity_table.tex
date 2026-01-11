@@ -1,1 +1,28 @@
-% Placeholder - run reproduction to generate this table
+\begin{table}[H]
+\centering
+\caption{Generator Temperature Sensitivity: Edge F1 Score by CLD}
+\label{tab:temperature_sensitivity}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Temperature} & \multicolumn{4}{c}{\textbf{Edge F1 Score (Mean $\pm$ 95\% CI)}} \\
+\cmidrule(lr){2-5}
+ & \textbf{Social Norms} & \textbf{Depressive} & \textbf{Emergency Dept} & \textbf{Overall} \\
+\midrule
+T=0.0 & $0.325 \pm 0.037$ & $0.455 \pm 0.021$ & $0.113 \pm 0.012$ & $0.298 \pm 0.073$ \\
+T=0.3 & $0.373 \pm 0.033$ & $0.445 \pm 0.005$ & $0.125 \pm 0.016$ & $0.314 \pm 0.071$ \\
+T=0.5 & $0.314 \pm 0.038$ & $0.480 \pm 0.019$ & $0.105 \pm 0.004$ & $0.299 \pm 0.079$ \\
+T=0.7 & $0.348 \pm 0.056$ & $0.446 \pm 0.005$ & $0.104 \pm 0.012$ & $0.299 \pm 0.075$ \\
+T=1.0 & $0.381 \pm 0.020$ & $0.444 \pm 0.010$ & $0.105 \pm 0.005$ & $0.310 \pm 0.076$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Edge F1 = $\frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}$ comparing generated edges against literature ground truth.
+\item \textit{Design.} 5 temperatures $\times$ 3 runs $\times$ 3 CLDs = 45 total experiments. Seeds: 10, 20, 30 per temperature.
+\item \textit{Per-CLD columns:} Mean $\pm$ 95\% CI across 3 runs per CLD at each temperature.
+\item \textit{Overall column:} Mean $\pm$ 95\% CI computed across all 9 individual runs (3 CLDs $\times$ 3 runs) per temperature. The larger CI reflects variability both within and between CLDs.
+\item \textit{Per-CLD ANOVA (temperature effect):} Social Norms $F(4,25)=3.73$, $p=0.02$; Depressive $F(4,25)=7.71$, $p=0.00$; Emergency Dept $F(4,25)=4.40$, $p=0.01$. None significant at $\alpha=.05$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

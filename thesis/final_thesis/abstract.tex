@@ -1,0 +1,55 @@
+%==============================================================================
+\renewcommand{\abstractname}{Extended Abstract}
+\begin{abstract}
+%==============================================================================
+
+% TODO: Fill in the abstract
+% Suggested structure (approximately 250-300 words):
+%
+% 1. CONTEXT/PROBLEM (2-3 sentences)
+%    - CLD construction cost scales as O(|V|^2)
+%    - LLMs as potential solution for generating initial CLDs
+%    - Hallucination problem threatens reliability
+
+Causal loop diagrams (CLDs) can map cause and effect in complex systems but are costly for experts to produce, as cost scales with the square of the number of variables. LLMs can generate initial CLDs, reducing costs, but suffer from hallucinations. LLM-powered text-to-CLD extraction is the gold standard for grounding but is constrained by source text availability. The alternative, LLM-based CLD generation, loses grounding, increasing the risk of hallucinations.
+
+Applying established hallucination mitigation methods at test time---through LLM-as-a-judge, LLM-as-a-corrector, and UQ metrics (cosine similarity and logprob-derived measures)---previously untested in CLD generation, we ask: (1) Can LLM-as-a-judge and LLM-as-a-corrector improve CLD F1 versus literature ground truth? (2) Can UQ metrics detect hallucinations? (3) Can adaptive test-time compute, guided by UQ metrics, improve the cost--accuracy trade-off?
+Findings show, in our dataset of three health CLDs, LLM-based CLD generation performance exceeds a random baseline. In a controlled synthetic hallucination setting (GT Synth), Correctness Judge performance is high, but it drops in the literature ground-truth setting (GT Lit), with only our causal mechanistic prompt beating random baselines. The Citation Judge, which retrieves supporting articles post hoc, fails to exceed random baselines despite reaching 80\% alignment with human validators. LLM-as-a-corrector improves judge scores and slightly improves CLD quality vs GT Synth, but not vs GT Lit.  
+UQ metrics (perplexity, min probability, max window entropy, cosine similarity) do not effectively flag hallucinations independently but do as ensemble input to supervised classifiers in-distribution; however, they fail to generalize out-of-CLD. As UQ and corrector were ineffective, we pilot a multi-agent deep research (DR) system that finds direct causal evidence for 62.4\% of false positives and 42.9\% of false negatives. Human validation (n=50) suggests that at applicability threshold $t=0.7$, 66\% of DR-evidenced edges pass the threshold and, among passing edges, 90.9\% are correct-causal. Under this calibration, extrapolated ground-truth enrichment yields large gains in aggregate edge F1: $0.267 \to 0.527$ (Scenario 1: FP$\to$TP) and $0.267 \to 0.582$ (Scenario 2: LLM+DR system), with conservative estimates of 0.472 and 0.500. Using a mechanistic Correctness Judge to flag hallucinations for adaptive deployment of DR delivers a 15\% accuracy-per-dollar increase. Results suggest that LLM-based CLD generation and multi-agent validation-driven research can assist experts in CLD creation; future work includes validating the system across additional CLD domains and conducting component-wise ablation studies of DR to find more efficient compute–accuracy trade-offs.
+
+% Causal loop diagrams are useful tools to map cause and effect in complex systems, but they become costly for experts to produce, as cost scales with the square of the number of variables. LLMs, which carry parametric knowledge from training on the literature, can provide a starting point, reducing costs, but suffer from hallucinations. In CLD literature, LLMs are employed to create CLDs through text extraction, which adds grounding but is constrained by availability of source texts. LLM-based CLD generation provides an alternative, but loses grounding, increasing the risk of hallucinations. 
+% In this thesis, we apply established hallucination mitigation methods at test time—through LLM-as-a-judge, LLM-as-a-corrector, and UQ metrics (cosine similarity and logprob-derived measures)—previously untested in causal loop diagram generation. Our research questions are: 1) Can LLM-as-a-judge and LLM-as-a-corrector improve CLD quality? 2) Can UQ metrics be used to detect hallucinations? and 3) Can smart deployment of test-time compute using UQ metrics to flag hallucinations provide a more efficient cost/accuracy trade-off? 
+% Findings show that in our dataset of three health CLDs, LLM-bassed CLD generation performs significantly exceeds random baseline, suggesting capturing of causal structure.
+
+% In the synthetic hallucination setting, Correctness Judge performance is high, but drops when moving to the literature ground-truth setting; only our causal mechanistic prompt scores beats random baselines. 
+% The Citation Judge, retrieving supporting articles post-hoc to assess causal evidence, doesn’t exceed random baselines in synthetic or literature ground-truth setting although verdicts align with human validators. LLM-as-a-corrector, improves judge scores and slightly improves CLD quality in the synthetic setting, but not in the literature ground-truth setting. 
+% UQ metrics, while (cosine similarity most) effective in-distribution when used in ensemble classifiers, can flag hallucinations in-distribution but do not generalize out-of-CLD, making them unreliable hallucination flaggers. Thus, we use mechanistic judge as a compute-cheap hallucination indicator, smartly deploying test-time compute in the form of a multi-agent deep research (DR) system as part of an exploratory pilot, which finds direct causal evidence for 62.4\% of FPs and 42.9\% of FNs in literature ground truth. Human validation shows DR evidence to be valid on a single-relation basis; enrichment of our ground truth with this evidence under strong assumptions yields large F1 gains, suggesting that “hallucinations” may be expert overlooked-but-valid relationships. Smart deployment of DR using Correctness-flagged edges delivers a 15\% accuracy-per-dollar increase. Results suggest CLD generation and multi-agent driven validation research can assist experts in CLD creation.
+
+%
+% 2. RESEARCH QUESTIONS (1-2 sentences)
+%    - RQ1: LLM-as-a-Judge for hallucination detection
+%    - RQ2: Context-insensitive UQ metrics
+%    - RQ3: Deep Research validation
+%
+% 3. METHODS (2-3 sentences)
+%    - Three health-domain CLDs as ground truth
+%    - Correctness and citation judges, multiple prompt variants
+%    - Logit-derived metrics and ensemble classifiers
+%    - Deep Research multi-agent literature validation
+%
+% 4. KEY FINDINGS (4-5 sentences)
+%    - Generators outperform random baseline 2.2-3.4x
+%    - Judges: partial transfer, citation judges achieve human-level agreement (kappa=0.618)
+%    - Corrector ineffective on literature ground truth (Goodhart's Law)
+%    - UQ metrics show weak signal, poor cross-CLD generalization
+%    - 62.4% of "hallucinations" have retrievable causal evidence
+%
+% 5. IMPLICATIONS (1-2 sentences)
+%    - LLMs as starting points for expert model-building
+%    - Reframing hallucinations as potentially overlooked-but-valid relationships
+
+\end{abstract}
+
+
+
+

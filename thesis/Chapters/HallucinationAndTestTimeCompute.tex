@@ -1,0 +1,488 @@
+\chapter{Hallucination Detection and Test-Time Compute: Advanced Techniques for LLM Reliability}
+\label{Chapter:HallucinationTestTime}
+
+% Chapter introduction
+This chapter provides a comprehensive review of two critical techniques for improving the reliability and performance of Large Language Models (LLMs): hallucination detection and test-time compute optimization. Section~\ref{sec:hallucination_taxonomy} presents a detailed taxonomy of hallucinations in LLMs, examining their types, causes, detection methods, and mitigation strategies. Section~\ref{sec:test_time_compute} explores the emerging paradigm of test-time compute, which enables LLMs to improve their outputs by allocating additional computational resources during inference. Together, these techniques form the foundation for building more reliable and efficient LLM-based systems, particularly in the context of our research on multi-agent causal discovery.
+
+%----------------------------------------------------------------------------------------
+\section{Hallucination Taxonomy and Detection}
+\label{sec:hallucination_taxonomy}
+
+\subsection{Introduction to LLM Hallucinations}
+
+Hallucinations in Large Language Models (LLMs) represent one of the most critical challenges facing the deployment of these systems in production environments. A hallucination occurs when an LLM generates content that is factually incorrect, nonsensical, or unfaithful to its input context \citep{huang2023survey,ji2023survey}. As LLMs are increasingly deployed in high-stakes domains such as healthcare, legal systems, and scientific research, understanding and mitigating hallucinations has become a priority for the research community.
+
+Recent work by \citet{openai2025bluffing} demonstrates that hallucinations are not merely an artifact of insufficient training data or model capacity, but rather an inherent consequence of the next-token prediction objective. Their analysis shows that ``next-token training objectives and common leaderboards reward confident guessing over calibrated uncertainty, so models learn to bluff'' \citep{openai2025bluffing}. This fundamental insight suggests that hallucinations may be theoretically inevitable in current LLM architectures, making detection and mitigation strategies essential rather than optional.
+
+The economic and societal impact of hallucinations is substantial. In enterprise settings, hallucinated information can lead to incorrect business decisions, compliance violations, and reputational damage. In healthcare applications, factual errors can directly impact patient safety \citep{nature2025medical}. Consequently, the development of robust hallucination detection and mitigation techniques is not merely an academic exercise but a practical necessity for responsible AI deployment.
+
+\subsection{Formal Taxonomy of Hallucinations}
+
+\subsubsection{Core Distinctions: Intrinsic vs. Extrinsic Hallucinations}
+
+The hallucination taxonomy literature distinguishes between two fundamental categories based on the source of inconsistency \citep{huang2023survey,arxiv2025comprehensive}:
+
+\begin{itemize}
+    \item \textbf{Intrinsic Hallucinations}: These occur when the generated output contradicts the provided input context or prompt. For example, if a model is given a document stating ``The company was founded in 2010'' and generates ``The company has been operating for 20 years'' (in 2024), this represents an intrinsic hallucination. Intrinsic hallucinations are particularly problematic in retrieval-augmented generation (RAG) systems, where the model must faithfully represent information from retrieved documents.
+    
+    \item \textbf{Extrinsic Hallucinations}: These occur when the generated output is inconsistent with established facts in the real world or the model's training data, regardless of the input context. For instance, stating ``Paris is the capital of Germany'' represents an extrinsic hallucination. Extrinsic hallucinations are challenging to detect automatically because they require external knowledge sources for verification.
+\end{itemize}
+
+\subsubsection{Factuality vs. Faithfulness}
+
+A complementary dimension of the taxonomy distinguishes between \textit{factuality} and \textit{faithfulness} \citep{huang2023survey}:
+
+\begin{itemize}
+    \item \textbf{Factuality}: Refers to the absolute correctness of a statement with respect to verifiable real-world facts. A factually incorrect statement claims something objectively false (e.g., ``The Eiffel Tower is 2,000 meters tall'').
+    
+    \item \textbf{Faithfulness}: Refers to the consistency of the output with the provided input context, regardless of real-world factuality. A model can be faithful but not factual (correctly summarizing a document containing misinformation) or factual but not faithful (providing correct information not present in the source material).
+\end{itemize}
+
+This distinction is particularly relevant for our research on LLM-as-a-judge systems, where we must consider both whether the judge's assessment is faithful to the generated causal loop diagram and whether it correctly identifies factual errors in the causal relationships.
+
+\subsubsection{Specific Manifestations of Hallucinations}
+
+Recent comprehensive surveys \citep{huang2023survey,arxiv2025comprehensive,ji2023survey} identify several specific manifestations of hallucinations across different task domains:
+
+\begin{enumerate}
+    \item \textbf{Factual Errors}: Direct misstatements of verifiable facts, including incorrect dates, names, numbers, and relationships between entities. These are the most common and easily identifiable hallucinations.
+    
+    \item \textbf{Contextual Inconsistencies}: Generating content that contradicts earlier statements within the same response or conversation. For example, stating ``I will provide three reasons'' and then listing only two.
+    
+    \item \textbf{Logical Inconsistencies}: Violations of basic logical principles, such as affirming both $P$ and $\neg P$ within the same reasoning chain, or deriving conclusions that do not follow from stated premises.
+    
+    \item \textbf{Temporal Disorientation}: Confusion about temporal relationships, such as describing future events in past tense or anachronistically placing technologies or concepts in inappropriate time periods.
+    
+    \item \textbf{Ethical Violations}: Generating content that violates ethical guidelines or produces harmful stereotypes, though these are sometimes considered a separate category from traditional hallucinations.
+    
+    \item \textbf{Task-Specific Hallucinations}: Domain-specific errors such as:
+    \begin{itemize}
+        \item \textit{Code Generation}: Invoking non-existent APIs, using deprecated syntax, or generating syntactically invalid code
+        \item \textit{Multimodal Applications}: Describing visual elements not present in images or misidentifying objects
+        \item \textit{Mathematical Reasoning}: Arithmetic errors, incorrect application of formulas, or invalid proof steps
+        \item \textit{Summarization}: Including information not present in the source text (intrinsic hallucination)
+    \end{itemize}
+\end{enumerate}
+
+In the context of our research on causal discovery, we are particularly concerned with \textit{logical inconsistencies} and \textit{domain-specific hallucinations} related to causal reasoning. For instance, an LLM might hallucinate causal relationships that violate fundamental principles such as acyclicity in causal graphs or might generate causal mechanisms that are logically impossible given domain constraints.
+
+\subsection{Causes and Contributing Factors}
+
+Understanding the root causes of hallucinations is essential for developing effective mitigation strategies. The literature identifies several contributing factors \citep{huang2023survey,openai2025bluffing}:
+
+\subsubsection{Training Objective Misalignment}
+
+The fundamental training objective of modern LLMs—next-token prediction via maximum likelihood estimation—does not explicitly optimize for factuality or truthfulness. As \citet{openai2025bluffing} demonstrate, this objective actively incentivizes confident responses even in cases of uncertainty. When faced with a prompt requiring factual knowledge not clearly represented in the training data, the model is rewarded for producing plausible-sounding text rather than expressing uncertainty or declining to answer.
+
+\subsubsection{Data Quality and Coverage}
+
+Training data inevitably contains errors, biases, and conflicting information. When the model encounters similar patterns during inference, it may reproduce these errors. Additionally, \textit{data coverage gaps} mean that the model lacks sufficient information about certain topics, leading to extrapolation from superficially similar training examples—a process that often produces hallucinations.
+
+\subsubsection{Sampling and Decoding Strategies}
+
+The choice of decoding strategy significantly impacts hallucination rates. Greedy decoding tends to produce more deterministic but potentially overconfident outputs. Temperature sampling with high temperature values increases diversity but may amplify hallucinations by giving non-trivial probability mass to low-likelihood continuations. Nucleus sampling (top-p) and top-k sampling aim to balance these concerns but can still produce hallucinations when the model's probability distribution is poorly calibrated.
+
+\subsubsection{Context Length and Attention Limitations}
+
+Despite advances in long-context models, attention mechanisms can still fail to properly utilize all relevant information from extended contexts. The ``lost in the middle'' phenomenon \citep{liu2023lost} shows that models disproportionately attend to information at the beginning and end of long contexts, potentially missing crucial facts in the middle that could prevent hallucinations.
+
+\subsubsection{Instruction Following vs. Truthfulness Trade-offs}
+
+Recent work suggests a tension between instruction-following capabilities and truthfulness. Models fine-tuned to be more helpful and responsive may become more prone to hallucinations, as they prioritize providing an answer over acknowledging uncertainty \citep{huang2023survey}.
+
+\subsection{Hallucination Detection Methods}
+
+Detecting hallucinations is a challenging task that has spawned a diverse array of approaches. We categorize these methods based on their primary mechanism \citep{huang2023survey,github2024awesome}.
+
+\subsubsection{Consistency-Based Methods}
+
+Consistency-based methods operate on the assumption that hallucinations are random errors that will not be consistently reproduced across multiple independent generations, while correct information will be more stable.
+
+\textbf{SelfCheckGPT}: One of the most influential consistency-based approaches is SelfCheckGPT \citep{manakul2023selfcheckgpt}, which measures inconsistencies across multiple sampled responses. The intuition is that if an LLM hallucinates, the hallucinated content will vary across samples, whereas factually correct information will appear consistently. SelfCheckGPT-NLI uses natural language inference to compare sentences from the main response against multiple sampled responses, flagging sentences with low consistency as potential hallucinations. Empirical results show that a SelfCheckGPT score of 0.8 corresponds to approximately 80\% recall in identifying hallucinations.
+
+\textbf{Self-Consistency with Chain-of-Thought}: Originally developed for arithmetic reasoning \citep{wang2023selfconsistency}, self-consistency can also detect hallucinations by sampling multiple reasoning paths and comparing their conclusions. Significant disagreement among reasoning paths suggests potential hallucinations or genuine uncertainty.
+
+\textbf{Limitations}: Consistency-based methods require generating multiple responses at inference time, substantially increasing computational cost (typically 5-10x). Additionally, systematic hallucinations that appear consistently across all samples will not be detected by these methods.
+
+\subsubsection{Uncertainty-Based Methods}
+
+Uncertainty quantification approaches attempt to estimate the model's confidence in its outputs and flag low-confidence generations as potential hallucinations.
+
+\textbf{Semantic Entropy}: Recent work by \citet{farquhar2024semantic} introduces semantic entropy as a theoretically grounded uncertainty measure for LLM outputs. Unlike traditional entropy over token sequences, semantic entropy computes entropy over \textit{semantic meanings}, accounting for the fact that multiple token sequences can express the same meaning. This method can detect confabulations—arbitrary incorrect generations—even when the model appears confident at the token level.
+
+\textbf{Token Probability Analysis}: Simple baselines using log-probability of generated tokens or sequences can provide useful signals. Lower average token probability often (but not always) correlates with hallucinations. However, this approach is limited because models can confidently generate hallucinations with high token probabilities.
+
+\textbf{Hidden State Analysis}: Methods that analyze internal representations examine variations in model characteristics between truthful and hallucinated examples. For instance, \citet{azaria2023internal} show that probing classifiers trained on hidden states can distinguish between truthful and false statements, suggesting that models internally ``know'' when they are hallucinating, even if this knowledge is not reflected in output probabilities.
+
+\subsubsection{External Knowledge Verification}
+
+These methods verify generated content against external knowledge sources.
+
+\textbf{Retrieval-Augmented Verification}: After generation, retrieve relevant documents and check consistency between the generated text and retrieved information. This approach is effective but requires access to reliable, comprehensive knowledge bases and adds latency to the inference pipeline.
+
+\textbf{Fact-Checking Databases}: For domains with structured knowledge bases (e.g., Wikidata, scientific databases), direct verification against these sources can identify factual errors. However, coverage is limited to domains with well-maintained knowledge graphs.
+
+\textbf{LLM-as-a-Verifier}: Using a separate (often larger or more capable) LLM to verify the factuality of outputs from a target model. This meta-verification approach can be effective but inherits the limitations of the verifier model and introduces additional computational cost and potential cascading errors.
+
+\subsubsection{Statistical Pattern Analysis}
+
+These methods identify statistical patterns associated with hallucinations.
+
+\textbf{Attention Pattern Analysis}: Examining attention weights can reveal when a model is not properly grounding its outputs in the input context. Low attention to source documents in RAG systems, for instance, may indicate generation from parametric memory rather than retrieved facts.
+
+\textbf{Eigenvalue Analysis}: Recent work uses eigenvalue decomposition of internal representations to identify hallucinations, with the hypothesis that hallucinated content exhibits different spectral properties in the model's hidden states \citep{huang2023survey}.
+
+\subsection{Evaluation Metrics and Benchmarks}
+
+Rigorous evaluation of hallucination detection methods requires well-defined metrics and benchmarks.
+
+\subsubsection{Detection Metrics}
+
+\begin{itemize}
+    \item \textbf{Detection Rate (Sensitivity/Recall)}: The percentage of actual hallucinations correctly identified by the detection method. State-of-the-art methods achieve 76.5\% detection rate at 5\% false positive rate for GPT-4o \citep{relai2024sota}.
+    
+    \item \textbf{False Positive Rate (1 - Specificity)}: The percentage of correct outputs incorrectly flagged as hallucinations. High false positive rates can significantly degrade user experience by unnecessarily questioning correct information.
+    
+    \item \textbf{AUROC (Area Under ROC Curve)}: Standard metric for binary classification performance, providing a single score summarizing the trade-off between detection rate and false positive rate across all threshold settings.
+    
+    \item \textbf{Rejection Accuracy}: In selective prediction settings, the percentage of rejected examples that were actually incorrect, measuring precision of the rejection mechanism.
+\end{itemize}
+
+\subsubsection{Factuality Benchmarks}
+
+Several specialized benchmarks have emerged for evaluating factuality and hallucination detection \citep{huang2023survey}:
+
+\begin{itemize}
+    \item \textbf{SimpleQA}: A benchmark of short, fact-seeking queries designed to minimize ambiguity and provide clear ground truth \citep{openai2024simpleqa}.
+    
+    \item \textbf{HaDes}: A token-level, reference-free annotated dataset for hallucination detection across multiple domains \citep{huang2023survey}.
+    
+    \item \textbf{Wiki-FACTOR and News-FACTOR}: Benchmarks based on Wikipedia and news articles with factual and counterfactual alternatives for evaluating factuality.
+    
+    \item \textbf{Vectara Hallucination Leaderboard}: Compares LLM performance at producing hallucinations when summarizing short documents, computing overall factual consistency rates \citep{github2024vectara}.
+    
+    \item \textbf{CCHall}: Multimodal hallucination benchmark testing reasoning across images and text \citep{huang2023survey}.
+    
+    \item \textbf{Mu-SHROOM}: Multilingual hallucination evaluation, addressing the need for factuality assessment beyond English \citep{huang2023survey}.
+\end{itemize}
+
+These benchmarks reveal that even state-of-the-art models exhibit substantial hallucination rates, particularly in low-resource languages, multimodal settings, and domains requiring specialized knowledge.
+
+\subsection{Hallucination Mitigation Strategies}
+
+Given the difficulty of completely preventing hallucinations, research has focused on mitigation strategies that reduce their frequency and impact.
+
+\subsubsection{Retrieval-Augmented Generation (RAG)}
+
+RAG systems \citep{lewis2020rag} aim to ground model outputs in retrieved external information, significantly reducing extrinsic hallucinations. However, RAG introduces new failure modes \citep{mdpi2025rag}:
+
+\begin{itemize}
+    \item \textbf{Retrieval Failures}: Irrelevant or low-quality retrieved documents can mislead the model or be ignored, falling back to potentially hallucinated parametric knowledge.
+    
+    \item \textbf{Context Noise}: Irrelevant information in retrieved documents can distract the model, particularly in long contexts.
+    
+    \item \textbf{Context Conflicts}: When retrieved documents contain contradictory information, models may generate inconsistent outputs or arbitrarily select one source.
+\end{itemize}
+
+\textbf{Advanced RAG Techniques}: Recent improvements include contextual re-ranking of retrieved documents, hybrid generation pipelines that mix extractive and abstractive approaches, and citation mechanisms that explicitly link generated claims to source documents, enabling verification and building user trust.
+
+\subsubsection{Prompt Engineering}
+
+Carefully designed prompts can reduce hallucinations:
+
+\begin{itemize}
+    \item \textbf{Explicit Grounding Instructions}: Instructing the model to rely only on provided context and to acknowledge when information is unavailable reduces extrinsic hallucinations.
+    
+    \item \textbf{Uncertainty Elicitation}: Prompts that encourage the model to express uncertainty (``If you're not certain, say so'') can reduce confident hallucinations, though effectiveness varies by model.
+    
+    \item \textbf{Chain-of-Thought with Verification}: Asking models to show their reasoning and verify their own answers can catch some hallucinations before they reach the user.
+\end{itemize}
+
+\subsubsection{Fine-Tuning and Reinforcement Learning}
+
+\begin{itemize}
+    \item \textbf{Supervised Fine-Tuning on Factual Data}: Training on high-quality, fact-checked data can improve factuality, though gains are often limited by the model's pre-training.
+    
+    \item \textbf{Reinforcement Learning from Human Feedback (RLHF)}: Training reward models to penalize hallucinations and reward factual responses. However, this approach must carefully balance helpfulness and truthfulness, as overemphasis on refusing to answer can degrade utility.
+    
+    \item \textbf{Direct Preference Optimization (DPO)}: Recent alternatives to RLHF that directly optimize for preferred behaviors, potentially offering more stable training for factuality objectives.
+\end{itemize}
+
+\subsubsection{Architectural Modifications}
+
+\begin{itemize}
+    \item \textbf{Attribution Mechanisms}: Models that inherently produce citations or attributions for their claims, enabling verification and discouraging unsupported statements.
+    
+    \item \textbf{Calibration Layers}: Additional model components that improve calibration of output probabilities to better reflect true uncertainty.
+    
+    \item \textbf{Uncertainty Modeling}: Explicitly modeling epistemic uncertainty to distinguish ``known unknowns'' from confident knowledge.
+\end{itemize}
+
+\subsubsection{Post-Processing and Verification}
+
+\begin{itemize}
+    \item \textbf{Automated Fact-Checking}: Using secondary models or knowledge bases to verify generated content before presenting to users.
+    
+    \item \textbf{Rowen}: An adaptive retrieval method that identifies potential hallucinations and corrects factual errors through iterative retrieval \citep{rowen2024adaptive}.
+    
+    \item \textbf{Human-in-the-Loop}: For high-stakes applications, flagging uncertain outputs for human review before deployment.
+\end{itemize}
+
+\subsection{Implications for LLM-Based Causal Discovery}
+
+In our research context, hallucinations in LLM-generated causal loop diagrams manifest as several distinct failure modes:
+
+\begin{enumerate}
+    \item \textbf{Spurious Causal Relationships}: The LLM may generate edges between variables that have no plausible causal connection, drawing on superficial correlations or stereotypical associations rather than genuine causal mechanisms.
+    
+    \item \textbf{Incorrect Causal Direction}: Even when a true causal relationship exists between two variables, the model may reverse the direction of causation.
+    
+    \item \textbf{Missing Causal Links}: Omitting critical causal relationships that are necessary for a complete understanding of the system.
+    
+    \item \textbf{Logically Inconsistent Feedback Loops}: Generating cyclic causal structures that violate domain constraints or produce logical contradictions.
+\end{enumerate}
+
+Our use of an LLM-as-a-judge architecture aims to detect these hallucinations by providing a second layer of scrutiny. However, this approach introduces the meta-problem of \textit{judge hallucinations}—the possibility that the judging model itself hallucinates errors that do not exist or fails to detect genuine hallucinations. This concern motivates our investigation of context-insensitive metrics as an independent, complementary validation signal.
+
+The theoretical inevitability of hallucinations in next-token prediction models \citep{openai2025bluffing,arxiv2025comprehensive} suggests that perfect causal discovery via LLMs may be unattainable. Instead, our research aims to characterize the frequency and types of hallucinations in causal discovery tasks and develop detection strategies that reduce their impact to acceptable levels for practical applications.
+
+
+%----------------------------------------------------------------------------------------
+\section{Test-Time Compute: Scaling Inference for Improved Performance}
+\label{sec:test_time_compute}
+
+\subsection{Introduction to Test-Time Compute}
+
+Test-time compute (TTC), also referred to as inference-time compute or test-time scaling, represents a paradigm shift in how we think about improving LLM performance. Rather than exclusively focusing on scaling model parameters through larger architectures and more pre-training, TTC explores how allocating additional computational resources \textit{during inference} can enhance output quality \citep{snell2024scaling,cmu2025metarl}.
+
+The fundamental insight motivating TTC research is that many reasoning tasks benefit from deliberation and exploration of multiple solution paths. Humans do not solve complex problems by immediately outputting a solution; instead, we engage in iterative refinement, consider alternative approaches, and verify our reasoning. TTC aims to imbue LLMs with similar capabilities by allowing them to ``think longer'' before producing final outputs.
+
+Recent empirical results demonstrate the remarkable effectiveness of this approach: strategically scaling test-time compute can improve model performance more than scaling model parameters by 14x \citep{snell2024scaling}. This finding has profound implications for the economics and practical deployment of LLMs, suggesting that inference-time optimization may offer better returns on computational investment than continued scaling of pre-training.
+
+\subsection{Theoretical Foundations}
+
+\subsubsection{Compute-Optimal Scaling Strategy}
+
+The core theoretical contribution of recent TTC research is the concept of \textit{compute-optimal} scaling \citep{snell2024scaling}. This framework recognizes that different problems benefit from different types and amounts of test-time computation. Key principles include:
+
+\begin{enumerate}
+    \item \textbf{Problem-Dependent Efficacy}: The effectiveness of various TTC strategies critically depends on problem difficulty. Easy problems may need minimal additional compute, while hard problems benefit substantially from increased inference budget.
+    
+    \item \textbf{Adaptive Allocation}: Rather than uniformly applying the same amount of test-time compute to all prompts, compute-optimal strategies estimate problem difficulty and allocate compute accordingly. This adaptive approach can improve efficiency by 4x compared to uniform allocation \citep{snell2024scaling}.
+    
+    \item \textbf{Strategy Selection}: Different TTC methods (search, revision, verification) have varying strengths. The optimal strategy depends on the nature of the task and the specific failure modes of the base model.
+\end{enumerate}
+
+\subsubsection{Connection to Meta-Reinforcement Learning}
+
+Recent work from CMU \citep{cmu2025metarl} frames test-time compute optimization as a meta-reinforcement learning problem. From this perspective, TTC methods learn an \textit{algorithm} that figures out how to solve queries at test time. This view provides theoretical grounding for understanding why certain TTC approaches work and suggests principled methods for developing new strategies.
+
+The meta-RL framing implies that test-time compute is not merely about generating more candidates, but about learning an efficient search strategy through the space of possible solutions. This perspective aligns with human problem-solving, where expertise involves not just knowledge, but effective heuristics for exploring solution spaces.
+
+\subsubsection{Scaling Laws for Test-Time Compute}
+
+Traditional neural scaling laws \citep{kaplan2020scaling} characterize the relationship between model size, data size, training compute, and performance. Recent work extends these scaling laws to inference time \citep{arxiv2024inference}, establishing predictable relationships between test-time compute budget and performance improvements.
+
+Key findings include:
+
+\begin{itemize}
+    \item \textbf{Power-Law Scaling}: Performance often improves as a power law with respect to inference compute budget, exhibiting diminishing but predictable returns.
+    
+    \item \textbf{Model Size Trade-offs}: At fixed compute budgets, using a smaller model with more test-time compute can outperform using a larger model with less test-time compute \citep{snell2024scaling}. This suggests that future model development may prioritize inference-time reasoning over parameter counts.
+    
+    \item \textbf{Data Efficiency}: As pre-training datasets approach exhaustion of high-quality text, test-time compute offers an alternative path to performance improvements that does not require additional training data \citep{mit2025scaling}.
+\end{itemize}
+
+\subsection{Primary Test-Time Compute Mechanisms}
+
+\subsubsection{Best-of-N Sampling}
+
+The simplest TTC approach is \textit{best-of-N sampling}: generate $N$ independent responses and select the best according to some scoring function. While conceptually simple, this baseline is surprisingly effective and serves as a reference point for evaluating more sophisticated methods.
+
+\textbf{Scoring Functions}: The effectiveness of best-of-N depends critically on the quality of the scoring function. Options include:
+\begin{itemize}
+    \item \textbf{Length-normalized log probability}: Selecting the response with highest average token probability
+    \item \textbf{Reward models}: Using a separate model trained to score response quality
+    \item \textbf{Task-specific verifiers}: For problems with verifiable answers (e.g., code execution, mathematical proofs)
+\end{itemize}
+
+\textbf{Limitations}: Best-of-N sampling is compute-intensive (linear cost in $N$) and limited by the diversity of samples. If the model consistently makes the same error across all samples, best-of-N cannot recover the correct answer.
+
+\subsubsection{Chain-of-Thought and Self-Consistency}
+
+Chain-of-thought (CoT) prompting \citep{wei2022cot} encourages models to generate intermediate reasoning steps before final answers. Self-consistency \citep{wang2023selfconsistency} extends this by sampling multiple CoT reasoning paths and selecting the most common final answer via majority voting.
+
+Empirical results show substantial improvements: self-consistency with CoT improves accuracy by 17.9\% on GSM8K (math word problems), 11.0\% on SVAMP, and 12.2\% on AQuA \citep{wang2023selfconsistency}. These gains come from two sources: (1) CoT enables step-by-step reasoning, and (2) self-consistency leverages the principle that correct reasoning paths tend to converge on the same answer, while errors are random.
+
+\textbf{Recent Advances}: Reasoning-Aware Self-Consistency (RASC) improves upon vanilla self-consistency by scoring both answers and reasoning paths, better handling incorrect or irrelevant responses and optimizing sampling efficiency \citep{rasc2024}.
+
+\subsubsection{Iterative Refinement and Revision}
+
+Rather than sampling multiple independent solutions, iterative refinement generates an initial response and then progressively improves it through guided self-correction. This approach mimics human problem-solving, where we iteratively revise our work based on reflection and feedback.
+
+\textbf{Process}: 
+\begin{enumerate}
+    \item Generate initial response
+    \item Prompt model to critique its own response, identifying potential errors
+    \item Generate revised response addressing identified issues
+    \item Repeat for $k$ iterations or until convergence
+\end{enumerate}
+
+\textbf{Advantages}: Refinement can fix errors that would appear consistently in independent samples (systematic errors). It is also more compute-efficient than best-of-N for problems where the initial attempt is close to correct.
+
+\textbf{Challenges}: The model may introduce new errors during revision, or become stuck in revision cycles without convergence. Additionally, the effectiveness of self-critique varies widely across models and task types.
+
+\subsubsection{Search-Based Methods with Process Reward Models}
+
+The most sophisticated TTC approaches use structured search through the space of possible solutions, guided by \textit{process reward models} (PRMs) that evaluate intermediate steps rather than only final outcomes \citep{uesato2022prm,arxiv2024prm}.
+
+\textbf{Process Reward Models}: Unlike outcome reward models (ORMs) that only score final answers, PRMs provide feedback at each step of a multi-step reasoning trace. This fine-grained feedback enables more effective credit assignment and helps identify where reasoning goes wrong.
+
+PRMs are trained on data annotated with step-level correctness labels. During inference, the PRM scores each reasoning step, allowing search algorithms to prioritize promising paths and prune incorrect ones early. Recent work shows that PRMs significantly outperform ORMs for mathematical reasoning and other multi-step tasks \citep{lightman2023prm}.
+
+\textbf{Search Algorithms}: Several search strategies can be used with PRMs:
+
+\begin{itemize}
+    \item \textbf{Beam Search}: Maintains the top-$k$ partial solutions at each step, expanding the most promising according to PRM scores.
+    
+    \item \textbf{Monte Carlo Tree Search (MCTS)}: Builds a tree of possible reasoning paths, using PRM scores to guide exploration. MCTS balances exploitation (pursuing promising paths) and exploration (trying alternative approaches).
+    
+    \item \textbf{Best-First Search}: Expands the most promising node in the entire tree at each step, rather than expanding all nodes at a given depth (as in beam search).
+\end{itemize}
+
+\textbf{Empirical Results}: Search-based methods with PRMs achieve state-of-the-art performance on challenging reasoning benchmarks. When combined with compute-optimal allocation strategies, they can outperform much larger models while using less total compute \citep{snell2024scaling}.
+
+\subsection{Adaptive Compute Allocation}
+
+A critical insight from recent research is that uniform allocation of test-time compute is suboptimal. The \textit{compute-optimal} strategy adaptively allocates inference budget based on estimated problem difficulty \citep{snell2024scaling}.
+
+\subsubsection{Estimating Problem Difficulty}
+
+Several signals can indicate problem difficulty:
+
+\begin{itemize}
+    \item \textbf{Model Uncertainty}: Low token probabilities or high entropy in initial generations suggest the problem is challenging for the model.
+    
+    \item \textbf{Self-Consistency Disagreement}: When multiple initial samples produce diverse answers, this indicates uncertainty and suggests benefit from additional compute.
+    
+    \item \textbf{Verifier Scores}: Low confidence scores from reward models or verifiers on initial attempts suggest the problem is difficult.
+    
+    \item \textbf{Task Metadata}: When available, explicit difficulty labels or problem characteristics (e.g., length, domain) can guide allocation.
+\end{itemize}
+
+\subsubsection{Allocation Strategies}
+
+Given an estimate of problem difficulty, how should compute be allocated? Research suggests:
+
+\begin{itemize}
+    \item \textbf{Easy Problems}: Use minimal compute, potentially just greedy decoding or a small number of samples. Revision may be more efficient than sampling for near-correct initial attempts.
+    
+    \item \textbf{Moderate Difficulty}: Employ self-consistency with moderate sample counts, or limited search depth with PRMs.
+    
+    \item \textbf{Hard Problems}: Allocate substantial compute to deep search or large sample sets, as these problems benefit most from exploration of diverse solution paths.
+\end{itemize}
+
+Empirical results show that adaptive allocation can match the performance of uniform high-compute strategies while using 4x less compute on average \citep{snell2024scaling}.
+
+\subsection{Applications and Practical Considerations}
+
+\subsubsection{Enterprise Applications: TAO}
+
+Databricks' TAO (Test-time Adaptive Optimization) \citep{databricks2024tao} demonstrates practical enterprise applications of TTC. TAO uses test-time compute and reinforcement learning to improve models without requiring labeled training data—a critical advantage for enterprise settings where obtaining high-quality labeled data is expensive or impossible.
+
+Key innovations:
+\begin{itemize}
+    \item Uses test-time compute during \textit{training} to generate synthetic preference data
+    \item Achieves better model quality than traditional fine-tuning
+    \item Brings open-source models (Llama) to within the quality of proprietary models (GPT-4o) for specific tasks
+\end{itemize}
+
+\subsubsection{Cost-Benefit Analysis}
+
+While test-time compute improves performance, it increases inference cost and latency. Practical deployment requires careful cost-benefit analysis:
+
+\textbf{Costs}:
+\begin{itemize}
+    \item Increased compute expense (proportional to number of forward passes)
+    \item Higher latency (sequential revision or search increases wall-clock time)
+    \item More complex serving infrastructure
+\end{itemize}
+
+\textbf{Benefits}:
+\begin{itemize}
+    \item Improved accuracy, potentially reducing downstream costs of errors
+    \item Can use smaller base models, reducing memory requirements
+    \item Dynamic allocation allows cost control via compute budgets
+\end{itemize}
+
+For many applications, spending 5-10x inference compute to substantially improve quality is economically rational, particularly for high-stakes decisions or complex reasoning tasks.
+
+\subsubsection{Latency Considerations}
+
+Latency is critical for interactive applications. Strategies to manage latency include:
+
+\begin{itemize}
+    \item \textbf{Parallel Sampling}: Generate multiple candidates concurrently rather than sequentially
+    \item \textbf{Speculative Execution}: Begin generating high-probability continuations while still evaluating earlier steps
+    \item \textbf{Streaming with Refinement}: Show initial output immediately, then stream refinements
+    \item \textbf{Async TTC}: For non-interactive use cases, decouple TTC from user-facing response time
+\end{itemize}
+
+\subsection{Future Directions and Open Questions}
+
+\subsubsection{Pre-training vs. Inference Compute Trade-offs}
+
+As test-time compute demonstrates increasing effectiveness, a fundamental question emerges: should we invest more compute in pre-training larger models or in inference-time reasoning with smaller models? Recent evidence suggests the latter may be more efficient \citep{snell2024scaling,mit2025scaling}.
+
+Implications:
+\begin{itemize}
+    \item Future LLMs may prioritize inference-time reasoning capabilities over parameter count
+    \item Pre-training objectives might explicitly optimize for test-time improvability
+    \item Research focus may shift toward inference algorithms and reward models
+\end{itemize}
+
+\subsubsection{Generalization Across Domains}
+
+Most TTC research focuses on mathematical reasoning and coding tasks, where objective verification is possible. Key open questions include:
+
+\begin{itemize}
+    \item How effective is TTC for open-ended generation tasks (creative writing, general conversation)?
+    \item Can TTC improve factuality and reduce hallucinations in knowledge-intensive tasks?
+    \item How do TTC benefits generalize across languages and cultural contexts?
+\end{itemize}
+
+Recent work on multi-domain process reward models \citep{versaprm2025} suggests that TTC can extend beyond mathematics, but much work remains to characterize its effectiveness across diverse applications.
+
+\subsubsection{Learned Inference Algorithms}
+
+Rather than hand-crafting inference-time algorithms (search strategies, refinement protocols), can we learn them? The meta-RL framing suggests that inference algorithms themselves could be learned through meta-training, potentially discovering strategies superior to those designed by humans.
+
+\subsubsection{Integration with Hallucination Detection}
+
+Test-time compute offers a natural framework for integrating hallucination detection: use additional inference budget to verify factual claims, check consistency, and refine outputs. The interplay between TTC and hallucination mitigation is an important direction for future research.
+
+\subsection{Implications for LLM-Based Causal Discovery}
+
+In the context of our research, test-time compute principles inform our approach in several ways:
+
+\begin{enumerate}
+    \item \textbf{LLM-as-a-Judge}: Our use of a judging model to evaluate generated causal diagrams is conceptually a form of test-time compute—allocating additional inference resources to verify and improve initial outputs.
+    
+    \item \textbf{Iterative Refinement for Causal Discovery}: Rather than accepting the first generated causal loop diagram, test-time compute principles suggest iteratively refining the diagram based on judge feedback. This approach could significantly improve diagram quality while managing computational costs through adaptive allocation.
+    
+    \item \textbf{Selective Judging as Adaptive Compute Allocation}: Our RQ3 investigation into smart test-time compute directly applies compute-optimal principles. By using context-insensitive metrics (analogous to difficulty estimators), we can identify which generated diagrams require judge verification and which can be accepted without additional compute. This adaptive strategy aims to achieve a favorable trade-off between quality and cost.
+    
+    \item \textbf{Multiple Generation Strategies}: Test-time compute research suggests generating multiple candidate causal diagrams and using the judge to select the best, rather than relying on a single generation. The effectiveness of this approach versus iterative refinement is an empirical question we aim to address.
+    
+    \item \textbf{Process Reward Models for Causal Reasoning}: While our current work uses outcome-based judging (evaluating complete diagrams), future extensions could develop process reward models that evaluate intermediate steps in causal reasoning (e.g., ``Is this individual causal link plausible?''), enabling more sophisticated search-based approaches.
+\end{enumerate}
+
+The test-time compute paradigm provides theoretical grounding for our experimental design and suggests natural extensions for future work. By framing causal discovery as a test-time optimization problem, we can leverage insights from the broader TTC literature to improve both the quality and efficiency of LLM-based causal discovery systems.
+
+%----------------------------------------------------------------------------------------
+
+\section{Conclusion}
+
+This chapter has provided a comprehensive review of two critical techniques for advancing LLM reliability and performance: hallucination detection and test-time compute. Understanding the taxonomy of hallucinations, their causes, detection methods, and mitigation strategies is essential for deploying LLMs in high-stakes applications. Similarly, test-time compute offers a promising paradigm for improving LLM outputs through strategic allocation of inference resources.
+
+In our research on LLM-based causal discovery, these two threads intersect: hallucinations manifest as errors in generated causal diagrams, while test-time compute principles guide our use of LLM-as-a-judge systems and adaptive verification strategies. The theoretical and empirical insights from this literature inform our methodology and suggest future directions for improving the reliability and efficiency of automated causal discovery.

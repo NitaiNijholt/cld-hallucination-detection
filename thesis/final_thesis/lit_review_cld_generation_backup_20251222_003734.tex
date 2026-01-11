@@ -1,0 +1,174 @@
+% Literature Review: Causal Loop Diagram (CLD) Generation with Large Language Models
+% Background section on LLM-based approaches to automated CLD construction
+
+\subsection{LLM-Based Causal Loop Diagram Generation}
+\label{sec:lit_cld_generation}
+
+\subsubsection{Hallucination Detection in LLM-Generated Causal Loop Diagrams}
+
+Large language models show promise for automating Causal Loop Diagram construction but exhibit systematic failure modes that demand specialized uncertainty quantification approaches. 
+
+The most directly comparable evaluation is the \textbf{System Dynamics Bot} \citep{hosseinichimeh2024textmapdynamicsbot}, which performs the identical task to CLD generation: \textit{extracting causal variables and directed causal links from natural language text to construct feedback diagrams}. Given textual descriptions of systems, the bot identifies variables, determines causal relationships between them, and outputs structured CLDs. Evaluated against human-coded ground truth from system dynamics literature and participant responses, the bot recovers only \textbf{59\% of causal links} and \textbf{66\% of feedback loops}---establishing a concrete performance ceiling for current LLMs on text-to-CLD extraction.
+
+Other causal reasoning benchmarks evaluate \textit{different tasks} that provide indirect evidence of LLM limitations. CLadder \citep{jin2023cladder} tests \textit{answering causal queries given a known causal graph}---the inverse of CLD generation where the graph is provided and models must reason about interventions and what-if queries. Corr2Cause tests \textit{inferring causal structure from statistical correlation statements}---a formal graph discovery task without natural language grounding. These benchmarks reveal fundamental reasoning limitations (GPT-4 achieves $\sim$62\% on CLadder, near-random on Corr2Cause) but do not directly measure text-to-diagram extraction performance.
+
+This background review synthesizes 2022--2025 literature connecting general hallucination detection metrics to the specific challenge of generating reliable causal structures from text, distinguishing between benchmarks that evaluate (a) causal extraction from text, (b) causal reasoning over given graphs, and (c) causal structure discovery from statistical data.
+
+\subsubsection{LLM Performance Degrades Sharply on Formal Causal Reasoning}
+
+Benchmark studies reveal a stark performance hierarchy across causal task types, though each evaluates a distinct form of causal reasoning:
+
+\textbf{COPA} (Choice of Plausible Alternatives) tests \textit{commonsense causal judgment}: given a premise (e.g., ``The man broke his toe'') and two alternatives, models select which is more plausibly the cause or effect. This multiple-choice format with everyday scenarios yields near-perfect GPT-4 accuracy but requires no graph construction or variable extraction---it tests recognition of familiar causal patterns rather than systematic causal inference.
+
+\textbf{CLadder} \citep{jin2023cladder} tests \textit{causal query answering over provided graphs}: models receive a causal graph with binary variables and must answer queries at three levels of Pearl's ladder---associational (``What is P(Y|X)?''), interventional (``What happens if we set X=1?''), and retrospective what-if (``Would Y have occurred if X had been different?''). GPT-4 achieves only \textbf{$\sim$62\% accuracy}, with performance degrading sharply on interventional and retrospective what-if queries. \textit{Relation to CLD generation}: CLadder evaluates reasoning \textit{with} a given causal structure, whereas CLD generation requires \textit{constructing} the structure from text. However, polarity errors in CLD generation may reflect similar failures in interventional reasoning.
+
+The \textbf{CaLM benchmark} (Chen et al., 2024) provides the most comprehensive evaluation, testing 28 models across 92 causal targets organized into four modules. Tasks range from \textit{causal attribution} (identifying causes of events) to \textit{effect prediction} and \textit{what-if reasoning}. The key finding---``as complexity of causal reasoning increases, accuracy progressively deteriorates, eventually falling almost to zero''---suggests that CLD generation involving multi-step causal chains will face compounding errors.
+
+\textbf{Corr2Cause} (Jin et al., ICLR 2024) tests \textit{inferring causal graph structure from correlation statements}: given statements like ``A is correlated with B'' and ``B is correlated with C,'' models must determine whether ``A causes B'' or identify the correct DAG structure. Testing 17 models on 200K+ samples, all achieved near-random performance ($\sim$29\% F1). \textit{Relation to CLD generation}: This benchmark isolates pure causal structure inference without natural language complexity. The near-random performance suggests that when text-to-CLD systems succeed, it may be through pattern matching on familiar domains rather than principled causal inference.
+
+For \textbf{causal graph discovery from domain knowledge}, LLMs show complementary strengths and weaknesses. Jiralerspong et al.\ (2024) demonstrate that querying LLMs about pairwise causal relationships using breadth-first search can achieve state-of-the-art results on real-world causal graphs---a task closer to CLD generation since it relies on domain knowledge rather than statistical data. Darvariu et al.\ (2024) show LLM priors particularly help with edge directionality (84\% correctly oriented for LLaMA2-70B) when combined with observational data. \textbf{CausalBench} evaluates three subtasks: \textit{correlation identification}, \textit{causal skeleton identification} (undirected graph structure), and \textit{causality identification} (directed edges). LLMs significantly lag behind traditional algorithms on networks exceeding 50 nodes and struggle with collider structures while excelling at chains.
+
+The ``causal parrots'' hypothesis (Zečević et al., TMLR 2023) offers a theoretical framework unifying these findings: LLMs encode causal facts within ``meta-SCMs'' (structural causal models describing relationships between causal facts in training data) but cannot perform genuine interventional or what-if reasoning. When LLMs succeed at causal tasks, they retrieve correlations between causal statements seen during training. \textit{Implication for CLD generation}: Models may accurately reproduce causal structures from well-documented domains while fabricating plausible-sounding but incorrect links in novel domains.
+
+\subsubsection{How Hallucinations Manifest in Causal Structure Generation}
+
+Hallucinations in CLD generation take distinct forms compared to free-text generation, requiring specialized detection approaches. Research identifies five primary error categories:
+
+\textbf{Fabricated causal links} represent the most direct hallucination type---generating relationships between variables without textual grounding. The \textbf{ReCAST benchmark} (arXiv 2505.18931) directly evaluates \textit{multi-node causal graph construction from academic text}---a task closely aligned with CLD generation. Unlike synthetic benchmarks, ReCAST uses unstructured, naturally written academic texts of varying length and complexity. Models must identify causal variables and construct directed graphs capturing the causal relationships described. The best-performing model achieves only \textbf{F1 = 0.477}, with common errors including fabricated links (e.g., ``loan usage flexibility $\rightarrow$ cash crop cultivation'' when no such relationship exists), difficulty with implicit causal information, and failure to connect causally relevant information spread across lengthy texts.
+
+\textbf{Polarity errors} involve incorrect $+$/$-$ assignment to causal links. This manifests when LLMs state A increases B when it actually decreases B---a failure to apply ``ceteris paribus'' reasoning correctly. Unlike free-text hallucinations, CLDs require internally consistent sign patterns around feedback loops.
+
+\textbf{Spurious variable introduction} creates variables not grounded in source text through over-generalization. Reinholtz et al.\ (Systems 2025) document examples like ``Macroeconomic and finance conditions'' with unknown polarity, or ``Global technology learning''---concepts too vague to support directional interpretation. Their study uses \textit{Pipeline Algebra} to construct CLDs from text, with expert refinement identifying systematic LLM errors.
+
+\textbf{Missing causal links} represent faithfulness failures where explicit source relationships are omitted. The System Dynamics Bot study found that missing links often occur when ``authors assumed readers would know'' implicit information---highlighting the challenge of implicit versus explicit causal knowledge in text-to-CLD extraction.
+
+\textbf{Direction reversal} and \textbf{DAG violations} constitute structural hallucinations unique to graph outputs. LLMs may reverse cause and effect or create cycles violating directed acyclic graph constraints. Jiralerspong et al.\ (2024), in their \textit{pairwise causal query} approach to graph discovery, document that LLMs sometimes predict bidirectional causation or inconsistent edge directions when queried about the same variable pair in different orderings.
+
+Expert evaluation at MIT (Reinholtz et al., 2025) produced a practical taxonomy with five categories: (A) ambiguous/overly broad variables, (B) duplicate/syntactically odd labels, (C) mis-specified linkage or polarity, (D) redundant elements, and (E) process-level limitations. This taxonomy provides actionable categories for automated detection systems in text-to-CLD pipelines.
+
+\subsubsection{Uncertainty Quantification Methods Show Promise for Graph Structures}
+
+Standard hallucination detection metrics---token probability, perplexity, entropy---show limited effectiveness for structured outputs, but recent advances in compositional and semantic uncertainty offer promising directions for CLD verification. Each method addresses a different task; their applicability to CLD generation varies.
+
+\textbf{Semantic entropy} (Farquhar et al., Nature 2024) was developed for \textit{detecting confabulations in free-text question answering}---identifying when LLMs generate arbitrary incorrect answers that vary with irrelevant factors like random seeds. The task involves sampling multiple responses to factual questions, clustering semantically equivalent answers using NLI models, and computing entropy over these clusters. High semantic entropy indicates unreliable outputs. The method achieves \textbf{AUROC 0.75--0.85} across diverse QA benchmarks. \textit{Relation to CLD generation}: While not designed for structured outputs, semantic entropy could be applied to individual causal claims (``Does X cause Y?'') before graph assembly. However, computational overhead (5--10$\times$ inference cost from multiple sampling) and NLI models trained on declarative rather than causal statements may limit effectiveness.
+
+\textbf{Semantic entropy probes} (Kossen et al., ICML 2024) address computational costs for the \textit{same QA confabulation detection task}. Linear probes trained on LLM hidden states predict semantic entropy directly from a single forward pass, achieving \textbf{AUROC 0.70--0.95} without multiple sampling. The probes generalize to out-of-distribution data, suggesting hidden states encode semantic uncertainty. \textit{Relation to CLD generation}: This approach could enable real-time uncertainty estimation for individual causal link predictions, though probes would need training on causal claim datasets.
+
+The most directly applicable framework is \textbf{compositional uncertainty quantification} (Lin et al., ICLR 2023), developed for \textit{semantic parsing}---converting natural language queries into structured representations like SQL or knowledge graph queries. The key challenge is that seq2seq models produce token probabilities, but structured outputs require uncertainty at the component level (nodes, edges). \textbf{Graph-Aligned Probability (GAP)} translates sequence probabilities to structural probabilities by marginalizing over all token sequences producing the same graph component. The \textbf{Compositional Expected Calibration Error (CECE)} metric measures calibration at graph component level. Applied to collaborative semantic parsing (flagging uncertain subgraphs for human review), the method achieves \textbf{30\% average error reduction}---performance comparable to oracle selection. \textit{Relation to CLD generation}: This framework maps directly to CLD output: GAP can provide confidence scores for individual causal links, and CECE can measure overall calibration of the text-to-CLD system.
+
+For \textit{LLM-based causal graph discovery} specifically, Sng et al.\ (2024) introduce \textbf{multi-LLM debate with arbiter}. Their task involves constructing causal DAGs by querying LLMs about pairwise causal relationships, then using multiple LLMs to debate disputed edges with an arbiter making final decisions. This achieves hallucination reduction comparable to RAG without requiring reference corpora. \textit{Relation to CLD generation}: The debate framework could be applied to verify extracted causal links, though it significantly increases inference cost.
+
+\textbf{Token probability approaches} (Quevedo et al., 2024) remain useful baselines for \textit{general hallucination detection in free-text generation}, using features including mean token probability, probability deviation, and entropy measures. These achieve state-of-the-art on text-based hallucination benchmarks but face limitations for structured outputs: token probabilities don't distinguish structural errors from surface form variation, and overconfident hallucinations remain challenging to detect.
+
+\subsubsection{The Reliability Gap Demands Hybrid Verification Approaches}
+
+LLM reliability for structured knowledge extraction shows consistent patterns relevant to CLD generation, though performance varies dramatically by task type.
+
+For \textit{relation extraction}---identifying typed relationships between entities in text (e.g., ``Company X acquired Company Y'')---F1 scores range from \textbf{0.50--0.84} depending on domain and prompting strategy, with GPT-4 achieving the upper bound on biomedical benchmarks. This task is analogous to the link extraction component of CLD generation but does not require causal interpretation or polarity assignment.
+
+For \textit{causal claim verification}---determining whether stated causal relationships are scientifically valid---results are more sobering. On benchmarks testing LLMs against peer-reviewed causal findings from economics literature, the best-performing model (Qwen3-32B) achieves only \textbf{57.6\% accuracy}, while some models drop to \textbf{29.4\%}. This suggests that even when CLD systems correctly extract causal claims from text, they cannot reliably distinguish valid from spurious relationships.
+
+Critically, model scale does not consistently translate to superior causal reasoning, and larger models produce hallucinations that are \textbf{harder to detect} despite hallucinating less frequently overall (arXiv:2408.07852). This presents a particular challenge for CLD verification: advanced models may generate more plausible-sounding but incorrect causal links.
+
+\textbf{Faithfulness metrics} developed for \textit{RAG-based question answering}---measuring whether generated answers are grounded in retrieved context---offer a framework for CLD verification. The standard formula measures (claims supported by context) / (total claims). For declarative text, this involves claim extraction plus NLI verification. \textit{Adaptation for CLDs}: Each extracted causal link can be treated as a claim requiring textual grounding, though causal claims may require domain-specific validation beyond standard NLI.
+
+\textbf{GraphEval} (Sansford et al., 2024) was developed for \textit{hallucination detection in free-text summarization}. The approach converts LLM-generated text into knowledge graph triples (subject-predicate-object), then verifies each triple against source context using NLI models. By decomposing text into atomic claims, GraphEval identifies specific triples prone to hallucination rather than flagging entire outputs. The companion \textbf{GraphCorrect} tool rectifies identified hallucinations by leveraging KG structure. \textit{Relation to CLD generation}: The triple-based decomposition maps naturally to CLD links (cause-polarity-effect), suggesting similar verification architectures could work for causal structures.
+
+Prompting strategies significantly impact extraction reliability across tasks. Few-shot with retrieved domain-specific examples substantially outperforms zero-shot for both relation extraction and causal reasoning. Chain-of-Thought helps but requires careful task design. Self-consistency prompting---generating multiple reasoning paths---helps identify errors but increases cost. RAG few-shot (simple instruction with 3 retrieved examples) significantly enhances performance across knowledge extraction tasks, though for CLD generation, relevant examples must include causal structures rather than just domain text.
+
+\subsubsection{Connecting Metrics to CLD Generation Requires Compositional Approaches}
+
+The gap between general hallucination detection and CLD verification stems from the structural nature of causal outputs. Token-level probabilities capture syntactic confidence but miss semantic and relational accuracy. Sequence-level uncertainty misses component-level errors---a CLD with 10 correct links and 2 fabricated ones may show high overall confidence while containing critical errors.
+
+\textbf{Table~\ref{tab:benchmark_task_mapping}} summarizes the relationship between reviewed benchmarks and the text-to-CLD task:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{p{2.8cm}p{4.5cm}p{4.5cm}}
+\toprule
+\textbf{Benchmark} & \textbf{Task} & \textbf{Relation to CLD Generation} \\
+\midrule
+System Dynamics Bot & Extract causal variables \& links from text to construct CLDs & \textit{Direct}: identical task \\
+ReCAST & Construct multi-node causal graphs from academic text & \textit{Direct}: same extraction challenge \\
+CLadder & Answer causal queries given a known graph & \textit{Indirect}: tests reasoning, not extraction \\
+Corr2Cause & Infer causal structure from correlation statements & \textit{Indirect}: tests formal inference \\
+CaLM & Multi-task causal reasoning evaluation & \textit{Indirect}: tests reasoning components \\
+CausalBench & Identify causal skeleton \& edge direction & \textit{Partial}: graph discovery without text \\
+\bottomrule
+\end{tabular}
+\caption{Mapping of causal reasoning benchmarks to the text-to-CLD generation task.}
+\label{tab:benchmark_task_mapping}
+\end{table}
+
+The research synthesis points to a \textbf{three-tier detection framework} for CLD hallucinations, drawing on methods from both causal extraction and general hallucination detection:
+
+At the \textbf{variable level}, detection should flag name ambiguity, spurious variables not grounded in source text, and missing variables mentioned but excluded from final output. Methods from \textit{entity extraction} and \textit{NLI-based faithfulness verification} (as in GraphEval) apply directly.
+
+At the \textbf{link level}, fabricated relationships, wrong polarity, and reversed direction require compositional uncertainty quantification---specifically GAP scores for individual edges adapted from \textit{semantic parsing}. Multi-LLM debate (from \textit{causal graph discovery}) provides a reference-free validation approach where domain knowledge cannot be easily retrieved.
+
+At the \textbf{loop level}, unclosed feedback loops, incorrect reinforcing/balancing classification, and sign-count errors require graph-level verification combining structural constraints with domain logic. No existing benchmark directly evaluates this; it remains unique to CLD generation.
+
+The most promising research direction combines \textbf{compositional uncertainty quantification} from semantic parsing with \textbf{semantic entropy probing} for individual causal claims. This hybrid approach would provide edge-level confidence scores (via GAP) while leveraging hidden state probes for computational efficiency. Multi-LLM debate adds robustness for claims that cannot be verified against existing knowledge.
+
+\subsubsection{Conclusion}
+
+The literature reveals both the promise and limitations of LLM-based CLD generation. On the most directly comparable task---the System Dynamics Bot's text-to-CLD extraction---models recover approximately \textbf{60\% of causal structures} from explicit text. The ReCAST benchmark, evaluating causal graph construction from academic text, reports similar performance (F1 = 0.477). Indirect evidence from reasoning benchmarks (CLadder, Corr2Cause) suggests these limitations reflect fundamental gaps in LLM causal inference rather than extraction-specific failures.
+
+Three findings carry particular weight for thesis development:
+
+\textbf{Compositional uncertainty quantification} from semantic parsing (Lin et al., 2023) provides the most direct path to edge-level confidence estimation. The GAP framework translates naturally from query-to-graph parsing to text-to-CLD generation.
+
+\textbf{Semantic entropy probes} (Kossen et al., 2024) offer computationally tractable alternatives to sampling-based methods for individual claim verification. While developed for QA, the approach could be adapted to causal link confidence estimation.
+
+The \textbf{``causal parrots'' hypothesis} (Zečević et al., 2023) explains why domain-specific validation remains essential: LLMs retrieve memorized causal patterns rather than performing principled inference, making them unreliable on novel domains regardless of general capability improvements.
+
+The practical implication is clear: reliable CLD generation requires human-AI collaboration with uncertainty-guided expert review rather than fully automated pipelines. The thesis builds on this foundation by focusing on corpus-independent CLD generation with post-hoc verification.
+
+\subsubsection{Comparison of LLM-Based CLD Approaches}
+
+Table~\ref{tab:prior_cld_work} summarizes prior work on LLM-based CLD construction, distinguishing approaches by their input requirements, hallucination mitigation strategies, and evaluation methods.
+
+\begin{table}[h]
+\centering
+\caption{Comparison of LLM-based CLD Generation and Validation Approaches}
+\label{tab:prior_cld_work}
+\footnotesize
+\begin{tabular}{p{2.0cm}p{2.4cm}p{1.8cm}p{1.5cm}p{3.0cm}}
+\toprule
+\textbf{Approach} & \textbf{Method} & \textbf{Input} & \textbf{Corpus Req.} & \textbf{Hallucination Mitigation} \\
+\midrule
+SD-Bot~\citep{hosseinichimeh2024textmapdynamicsbot} & Text-to-CLD extraction via LLM & Text documents & Yes & None reported \\
+\midrule
+Theoraizer~\citep{Waaijers2024theoraizer} & Variable-pair querying; multiple candidates & User-defined variables & No & Logit-based UQ; candidate generation \\
+\midrule
+Liu \& Keith~\citep{liu2025leveraging} & Curated prompting techniques & Dynamic hypothesis text & Yes & None reported \\
+\midrule
+Pipeline Algebra~\citep{systems13090784} & Typed operators; iterative prompting & Abstract + web search & Partial & Expert refinement step \\
+\midrule
+CausalRAG~\citep{wang2025causalrag} & RAG-enhanced causal discovery & Scientific literature & Yes & RAG grounding (99.5\% faithfulness) \\
+\midrule
+Susanti \& Holsm.~\citep{susanti2025prompting} & Validation (not generation); fine-tuning vs prompting & Existing causal graphs & Yes & Fine-tuning (+20.5 F1 over prompting) \\
+\midrule
+Zhang et al.~\citep{zhang2024causal} & RAG-based causal graph discovery & Scientific literature & Yes & RAG grounding \\
+\midrule
+\textbf{This thesis} & Corpus-independent generation + post-hoc validation & Parametric knowledge & \textbf{No} & LLM-as-a-Judge; CI metrics; Deep Research \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Key observations:}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Corpus dependency:} Most approaches require an external corpus (text-to-CLD extraction or RAG), limiting applicability when relevant corpora are unavailable. Only Theoraizer and this thesis operate corpus-independently.
+    
+    \item \textbf{Hallucination mitigation:} Prior work largely neglects systematic hallucination detection. Theoraizer uses logits for uncertainty quantification but does not evaluate detection performance. RAG-based approaches (CausalRAG, Zhang et al.) rely on retrieval grounding but are capped by retrieval quality. This thesis systematically evaluates multiple corpus-independent detection methods.
+    
+    \item \textbf{Evaluation scope:} SD-Bot reports 60\% link recall and 66--83\% loop recall on controlled datasets. Liu \& Keith demonstrate expert-comparable quality on simple structures. Pipeline Algebra presents qualitative case studies. No prior work evaluates hallucination \emph{detection} performance with precision/recall metrics against expert ground truth.
+\end{itemize}
+
+
+
+
+
+

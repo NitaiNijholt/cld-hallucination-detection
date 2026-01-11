@@ -1,0 +1,169 @@
+\section{Background}
+
+\subsection{Modeling, simulation, and why conceptual validity matters}
+\label{sec:background_simulation}
+
+\paragraph{The role of simulations in science.}
+A simulation can be used to study a model of a system by manipulating its inputs to obtain knowledge about its properties, which may have correlates in the original system or inform new theory development. Simulations enable studying certain phenomena at reduced cost, such as in robot training; at temporal or spatial scales which are difficult or impossible to observe, as in computational astrophysics; or in cases where the consequences of mistakes may be severe, such as in surgery planning. Simulation studies also enable testing what-if scenarios and interventions—for example, examining the effects of vaccines in a pandemic model to assess intervention strategies.
+Simulations have become so integral to many branches of science that they are often called the third pillar of science, alongside theory and experiment. Nonetheless, properties observed in a model may transfer only partially, or not at all, to the system under study. It is precisely this consideration—determining the extent to which model behaviors generalize—that yields valuable insights.
+
+\paragraph{Model abstraction and computational trade-offs.}
+A model of a system by definition abstracts away parts of the system, and this information loss inherently limits the transferability of conclusions to the system itself. Thus, all models are inherently flawed representations; however, studying these models can still be highly informative. Making informed choices about which features of the system to include in the model is crucial to reproducing the most important dynamics relevant to the study's context.
+To reduce information loss and increase the transferability of conclusions, scientists strive to create higher-resolution representations of systems. This often leads to more complex models through increased temporal and spatial resolutions, additional variables, or the relaxation of simplifying assumptions—which may introduce non-linearities and interaction effects. This increase in complexity comes at a computational cost: greater model fidelity typically requires more computational resources, creating a fundamental trade-off between model accuracy and computational tractability.
+Both computational scientists and domain experts must collaborate to navigate this trade-off efficiently. Domain experts understand which phenomena are most important to capture, while computational scientists possess knowledge of algorithmic optimizations, numerical methods, parallel computing strategies, and complexity analysis. This interdisciplinary collaboration is essential for making intelligent modeling decisions that balance scientific fidelity with computational feasibility. Key considerations include algorithm selection, data structure optimization, verification and validation procedures, and uncertainty quantification methods.
+
+\paragraph{Group model building as a foundation for computational models.}
+Bringing domain experts together to assimilate their knowledge into a model is a critical preliminary step, especially for complex systems such as those in biology, where subject matter experts may be specialized in only part of the system they wish to model. Convening such groups may present time, cost, and coordination challenges, and the resulting models will inevitably be limited by knowledge gaps and cognitive biases. Nonetheless, these collaborative sessions serve as a valuable basis for model building, and established methods exist to make these sessions more efficient and productive.
+Within system dynamics—a branch of science concerned with understanding the behavior of complex systems over time through feedback loops, stocks, and flows—a key type of model is the Causal Loop Diagram (CLD).
+
+\medskip
+\noindent
+\textbf{The Modeling and Simulation Cycle.} The established modeling and simulation (M\&S) cycle~\citep{ziegler1976theory, cellier1990continuous} proceeds through distinct stages: a real system or phenomenon is first mapped to a \emph{conceptual model} through qualitative modeling, then transformed via quantitative modeling into a \emph{computational model}, which is discretized and implemented as a simulation. Results feed back through validation, prediction, and hypothesis testing to refine understanding of the original system. Crucially, validation is required at each stage transition—including the earliest qualitative step. A flawed conceptual model propagates errors downstream: incorrect causal structure at the conceptual stage undermines all subsequent quantitative modeling and simulation efforts, regardless of their numerical sophistication.
+
+\medskip
+\noindent
+\textbf{Why model and simulate?} As \citet{ziegler1976theory} articulated, ``modeling means the process of organizing knowledge about a given system.'' \citet{cellier1990continuous} further emphasized that ``modeling is the single most central activity that unites all scientific and engineering endeavors... simulation can be used not only for analysis (direct problems) but also for design (inverse problems).'' For complex health and social systems---such as those captured by the CLDs in this thesis---simulation is often the \emph{only} feasible approach for several compelling reasons:
+
+\begin{itemize}
+    \item \textbf{The physical system is not available for experimentation:} Randomized controlled trials (RCTs) on complex biopsychosocial interventions are often ethically infeasible, prohibitively expensive, or logistically impossible. One cannot experimentally manipulate social norms, community-level obesity prevalence, or healthcare system structures at will, and even if possible, this may raise ethical concerns.
+    \item \textbf{Time constants are incompatible with research timelines:} Causal processes in chronic disease and social dynamics unfold over years to decades---far exceeding typical research project durations. Simulation enables exploration of long-term system trajectories within practical timeframes.
+    \item \textbf{Control variables may be inaccessible:} In observational health data, key confounders (genetics, lifetime exposures, unmeasured social determinants) cannot be experimentally controlled. Simulation allows systematic exploration of what-if scenarios.
+    \item \textbf{To develop deeper understanding and generate hypotheses:} Before investing in expensive empirical studies, simulation-based exploration can identify which causal pathways merit investigation, prioritize intervention targets, and reveal unexpected system behaviors (e.g., counterintuitive feedback effects).
+    \item \textbf{What-if scenario simulation:} Simulation enables systematic exploration of hypothetical interventions and policy scenarios that would be impossible or unethical to test in reality. Decision-makers can evaluate the potential consequences of alternative strategies---such as resource allocation changes, prevention programs, or policy modifications---before committing to costly real-world implementation.
+\end{itemize}
+
+\noindent
+These considerations motivate the value of accurate CLD construction: the qualitative causal structure encoded in a CLD forms the foundation upon which all subsequent quantitative modeling and simulation rests.
+
+\subsection{Causal Loop Diagrams (CLDs)}
+\label{sec:background_clds}
+
+\newcommand{\CLD}{CLD}
+\paragraph{Definition.}
+A causal loop diagram (\CLD) is a qualitative system-dynamics representation of hypothesized causal structure within a bounded system. It is a signed, directed graph whose nodes denote system variables and whose arcs encode \emph{ceteris paribus} monotonic influences: a \enquote{+} arc indicates that, relative to a reference level, an increase (decrease) in the source tends to produce an increase (decrease) in the target; a \enquote{--} arc indicates the opposite tendency. Salient delays may be marked on arcs to indicate that the dominant effect is time-lagged. Unlike directed acyclic graphs (DAGs), CLDs admit cycles and explicitly emphasize feedback as a first-class structural feature.
+
+\medskip
+\noindent
+\textbf{Formalization.} A \CLD\ can be defined as \(G=(V,E,\sigma,\delta)\), where \(V\) is a finite set of variables; \(E\subseteq V\times V\) is a set of directed arcs; \(\sigma:E\rightarrow\{+1,-1\}\) assigns each arc a polarity; and \(\delta:E\rightarrow\{0,1\}\) flags salient delays. The intended semantics are that for each arc \(i\rightarrow j\in E\) there exists a (possibly nonlinear) structural relation
+\[
+x_j \;=\; f_j\!\bigl(x_{\mathrm{pa}(j)},\,u_j,\,t\bigr)
+\]
+such that, over the domain of interest and holding other parents approximately constant, \(\sigma(i\rightarrow j)=+1\) implies \(\partial f_j/\partial x_i \ge 0\) and \(\sigma(i\rightarrow j)=-1\) implies \(\partial f_j/\partial x_i \le 0\).
+
+\medskip
+\noindent
+\textbf{Feedback loops.} A \emph{feedback loop} is any simple directed cycle. Its polarity is the product of its arc signs: \(\prod_{e\in C}\sigma(e)=+1\) denotes a \emph{reinforcing} loop (R), which tends to amplify deviations; \(\prod_{e\in C}\sigma(e)=-1\) denotes a \emph{balancing} loop (B), which tends toward goal-seeking or stabilization. (Equivalently, reinforcing loops contain an even number of negative arcs, balancing loops an odd number.) Loop polarity characterizes qualitative tendencies and does not presume linearity, stationarity, or constant effect sizes.
+
+\medskip
+\noindent
+\textbf{Scope and use.} \CLD s deliberately abstract from magnitudes, functional forms, stock-and-flow accounting, and statistical identification of causal effects. They encode theory- or evidence-informed hypotheses about directional dependencies and dominant feedbacks to support elicitation, communication, and high-level reasoning about system behavior, and they are commonly used as a precursor or complement to quantified stock-and-flow models, experiments, and statistical/causal analyses.
+
+\medskip
+\noindent
+\textbf{Epistemological status.} CLDs encode \emph{hypothesized}---not experimentally validated---causal relationships. In complex biopsychosocial systems, isolating causal effects through controlled experiments is often infeasible or unethical; the systems involve too many interacting variables, long time horizons, and ethical constraints on manipulation. Published CLDs therefore represent expert consensus synthesized from scientific literature, domain knowledge, and group deliberation---not ground-truth causality established through intervention. When we ask whether an LLM can ``generate'' a CLD, we ask whether it can reproduce expert-hypothesized causal structures, and when we detect ``hallucinations,'' we identify divergence from expert models rather than departure from proven causal facts.
+
+\subsection{Group Model Building (GMB) and the CLD-to-computational model pipeline}
+\label{sec:background_gmb}
+
+The systematic construction of CLDs typically occurs through \emph{Group Model Building} (GMB)---a participatory method where domain experts collaboratively develop shared mental models of complex systems~\cite{crielaard2024refining}. This process transforms tacit expert knowledge into explicit causal structures that can subsequently inform computational models.
+
+\medskip
+\noindent
+\textbf{The CLD-to-SDM pipeline.} Crielaard et al.~\cite{crielaard2024refining} formalize the transition from conceptual to computational models through an \emph{annotated CLD} (aCLD) that captures additional information required for quantification. The key steps are:
+
+\begin{enumerate}
+    \item \textbf{Research question and context of validity:} Define the specific research question and establish the spatial/temporal scales over which the model should be valid. The context determines which variables are stocks (accumulating over time), constants (fixed within the temporal scale), or auxiliaries (instantaneously computed).
+    \item \textbf{Variable selection via scale separation map:} Identify all relevant variables and organize them by temporal and spatial scale. Variables acting on smaller temporal scales than the variable of interest can be averaged out; variables on larger scales can be treated as constants.
+    \item \textbf{Causal link identification:} For each pair of variables, determine whether a causal link exists. Links are classified as:
+    \begin{itemize}
+        \item \textbf{Present (with consensus):} Experts agree the relationship exists
+        \item \textbf{Uncertain:} Experts disagree or lack evidence
+        \item \textbf{Known-to-be-absent:} Explicitly ruled out (critically different from simply unrecorded)
+    \end{itemize}
+    \item \textbf{Intermediary variable documentation:} Record mediating variables underlying each causal link. If two proposed links share an intermediary variable, it should be added to the model to avoid spurious independence assumptions.
+    \item \textbf{Functional form specification:} For each link, determine the mathematical relationship (linear, sigmoidal, polynomial, etc.). Sources include expert elicitation, literature review, or computational fitting.
+    \item \textbf{Interaction term identification:} Identify many-to-one relationships where multiple variables jointly affect an outcome (AND gates, OR gates, conditional effects).
+    \item \textbf{Evidence annotation:} Document the source and quality of evidence for each link using frameworks like GRADE~\citep{moberg2018grade} (high/moderate/low/very low).
+\end{enumerate}
+
+\medskip
+\noindent
+\textbf{Uncertainty quantification.} A key contribution of the Crielaard et al. framework is explicit treatment of uncertainty at each stage:
+\begin{itemize}
+    \item \textbf{Structural uncertainty:} Uncertainty about which links exist and their functional forms, leading to a ``model space'' of possible model topologies.
+    \item \textbf{Parameter uncertainty:} Uncertainty about parameter values within a given model structure.
+    \item \textbf{Propagation:} Both sources of uncertainty should be propagated through simulation to obtain confidence intervals on predictions.
+\end{itemize}
+
+\medskip
+\noindent
+\textbf{Implications for LLM-based CLD generation.} Crielaard's systematic framework~\citep{crielaard2024refining} highlights what LLMs would need to replicate to construct comprehensive aCLDs: not merely variable-relationship pairs, but also consensus levels, intermediary variables, functional forms, and evidence quality. However, a simpler starting point---accurately providing variables, relationships reflecting literature consensus, and their references---would already reduce expert time requirements. This is especially valuable if achievable in a source-text-corpus-independent manner, as corpus dependence constrains the currently most prevalent text-to-CLD methods in the literature.
+
+Current LLM-based approaches focus on core causal structure (variables, links, polarity) without capturing these richer annotations. Some approaches like Theoraizer~\citep{Waaijers2024theoraizer} are more closely aligned with the method in this thesis, as they also perform CLD generation while capturing uncertainty quantification through logprobs and references to CLDs---but provide no clear measurement indicating the hallucination reduction potential of these methods.
+
+This thesis aims to validate multi-agent test-time compute methods such as LLM-as-a-Judge and Corrector, alongside logprob-based uncertainty quantification and embedding-similarity-based hallucination reduction methods. These approaches are well-established outside the field of CLD generation but have not been systematically validated within it.
+
+The gap between LLM-generated CLDs and fully annotated aCLDs---which also include functional forms and rigorous consensus assessment---represents a direction for future work, and underscores why expert validation remains essential even if LLMs provide useful initial CLD drafts. The intended contribution of this thesis is that, by establishing where LLMs can and cannot be useful in constructing initial CLDs, expert time can be spent more efficiently in creating aCLDs. These aCLDs, in turn, offer scientific value by informing theory, can be translated into computational models in which interventions can be simulated, and through this, help clarify the role of LLMs in contributing to the scientific process.
+
+\subsection{Large language model (LLM) background}
+\label{sec:background_llms}
+
+\input{background_llms}
+
+\input{background_prompts}
+
+\subsection{Hallucinations in LLMs (general)}
+\label{sec:background_hallucinations_general}
+
+LLM hallucinations arise naturally from the pretraining objective---by reducing generation to an ``Is-It-Valid'' binary classification problem, cross-entropy--trained base models will still produce errors (notably on arbitrary facts or under model misspecification), even with error-free data \citep{kalai2025languagemodelshallucinate}. Moreover, prevalent 0--1 graded benchmarks penalize abstentions and uncertainty, so models are effectively rewarded for confident guesses, which sustains overconfident hallucinations. Under the Open World Assumption, hallucination is a direct consequence of generalization in an unbounded environment: finite training data can never guarantee correctness in all future situations \citep{xu2025hallucination}.
+
+\subsubsection{Taxonomy of Hallucinations}
+
+A comprehensive survey on LLM hallucinations~\citep{huang2025hallucination} establishes a principled taxonomy distinguishing two main types: \textit{factuality hallucinations} (contradictions with real-world facts, fabrication, overclaims, and unverifiable content) and \textit{faithfulness hallucinations} (instruction inconsistency, context inconsistency, and logical inconsistency). In the context of CLD generation, most errors map to \textit{relation-error factuality hallucinations} (incorrect causal relationships) and \textit{logical inconsistency faithfulness hallucinations} (invalid feedback loop structures or polarity assignments).
+
+The survey strongly supports the view that LLM hallucinations arise when the model operates outside its \textit{knowledge boundary}---which may be incomplete (long-tail knowledge), outdated (temporal cutoff), or legally restricted (copyright). CLDs inherently involve niche domain variables, implicit causal relations, and theory-level abstractions---exactly the type of long-tail and underspecified knowledge where hallucinations are most likely.
+
+These considerations motivate the exploration of \textit{corpus-independent} hallucination mitigation methods that do not rely solely on retrieval quality, as detailed in Section~\ref{sec:lit_rq2_signals}.
+
+\subsubsection{Hallucination Reduction Methods}
+
+Methods for combating hallucinations can be grouped into \emph{black-box} approaches (no access to model weights required) and \emph{white-box} approaches (modifying or inspecting model internals).
+
+\paragraph{Black-box methods.}~
+
+\begin{description}[style=unboxed,leftmargin=1em,labelindent=0pt]
+    \item[Prompt-based.] Prompt engineering specifies the model's role and constraints via system prompts, uses Chain-of-Thought (CoT) prompting to scaffold reasoning \citep{wei2022chain}, and provides one or more input--output exemplars (few-/multi-shot learning) to anchor the desired behavior \citep{brown2020language}.
+
+    \item[Retrieval-Augmented Generation.] RAG conditions generation on external knowledge by embedding the query and a corpus into a shared vector space and retrieving the most relevant context using distance metrics such as cosine similarity or $L_2$ distance; retrieved sources can come from vector databases or structured stores such as knowledge graphs \citep{lewis2020retrieval}. In \emph{reverse retrieval} settings, the model output and corpus are embedded in a vector space and the documents most similar to the output are retrieved, identifying which sources best support a given response.
+
+    \item[System orchestration.] Verification agents assign LLMs explicit checking roles, e.g., LLM-as-a-judge to assess another model's output and LLM-as-a-corrector to reflect and repair detected errors. More generally, multi-agent ensembles can be arranged serially or in parallel with distinct instruction sets to ``divide and conquer'' the reasoning and verification process \citep{shinn2024reflexion}. Relatedly, \emph{test-time compute} increases inference-time computation---often via multi-step reasoning, agentic reflection, and/or reinforcement-learning-inspired selection among candidate trajectories---to improve answer quality and reduce hallucinations \citep{openai2024reasoning, guo2025deepseek}.
+
+    \item[Context-insensitive metrics.] Hallucinations can be flagged using statistical signals that do not require deep semantic interpretation: (i)~low cosine similarity between generated text and retrieved/cited sources suggests unsupported content, (ii)~perplexity or log-likelihood anomalies can indicate low-confidence generation \citep{varshney2023stitch}, (iii)~elevated semantic entropy (uncertainty over meaning) correlates with hallucination risk \citep{farquhar2024detecting}, and (iv)~instability in multi-hop reasoning trajectories---e.g., analyzed via Hamiltonian interpretations of reasoning paths---can signal unreliable chains \citep{marin2024optimizing}.
+\end{description}
+
+\paragraph{White-box methods.}~
+
+\begin{description}[style=unboxed,leftmargin=1em,labelindent=0pt]
+    \item[Fine-tuning and RLHF.] Weight updates using supervised fine-tuning and reinforcement learning from human feedback (RLHF) improve task adherence and can reduce hallucinations \citep{ouyang2022rlhf}; parameter-efficient methods such as LoRA reduce training cost and preserve generality by adapting low-rank components and/or fine-tuning only subsets of layers \citep{hu2021lora}.
+
+    \item[Test-time compute.] Beyond orchestration as a black-box strategy, test-time compute can also be viewed as a model-level paradigm shift: when pre-training gains diminish with scale, allocating compute at inference (e.g., multiple rollouts, reflection, RL-guided selection) becomes a primary driver of improved reasoning and reduced errors \citep{kaplan2020scaling}.
+
+    \item[Activation monitoring and steering.] Monitoring internal activations can associate hallucinations with specific neurons or layers and mitigate them by steering activations; related work suggests that suppressing undesirable neuron behaviors (e.g., overly high sensitivity) via interventions such as dropout during fine-tuning can reduce hallucination propensity \citep{wang2024adaptive, varshney2023stitch}.
+
+    \item[Predictive analysis of system capacity.] Properties of weight matrices (e.g., eigenvalue spectra and heavy-tailed self-regularization indicators) can be used to characterize whether layers are over- or under-fit (e.g., via an $\alpha$ exponent range), potentially enabling prediction of model capacity and identifying thresholds for sufficient fine-tuning beyond task-level scores---an avenue that remains underexplored for CLD-building systems \citep{martin2021predicting, martin2019traditional}.
+\end{description}
+
+\medskip
+Taken together, these mitigation strategies reveal different approaches along different axes of hallucination reduction exist, and that not a single technique but a design space spanning prompt design, retrieval and external grounding, agentic verification pipelines, inference-time scaling, and weight- or activation-level interventions is available. With a broad overview of different types of hallucination detection and mitigation methods given, the following literature review will focus on the use of LLMs in constructing CLDs, how hallucinations manifest there, and the role of LLMs in constructing causal loop diagrams, as well as reviewing the literature methods we will specifically evaluate in this thesis.
+
+
+
+
+
+
+
+
+
+
+
+

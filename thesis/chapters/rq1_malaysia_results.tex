@@ -1,0 +1,201 @@
+\chapter{Judge Performance on Malaysia Healthcare CLDs}
+\label{ch:rq1_malaysia_results}
+
+\section{Dataset}
+
+We evaluated judge performance across four Malaysia healthcare system CLDs, comprising 1,070 edges total:
+
+\begin{itemize}
+    \item \textbf{Healthcare Financing:} 380 edges (18 validation edges)
+    \item \textbf{Hospital Capacity:} 72 edges (9 validation edges)
+    \item \textbf{Patient Pathways:} 462 edges (25 validation edges)
+    \item \textbf{Physician Flows:} 156 edges (12 validation edges)
+\end{itemize}
+
+Edges were classified as True Positive (TP), False Positive (FP), True Negative (TN), or False Negative (FN) based on presence in session vs validation graphs. Judging was performed using Claude Sonnet 4.5 in correctness mode.
+
+\section{Results}
+
+\subsection{Individual CLD Analysis}
+
+\subsubsection{Healthcare Financing (380 edges)}
+
+\textbf{Score distribution by classification:}
+\begin{itemize}
+    \item TP (n=10): Mean=0.750, Median=1.000, SD=0.354
+    \item FP (n=50): Mean=0.720, Median=1.000, SD=0.418
+    \item TN (n=312): Mean=0.599, Median=1.000, SD=0.443
+    \item FN (n=8): Mean=0.625, Median=0.750, SD=0.443
+\end{itemize}
+
+\textbf{Statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = -0.030$, $d = -0.077$, $p = 0.52$ (n.s.)
+    \item FN vs TN: $\Delta = 0.026$, $d = 0.058$, $p = 0.55$ (n.s.)
+\end{itemize}
+
+\subsubsection{Hospital Capacity (72 edges)}
+
+\textbf{Score distribution by classification:}
+\begin{itemize}
+    \item TP (n=8): Mean=1.000, Median=1.000, SD=0.000
+    \item FP (n=7): Mean=0.857, Median=1.000, SD=0.378
+    \item TN (n=56): Mean=0.652, Median=1.000, SD=0.456
+    \item FN (n=1): Mean=1.000, Median=1.000
+\end{itemize}
+
+\textbf{Statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = -0.143$, $d = -0.535$, $p = 0.17$ (n.s.)
+    \item FN vs TN: Insufficient sample size (n=1)
+\end{itemize}
+
+\subsubsection{Patient Pathways (462 edges)}
+
+\textbf{Score distribution by classification:}
+\begin{itemize}
+    \item TP (n=11): Mean=0.773, Median=1.000, SD=0.410
+    \item FP (n=75): Mean=0.773, Median=1.000, SD=0.405
+    \item TN (n=362): Mean=0.693, Median=1.000, SD=0.419
+    \item FN (n=14): Mean=0.571, Median=0.750, SD=0.475
+\end{itemize}
+
+\textbf{Statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = 0.001$, $d = 0.001$, $p = 0.53$ (n.s.)
+    \item FN vs TN: $\Delta = -0.122$, $d = -0.274$
+\end{itemize}
+
+\subsubsection{Physician Flows (156 edges)}
+
+\textbf{Score distribution by classification:}
+\begin{itemize}
+    \item TP (n=8): Mean=0.750, Median=1.000, SD=0.378
+    \item FP (n=22): Mean=0.773, Median=1.000, SD=0.400
+    \item TN (n=122): Mean=0.754, Median=1.000, SD=0.392
+    \item FN (n=4): Mean=0.250, Median=0.000, SD=0.500
+\end{itemize}
+
+\textbf{Statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = 0.023$, $d = 0.058$, $p = 0.65$ (n.s.)
+    \item FN vs TN: $\Delta = -0.504$, $d = -1.178$
+\end{itemize}
+
+\subsection{Aggregate Analysis: Malaysia CLDs Only (1,070 edges)}
+
+\textbf{Combined score distribution:}
+\begin{itemize}
+    \item TP (n=37): Mean=0.811, Median=1.000, SD=0.341
+    \item FP (n=154): Mean=0.760, Median=1.000, SD=0.405
+    \item TN (n=852): Mean=0.665, Median=1.000, SD=0.430
+    \item FN (n=27): Mean=0.556, Median=0.500, SD=0.467
+\end{itemize}
+
+\textbf{Aggregate statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = -0.051$, $d = -0.136$, $p = 0.35$ (n.s.)
+    \item FN vs TN: $\Delta = -0.109$, $d = -0.244$, $p = 0.10$ (n.s.)
+\end{itemize}
+
+\textbf{Classification performance (threshold = 0.5):}
+\begin{itemize}
+    \item Accuracy: 75.2\%
+    \item Precision: 0.0\%
+    \item Recall: 0.0\%
+    \item Specificity: 75.2\%
+\end{itemize}
+
+\subsection{Combined Analysis: All 7 CLDs (1,498 edges)}
+
+To assess robustness across diverse domains, we combined the Malaysia healthcare CLDs with three previously analyzed CLDs: Social Norms and Obesity (90 edges), Depressive Symptoms (182 edges), and Belgian Sugar Industry (156 edges).
+
+\textbf{Combined score distribution (n=1,498):}
+\begin{itemize}
+    \item TP (n=79): Mean=0.835, Median=1.000, SD=0.297
+    \item FP (n=210): Mean=0.783, Median=1.000, SD=0.372
+    \item TN (n=1,162): Mean=0.654, Median=1.000, SD=0.428
+    \item FN (n=47): Mean=0.532, Median=0.500, SD=0.459
+\end{itemize}
+
+\textbf{Aggregate statistical comparisons:}
+\begin{itemize}
+    \item FP vs TP: $\Delta = -0.052$, $d = -0.155$, $p = 0.26$ (n.s.)
+    \item FN vs TN: $\Delta = -0.122$, $d = -0.275$, $p = 0.03$ \textbf{(significant)}
+\end{itemize}
+
+\textbf{Classification performance (threshold = 0.5):}
+\begin{itemize}
+    \item Accuracy: 76.2\%
+    \item Precision: 0.0\%
+    \item Recall: 0.0\%
+    \item Specificity: 76.2\%
+\end{itemize}
+
+\textbf{Key findings from combined analysis:}
+\begin{enumerate}
+    \item \textbf{FP detection failure persists:} With nearly 1,500 edges across seven diverse domains, judges still cannot distinguish false positives from true positives ($p=0.26$). This null result is robust across healthcare policy, clinical systems, obesity interventions, mental health, and agricultural economics.
+    
+    \item \textbf{Modest FN detection emerges:} The combined dataset reveals statistically significant (but small) discrimination between false negatives and true negatives ($p=0.03$, $d=-0.275$). Judges assign slightly lower scores to missing edges that should be present (FN=0.532) compared to correctly absent edges (TN=0.654).
+    
+    \item \textbf{Effect size remains small:} Despite statistical significance, the Cohen's d of -0.275 for FN vs TN represents a small effect. The 12\% absolute difference in mean scores has limited practical utility for automated quality control.
+    
+    \item \textbf{High specificity, zero precision:} With a 0.5 threshold, the judge correctly identifies 76\% of truly absent edges (specificity) but achieves 0\% precision, meaning all positive predictions are false alarms.
+\end{enumerate}
+
+\section{Interpretation}
+
+Judge performance on Malaysia healthcare CLDs replicates findings from the original three-CLD analysis (Chapter~\ref{ch:rq1_results}):
+
+\begin{enumerate}
+    \item \textbf{Inability to detect false positives:} Across all four CLDs, judges assign statistically indistinguishable scores to false positives vs true positives (all $p > 0.17$). The mean differences range from -0.143 to 0.023, with effect sizes ranging from $d = -0.535$ to $d = 0.058$.
+    
+    \item \textbf{Consistency across domains:} The null finding (FP $\approx$ TP) holds across diverse healthcare contexts: financing mechanisms, hospital infrastructure, patient flow dynamics, and physician workforce management. This suggests the limitation is fundamental to the judging approach rather than domain-specific.
+    
+    \item \textbf{High baseline scores mask discrimination:} All groups (TP, FP, TN, FN) show median scores of 1.0 or 0.75 in most CLDs, indicating judges rate most edges as "correct" regardless of ground truth validity. This ceiling effect prevents meaningful discrimination between true and false positives.
+    
+    \item \textbf{Modest FN detection:} Some CLDs show numerically lower scores for false negatives (e.g., Physician Flows: FN=0.250 vs TN=0.754), but statistical power is limited by small FN sample sizes.
+\end{enumerate}
+
+\textbf{Clinical significance:} These results have direct implications for automated healthcare systems modeling. Judges cannot reliably identify spurious causal relationships in healthcare CLDs, even when edges describe well-understood medical and administrative processes. This limitation persists whether modeling financing policy, clinical workflows, or resource allocation.
+
+\section{Data Availability}
+
+\textbf{Raw judged Excel files:}
+\begin{verbatim}
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/
+  results/rq1_judged_base_clds_20251011_051104/
+    - judged_malaysia_healthcare_financing_base_correctness.xlsx
+    - judged_malaysia_hospital_capacity_base_correctness.xlsx
+    - judged_malaysia_patient_pathways_base_correctness.xlsx
+    - judged_malaysia_physician_flows_base_correctness.xlsx
+\end{verbatim}
+
+\textbf{Individual CLD analysis results:}
+\begin{verbatim}
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/
+  results/
+    - malaysia_individual_healthcare/rq1_analysis_summary.txt
+    - malaysia_individual_hospital/rq1_analysis_summary.txt
+    - malaysia_individual_pathways/rq1_analysis_summary.txt
+    - malaysia_individual_flows/rq1_analysis_summary.txt
+\end{verbatim}
+
+\textbf{Malaysia CLDs aggregate analysis (1,070 edges):}
+\begin{verbatim}
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/
+  results/rq1_judged_base_clds_20251011_051104/
+    rq1_analysis_summary.txt
+\end{verbatim}
+
+\textbf{Combined 7 CLDs aggregate analysis (1,498 edges):}
+\begin{verbatim}
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/
+  results/combined_all_7_clds/
+    rq1_analysis_summary.txt
+    rq1_score_distributions.png
+    rq1_roc_curves.png
+\end{verbatim}
+
+\vspace{1em}
+\noindent\textit{Dataset: 1,498 edges across 7 CLDs (4 Malaysia healthcare + Social Norms + Depressive Symptoms + Belgian Sugar). Judge: Claude Sonnet 4.5 (correctness mode). Statistics: Mann-Whitney U tests (two-tailed), Cohen's d effect sizes, $\alpha$=0.05.}

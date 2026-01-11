@@ -1,0 +1,66 @@
+\section{RQ1b: LLM-as-a-Corrector Performance on Synthetically Corrupted CLDs}
+
+\subsection{Experimental Setup}
+
+To evaluate the corrector's ability to recover from synthetic corruption, we generated base CLDs using the LLM system (Phase 0), applied controlled corruption (Phase 1), and then tested the corrector's recovery performance (Phase 2b). Three CLDs were tested: Social Norms and Obesity Prevalence, Depressive Symptoms in Response to a Stressor, and Older Persons Emergency Department Visits.
+
+Synthetic corruption was applied at a 30\% rate across all edges, with random selection among three corruption types: (1) motivation corruption (replacing correct explanations with plausible but false text), (2) spurious edges (converting NONE relationships to false positive causal edges), and (3) polarity flips (reversing POSITIVE $\leftrightarrow$ NEGATIVE relationships). The corrector was evaluated by comparing recovered edges against the original base CLD (synthetic ground truth).
+
+\subsection{Results}
+
+Table~\ref{tab:rq1b_correction_metrics} presents per-CLD and aggregate correction performance metrics across all three domains.
+
+\begin{table}[htbp]
+\centering
+\caption{RQ1b Corrector Performance: Per-CLD and Aggregate Metrics}
+\label{tab:rq1b_correction_metrics}
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{CLD} & \textbf{Base} & \textbf{Corrupted} & \textbf{Corrected} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{TN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Social Norms & 14 & 42 & 33 & 9 & 24 & 5 & 8 & 0.273 & 0.643 & 0.383 \\
+Depressive Symptoms & 72 & 113 & 90 & 45 & 45 & 27 & 17 & 0.500 & 0.625 & 0.556 \\
+Older Persons & 132 & 449 & 272 & 111 & 161 & 21 & 171 & 0.408 & 0.841 & 0.550 \\
+\midrule
+\textbf{Aggregate (n=3)} & \textbf{218} & \textbf{604} & \textbf{395} & \textbf{165} & \textbf{230} & \textbf{53} & \textbf{196} & \textbf{0.418} & \textbf{0.757} & \textbf{0.538} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Base = original synthetic ground truth edges (Phase 0); Corrupted = edges after 30\% synthetic corruption (Phase 1); Corrected = edges after correction attempt (Phase 2b); TP = true positives (base edges correctly retained); FP = false positives (spurious edges incorrectly retained); FN = false negatives (base edges incorrectly removed); TN = true negatives (spurious edges correctly removed); Precision = TP/(TP+FP); Recall = TP/(TP+FN); F1 = harmonic mean of Precision and Recall.
+\end{tablenotes}
+\end{table}
+
+\subsection{Interpretation}
+
+The corrector demonstrates \textbf{moderate recovery performance} with an aggregate F1 score of 0.538, achieving consistent results across all three domains (per-CLD F1: 0.383--0.556). However, the performance profile reveals a critical limitation: the system exhibits \textbf{conservative deletion behavior} rather than true correction.
+
+\subsubsection{High Recall, Low Precision Pattern}
+
+The corrector achieves strong recall (75.7\%) but weak precision (41.8\%), indicating it successfully preserves most valid edges from the base CLD but retains a large proportion of spurious edges introduced during corruption. Specifically:
+
+\begin{itemize}
+    \item \textbf{Valid edge preservation:} 165/218 base edges retained (75.7\% recall), with only 53 incorrectly removed (24.3\% deletion of true positives)
+    \item \textbf{Spurious edge retention:} 230/386 corrupted edges retained (59.6\%), despite being false positives
+    \item \textbf{Spurious edge removal:} Only 196/386 corrupted edges successfully removed (50.8\% true negative rate)
+\end{itemize}
+
+\subsubsection{Deletion-Based Strategy}
+
+The corrector's behavior suggests a \textbf{deletion-focused approach} rather than genuine correction. Of the 604 corrupted edges, the system removed 209 edges (34.6\% reduction) to produce 395 corrected edges. Although the corrector has four tools available (revise motivation, flip polarity, change edge type, remove edge), it predominantly employs the remove\_edge tool. This conservative deletion strategy explains the high recall (preserving most valid content) but low precision (unable to discriminate spurious from valid edges effectively).
+
+Critically, the corrector \textbf{does not conduct independent evidence searches}---it operates solely on judge feedback and existing edge citations. This judge-corrector pipeline means the corrector inherits the judge's limitations: if the judge marks a spurious edge as CORRECT (as happened in 36 cases per RQ1a where corrupted edges were missed), the corrector never evaluates it. Conversely, if the judge marks a valid edge as INCORRECT (false alarm rate of 21.2\%), the corrector may remove it unnecessarily, explaining the 53 false negative deletions (24.3\% of valid edges removed).
+
+\subsubsection{Domain Consistency}
+
+Performance remains relatively stable across domains with F1 scores ranging from 0.383 (Social Norms) to 0.556 (Depressive Symptoms), suggesting the corrector's limitations are systematic rather than domain-specific. The Older Persons CLD shows the highest recall (84.1\%) but suffers from low precision (40.8\%), following the same conservative pattern as the smaller CLDs.
+
+\subsubsection{Comparison to Random Baseline}
+
+To contextualize these results, consider that a random corrector removing 34.6\% of edges would achieve expected precision of $\frac{218}{604} = 0.361$ and recall of $\frac{218 \times 0.654}{218} = 0.654$, yielding F1 $\approx$ 0.465. The LLM corrector's F1 of 0.538 represents a meaningful but modest improvement (+15.7\% relative gain) over this baseline, suggesting the system possesses some discriminative ability but falls short of robust correction.
+
+\subsection{Conclusion}
+
+The LLM-as-a-corrector demonstrates \textbf{limited effectiveness} for recovering synthetically corrupted CLDs, achieving F1 = 0.538. Importantly, this limitation reflects \textbf{behavioral choices rather than capability constraints}: the corrector possesses tools to revise motivations, flip polarities, change edge types, and remove edges, but empirically defaults to deletion-based strategies rather than employing its full correction capabilities. This conservative behavior results in high recall (75.7\% valid edge preservation) but low precision, with the majority of spurious edges (59.6\%) incorrectly retained.
+
+The corrector's limited effectiveness stems from two factors: (1) \textbf{inherited judge limitations}---the corrector only evaluates edges flagged as problematic, missing 36 corrupted edges the judge marked as CORRECT, and (2) \textbf{conservative decision-making}---when uncertain, the agent prefers retention over correction or removal, likely reflecting risk aversion to deleting potentially valid edges. The corrector's modest improvement over random baseline (+15.7\% F1) suggests that despite possessing appropriate correction tools, the agent's decision-making strategy is insufficient for ensuring CLD accuracy without domain expert oversight.

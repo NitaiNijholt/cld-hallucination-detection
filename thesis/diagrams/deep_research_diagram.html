@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Research Orchestration System (Basic Version)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+Pro:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #12122a 50%, #0a1520 100%);
+            min-height: 100vh;
+            padding: 12px 16px;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 3px;
+        }
+        
+        .title h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.42rem;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.38rem;
+            margin-left: 8px;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        /* Top row */
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .io-box {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            border-radius: 4px;
+            padding: 4px 10px;
+            text-align: center;
+        }
+        
+        .io-box.input { border: 2px solid #00d4ff; }
+        .io-box.output { border: 2px solid #22c55e; }
+        
+        .io-box .label {
+            font-size: 0.38rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1px;
+        }
+        
+        .io-box.input .label { color: #00d4ff; }
+        .io-box.output .label { color: #22c55e; }
+        
+        .io-box .content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.48rem;
+            color: #e0e0e0;
+        }
+        
+        .orchestrator-box {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            border-radius: 5px;
+            padding: 5px 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+        }
+        
+        .orchestrator-box .agent-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .orchestrator-box .agent-role {
+            font-size: 0.36rem;
+            color: #c4b5fd;
+            margin-top: 1px;
+        }
+        
+        .arrow-h {
+            color: #4a5568;
+            font-size: 0.75rem;
+        }
+        
+        /* Iteration loop */
+        .iteration-loop {
+            flex: 1;
+            border: 2px dashed #4a5568;
+            border-radius: 6px;
+            padding: 10px 10px 5px 10px;
+            background: rgba(15, 15, 35, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .loop-header {
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .loop-label {
+            background: #0a0a1a;
+            padding: 0 6px;
+            font-size: 0.44rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #f472b6;
+            font-weight: 600;
+        }
+        
+        .loop-info {
+            background: #0a0a1a;
+            padding: 0 5px;
+            font-size: 0.38rem;
+            color: #8892b0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Feedback arrow */
+        .feedback-container {
+            position: absolute;
+            right: -32px;
+            top: 12%;
+            height: 76%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .feedback-arrow {
+            width: 18px;
+            height: 100%;
+            border: 2px dashed #f472b6;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        
+        .feedback-arrow::before {
+            content: '↑';
+            position: absolute;
+            top: -7px;
+            left: -5px;
+            color: #f472b6;
+            font-size: 0.65rem;
+        }
+        
+        .feedback-text {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-size: 0.32rem;
+            color: #f472b6;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        
+        /* Flow container */
+        .flow-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        /* Step row */
+        .step-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .step-num {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.44rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .step-num.planning { background: #fbbf24; color: #1a1a3e; }
+        .step-num.execution { background: #22c55e; color: #1a1a3e; }
+        .step-num.fetch { background: #06b6d4; color: #1a1a3e; }
+        .step-num.reasoning { background: #3b82f6; color: #fff; }
+        .step-num.synthesis { background: #f472b6; color: #1a1a3e; }
+        
+        /* Agent node */
+        .agent-node {
+            background: linear-gradient(145deg, #1a1a3e 0%, #151530 100%);
+            border-radius: 4px;
+            padding: 5px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-width: 130px;
+        }
+        
+        .agent-node.planning { border-left: 3px solid #fbbf24; }
+        .agent-node.execution { border-left: 3px solid #22c55e; }
+        .agent-node.fetch { border-left: 3px solid #06b6d4; }
+        .agent-node.reasoning { border-left: 3px solid #3b82f6; }
+        .agent-node.synthesis { border-left: 3px solid #f472b6; }
+        
+        .agent-node .name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.48rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .agent-node .desc {
+            font-size: 0.36rem;
+            color: #9ca3af;
+            line-height: 1.25;
+            margin-top: 2px;
+        }
+        
+        .agent-node .model-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.3rem;
+            color: #a78bfa;
+            margin-top: 2px;
+        }
+        
+        /* Badges */
+        .parallel-badge {
+            font-size: 0.36rem;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .loop-badge {
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            font-size: 0.32rem;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 1px 4px;
+            border-radius: 2px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .http-tag {
+            font-size: 0.34rem;
+            background: rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
+            padding: 2px 5px;
+            border-radius: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Flow arrow */
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+        
+        .flow-arrow .arrow {
+            font-size: 0.55rem;
+            margin: 0 2px;
+        }
+        
+        .flow-arrow .data-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.32rem;
+            color: #a78bfa;
+            background: rgba(124, 58, 237, 0.15);
+            padding: 2px 5px;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+        
+        /* Vertical arrow */
+        .v-arrow {
+            display: flex;
+            align-items: center;
+            margin-left: 21px;
+            padding: 1px 0;
+        }
+        
+        .v-arrow .line {
+            width: 1px;
+            height: 6px;
+            background: #4a5568;
+        }
+        
+        .v-arrow .head {
+            font-size: 0.45rem;
+            color: #6b7280;
+            margin-left: -3px;
+            margin-top: -1px;
+        }
+        
+        .v-arrow .data-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.32rem;
+            color: #a78bfa;
+            background: rgba(124, 58, 237, 0.15);
+            padding: 2px 5px;
+            border-radius: 2px;
+            margin-left: 5px;
+        }
+        
+        /* Agents row */
+        .agents-row {
+            display: flex;
+            gap: 5px;
+            align-items: stretch;
+        }
+        
+        /* Parameters section */
+        .params-section {
+            display: flex;
+            gap: 4px;
+            margin-left: 21px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+        
+        .param-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.3rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 2px 5px;
+            border-radius: 2px;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+        
+        /* Output section */
+        .output-section {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 4px;
+            padding: 4px 6px;
+            margin-left: 21px;
+            margin-top: 3px;
+            max-width: 520px;
+        }
+        
+        .output-title {
+            font-size: 0.32rem;
+            color: #22c55e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        .output-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+        }
+        
+        .output-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.26rem;
+            color: #86efac;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 2px 3px;
+            border-radius: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Bottom row */
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 5px;
+            border-top: 1px dashed rgba(74, 85, 104, 0.4);
+            margin-top: auto;
+        }
+        
+        .convergence {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .convergence-title {
+            font-size: 0.36rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #f472b6;
+            font-weight: 600;
+        }
+        
+        .convergence-items {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .convergence-item {
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.25);
+            border-radius: 3px;
+            padding: 2px 5px;
+            font-size: 0.34rem;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.36rem;
+            color: #8892b0;
+        }
+        
+        .legend-color {
+            width: 7px;
+            height: 7px;
+            border-radius: 2px;
+        }
+        
+        .legend-color.planning { background: #fbbf24; }
+        .legend-color.execution { background: #22c55e; }
+        .legend-color.fetch { background: #06b6d4; }
+        .legend-color.reasoning { background: #3b82f6; }
+        .legend-color.synthesis { background: #f472b6; }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <h1>Deep Research Orchestration System<span class="version-badge">BASIC v1 - Used in Experiments</span></h1>
+    </div>
+    <div class="subtitle">pydantic_ai_deepresearch_orchestration.py • 6 LLM agents • Brave Search API • HTTP scraping</div>
+    
+    <div class="main-content">
+        <!-- Top Row -->
+        <div class="top-row">
+            <div class="io-box input">
+                <div class="label">Input</div>
+                <div class="content">"A → B via X"</div>
+            </div>
+            <span class="arrow-h">→</span>
+            <div class="orchestrator-box">
+                <div class="agent-name">DeepResearchManager</div>
+                <div class="agent-role">max_iterations=3 • time_limit=120s • min_evidence=5</div>
+            </div>
+            <span class="arrow-h">→</span>
+            <div class="io-box output">
+                <div class="label">Output</div>
+                <div class="content">FinalVerdict</div>
+            </div>
+        </div>
+        
+        <!-- Iteration Loop -->
+        <div class="iteration-loop">
+            <div class="loop-header">
+                <span class="loop-label">Iterative Loop</span>
+                <span class="loop-info">max_iterations=3 • claim_modification • early_stop</span>
+            </div>
+            
+            <div class="feedback-container">
+                <div class="feedback-arrow"></div>
+                <span class="feedback-text">suggested_modification → retry</span>
+            </div>
+            
+            <div class="flow-container">
+                <!-- Step 1: Planning -->
+                <div class="step-row">
+                    <span class="step-num planning">1</span>
+                    <div class="agent-node planning">
+                        <div class="name">hypothesis_evaluator</div>
+                        <div class="desc">PICO form + keywords + confounders</div>
+                        <div class="model-tag">HEAVY_MODEL (gpt-5) • retries=5</div>
+                    </div>
+                    <div class="flow-arrow">
+                        <span class="arrow">→</span>
+                        <span class="data-label">SearchPlan</span>
+                    </div>
+                </div>
+                <div class="params-section">
+                    <span class="param-tag">queries: List[SearchQuery]</span>
+                    <span class="param-tag">keywords: List[str]</span>
+                    <span class="param-tag">confounders: List[str]</span>
+                </div>
+                
+                <div class="v-arrow">
+                    <div class="line"></div>
+                    <span class="head">▼</span>
+                </div>
+                
+                <!-- Step 2: Search -->
+                <div class="step-row">
+                    <span class="step-num execution">2</span>
+                    <span class="parallel-badge">4-6 parallel</span>
+                    <div class="agents-row">
+                        <div class="agent-node execution">
+                            <div class="loop-badge">MAX=5</div>
+                            <div class="name">search_agent</div>
+                            <div class="desc">Brave API + trusted_domains filter</div>
+                            <div class="model-tag">MINI_MODEL (gpt-5-mini) • @tool web_search</div>
+                        </div>
+                        <div class="flow-arrow">
+                            <span class="arrow">→</span>
+                            <span class="data-label">List[SearchResult]</span>
+                            <span class="arrow">→</span>
+                        </div>
+                        <div class="agent-node execution">
+                            <div class="loop-badge">↻ each</div>
+                            <div class="name">evidence_scorer</div>
+                            <div class="desc">relevance(1-10) + quality(1-10)</div>
+                            <div class="model-tag">MINI_MODEL • EvidenceScore</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="params-section">
+                    <span class="param-tag">max_sources=5/query</span>
+                    <span class="param-tag">trusted_domains: pubmed, arxiv, nature, science...</span>
+                    <span class="param-tag">timeout=(10s, 40s)</span>
+                    <span class="param-tag">retry_strategy: total=3, backoff=1</span>
+                </div>
+                
+                <div class="v-arrow">
+                    <div class="line"></div>
+                    <span class="head">▼</span>
+                    <span class="data-label">List[EvidenceScore]</span>
+                </div>
+                
+                <!-- Step 3: Article Selection & Fetching -->
+                <div class="step-row">
+                    <span class="step-num fetch">3</span>
+                    <div class="agent-node fetch">
+                        <div class="name">article_selector</div>
+                        <div class="desc">Select 2-3 best articles for full text</div>
+                        <div class="model-tag">HEAVY_MODEL • ArticleSelection</div>
+                    </div>
+                    <div class="flow-arrow">
+                        <span class="arrow">→</span>
+                        <span class="data-label">urls_to_fetch (max 3)</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="agent-node fetch">
+                        <div class="name">fetch_full_article</div>
+                        <div class="desc">HTTP scrape + BeautifulSoup</div>
+                        <div class="model-tag">requests • pool_connections=10</div>
+                    </div>
+                    <span class="http-tag">HTTP</span>
+                </div>
+                
+                <div class="v-arrow">
+                    <div class="line"></div>
+                    <span class="head">▼</span>
+                    <span class="data-label">[FULL_ARTICLE_TEXT]</span>
+                </div>
+                
+                <!-- Step 4: Causal Evidence Detection -->
+                <div class="step-row">
+                    <span class="step-num reasoning">4</span>
+                    <div class="agents-row">
+                        <div class="agent-node reasoning">
+                            <div class="name">causal_evidence_detector</div>
+                            <div class="desc">Find direct causal evidence (RCTs, experiments)</div>
+                            <div class="model-tag">HEAVY_MODEL • CausalEvidenceEvaluation</div>
+                        </div>
+                        <div class="flow-arrow">
+                            <span class="arrow">+</span>
+                        </div>
+                        <div class="agent-node reasoning">
+                            <div class="name">judgment_agent</div>
+                            <div class="desc">supported? confidence? modify?</div>
+                            <div class="model-tag">HEAVY_MODEL • EvidenceJudgment</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="params-section">
+                    <span class="param-tag">direct_evidence_found: bool</span>
+                    <span class="param-tag">confidence: 1-10</span>
+                    <span class="param-tag">cited_passage: verbatim quote</span>
+                    <span class="param-tag">study_type: RCT|meta-analysis|...</span>
+                </div>
+                
+                <div class="v-arrow">
+                    <div class="line"></div>
+                    <span class="head">▼</span>
+                    <span class="data-label">CausalEvidenceEvaluation + EvidenceJudgment</span>
+                </div>
+                
+                <!-- Step 5: Synthesis -->
+                <div class="step-row">
+                    <span class="step-num synthesis">5</span>
+                    <div class="agent-node synthesis">
+                        <div class="name">verdict_agent</div>
+                        <div class="desc">Synthesize final verdict + key evidence</div>
+                        <div class="model-tag">HEAVY_MODEL • FinalVerdict</div>
+                    </div>
+                </div>
+                
+                <!-- Output fields -->
+                <div class="output-section">
+                    <div class="output-title">FinalVerdict Output Fields</div>
+                    <div class="output-items">
+                        <span class="output-item">verdict</span>
+                        <span class="output-item">confidence</span>
+                        <span class="output-item">direct_causal_found</span>
+                        <span class="output-item">strongest_url</span>
+                        <span class="output-item">strongest_passage</span>
+                        <span class="output-item">study_type</span>
+                        <span class="output-item">modified_claim</span>
+                        <span class="output-item">evidence_summaries</span>
+                        <span class="output-item">limitations</span>
+                        <span class="output-item">iteration_history</span>
+                        <span class="output-item">evidence_urls</span>
+                        <span class="output-item">future_research</span>
+                    </div>
+                </div>
+                
+                <!-- Bottom row -->
+                <div class="bottom-row">
+                    <div class="convergence">
+                        <span class="convergence-title">Early Stop:</span>
+                        <div class="convergence-items">
+                            <span class="convergence-item">direct_causal + 3 high-qual (rel≥8, qual≥7)</span>
+                            <span class="convergence-item">time_limit=120s</span>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-color planning"></div>Plan</div>
+                        <div class="legend-item"><div class="legend-color execution"></div>Search</div>
+                        <div class="legend-item"><div class="legend-color fetch"></div>Fetch</div>
+                        <div class="legend-item"><div class="legend-color reasoning"></div>Reason</div>
+                        <div class="legend-item"><div class="legend-color synthesis"></div>Synthesize</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centreing
+\caption{RQ1a: Judge Performance on Corruption Detection (by CLD and Prompt)}
+\label{tab:rq1a_main}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{CLD} & \textbf{Prompt} & \textbf{N} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{AUC} & \textbf{r$_{pb}$} \\
+\midrule
+emergency department & Baseline & 3 & 0.736±0.006 & 0.768±0.023 & 0.752±0.008 & 0.835 & -0.598 \\
+ & CoT & 3 & 0.746±0.005 & 0.829±0.027 & 0.785±0.014 & 0.862 & -0.625 \\
+ & Mechanistic & 3 & 0.624±0.012 & 0.952±0.019 & 0.754±0.014 & 0.861 & -0.512 \\
+\midrule
+social norms & Baseline & 3 & 0.767±0.018 & 0.885±0.038 & 0.821±0.006 & 0.895 & -0.728 \\
+ & CoT & 3 & 0.776±0.030 & 0.885±0.000 & 0.827±0.017 & 0.895 & -0.722 \\
+ & Mechanistic & 3 & 0.594±0.012 & 0.974±0.022 & 0.738±0.015 & 0.886 & -0.617 \\
+\midrule
+depressive & Baseline & 3 & 0.692±0.028 & 0.739±0.084 & 0.714±0.052 & 0.798 & -0.537 \\
+ & CoT & 3 & 0.677±0.033 & 0.744±0.035 & 0.709±0.032 & 0.796 & -0.526 \\
+ & Mechanistic & 3 & 0.500±0.004 & 0.956±0.025 & 0.656±0.009 & 0.764 & -0.413 \\
+\midrule
+\bottomrule
+\end{tabular}
+\end{table}

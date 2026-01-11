@@ -1,0 +1,2437 @@
+Rc files read:
+  /etc/LatexMk
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+Latexmk: Getting log file 'thesis_full.log'
+Latexmk: Examining 'thesis_full.log'
+Latexmk: Found input bbl file 'thesis_full.bbl'
+Latexmk: Log file says output to 'thesis_full.pdf'
+Latexmk: Found bibliography file(s):
+  ./references.bib
+  ./software.bib
+Latexmk: applying rule 'bibtex thesis_full'...
+Rule 'bibtex thesis_full':  Reasons for rerun
+Category 'other':
+  Rerun of 'bibtex thesis_full' forced or previously required:
+    Reason or flag: 'Initial set up of rule'
+
+------------
+Run number 1 of rule 'bibtex thesis_full'
+------------
+------------
+Running 'bibtex  "thesis_full.aux"'
+------------
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+The top-level auxiliary file: thesis_full.aux
+The style file: plainnat.bst
+Database file #1: references.bib
+Database file #2: software.bib
+Warning--entry type for "pydantic2024" isn't style-file defined
+--line 156 of file software.bib
+Warning--empty journal in levene1960robust
+Warning--empty journal in lin2022truthfulqa
+Warning--empty publisher in pascal1663equilibre
+Warning--empty publisher in torricelli1644opera
+(There were 5 warnings)
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  conclusion.tex
+  discussion_merged.tex
+  final_results.tex
+  lit_review_ci_metrics_background.tex
+  method_experiments_final_body.tex
+  thesis_full.aux
+  thesis_full.bbl
+  thesis_full.out
+  thesis_full.tex
+  thesis_full.toc
+Category 'changed_user':
+  conclusion.tex
+  discussion_merged.tex
+  final_results.tex
+  lit_review_ci_metrics_background.tex
+  method_experiments_final_body.tex
+  thesis_full.tex
+Category 'never_run':
+  pdflatex
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder  "thesis_full.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./thesis_full.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-22>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/threeparttable/threeparttable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/capt-of/capt-of.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)))
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered
+.code.tex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
+f)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
+tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonomet
+ric.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.cod
+e.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
+thmetics.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
+code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
+s.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.t
+ex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex))
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
+.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
+.sty)) (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarytopaths.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.geometric.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.geometric.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.
+code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypositioning.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryfit.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarybackgrounds.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarycalc.code.tex)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.def)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/docmute/docmute.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+(./thesis_full.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(./thesis_full.out) (./thesis_full.out)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd) (./abstract.tex)
+(./thesis_full.toc [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+[2] [3] [4] [5] [6] (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd)
+[7] [8] [9]) [10] (./introduction.tex [11] [12 <../../final_runs/time_and_cost_
+scaling/figures/figure4_expert_time_vs_llm_generation.pdf>] [13] [14] [15]
+Overfull \hbox (9.2583pt too wide) in paragraph at lines 118--119
+[]\T1/cmr/m/n/12 Formalizes CLDs as signed di-rected graphs, sit-u-ates them wi
+thin the modeling-
+) (./ch2_background.tex [16] [17] [18]
+Overfull \hbox (21.35458pt too wide) in paragraph at lines 65--65
+[]\T1/cmr/bx/n/14.4 Group Model Build-ing (GMB) and the CLD-to-computational mo
+del pipeline 
+[19] (./background_llms.tex [20] [21 <./background_LLM_images_stanford_CME_Chea
+tsheet/token_1_seq.png>] [22 <./background_LLM_images_stanford_CME_Cheatsheet/a
+ttention_1_sequence.png> <./background_LLM_images_stanford_CME_Cheatsheet/atten
+tion_2_MHA.png>] [23 <./background_LLM_images_stanford_CME_Cheatsheet/architect
+ure_2_encoder_decoder_components.png>] [24 <./background_LLM_images_stanford_CM
+E_Cheatsheet/architecture_1_encoder_decoder_example.png>] [25 <./figures/transf
+ormer_Vaswani.png>]) (./background_prompts.tex [26 <./background_LLM_images_sta
+nford_CME_Cheatsheet/variants_2_decoder_only.png> <./background_LLM_images_stan
+ford_CME_Cheatsheet/decoding_sampling_2.png>]
+Overfull \hbox (10.44548pt too wide) in paragraph at lines 26--27
+[]\T1/cmr/m/n/12 The ``sta-tis-ti-cal causal prompt-ing'' (SCP) ap-proach [[]] 
+com-bines sta-tis-ti-cal causal dis-cov-ery with knowledge-
+[27] [28]) [29] [30]) (./ch3_literature_review.tex
+(./lit_review_cld_generation.tex [31] [32]
+Overfull \hbox (5.01497pt too wide) in paragraph at lines 41--42
+[]\T1/cmr/bx/n/12 Spurious vari-able in-tro-duc-tion \T1/cmr/m/n/12 cre-ates va
+ri-ables not grounded in source text through over-generalization.
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+[]|\T1/cmr/bx/n/10 Corpus
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--63
+[]|\T1/cmr/bx/n/10 Hallucination
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
+[]|\T1/cmr/m/n/10 Text-to-CLD
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
+\T1/cmr/m/n/10 ex-trac-tion via
+
+Underfull \hbox (badness 1117) in paragraph at lines 64--64
+[]|\T1/cmr/m/n/10 Text doc-u-
+
+Overfull \hbox (12.57753pt too wide) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 Theoraizer [[]]| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 Variable-pair
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 User-
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+\T1/cmr/m/n/10 defined
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+[]|\T1/cmr/m/n/10 Logit-based UQ;
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+\T1/cmr/m/n/10 can-di-date gen-er-a-
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Liu &
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Curated
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+\T1/cmr/m/n/10 prompt-ing
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Dynamic
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+\T1/cmr/m/n/10 hy-poth-e-sis
+
+Underfull \hbox (badness 2042) in paragraph at lines 70--70
+[]|\T1/cmr/m/n/10 Pipeline Al-
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--70
+[]|\T1/cmr/m/n/10 Typed op-er-a-
+
+Underfull \hbox (badness 5147) in paragraph at lines 70--70
+\T1/cmr/m/n/10 tors; it-er-a-tive
+
+Underfull \hbox (badness 4699) in paragraph at lines 70--71
+[]|\T1/cmr/m/n/10 Expert re-fine-ment
+
+Overfull \hbox (17.78459pt too wide) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 CausalRAG [[]]| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 RAG-enhanced
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+\T1/cmr/m/n/10 causal dis-cov-
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 Scientific
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--73
+[]|\T1/cmr/m/n/10 RAG ground-ing
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--73
+\T1/cmr/m/n/10 (99.5% faith-ful-
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+[]|\T1/cmr/m/n/10 Susanti &
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 gen-er-a-tion);
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 fine-tuning vs
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+[]|\T1/cmr/m/n/10 Existing
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 causal
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 Zhang et
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 RAG-based
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+\T1/cmr/m/n/10 causal graph
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 Scientific
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+[]|\T1/cmr/m/n/10 Corpus-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 independent
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 gen-er-a-tion +
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 post-hoc val-i-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+[]|\T1/cmr/m/n/10 Parametric
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\T1/cmr/m/n/10 LLM-as-a-Judge;
+[34]) (./lit_review_llm_as_judge.tex [35] [36] [37])
+(./lit_review_ci_metrics_background.tex [38] [39] [40] [41] [42]
+Overfull \hbox (2.16412pt too wide) in paragraph at lines 145--146
+ []\T1/cmr/bx/n/12 Uncertainty Con-fla-tion.[] \T1/cmr/m/n/12 As dis-cussed in 
+Sec-tion []3.5[], the logit dis-tri-bu-tion con-flates epis-temic, aleatoric,
+[43] [44]) [45] [46]) (./method_experiments_final_body.tex [47]
+(./figures/cld_pipeline_flowchart.tex) [48] [49]
+Overfull \hbox (2.5863pt too wide) in paragraph at lines 156--157
+ []\T1/cmr/bx/n/12 Retrieval Mech-a-nism[] \T1/cmr/m/n/12 Ci-ta-tion re-trieval
+ uses \T1/cmr/bx/n/12 ContentScraper-only \T1/cmr/m/n/12 mode (BeautifulSoup-ba
+sed fetch-
+[50]
+
+LaTeX Warning: Reference `sec:hybrid_generate_then_search' on page 51 undefined
+ on input line 161.
+
+[51] (./figures/deep_research_flowchart.tex)
+Overfull \hbox (56.35371pt too wide) in paragraph at lines 221--222
+[]\T1/cmr/bx/n/12 Trusted Aca-demic Do-mains (23): \T1/cmr/m/n/12 Re-sults from
+ the fol-low-ing do-mains are pri-or-i-tized: \T1/cmtt/m/n/12 pubmed.ncbi.nlm.n
+ih.gov\T1/cmr/m/n/12 ,
+
+Overfull \hbox (22.7926pt too wide) in paragraph at lines 221--222
+\T1/cmtt/m/n/12 frontiersin.org\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 springer.com\T1
+/cmr/m/n/12 , \T1/cmtt/m/n/12 wiley.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 science
+direct.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 tandfonline.com\T1/cmr/m/n/12 , \T1/
+cmtt/m/n/12 sage.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 jstor.org\T1/cmr/m/n/12 ,
+[52] [53] [54] [55] [56] [57]
+Overfull \hbox (0.41039pt too wide) in paragraph at lines 466--467
+[]\T1/cmr/bx/n/12 Friedman test: \T1/cmr/m/n/12 Non-parametric equiv-a-lent of 
+repeated-measures ANOVA; ranks ob-ser-va-tions within
+[58] [59] [60] [61] [62] [63]
+Overfull \hbox (150.63304pt too wide) in paragraph at lines 739--741
+\T1/cmr/m/n/12 (Ta-ble []39[]). Anal-y-sis scripts: \T1/cmtt/m/n/12 sensitivity
+_analysis_simple_rm_anova.py \T1/cmr/m/n/12 (judge), \T1/cmtt/m/n/12 sensitivit
+y_analysis_corrector_rm_anova.py
+[64]
+Overfull \hbox (0.61678pt too wide) in paragraph at lines 770--771
+[]\T1/cmr/bx/n/12 Judge (RQ1a): \T1/cmr/m/n/12 4 ex-per-i-ments $\OMS/cmsy/m/n/
+12 ^^B$ \T1/cmr/m/n/12 3--4 prompt vari-ants (Base-line, CoT, Mech-a-nis-tic, a
+nd Mechanistic-
+[65] [66]
+Overfull \hbox (46.93372pt too wide) in paragraph at lines 880--882
+\T1/cmr/m/n/12 Ap-pendix []B.1[] (Ta-ble []39[]). Ex-e-cu-tion scripts: Ap-pend
+ix []B.2[] (Ta-ble []40[]); anal-y-sis: \T1/cmtt/m/n/12 analyze_corrector_ablat
+ion.py\T1/cmr/m/n/12 . 
+[67]
+Overfull \hbox (75.05286pt too wide) in paragraph at lines 904--907
+\T1/cmr/m/n/12 see Ap-pendix []B.1[] (Ta-ble []39[]). Anal-y-sis scripts: \T1/c
+mtt/m/n/12 rq2_master_report_v2_enhanced.py\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 rq2
+_simple_batch_analyzer.py\T1/cmr/m/n/12 ;
+
+Overfull \hbox (9.76624pt too wide) in paragraph at lines 912--913
+ []\T1/cmr/bx/n/12 Statistical anal-y-sis.[] \T1/cmr/m/n/12 For single-metric i
+n-fer-ence, we ag-gre-gate to the in-de-pen-dent unit (block = CLD$\OMS/cmsy/m/
+n/12 ^^B$\T1/cmr/m/n/12 run,
+[68] [69]
+Overfull \hbox (33.14757pt too wide) in paragraph at lines 962--963
+[]\T1/cmr/bx/n/12 Phase 5 (train/test + CV): \T1/cmr/m/n/12 A sin-gle block-lev
+el split is sam-pled us-ing \T1/cmtt/m/n/12 GroupShuffleSplit(n_splits=1,
+[70] [71] [72] [73] [74]
+Overfull \hbox (3.72919pt too wide) in paragraph at lines 1193--1194
+[]\T1/cmr/bx/n/12 Reproduction: \T1/cmtt/m/n/12 python final_runs/RQ3_deep_rese
+arch/scripts/sample_edges_for_validation.py 
+[75] [76] [77]) (./final_results.tex
+Overfull \hbox (1.3103pt too wide) in paragraph at lines 32--33
+\T1/cmr/m/n/12 For re-pro-duc-tion com-mands and a com-plete map-ping from the-
+sis re-sults to the ex-e-cutable anal-y-sis pipelines,
+[78] [79] [80 <../../final_runs/random_baseline_generator/random_baseline_compa
+rison.png>] [81] [82 <../../final_runs/RQ1a_corruption_detection_correctness_fi
+nal/enhanced_analysis_20251225_233458_e5fcc326/rq1a_row1_performance_metrics.pn
+g>] [83 <../../final_runs/RQ1a_corruption_detection_correctness_final/enhanced_
+analysis_20251225_233458_e5fcc326/rq1a_row2_detailed_analysis.png>] [84 <../../
+final_runs/RQ1a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fc
+c326/rq1a_ground_truth_row1_performance_metrics.png>] [85 <../../final_runs/RQ1
+a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fcc326/rq1a_grou
+nd_truth_row2_detailed_analysis.png>] [86 <../../final_runs/RQ1a_corruption_det
+ection_citation_gpt5mini/enhanced_analysis_20251228_012920/rq1a_row1_performanc
+e_metrics.png>] [87 <../../final_runs/RQ1a_corruption_detection_citation_gpt5mi
+ni/enhanced_analysis_20251228_012920/rq1a_row2_detailed_analysis.png>] [88 <../
+../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233458_e5fc
+c326/rq1a_ground_truth_row1_performance_metrics.png>]
+Overfull \hbox (25.9068pt too wide) in paragraph at lines 428--447
+ [] 
+[89 <../../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233
+458_e5fcc326/rq1a_ground_truth_row2_detailed_analysis.png>] [90] [91] [92]
+[93]
+(../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_synthetic.tex
+) [94]
+(../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_synthetic.tex
+) [95]
+(../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_groundtruth.t
+ex) [96]
+(../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_groundtruth.t
+ex) [97] [98]
+(../../final_runs/RQ2_hallucination_detection/single_metric_table.tex) [99]
+[100] (../../final_runs/RQ2_hallucination_detection/normality_tests_table.tex)
+[101 <./figures/phase6_distributions_with_effect_sizes.png>]
+Overfull \hbox (33.16685pt too wide) in paragraph at lines 696--697
+[]\T1/cmr/m/n/12 Minimum to-ken prob-a-bil-ity ex-hibits the most con-sis-tent 
+sep-a-ra-tion (de-pres-sive p<0.0001; emer-gency_department
+[102] [103 <../../final_runs/RQ2_hallucination_detection/phase4_rfe_complete.pn
+g>]
+(../../final_runs/RQ2_hallucination_detection/ensemble_performance_table.tex)
+[104] [105] (../../final_runs/RQ3_deep_research/rq3_main_table.tex) [106]
+(../../final_runs/RQ3_deep_research/rq3_per_cld_table.tex) [107 <../../final_ru
+ns/RQ3_deep_research/figures/rq3_combined_figure.png>]
+(../../final_runs/RQ3_deep_research/rq3_enriched_gt_table.tex) [108]
+(./generated/rq3_enrichment_validation_numbers.tex)
+(./generated/rq3_human_validation_numbers.tex)
+(./generated/rq3_human_validation_table.tex)
+Overfull \hbox (20.59097pt too wide) in paragraph at lines 819--820
+\T1/cmr/m/n/12 (\T1/cmtt/m/n/12 human_verdict$\OMS/cmsy/m/n/12 2$\T1/cmr/m/n/12
+ {\T1/cmtt/m/n/12 causal\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 different_vars, causal
+\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 Not relevant / non-causal\T1/cmr/m/n/12 }) and
+ a human-assigned
+(./generated/rq3_verdict_distribution_table.tex) [109]
+Overfull \hbox (34.86475pt too wide) in paragraph at lines 844--845
+\T1/cmr/bx/n/12 Applicability-based cal-i-bra-tion (thesis-ready fil-ter-ing). 
+\T1/cmr/m/n/12 Be-cause DR's bi-nary \T1/cmtt/m/n/12 direct_causal_found=True
+
+Overfull \hbox (32.15279pt too wide) in paragraph at lines 869--871
+ [] 
+(./generated/rq3_enrichment_validation_table.tex) [110 <../../final_runs/RQ3_de
+ep_research/validation/all_edges_threshold_tradeoff.png>]
+(./generated/rq3_smart_trigger_numbers.tex)
+Overfull \hbox (16.31439pt too wide) in paragraph at lines 891--892
+\T1/cmr/m/it/12 gered \T1/cmr/m/n/12 if their mean score $\OMS/cmsy/m/n/12 ^^T 
+\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 5$\T1/cmr/m/n/12 . Of the tr
+ig-gered edges, we counted how many had \T1/cmtt/m/n/12 direct_causal_found=Tru
+e
+(./generated/rq3_smart_trigger_table.tex) [111] [112 <../../final_runs/RQ3_deep
+_research/validation/dr_cost_efficiency_comparison.png>]
+(./generated/effect_size_summary_table.tex
+Overfull \hbox (3.13403pt too wide) in paragraph at lines 6--68
+ [] 
+) [113] [114] (../../final_runs/latex/table21_scaling_summary.tex) [115 <../../
+final_runs/time_and_cost_scaling/figures/figure3_generation_vs_judging.png>]
+[116]) (./discussion_merged.tex [117 <../../final_runs/parallelization_benchmar
+k/figures/parallelization_thesis_figure.png>] [118]
+Overfull \hbox (2.2005pt too wide) in paragraph at lines 46--47
+\T1/cmr/m/n/12 GPT-4.1 was se-lected as the pri-mary gen-er-a-tor over Sonar-Pr
+o (F1=0.170) and Claude-Sonnet-4 (F1=0.154)
+[119]
+Overfull \hbox (13.2325pt too wide) in paragraph at lines 73--74
+\T1/cmr/m/n/12 ous edges, mo-ti-va-tion changes) ap-plied to LLM-generated CLDs
+ pro-vide known er-ror la-bels (\T1/cmtt/m/n/12 corrupted=True\T1/cmr/m/n/12 )
+[120] [121] [122]
+Overfull \hbox (42.16417pt too wide) in paragraph at lines 126--127
+\T1/cmr/m/n/12 Interpreting ``judge score by TP/F-P/FN/TN'' re-quires care be-c
+ause \T1/cmr/bx/n/12 TP/F-P/FN/TN de-note the hallucination-
+[123] [124] [125] [126] [127] [128] [129] [130] [131] [132] [133] [134]
+[135] [136] [137] [138] [139] [140]) [141] (./conclusion.tex [142])
+(./appendix.tex
+Overfull \hbox (14.62274pt too wide) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 judge_all_edges_with_citations_serial| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 _corrupt_relationships (mod-
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 correct_edges_serial (mod-
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 compute_avg_nll
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 compute_max_window_entropy
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 DeepResearchManager (py-dan-
+
+Overfull \hbox (28.2583pt too wide) in paragraph at lines 37--37
+\T1/cmr/m/n/10 tic_ai_deepresearch_orchestration.py:642)| 
+[143]
+Overfull \hbox (110.8401pt too wide) in paragraph at lines 76--76
+[]|\T1/cmtt/m/n/10 Depressive_symptoms_in_response_to_a_stressor_in_healthy_adu
+lts.xlsx| 
+
+Overfull \hbox (179.07344pt too wide) in paragraph at lines 76--76
+[]|\T1/cmtt/m/n/10 older_persons_emergency_department_visits_and_interactionsti
+tled_spreadsheet.xlsx| 
+[144]
+Overfull \hbox (35.64539pt too wide) in paragraph at lines 98--98
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/cld_data_files/| 
+
+Overfull \hbox (25.14795pt too wide) in paragraph at lines 98--98
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/| 
+
+Overfull \hbox (31.83145pt too wide) in paragraph at lines 122--123
+\T1/cmr/m/n/12 narrative-quality ar-ti-facts. Data files: \T1/cmtt/m/n/12 final
+_runs/RQ1a_validation_physics_CLDs/cld_data_files/*.xlsx\T1/cmr/m/n/12 . 
+[145] [146]
+Overfull \hbox (2.18663pt too wide) in paragraph at lines 216--216
+[]|\T1/cmtt/m/n/10 run_rq1a_corruption_citation_multirun.py| 
+
+Overfull \hbox (2.18663pt too wide) in paragraph at lines 216--216
+[]|\T1/cmtt/m/n/10 run_rq1_judge_citations_all_3_prompts.py| 
+
+Overfull \hbox (2.34402pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 data_science/parameter_tuning_experiments/analyze_rq1a_aggre
+gate_enhanced.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 data_science/parameter_tuning_experiments/analyze_rq1a_groun
+d_truth_enhanced.py| 
+
+Overfull \hbox (23.3389pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/judge_c
+itation_providers.py| 
+
+Overfull \hbox (28.58762pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/runner/truthqa_judge_ba
+seline_correctness.py| 
+
+Overfull \hbox (2.34402pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/estimate_smart_trigger_
+dr_enrichment.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/generate_validation_dis
+tribution_tables.py| 
+
+Overfull \hbox (7.59274pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_a
+nalysis_simple.py| 
+
+Overfull \hbox (23.3389pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_a
+nalysis_corrector.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/analyze_paralle
+lization_results.py| 
+[147]
+Overfull \hbox (8.85632pt too wide) in paragraph at lines 371--371
+[]|\T1/cmr/bx/n/10 Canonical
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 com-
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 mand
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 (from
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 repo
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (174.55197pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/aggregate_time_cost_scaling.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (143.05966pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/retrieve_effect_sizes.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (242.78531pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/temperature_sensitivity_assumption_tests.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (384.5007pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/runner/truthqa_judge_basel
+ine_correctness.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/analysis_script/recalculat
+e_metrics.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (295.27249pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/run_physics_cld_tests.p
+y| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (326.7648pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/analyze_physics_cld_res
+ults.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (316.26736pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/generate_comparison_tab
+le.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (368.75455pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/generate_retrieval_comp
+arison_table.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (258.53146pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/get_avg_scores.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (384.5007pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/cld_data_files/create_t
+hermostat_excel.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (447.48532pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/add_supporting_quotes.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (452.73404pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/add_urls_to_references.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (400.24686pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/show_example.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (436.98788pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/verify_and_fix_urls.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (394.99814pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/verify_urls.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/judge_cita
+tion_providers.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/compare_ji
+na_vs_scraper.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (311.01865pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_hallucination_detection/rq2_simple_batch_analyze
+r.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (332.01352pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_hallucination_detection/rq2_master_report_v2_enh
+anced.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (232.28787pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (279.52634pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/analyze_deep_research_results.py| 
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (232.28787pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_statistical_test.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (269.0289pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_per_cld_detection_rates.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (269.0289pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/compute_enriched_gt_metrics.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (211.293pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/generate_figures.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (211.293pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/run_rq3_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (311.01865pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/sample_edges_for_validatio
+n.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (295.27249pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/enrichment_extrapolation.p
+y| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (358.25711pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/estimate_smart_trigger_dr_
+enrichment.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/plot_dr_cost_efficiency.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/generate_validation_distri
+bution_tables.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/compute_enriched_f1_from_v
+alidation.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (206.04428pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_all_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (258.53146pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_costs_by_experiment.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (242.78531pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_experiment_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (237.53659pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_costs_max_edges.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (253.28275pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/analyze_token_and_call_stats.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (263.78018pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/analyze_output_tokens_tiktoken.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (190.29813pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/compute_dr_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (274.27762pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/generate_table21_scaling_summary.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/token_call_analysis_RQ1a_judge/analyze_output_tokens
+_tiktoken.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/time_and_cost_scaling/aggregate_time_cost_scaling.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (274.27762pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/time_and_cost_scaling/collect_corrector_timing.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (363.50583pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_simple.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_corrector.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (410.7443pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_simple_rm_anova.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (426.49045pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_corrector_rm_anova.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (363.50583pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/run_parallelizatio
+n_benchmark.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/analyze_paralleliz
+ation_results.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (227.03915pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/power_analysis/compute_power_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/random_baseline_generator/compute_random_baseline.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (316.26736pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/embedding_model_benchmark/embedding_benchmark_real_c
+ld.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/generator_model_comparison_analysis/run_generator_mo
+del_comparison.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (347.75967pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/generator_model_comparison_analysis/analyze_generato
+r_models.py| 
+[148] [149]
+Overfull \vbox (1016.80583pt too high) has occurred while \output is active
+[150]
+Overfull \hbox (2.97047pt too wide) in paragraph at lines 376--377
+\T1/cmr/m/n/12 and \T1/cmr/m/it/12 cot \T1/cmr/m/n/12 (chain-of-thought rea-son
+-ing [[]]). Ci-ta-tion judges ad-di-tion-ally in-clude a fourth vari-ant, \T1/c
+mr/m/it/12 mechanistic-
+
+Overfull \hbox (50.27873pt too wide) in paragraph at lines 396--396
+[]|\T1/cmtt/m/n/10 alternative_prompts/prompts_correctness_{baseline,mechanisti
+c,cot}.yaml| 
+
+Overfull \hbox (81.77104pt too wide) in paragraph at lines 396--396
+[]|\T1/cmtt/m/n/10 alternative_prompts/prompts_citation_{baseline,mechanistic,c
+ot,mech_lit}.yaml| 
+[151]
+Overfull \hbox (39.29146pt too wide) in paragraph at lines 487--488
+\T1/cmr/m/n/12 Complete Bib-TeX ci-ta-tions for all soft-ware are avail-able in
+ the repos-i-tory at \T1/cmtt/m/n/12 thesis/final_thesis/software.bib\T1/cmr/m/
+n/12 . 
+[152]
+Overfull \hbox (55.88591pt too wide) in paragraph at lines 526--527
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 final_runs/RQ1_verificatio
+n_Truth_QA/runner/truthqa_judge_baseline_correctness.py 
+[153]
+Overfull \hbox (49.71242pt too wide) in paragraph at lines 612--613
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 final_runs/RQ1a_ulemans_ci
+tation_provider_comparison/judge_citation_providers.py 
+[154]
+Overfull \hbox (192.62059pt too wide) in paragraph at lines 642--642
+[]\T1/cmtt/m/n/12 python RQ1_excel_snapshot_20251215/final_runs/RQ1_human_valid
+ation_citation_judge/combined_human_validation_analysis.py[] 
+[155] [156] [157]
+Overfull \hbox (0.32448pt too wide) in paragraph at lines 813--814
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 data_science/parameter_tun
+ing_experiments/run_temperature_sensitivity.py 
+
+Overfull \hbox (94.61673pt too wide) in paragraph at lines 815--816
+[]\T1/cmr/bx/n/12 Results Lo-ca-tion: \T1/cmtt/m/n/12 data_science/parameter_tu
+ning_experiments/results/temperature_sensitivity_<timestamp>/ 
+[158] [159]
+Overfull \hbox (79.56204pt too wide) in paragraph at lines 963--964
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion (Judge): \T1/cmtt/m/n/12 final_runs/Sensiti
+vity_analysis_simple/scripts/sensitivity_analysis_simple.py 
+
+Overfull \hbox (120.39648pt too wide) in paragraph at lines 965--966
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion (Cor-rec-tor): \T1/cmtt/m/n/12 final_runs/S
+ensitivity_analysis_simple/scripts/sensitivity_analysis_corrector.py 
+
+Overfull \hbox (34.86388pt too wide) in paragraph at lines 974--986
+ [][] 
+[160] [161] [162] [163 <../../final_runs/time_and_cost_scaling/figures/figure1_
+scaling_analysis.png>] [164 <../../final_runs/time_and_cost_scaling/figures/fig
+ure2_configuration_comparison.png>] [165] [166]
+Overfull \hbox (148.66577pt too wide) in paragraph at lines 1316--1317
+[]\T1/cmr/m/it/10.95 Reproduction: \T1/cmtt/m/n/10.95 python final_runs/token_c
+all_analysis_RQ1a_judge/analyze_output_tokens_tiktoken.py 
+[167] [168] [169 <../Figures/edge_ablation_f1_ordered.png>] [170] [171]
+[172] [173]
+Overfull \hbox (2.14647pt too wide) in paragraph at lines 1663--1664
+[]\T1/cmr/bx/n/12 Implementation: \T1/cmtt/m/n/12 modules.py:5688 \T1/cmr/m/n/1
+2 (\T1/cmtt/m/n/12 judge_all_edges_with_citations_serial\T1/cmr/m/n/12 ) $\OMS/
+cmsy/m/n/12 !$ \T1/cmtt/m/n/12 modules.py:4988 
+[174]
+Overfull \hbox (15.11533pt too wide) in paragraph at lines 1709--1710
+[]\T1/cmr/bx/n/12 Implementation: \T1/cmtt/m/n/12 modules.py:1748 \T1/cmr/m/n/1
+2 (\T1/cmtt/m/n/12 _corrupt_relationships\T1/cmr/m/n/12 ), \T1/cmtt/m/n/12 :154
+4 \T1/cmr/m/n/12 (\T1/cmtt/m/n/12 _corrupt_relationship\T1/cmr/m/n/12 ), \T1/cm
+tt/m/n/12 :1582
+[175] [176] [177] [178] [179] [180] [181] [182 <../../final_runs/RQ1a_ground_tr
+uth_correctness/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_truth_co
+rrectness_score_heatmap.png>] [183 <../../final_runs/RQ1a_ground_truth_citation
+/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_truth_citation_score_he
+atmap.png>] [184 <../../final_runs/RQ1a_corruption_detection_correctness_final/
+enhanced_analysis_20251224_230553_962416b3/rq1a_corruption_detection_correctnes
+s_score_heatmap.png>] [185 <../../final_runs/RQ1a_corruption_detection_citation
+_gpt5mini/enhanced_analysis_20251224_230553_962416b3/rq1a_corruption_detection_
+citation_score_heatmap.png>] [186 <../../final_runs/RQ1a_corruption_detection_c
+orrectness_final/enhanced_analysis_20251224_230553_962416b3/rq1a_roc_curves.png
+> <../../final_runs/RQ1a_corruption_detection_citation_gpt5mini/enhanced_analys
+is_20251224_230553_962416b3/rq1a_roc_curves.png>] [187 <../../final_runs/RQ1a_g
+round_truth_correctness/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_
+truth_roc_curves.png> <../../final_runs/RQ1a_ground_truth_citation/enhanced_ana
+lysis_20251224_230553_962416b3/rq1a_ground_truth_roc_curves.png>]
+(./appendix_sensitivity.tex [188] [189]
+(../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_table.tex)
+[190 <../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_figure.pn
+g>]
+(../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_assumptions_ta
+ble.tex) [191]
+(../../final_runs/Sensitivity_analysis_simple/corrector_sensitivity_table.tex)
+(../../final_runs/Sensitivity_analysis_simple/corrector_sensitivity_assumptions
+_table.tex)) [192 <../../final_runs/Sensitivity_analysis_simple/corrector_sensi
+tivity_figure.png>]
+Overfull \hbox (37.46709pt too wide) in paragraph at lines 2147--2148
+\T1/cmr/m/n/12 The fi-nal ex-per-i-ments use the \T1/cmr/bx/n/12 Ni-tai_C \T1/c
+mr/m/n/12 gen-er-a-tor prompt con-fig-u-ra-tion for both node gen-er-a-tion (\T
+1/cmtt/m/n/12 generateNodes\T1/cmr/m/n/12 )
+
+Overfull \hbox (247.70958pt too wide) in paragraph at lines 2147--2148
+\T1/cmr/m/n/12 and edge gen-er-a-tion (\T1/cmtt/m/n/12 generateEdges\T1/cmr/m/n
+/12 ). The prompt is stored in the repos-i-tory at \T1/cmtt/m/n/12 data_science
+/parameter_tuning_experiments/prompts_Nitai_C.yaml
+[193] [194] [195] [196] [197] [198] [199] [200] [201]
+Overfull \hbox (5.43434pt too wide) in paragraph at lines 2632--2633
+\T1/cmr/m/n/12 tools are avail-able: \T1/cmtt/m/n/12 revise_motivation \T1/cmr/
+m/n/12 (fix ex-pla-na-tion while pre-serv-ing edge type) and \T1/cmtt/m/n/12 ch
+ange_edge_type
+[202] [203] [204] [205]) (./thesis_full.bbl [206] [207] [208] [209] [210]
+[211]
+Underfull \hbox (badness 1838) in paragraph at lines 616--621
+[]\T1/cmr/m/n/12 OpenAI.  Learn-ing to rea-son with llms: In-tro-duc-ing ope-na
+i o1, a new large lan-guage
+[212]
+Underfull \hbox (badness 1038) in paragraph at lines 723--729
+[]\T1/cmr/m/n/12 Mark Shi-monovich, Adam Pearce, Hi-lary Thom-son, Kather-ine K
+eyes, and Srini-vasa Vit-tal
+
+Underfull \hbox (badness 2111) in paragraph at lines 805--810
+[]\T1/cmr/m/n/12 Evangelista Tor-ri-celli.  \T1/cmr/m/it/12 Opera ge-o-met-rica
+\T1/cmr/m/n/12 .  1644.  URL []$\T1/cmtt/m/n/12 https : / / archive . org / det
+ails /
+[213] [214] [215]) [216] (./thesis_full.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information) </home/nitai/.texlive2023/
+texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0500.600pk> </home/nitai/.texlive2023
+/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0700.600pk> </home/nitai/.texlive202
+3/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx1000.600pk> </home/nitai/.texlive20
+23/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0600.600pk> </home/nitai/.texlive2
+023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/nitai/.texlive
+2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1095.600pk> </home/nitai/.texliv
+e2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbi1000.600pk> </home/nitai/.texli
+ve2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti0800.600pk> </home/nitai/.texl
+ive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0800.600pk> </home/nitai/.tex
+live2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0800.600pk> </home/nitai/.te
+xlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1095.600pk> </home/nitai/.t
+exlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/nitai/.
+texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk> </home/nitai/
+.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/nitai
+/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> </home/nita
+i/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> </home/nit
+ai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0600.600pk> </home/ni
+tai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk> </home/n
+itai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/
+nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> </home
+/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> </hom
+e/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </ho
+me/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </h
+ome/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> </
+home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <
+/home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> 
+</home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
+10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/s
+ymbols/msbm10.pfb>
+Output written on thesis_full.pdf (216 pages, 10864293 bytes).
+Transcript written on thesis_full.log.
+Latexmk: Getting log file 'thesis_full.log'
+Latexmk: Examining 'thesis_full.fls'
+Latexmk: Examining 'thesis_full.log'
+Latexmk: Found input bbl file 'thesis_full.bbl'
+Latexmk: References changed.
+Latexmk: Log file says output to 'thesis_full.pdf'
+Latexmk: Found bibliography file(s):
+  ./references.bib
+  ./software.bib
+Latexmk: applying rule 'bibtex thesis_full'...
+Rule 'bibtex thesis_full':  Reasons for rerun
+Changed files or newly in use/created:
+  thesis_full.aux
+
+------------
+Run number 2 of rule 'bibtex thesis_full'
+------------
+------------
+Running 'bibtex  "thesis_full.aux"'
+------------
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+The top-level auxiliary file: thesis_full.aux
+The style file: plainnat.bst
+Database file #1: references.bib
+Database file #2: software.bib
+Warning--entry type for "pydantic2024" isn't style-file defined
+--line 156 of file software.bib
+Warning--empty journal in levene1960robust
+Warning--empty journal in lin2022truthfulqa
+Warning--empty publisher in pascal1663equilibre
+Warning--empty publisher in torricelli1644opera
+(There were 5 warnings)
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  thesis_full.aux
+  thesis_full.toc
+
+------------
+Run number 2 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder  "thesis_full.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./thesis_full.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-22>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/threeparttable/threeparttable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/capt-of/capt-of.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)))
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered
+.code.tex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
+f)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
+tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonomet
+ric.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.cod
+e.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
+thmetics.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
+code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
+s.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.t
+ex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex))
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
+.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
+.sty)) (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarytopaths.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.geometric.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.geometric.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.
+code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypositioning.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryfit.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarybackgrounds.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarycalc.code.tex)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.def)
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/docmute/docmute.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+(./thesis_full.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(./thesis_full.out) (./thesis_full.out)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd) (./abstract.tex)
+(./thesis_full.toc [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+[2] [3] [4] [5] [6] (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd)
+[7] [8] [9]) [10] (./introduction.tex [11] [12 <../../final_runs/time_and_cost_
+scaling/figures/figure4_expert_time_vs_llm_generation.pdf>] [13] [14] [15]
+Overfull \hbox (9.2583pt too wide) in paragraph at lines 118--119
+[]\T1/cmr/m/n/12 Formalizes CLDs as signed di-rected graphs, sit-u-ates them wi
+thin the modeling-
+) (./ch2_background.tex [16] [17] [18]
+Overfull \hbox (21.35458pt too wide) in paragraph at lines 65--65
+[]\T1/cmr/bx/n/14.4 Group Model Build-ing (GMB) and the CLD-to-computational mo
+del pipeline 
+[19] (./background_llms.tex [20] [21 <./background_LLM_images_stanford_CME_Chea
+tsheet/token_1_seq.png>] [22 <./background_LLM_images_stanford_CME_Cheatsheet/a
+ttention_1_sequence.png> <./background_LLM_images_stanford_CME_Cheatsheet/atten
+tion_2_MHA.png>] [23 <./background_LLM_images_stanford_CME_Cheatsheet/architect
+ure_2_encoder_decoder_components.png>] [24 <./background_LLM_images_stanford_CM
+E_Cheatsheet/architecture_1_encoder_decoder_example.png>] [25 <./figures/transf
+ormer_Vaswani.png>]) (./background_prompts.tex [26 <./background_LLM_images_sta
+nford_CME_Cheatsheet/variants_2_decoder_only.png> <./background_LLM_images_stan
+ford_CME_Cheatsheet/decoding_sampling_2.png>]
+Overfull \hbox (10.44548pt too wide) in paragraph at lines 26--27
+[]\T1/cmr/m/n/12 The ``sta-tis-ti-cal causal prompt-ing'' (SCP) ap-proach [[]] 
+com-bines sta-tis-ti-cal causal dis-cov-ery with knowledge-
+[27] [28]) [29] [30]) (./ch3_literature_review.tex
+(./lit_review_cld_generation.tex [31] [32]
+Overfull \hbox (5.01497pt too wide) in paragraph at lines 41--42
+[]\T1/cmr/bx/n/12 Spurious vari-able in-tro-duc-tion \T1/cmr/m/n/12 cre-ates va
+ri-ables not grounded in source text through over-generalization.
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+[]|\T1/cmr/bx/n/10 Corpus
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--63
+[]|\T1/cmr/bx/n/10 Hallucination
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
+[]|\T1/cmr/m/n/10 Text-to-CLD
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
+\T1/cmr/m/n/10 ex-trac-tion via
+
+Underfull \hbox (badness 1117) in paragraph at lines 64--64
+[]|\T1/cmr/m/n/10 Text doc-u-
+
+Overfull \hbox (12.57753pt too wide) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 Theoraizer [[]]| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 Variable-pair
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+[]|\T1/cmr/m/n/10 User-
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+\T1/cmr/m/n/10 defined
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+[]|\T1/cmr/m/n/10 Logit-based UQ;
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+\T1/cmr/m/n/10 can-di-date gen-er-a-
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Liu &
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Curated
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+\T1/cmr/m/n/10 prompt-ing
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/cmr/m/n/10 Dynamic
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+\T1/cmr/m/n/10 hy-poth-e-sis
+
+Underfull \hbox (badness 2042) in paragraph at lines 70--70
+[]|\T1/cmr/m/n/10 Pipeline Al-
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--70
+[]|\T1/cmr/m/n/10 Typed op-er-a-
+
+Underfull \hbox (badness 5147) in paragraph at lines 70--70
+\T1/cmr/m/n/10 tors; it-er-a-tive
+
+Underfull \hbox (badness 4699) in paragraph at lines 70--71
+[]|\T1/cmr/m/n/10 Expert re-fine-ment
+
+Overfull \hbox (17.78459pt too wide) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 CausalRAG [[]]| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 RAG-enhanced
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+\T1/cmr/m/n/10 causal dis-cov-
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
+[]|\T1/cmr/m/n/10 Scientific
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--73
+[]|\T1/cmr/m/n/10 RAG ground-ing
+
+Underfull \hbox (badness 10000) in paragraph at lines 72--73
+\T1/cmr/m/n/10 (99.5% faith-ful-
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+[]|\T1/cmr/m/n/10 Susanti &
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 gen-er-a-tion);
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 fine-tuning vs
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+[]|\T1/cmr/m/n/10 Existing
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+\T1/cmr/m/n/10 causal
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 Zhang et
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 RAG-based
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+\T1/cmr/m/n/10 causal graph
+
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
+[]|\T1/cmr/m/n/10 Scientific
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+[]|\T1/cmr/m/n/10 Corpus-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 independent
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 gen-er-a-tion +
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+\T1/cmr/m/n/10 post-hoc val-i-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+[]|\T1/cmr/m/n/10 Parametric
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\T1/cmr/m/n/10 LLM-as-a-Judge;
+[34]) (./lit_review_llm_as_judge.tex [35] [36] [37])
+(./lit_review_ci_metrics_background.tex [38] [39] [40] [41] [42]
+Overfull \hbox (2.16412pt too wide) in paragraph at lines 145--146
+ []\T1/cmr/bx/n/12 Uncertainty Con-fla-tion.[] \T1/cmr/m/n/12 As dis-cussed in 
+Sec-tion []3.5[], the logit dis-tri-bu-tion con-flates epis-temic, aleatoric,
+[43] [44]) [45] [46]) (./method_experiments_final_body.tex [47]
+(./figures/cld_pipeline_flowchart.tex) [48] [49]
+Overfull \hbox (2.5863pt too wide) in paragraph at lines 156--157
+ []\T1/cmr/bx/n/12 Retrieval Mech-a-nism[] \T1/cmr/m/n/12 Ci-ta-tion re-trieval
+ uses \T1/cmr/bx/n/12 ContentScraper-only \T1/cmr/m/n/12 mode (BeautifulSoup-ba
+sed fetch-
+[50] [51] (./figures/deep_research_flowchart.tex)
+Overfull \hbox (56.35371pt too wide) in paragraph at lines 221--222
+[]\T1/cmr/bx/n/12 Trusted Aca-demic Do-mains (23): \T1/cmr/m/n/12 Re-sults from
+ the fol-low-ing do-mains are pri-or-i-tized: \T1/cmtt/m/n/12 pubmed.ncbi.nlm.n
+ih.gov\T1/cmr/m/n/12 ,
+
+Overfull \hbox (22.7926pt too wide) in paragraph at lines 221--222
+\T1/cmtt/m/n/12 frontiersin.org\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 springer.com\T1
+/cmr/m/n/12 , \T1/cmtt/m/n/12 wiley.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 science
+direct.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 tandfonline.com\T1/cmr/m/n/12 , \T1/
+cmtt/m/n/12 sage.com\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 jstor.org\T1/cmr/m/n/12 ,
+[52] [53] [54] [55] [56] [57]
+Overfull \hbox (0.41039pt too wide) in paragraph at lines 466--467
+[]\T1/cmr/bx/n/12 Friedman test: \T1/cmr/m/n/12 Non-parametric equiv-a-lent of 
+repeated-measures ANOVA; ranks ob-ser-va-tions within
+[58] [59] [60] [61] [62] [63]
+Overfull \hbox (150.63304pt too wide) in paragraph at lines 739--741
+\T1/cmr/m/n/12 (Ta-ble []39[]). Anal-y-sis scripts: \T1/cmtt/m/n/12 sensitivity
+_analysis_simple_rm_anova.py \T1/cmr/m/n/12 (judge), \T1/cmtt/m/n/12 sensitivit
+y_analysis_corrector_rm_anova.py
+[64]
+Overfull \hbox (0.61678pt too wide) in paragraph at lines 770--771
+[]\T1/cmr/bx/n/12 Judge (RQ1a): \T1/cmr/m/n/12 4 ex-per-i-ments $\OMS/cmsy/m/n/
+12 ^^B$ \T1/cmr/m/n/12 3--4 prompt vari-ants (Base-line, CoT, Mech-a-nis-tic, a
+nd Mechanistic-
+[65] [66]
+Overfull \hbox (46.93372pt too wide) in paragraph at lines 880--882
+\T1/cmr/m/n/12 Ap-pendix []B.1[] (Ta-ble []39[]). Ex-e-cu-tion scripts: Ap-pend
+ix []B.2[] (Ta-ble []40[]); anal-y-sis: \T1/cmtt/m/n/12 analyze_corrector_ablat
+ion.py\T1/cmr/m/n/12 . 
+[67]
+Overfull \hbox (75.05286pt too wide) in paragraph at lines 904--907
+\T1/cmr/m/n/12 see Ap-pendix []B.1[] (Ta-ble []39[]). Anal-y-sis scripts: \T1/c
+mtt/m/n/12 rq2_master_report_v2_enhanced.py\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 rq2
+_simple_batch_analyzer.py\T1/cmr/m/n/12 ;
+
+Overfull \hbox (9.76624pt too wide) in paragraph at lines 912--913
+ []\T1/cmr/bx/n/12 Statistical anal-y-sis.[] \T1/cmr/m/n/12 For single-metric i
+n-fer-ence, we ag-gre-gate to the in-de-pen-dent unit (block = CLD$\OMS/cmsy/m/
+n/12 ^^B$\T1/cmr/m/n/12 run,
+[68] [69]
+Overfull \hbox (33.14757pt too wide) in paragraph at lines 962--963
+[]\T1/cmr/bx/n/12 Phase 5 (train/test + CV): \T1/cmr/m/n/12 A sin-gle block-lev
+el split is sam-pled us-ing \T1/cmtt/m/n/12 GroupShuffleSplit(n_splits=1,
+[70] [71] [72] [73] [74]
+Overfull \hbox (3.72919pt too wide) in paragraph at lines 1193--1194
+[]\T1/cmr/bx/n/12 Reproduction: \T1/cmtt/m/n/12 python final_runs/RQ3_deep_rese
+arch/scripts/sample_edges_for_validation.py 
+[75] [76] [77]) (./final_results.tex
+Overfull \hbox (1.3103pt too wide) in paragraph at lines 32--33
+\T1/cmr/m/n/12 For re-pro-duc-tion com-mands and a com-plete map-ping from the-
+sis re-sults to the ex-e-cutable anal-y-sis pipelines,
+[78] [79] [80 <../../final_runs/random_baseline_generator/random_baseline_compa
+rison.png>] [81] [82 <../../final_runs/RQ1a_corruption_detection_correctness_fi
+nal/enhanced_analysis_20251225_233458_e5fcc326/rq1a_row1_performance_metrics.pn
+g>] [83 <../../final_runs/RQ1a_corruption_detection_correctness_final/enhanced_
+analysis_20251225_233458_e5fcc326/rq1a_row2_detailed_analysis.png>] [84 <../../
+final_runs/RQ1a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fc
+c326/rq1a_ground_truth_row1_performance_metrics.png>] [85 <../../final_runs/RQ1
+a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fcc326/rq1a_grou
+nd_truth_row2_detailed_analysis.png>] [86 <../../final_runs/RQ1a_corruption_det
+ection_citation_gpt5mini/enhanced_analysis_20251228_012920/rq1a_row1_performanc
+e_metrics.png>] [87 <../../final_runs/RQ1a_corruption_detection_citation_gpt5mi
+ni/enhanced_analysis_20251228_012920/rq1a_row2_detailed_analysis.png>] [88 <../
+../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233458_e5fc
+c326/rq1a_ground_truth_row1_performance_metrics.png>]
+Overfull \hbox (25.9068pt too wide) in paragraph at lines 428--447
+ [] 
+[89 <../../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233
+458_e5fcc326/rq1a_ground_truth_row2_detailed_analysis.png>] [90] [91] [92]
+[93]
+(../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_synthetic.tex
+) [94]
+(../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_synthetic.tex
+) [95]
+(../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_groundtruth.t
+ex) [96]
+(../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_groundtruth.t
+ex) [97] [98]
+(../../final_runs/RQ2_hallucination_detection/single_metric_table.tex) [99]
+[100] (../../final_runs/RQ2_hallucination_detection/normality_tests_table.tex)
+[101 <./figures/phase6_distributions_with_effect_sizes.png>]
+Overfull \hbox (33.16685pt too wide) in paragraph at lines 696--697
+[]\T1/cmr/m/n/12 Minimum to-ken prob-a-bil-ity ex-hibits the most con-sis-tent 
+sep-a-ra-tion (de-pres-sive p<0.0001; emer-gency_department
+[102] [103 <../../final_runs/RQ2_hallucination_detection/phase4_rfe_complete.pn
+g>]
+(../../final_runs/RQ2_hallucination_detection/ensemble_performance_table.tex)
+[104] [105] (../../final_runs/RQ3_deep_research/rq3_main_table.tex) [106]
+(../../final_runs/RQ3_deep_research/rq3_per_cld_table.tex) [107 <../../final_ru
+ns/RQ3_deep_research/figures/rq3_combined_figure.png>]
+(../../final_runs/RQ3_deep_research/rq3_enriched_gt_table.tex) [108]
+(./generated/rq3_enrichment_validation_numbers.tex)
+(./generated/rq3_human_validation_numbers.tex)
+(./generated/rq3_human_validation_table.tex)
+Overfull \hbox (20.59097pt too wide) in paragraph at lines 819--820
+\T1/cmr/m/n/12 (\T1/cmtt/m/n/12 human_verdict$\OMS/cmsy/m/n/12 2$\T1/cmr/m/n/12
+ {\T1/cmtt/m/n/12 causal\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 different_vars, causal
+\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 Not relevant / non-causal\T1/cmr/m/n/12 }) and
+ a human-assigned
+(./generated/rq3_verdict_distribution_table.tex) [109]
+Overfull \hbox (34.86475pt too wide) in paragraph at lines 844--845
+\T1/cmr/bx/n/12 Applicability-based cal-i-bra-tion (thesis-ready fil-ter-ing). 
+\T1/cmr/m/n/12 Be-cause DR's bi-nary \T1/cmtt/m/n/12 direct_causal_found=True
+
+Overfull \hbox (32.15279pt too wide) in paragraph at lines 869--871
+ [] 
+(./generated/rq3_enrichment_validation_table.tex) [110 <../../final_runs/RQ3_de
+ep_research/validation/all_edges_threshold_tradeoff.png>]
+(./generated/rq3_smart_trigger_numbers.tex)
+Overfull \hbox (16.31439pt too wide) in paragraph at lines 891--892
+\T1/cmr/m/it/12 gered \T1/cmr/m/n/12 if their mean score $\OMS/cmsy/m/n/12 ^^T 
+\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 5$\T1/cmr/m/n/12 . Of the tr
+ig-gered edges, we counted how many had \T1/cmtt/m/n/12 direct_causal_found=Tru
+e
+(./generated/rq3_smart_trigger_table.tex) [111] [112 <../../final_runs/RQ3_deep
+_research/validation/dr_cost_efficiency_comparison.png>]
+(./generated/effect_size_summary_table.tex
+Overfull \hbox (3.13403pt too wide) in paragraph at lines 6--68
+ [] 
+) [113] [114] (../../final_runs/latex/table21_scaling_summary.tex) [115 <../../
+final_runs/time_and_cost_scaling/figures/figure3_generation_vs_judging.png>]
+[116]) (./discussion_merged.tex [117 <../../final_runs/parallelization_benchmar
+k/figures/parallelization_thesis_figure.png>] [118]
+Overfull \hbox (2.2005pt too wide) in paragraph at lines 46--47
+\T1/cmr/m/n/12 GPT-4.1 was se-lected as the pri-mary gen-er-a-tor over Sonar-Pr
+o (F1=0.170) and Claude-Sonnet-4 (F1=0.154)
+[119]
+Overfull \hbox (13.2325pt too wide) in paragraph at lines 73--74
+\T1/cmr/m/n/12 ous edges, mo-ti-va-tion changes) ap-plied to LLM-generated CLDs
+ pro-vide known er-ror la-bels (\T1/cmtt/m/n/12 corrupted=True\T1/cmr/m/n/12 )
+[120] [121] [122]
+Overfull \hbox (42.16417pt too wide) in paragraph at lines 126--127
+\T1/cmr/m/n/12 Interpreting ``judge score by TP/F-P/FN/TN'' re-quires care be-c
+ause \T1/cmr/bx/n/12 TP/F-P/FN/TN de-note the hallucination-
+[123] [124] [125] [126] [127] [128] [129] [130] [131] [132] [133] [134]
+[135] [136] [137] [138] [139] [140]) [141] (./conclusion.tex [142])
+(./appendix.tex
+Overfull \hbox (14.62274pt too wide) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 judge_all_edges_with_citations_serial| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 _corrupt_relationships (mod-
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 correct_edges_serial (mod-
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 compute_avg_nll
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 compute_max_window_entropy
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]|\T1/cmr/m/n/10 DeepResearchManager (py-dan-
+
+Overfull \hbox (28.2583pt too wide) in paragraph at lines 37--37
+\T1/cmr/m/n/10 tic_ai_deepresearch_orchestration.py:642)| 
+[143]
+Overfull \hbox (110.8401pt too wide) in paragraph at lines 76--76
+[]|\T1/cmtt/m/n/10 Depressive_symptoms_in_response_to_a_stressor_in_healthy_adu
+lts.xlsx| 
+
+Overfull \hbox (179.07344pt too wide) in paragraph at lines 76--76
+[]|\T1/cmtt/m/n/10 older_persons_emergency_department_visits_and_interactionsti
+tled_spreadsheet.xlsx| 
+[144]
+Overfull \hbox (35.64539pt too wide) in paragraph at lines 98--98
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/cld_data_files/| 
+
+Overfull \hbox (25.14795pt too wide) in paragraph at lines 98--98
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/| 
+
+Overfull \hbox (31.83145pt too wide) in paragraph at lines 122--123
+\T1/cmr/m/n/12 narrative-quality ar-ti-facts. Data files: \T1/cmtt/m/n/12 final
+_runs/RQ1a_validation_physics_CLDs/cld_data_files/*.xlsx\T1/cmr/m/n/12 . 
+[145] [146]
+Overfull \hbox (2.18663pt too wide) in paragraph at lines 216--216
+[]|\T1/cmtt/m/n/10 run_rq1a_corruption_citation_multirun.py| 
+
+Overfull \hbox (2.18663pt too wide) in paragraph at lines 216--216
+[]|\T1/cmtt/m/n/10 run_rq1_judge_citations_all_3_prompts.py| 
+
+Overfull \hbox (2.34402pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 data_science/parameter_tuning_experiments/analyze_rq1a_aggre
+gate_enhanced.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 data_science/parameter_tuning_experiments/analyze_rq1a_groun
+d_truth_enhanced.py| 
+
+Overfull \hbox (23.3389pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/judge_c
+itation_providers.py| 
+
+Overfull \hbox (28.58762pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/runner/truthqa_judge_ba
+seline_correctness.py| 
+
+Overfull \hbox (2.34402pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/estimate_smart_trigger_
+dr_enrichment.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/generate_validation_dis
+tribution_tables.py| 
+
+Overfull \hbox (7.59274pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_a
+nalysis_simple.py| 
+
+Overfull \hbox (23.3389pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_a
+nalysis_corrector.py| 
+
+Overfull \hbox (18.09018pt too wide) in paragraph at lines 278--278
+[]|\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/analyze_paralle
+lization_results.py| 
+[147]
+Overfull \hbox (8.85632pt too wide) in paragraph at lines 371--371
+[]|\T1/cmr/bx/n/10 Canonical
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 com-
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 mand
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 (from
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+\T1/cmr/bx/n/10 repo
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (137.81094pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (174.55197pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/aggregate_time_cost_scaling.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (143.05966pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/retrieve_effect_sizes.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (242.78531pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/temperature_sensitivity_assumption_tests.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (384.5007pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/runner/truthqa_judge_basel
+ine_correctness.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1_verification_Truth_QA/analysis_script/recalculat
+e_metrics.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (295.27249pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/run_physics_cld_tests.p
+y| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (326.7648pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/analyze_physics_cld_res
+ults.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (316.26736pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/generate_comparison_tab
+le.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (368.75455pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/generate_retrieval_comp
+arison_table.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (258.53146pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/get_avg_scores.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (384.5007pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/cld_data_files/create_t
+hermostat_excel.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (447.48532pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/add_supporting_quotes.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (452.73404pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/add_urls_to_references.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (400.24686pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/show_example.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (436.98788pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/verify_and_fix_urls.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (394.99814pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_validation_physics_CLDs/physics_clds_with_refer
+ences/verify_urls.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/judge_cita
+tion_providers.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ1a_ulemans_citation_provider_comparison/compare_ji
+na_vs_scraper.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (311.01865pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_hallucination_detection/rq2_simple_batch_analyze
+r.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (332.01352pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ2_hallucination_detection/rq2_master_report_v2_enh
+anced.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (232.28787pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_unified_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (279.52634pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/analyze_deep_research_results.py| 
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (232.28787pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_statistical_test.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (269.0289pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/rq3_per_cld_detection_rates.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (269.0289pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/compute_enriched_gt_metrics.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (211.293pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/generate_figures.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (211.293pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/run_rq3_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (311.01865pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/sample_edges_for_validatio
+n.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (295.27249pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/enrichment_extrapolation.p
+y| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (358.25711pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/estimate_smart_trigger_dr_
+enrichment.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/plot_dr_cost_efficiency.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/generate_validation_distri
+bution_tables.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/RQ3_deep_research/scripts/compute_enriched_f1_from_v
+alidation.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (206.04428pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_all_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (258.53146pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_costs_by_experiment.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (242.78531pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_experiment_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (237.53659pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/calculate_costs_max_edges.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (253.28275pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/analyze_token_and_call_stats.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (263.78018pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/analyze_output_tokens_tiktoken.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (190.29813pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/compute_dr_costs.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (274.27762pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/cost_analysis/generate_table21_scaling_summary.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (353.00839pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/token_call_analysis_RQ1a_judge/analyze_output_tokens
+_tiktoken.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/time_and_cost_scaling/aggregate_time_cost_scaling.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (274.27762pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/time_and_cost_scaling/collect_corrector_timing.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (363.50583pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_simple.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_corrector.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (410.7443pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_simple_rm_anova.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (426.49045pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/Sensitivity_analysis_simple/scripts/sensitivity_anal
+ysis_corrector_rm_anova.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (363.50583pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/run_parallelizatio
+n_benchmark.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (374.00327pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/parallelization_benchmark/scripts/analyze_paralleliz
+ation_results.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (227.03915pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/power_analysis/compute_power_analysis.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (290.02377pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/random_baseline_generator/compute_random_baseline.py
+| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (316.26736pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/embedding_model_benchmark/embedding_benchmark_real_c
+ld.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (379.25198pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/generator_model_comparison_analysis/run_generator_mo
+del_comparison.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--371
+[]|\T1/cmtt/m/n/10 python
+
+Overfull \hbox (347.75967pt too wide) in paragraph at lines 371--371
+\T1/cmtt/m/n/10 final_runs/generator_model_comparison_analysis/analyze_generato
+r_models.py| 
+[148] [149]
+Overfull \vbox (1016.80583pt too high) has occurred while \output is active
+[150]
+Overfull \hbox (2.97047pt too wide) in paragraph at lines 376--377
+\T1/cmr/m/n/12 and \T1/cmr/m/it/12 cot \T1/cmr/m/n/12 (chain-of-thought rea-son
+-ing [[]]). Ci-ta-tion judges ad-di-tion-ally in-clude a fourth vari-ant, \T1/c
+mr/m/it/12 mechanistic-
+
+Overfull \hbox (50.27873pt too wide) in paragraph at lines 396--396
+[]|\T1/cmtt/m/n/10 alternative_prompts/prompts_correctness_{baseline,mechanisti
+c,cot}.yaml| 
+
+Overfull \hbox (81.77104pt too wide) in paragraph at lines 396--396
+[]|\T1/cmtt/m/n/10 alternative_prompts/prompts_citation_{baseline,mechanistic,c
+ot,mech_lit}.yaml| 
+[151]
+Overfull \hbox (39.29146pt too wide) in paragraph at lines 487--488
+\T1/cmr/m/n/12 Complete Bib-TeX ci-ta-tions for all soft-ware are avail-able in
+ the repos-i-tory at \T1/cmtt/m/n/12 thesis/final_thesis/software.bib\T1/cmr/m/
+n/12 . 
+[152]
+Overfull \hbox (55.88591pt too wide) in paragraph at lines 526--527
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 final_runs/RQ1_verificatio
+n_Truth_QA/runner/truthqa_judge_baseline_correctness.py 
+[153]
+Overfull \hbox (49.71242pt too wide) in paragraph at lines 612--613
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 final_runs/RQ1a_ulemans_ci
+tation_provider_comparison/judge_citation_providers.py 
+[154]
+Overfull \hbox (192.62059pt too wide) in paragraph at lines 642--642
+[]\T1/cmtt/m/n/12 python RQ1_excel_snapshot_20251215/final_runs/RQ1_human_valid
+ation_citation_judge/combined_human_validation_analysis.py[] 
+[155] [156] [157]
+Overfull \hbox (0.32448pt too wide) in paragraph at lines 813--814
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion: \T1/cmtt/m/n/12 data_science/parameter_tun
+ing_experiments/run_temperature_sensitivity.py 
+
+Overfull \hbox (94.61673pt too wide) in paragraph at lines 815--816
+[]\T1/cmr/bx/n/12 Results Lo-ca-tion: \T1/cmtt/m/n/12 data_science/parameter_tu
+ning_experiments/results/temperature_sensitivity_<timestamp>/ 
+[158] [159]
+Overfull \hbox (79.56204pt too wide) in paragraph at lines 963--964
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion (Judge): \T1/cmtt/m/n/12 final_runs/Sensiti
+vity_analysis_simple/scripts/sensitivity_analysis_simple.py 
+
+Overfull \hbox (120.39648pt too wide) in paragraph at lines 965--966
+[]\T1/cmr/bx/n/12 Script Lo-ca-tion (Cor-rec-tor): \T1/cmtt/m/n/12 final_runs/S
+ensitivity_analysis_simple/scripts/sensitivity_analysis_corrector.py 
+
+Overfull \hbox (34.86388pt too wide) in paragraph at lines 974--986
+ [][] 
+[160] [161] [162] [163 <../../final_runs/time_and_cost_scaling/figures/figure1_
+scaling_analysis.png>] [164 <../../final_runs/time_and_cost_scaling/figures/fig
+ure2_configuration_comparison.png>] [165] [166]
+Overfull \hbox (148.66577pt too wide) in paragraph at lines 1316--1317
+[]\T1/cmr/m/it/10.95 Reproduction: \T1/cmtt/m/n/10.95 python final_runs/token_c
+all_analysis_RQ1a_judge/analyze_output_tokens_tiktoken.py 
+[167] [168] [169 <../Figures/edge_ablation_f1_ordered.png>] [170] [171]
+[172] [173]
+Overfull \hbox (2.14647pt too wide) in paragraph at lines 1663--1664
+[]\T1/cmr/bx/n/12 Implementation: \T1/cmtt/m/n/12 modules.py:5688 \T1/cmr/m/n/1
+2 (\T1/cmtt/m/n/12 judge_all_edges_with_citations_serial\T1/cmr/m/n/12 ) $\OMS/
+cmsy/m/n/12 !$ \T1/cmtt/m/n/12 modules.py:4988 
+[174]
+Overfull \hbox (15.11533pt too wide) in paragraph at lines 1709--1710
+[]\T1/cmr/bx/n/12 Implementation: \T1/cmtt/m/n/12 modules.py:1748 \T1/cmr/m/n/1
+2 (\T1/cmtt/m/n/12 _corrupt_relationships\T1/cmr/m/n/12 ), \T1/cmtt/m/n/12 :154
+4 \T1/cmr/m/n/12 (\T1/cmtt/m/n/12 _corrupt_relationship\T1/cmr/m/n/12 ), \T1/cm
+tt/m/n/12 :1582
+[175] [176] [177] [178] [179] [180] [181] [182 <../../final_runs/RQ1a_ground_tr
+uth_correctness/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_truth_co
+rrectness_score_heatmap.png>] [183 <../../final_runs/RQ1a_ground_truth_citation
+/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_truth_citation_score_he
+atmap.png>] [184 <../../final_runs/RQ1a_corruption_detection_correctness_final/
+enhanced_analysis_20251224_230553_962416b3/rq1a_corruption_detection_correctnes
+s_score_heatmap.png>] [185 <../../final_runs/RQ1a_corruption_detection_citation
+_gpt5mini/enhanced_analysis_20251224_230553_962416b3/rq1a_corruption_detection_
+citation_score_heatmap.png>] [186 <../../final_runs/RQ1a_corruption_detection_c
+orrectness_final/enhanced_analysis_20251224_230553_962416b3/rq1a_roc_curves.png
+> <../../final_runs/RQ1a_corruption_detection_citation_gpt5mini/enhanced_analys
+is_20251224_230553_962416b3/rq1a_roc_curves.png>] [187 <../../final_runs/RQ1a_g
+round_truth_correctness/enhanced_analysis_20251224_230553_962416b3/rq1a_ground_
+truth_roc_curves.png> <../../final_runs/RQ1a_ground_truth_citation/enhanced_ana
+lysis_20251224_230553_962416b3/rq1a_ground_truth_roc_curves.png>]
+(./appendix_sensitivity.tex [188] [189]
+(../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_table.tex)
+[190 <../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_figure.pn
+g>]
+(../../final_runs/Sensitivity_analysis_simple/prompt_sensitivity_assumptions_ta
+ble.tex) [191]
+(../../final_runs/Sensitivity_analysis_simple/corrector_sensitivity_table.tex)
+(../../final_runs/Sensitivity_analysis_simple/corrector_sensitivity_assumptions
+_table.tex)) [192 <../../final_runs/Sensitivity_analysis_simple/corrector_sensi
+tivity_figure.png>]
+Overfull \hbox (37.46709pt too wide) in paragraph at lines 2147--2148
+\T1/cmr/m/n/12 The fi-nal ex-per-i-ments use the \T1/cmr/bx/n/12 Ni-tai_C \T1/c
+mr/m/n/12 gen-er-a-tor prompt con-fig-u-ra-tion for both node gen-er-a-tion (\T
+1/cmtt/m/n/12 generateNodes\T1/cmr/m/n/12 )
+
+Overfull \hbox (247.70958pt too wide) in paragraph at lines 2147--2148
+\T1/cmr/m/n/12 and edge gen-er-a-tion (\T1/cmtt/m/n/12 generateEdges\T1/cmr/m/n
+/12 ). The prompt is stored in the repos-i-tory at \T1/cmtt/m/n/12 data_science
+/parameter_tuning_experiments/prompts_Nitai_C.yaml
+[193] [194] [195] [196] [197] [198] [199] [200] [201]
+Overfull \hbox (5.43434pt too wide) in paragraph at lines 2632--2633
+\T1/cmr/m/n/12 tools are avail-able: \T1/cmtt/m/n/12 revise_motivation \T1/cmr/
+m/n/12 (fix ex-pla-na-tion while pre-serv-ing edge type) and \T1/cmtt/m/n/12 ch
+ange_edge_type
+[202] [203] [204] [205]) (./thesis_full.bbl [206] [207] [208] [209] [210]
+[211]
+Underfull \hbox (badness 1838) in paragraph at lines 616--621
+[]\T1/cmr/m/n/12 OpenAI.  Learn-ing to rea-son with llms: In-tro-duc-ing ope-na
+i o1, a new large lan-guage
+[212]
+Underfull \hbox (badness 1038) in paragraph at lines 723--729
+[]\T1/cmr/m/n/12 Mark Shi-monovich, Adam Pearce, Hi-lary Thom-son, Kather-ine K
+eyes, and Srini-vasa Vit-tal
+
+Underfull \hbox (badness 2111) in paragraph at lines 805--810
+[]\T1/cmr/m/n/12 Evangelista Tor-ri-celli.  \T1/cmr/m/it/12 Opera ge-o-met-rica
+\T1/cmr/m/n/12 .  1644.  URL []$\T1/cmtt/m/n/12 https : / / archive . org / det
+ails /
+[213] [214] [215]) [216] (./thesis_full.aux) )
+(see the transcript file for additional information) </home/nitai/.texlive2023/
+texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0500.600pk> </home/nitai/.texlive2023
+/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0700.600pk> </home/nitai/.texlive202
+3/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx1000.600pk> </home/nitai/.texlive20
+23/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0600.600pk> </home/nitai/.texlive2
+023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/nitai/.texlive
+2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1095.600pk> </home/nitai/.texliv
+e2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbi1000.600pk> </home/nitai/.texli
+ve2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti0800.600pk> </home/nitai/.texl
+ive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0800.600pk> </home/nitai/.tex
+live2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0800.600pk> </home/nitai/.te
+xlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1095.600pk> </home/nitai/.t
+exlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/nitai/.
+texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk> </home/nitai/
+.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/nitai
+/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> </home/nita
+i/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> </home/nit
+ai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0600.600pk> </home/ni
+tai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk> </home/n
+itai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/
+nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> </home
+/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> </hom
+e/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </ho
+me/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </h
+ome/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> </
+home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <
+/home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> 
+</home/nitai/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
+10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/s
+ymbols/msbm10.pfb>
+Output written on thesis_full.pdf (216 pages, 10864137 bytes).
+Transcript written on thesis_full.log.
+Latexmk: Getting log file 'thesis_full.log'
+Latexmk: Examining 'thesis_full.fls'
+Latexmk: Examining 'thesis_full.log'
+Latexmk: Found input bbl file 'thesis_full.bbl'
+Latexmk: Log file says output to 'thesis_full.pdf'
+Latexmk: Found bibliography file(s):
+  ./references.bib
+  ./software.bib
+Latexmk: All targets (thesis_full.pdf) are up-to-date
+

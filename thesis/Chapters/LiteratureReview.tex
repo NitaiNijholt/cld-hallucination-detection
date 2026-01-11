@@ -1,0 +1,539 @@
+\chapter{Literature review}
+
+% a CAUSal loop diagram is a networkmodel of a system indicating the causal connections (edges) between variables (nodes). As opposed to DAG' (directed Acyclic graphs) loops are not only allowed but they are a crucial part of causal loop diagrams, often indicating important connections that can be determining for the functioning of the system. A loop is a cycle between 2 or more nodes. Reinforcing loops contitute loops with same polarity relationships (u,e, A positive B, and B positive A) leading to a runaway positive inrease in both variables over time (certis parabus). 
+% A balancing loop combined a positive (A posive B) and negative loop (B negative A) where an increase in one variable decreases the other, stabilizing the system.
+
+
+% A causal loop diagram (CLD) is a qualitative system-dynamics representation of hypothesized causal structure within a bounded system. It is a signed, directed graph whose nodes denote system variables and whose arcs encode ceteris paribus monotonic influences: a “+” arc indicates that, relative to a reference level, an increase (decrease) in the source tends to produce an increase (decrease) in the target; a “–” arc indicates the opposite tendency. Salient delays may be marked on arcs to indicate that the dominant effect is temporally lagged. Unlike directed acyclic graphs (DAGs), CLDs admit cycles and explicitly emphasize feedback as a first-class structural feature.
+
+% Formally, a CLD can be defined as 
+% ��
+% =
+% (
+% ��
+% ,
+% ��
+% ,
+% ��
+% ,
+% ��
+% )
+% G=(V,E,σ,δ), where 
+% ��
+% V is a finite set of variables; 
+% ��
+% ⊆
+% ��
+% ×
+% ��
+% E⊆V×V is a set of directed arcs; 
+% ��
+% :
+% ��
+% →
+% {
+% +
+% 1
+% ,
+% −
+% 1
+% }
+% σ:E→{+1,−1} assigns each arc a polarity; and 
+% ��
+% :
+% ��
+% →
+% {
+% 0
+% ,
+% 1
+% }
+% δ:E→{0,1} flags salient delays. The intended semantics are that for each arc 
+% ��
+%  ⁣
+% →
+%  ⁣
+% ��
+% ∈
+% ��
+% i→j∈E there exists a (possibly nonlinear) structural relation 
+% ��
+% ��
+% =
+% ��
+% ��
+% (
+% ��
+% p
+% a
+% (
+% ��
+% )
+% ,
+% ��
+% ��
+% ,
+% ��
+% )
+% x
+% j
+% 	​
+
+% =f
+% j
+% 	​
+
+% (x
+% pa(j)
+% 	​
+
+% ,u
+% j
+% 	​
+
+% ,t) such that, over the domain of interest and holding other parents approximately constant, 
+% ��
+% (
+% ��
+%  ⁣
+% →
+%  ⁣
+% ��
+% )
+% =
+% +
+% 1
+% σ(i→j)=+1 implies 
+% ∂
+% ��
+% ��
+% /
+% ∂
+% ��
+% ��
+% ≥
+% 0
+% ∂f
+% j
+% 	​
+
+% /∂x
+% i
+% 	​
+
+% ≥0 and 
+% ��
+% (
+% ��
+%  ⁣
+% →
+%  ⁣
+% ��
+% )
+% =
+% −
+% 1
+% σ(i→j)=−1 implies 
+% ∂
+% ��
+% ��
+% /
+% ∂
+% ��
+% ��
+% ≤
+% 0
+% ∂f
+% j
+% 	​
+
+% /∂x
+% i
+% 	​
+
+% ≤0.
+
+% A feedback loop is any simple directed cycle. Its polarity is the product of its arc signs: 
+% ∏
+% ��
+% ∈
+% ��
+% ��
+% (
+% ��
+% )
+% =
+% +
+% 1
+% ∏
+% e∈C
+% 	​
+
+% σ(e)=+1 denotes a reinforcing loop (R), which tends to amplify deviations; 
+% ∏
+% ��
+% ∈
+% ��
+% ��
+% (
+% ��
+% )
+% =
+% −
+% 1
+% ∏
+% e∈C
+% 	​
+
+% σ(e)=−1 denotes a balancing loop (B), which tends toward goal-seeking or stabilization. (Equivalently, reinforcing loops contain an even number of negative arcs, balancing loops an odd number.) Loop polarity characterizes qualitative tendencies and does not presume linearity, stationarity, or constant effect sizes.
+
+% CLDs deliberately abstract from magnitudes, functional forms, stocks-and-flows accounting, and statistical identification of causal effects. They encode theory- or evidence-informed hypotheses about directional dependencies and dominant feedbacks to support elicitation, communication, and high-level reasoning about system behavior, and they are commonly used as a precursor or complement to quantified stock-and-flow models, experiments, and statistical/causal analyses.
+
+% While there is research exploring extending CLDs to quantative rigourous, computational models [] offering (assumption heavy) and has a long road to go. An even more fundamental problem: Lack of CLD's pf of the systems we want to model, remains. This is due to prohibitive time investment needed to construct these CLDs. 
+
+% As an example Given a CLD with V variables, discussing each possible relationship between these variables pairwise scales with O(V2), quickly models of systems of a large number of variables into a time intensive heavy exercise for a group of experts, with associated coordination challenges and costs.
+
+
+\section*{Causal Loop Diagrams}
+
+A causal loop diagram (\CLD) is a qualitative system-dynamics representation of hypothesized causal structure within a bounded system. It is a signed, directed graph whose nodes denote system variables and whose arcs encode \emph{ceteris paribus} monotonic influences: a \enquote{+} arc indicates that, relative to a reference level, an increase (decrease) in the source tends to produce an increase (decrease) in the target; a \enquote{--} arc indicates the opposite tendency. Salient delays may be marked on arcs to indicate that the dominant effect is time-lagged. Unlike directed acyclic graphs (DAGs), CLDs admit cycles and explicitly emphasize feedback as a first-class structural feature.
+
+\medskip
+\noindent
+\textbf{Formalization.} A \CLD\ can be defined as \(G=(V,E,\sigma,\delta)\), where \(V\) is a finite set of variables; \(E\subseteq V\times V\) is a set of directed arcs; \(\sigma:E\to\{+1,-1\}\) assigns each arc a polarity; and \(\delta:E\to\{0,1\}\) flags salient delays. The intended semantics are that for each arc \(i\!\to\!j\in E\) there exists a (possibly nonlinear) structural relation
+\[
+x_j \;=\; f_j\!\bigl(x_{\pa(j)},\,u_j,\,t\bigr)
+\]
+such that, over the domain of interest and holding other parents approximately constant, \(\sigma(i\!\to\!j)=+1\) implies \(\partial f_j/\partial x_i \ge 0\) and \(\sigma(i\!\to\!j)=-1\) implies \(\partial f_j/\partial x_i \le 0\).
+
+\medskip
+\noindent
+\textbf{Feedback loops.} A \emph{feedback loop} is any simple directed cycle. Its polarity is the product of its arc signs: \(\prod_{e\in C}\sigma(e)=+1\) denotes a \emph{reinforcing} loop (R), which tends to amplify deviations; \(\prod_{e\in C}\sigma(e)=-1\) denotes a \emph{balancing} loop (B), which tends toward goal-seeking or stabilization. (Equivalently, reinforcing loops contain an even number of negative arcs, balancing loops an odd number.) Loop polarity characterizes qualitative tendencies and does not presume linearity, stationarity, or constant effect sizes.
+
+\medskip
+\noindent
+\textbf{Scope and use.} \CLD s deliberately abstract from magnitudes, functional forms, stock-and-flow accounting, and statistical identification of causal effects. They encode theory- or evidence-informed hypotheses about directional dependencies and dominant feedbacks to support elicitation, communication, and high-level reasoning about system behavior, and they are commonly used as a precursor or complement to quantified stock-and-flow models, experiments, and statistical/causal analyses.
+
+\medskip
+\noindent
+\textbf{Practical limitations.} While there is ongoing research on extending \CLD s toward quantitatively rigorous computational formalisms (add citations), many such approaches remain assumption-heavy and still maturing. A more fundamental obstacle is the scarcity of high-quality \CLD s for the systems of interest, largely due to the prohibitive time investment required to construct them. For a \CLD\ with \(|V|\) variables, considering all possible pairwise relationships scales as \(O(|V|^2)\), quickly turning large-system modeling into a time-intensive exercise for expert groups, with associated coordination challenges and costs.
+
+
+\section*{Transformer Architecture and Attention Mechanisms}
+
+\section{Evolution of Sequential Modeling Paradigms}
+
+The development of modern language models represents a paradigmatic shift in sequential data processing architectures. Traditional Recurrent Neural Networks (RNNs), while foundational for sequence modeling, exhibited critical limitations that constrained their scalability and effectiveness. The sequential processing paradigm inherent in RNNs precluded efficient parallelization, while the vanishing gradient problem fundamentally limited their capacity to model long-range dependencies—a crucial requirement for understanding complex linguistic structures.
+
+The seminal contribution of Bahdanau et al. \cite{bahdanau2014neural} introduced the attention mechanism as a solution to the information bottleneck problem in encoder-decoder architectures. Rather than compressing entire sequences into fixed-length representations, attention mechanisms enabled dynamic focus allocation across input elements, fundamentally altering how neural networks process sequential information. This innovation laid the groundwork for the revolutionary Transformer architecture proposed by Vaswani et al. \cite{vaswani2017attention}, which demonstrated that self-attention mechanisms alone could achieve state-of-the-art performance without recurrence or convolution.
+
+\section{Self-Attention and Multi-Head Attention Mechanisms}
+
+\subsection{Scaled Dot-Product Attention}
+
+The cornerstone of Transformer architectures lies in the scaled dot-product attention mechanism, formalized as:
+
+\begin{equation}
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\end{equation}
+
+This formulation operationalizes attention through four fundamental operations: (1) query-key similarity computation via dot products, (2) normalization scaling by $\sqrt{d_k}$, (3) probability distribution generation through softmax, and (4) value aggregation through weighted summation.
+
+\textbf{Relevance to Hallucination and Generation Accuracy}: The softmax operation in attention is particularly critical for understanding hallucination phenomena. The temperature-like scaling factor $\sqrt{d_k}$ controls the sharpness of attention distributions. When $d_k$ is large without proper scaling, attention weights become increasingly concentrated (approaching one-hot distributions), potentially leading to overconfident predictions and reduced robustness. This concentration effect can contribute to hallucinations when the model becomes overly certain about spurious correlations in the training data.
+
+\subsection{Multi-Head Attention Architecture}
+
+Multi-head attention extends the representational capacity by computing attention in parallel across multiple subspaces:
+
+\begin{align}
+\text{MultiHead}(Q, K, V) &= \text{Concat}(\text{head}_1, \ldots, \text{head}_h)W^O \\
+\text{where } \text{head}_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
+\end{align}
+
+\textbf{Relevance to Generation Accuracy}: The multi-head mechanism enables the model to simultaneously capture diverse linguistic relationships—syntactic, semantic, and pragmatic. This parallel processing of multiple attention patterns is crucial for generation accuracy, as it allows the model to maintain awareness of various contextual factors simultaneously. However, it can also contribute to hallucination when different heads learn to attend to conflicting or spurious patterns.
+
+\section{Architectural Components and Their Impact on Model Behavior}
+
+\subsection{Layer Normalization and Stability}
+
+Modern Transformer implementations employ Root Mean Square Layer Normalization (RMSNorm):
+
+\begin{equation}
+\text{RMSNorm}(x) = \frac{x}{\sqrt{\frac{1}{d}\sum_{i=1}^d x_i^2 + \epsilon}} \cdot \gamma
+\end{equation}
+
+where $x$ is the input tensor, $d$ is the dimension, $\epsilon$ is a small constant for numerical stability, and $\gamma$ is a learned scaling parameter.
+
+\textbf{Relevance to Generation Accuracy}: Normalization techniques are crucial for training stability and, consequently, generation quality. Poor normalization can lead to activation distributions that are difficult to model accurately, potentially increasing hallucination rates by making the model less reliable in its predictions.
+
+\subsection{Feed-Forward Networks and Token-Level Processing}
+
+The feed-forward component operates independently on each token position, typically expanding dimensionality before contracting back to the model dimension. This design choice (wide rather than deep) optimizes for parallel computation while enabling complex non-linear transformations.
+
+\textbf{Relevance to Hallucination}: The feed-forward layers can be viewed as associative memory components that store factual knowledge. Overfitting in these layers or inadequate capacity can lead to hallucinations when the model retrieves incorrect associations or fails to generalize properly.
+
+\section{Positional Encoding Schemes and Sequential Understanding}
+
+\subsection{Absolute vs. Relative Position Embeddings}
+
+Traditional absolute positional embeddings assign fixed representations to sequence positions, while relative approaches like Rotary Position Embedding (RoPE) encode distances between tokens through rotation matrices:
+
+\begin{align}
+\theta_{m,i} &= m \cdot \omega_i, \quad \text{where } \omega_i = \frac{1}{10000^{2i/d}} \\
+R_\theta &= \begin{pmatrix}
+\cos(\theta) & -\sin(\theta) \\
+\sin(\theta) & \cos(\theta)
+\end{pmatrix}
+\end{align}
+
+For each vector $x$ at position $m$, the rotation is applied to dimension pairs $(2i, 2i+1)$:
+
+\begin{equation}
+\begin{pmatrix}
+x'_{2i} \\
+x'_{2i+1}
+\end{pmatrix} = \begin{pmatrix}
+\cos(m \cdot \omega_i) & -\sin(m \cdot \omega_i) \\
+\sin(m \cdot \omega_i) & \cos(m \cdot \omega_i)
+\end{pmatrix} \begin{pmatrix}
+x_{2i} \\
+x_{2i+1}
+\end{pmatrix}
+\end{equation}
+
+\textbf{Relevance to Generation Accuracy and Hallucination}: Position encoding directly impacts the model's understanding of temporal and structural relationships. Absolute embeddings can lead to hallucinations when the model encounters sequences longer than those seen during training, as position embeddings for unseen positions may have unpredictable behavior. Relative encodings, while more robust to length variations, can still contribute to hallucinations if the distance relationships learned during training don't generalize appropriately to new contexts.
+
+\section{Training Paradigms and Generation Objectives}
+
+\subsection{Causal Language Modeling}
+
+The autoregressive training objective optimizes:
+
+\begin{equation}
+p(w_i^t | w_{t-1}, w_{t-2}, \ldots, w_1) \propto \frac{\exp(s_i)}{\sum_{j \in \mathcal{V}} \exp(s_j)}
+\end{equation}
+
+where $s_i$ represents the logit scores for token $i$ and $\mathcal{V}$ is the vocabulary.
+
+\textbf{Critical Relevance to Hallucination}: The next-token prediction objective, while enabling powerful generative capabilities, inherently creates conditions conducive to hallucination. The model learns to maximize likelihood on training data, which can lead to:
+
+\begin{enumerate}
+\item \textbf{Exposure bias}: During training, the model always sees ground truth context, but during generation, it must condition on its own potentially incorrect outputs
+\item \textbf{Distributional mismatch}: The model optimizes for single-token accuracy rather than sequence-level coherence
+\item \textbf{Confidence miscalibration}: The softmax objective can produce overconfident predictions even for uncertain situations
+\end{enumerate}
+
+\subsection{Generation Strategies and Their Implications}
+
+Two primary decoding strategies demonstrate different trade-offs:
+
+\begin{itemize}
+\item \textbf{Greedy Decoding}: $w_t = \arg\max_w p(w|w_{t-1}, w_{t-2}, \ldots, w_1)$
+\item \textbf{Top-p (Nucleus) Sampling}: Sample from the smallest set $\mathcal{S} \subset \mathcal{V}$ such that:
+\end{itemize}
+
+\begin{equation}
+\sum_{w \in \mathcal{S}} p(w|w_{t-1}, w_{t-2}, \ldots, w_1) \geq \tau
+\end{equation}
+
+\textbf{Relevance to Hallucination and Accuracy}: Greedy decoding can lead to repetitive and deterministic hallucinations when the model enters high-confidence incorrect states. Stochastic sampling methods like top-p can help mitigate some forms of hallucination by maintaining diversity, but they can also introduce errors when the probability calibration is poor. The choice of sampling strategy thus represents a fundamental trade-off between consistency and diversity in generation quality.
+
+\section{Memory and Computational Optimizations}
+
+\subsection{Attention Complexity and FlashAttention}
+
+The quadratic complexity of attention with respect to sequence length $O(n^2d)$ poses significant scalability challenges. FlashAttention addresses this through memory-efficient computation by:
+
+\begin{enumerate}
+\item \textbf{Tiling}: Computing attention in blocks to reduce memory footprint
+\item \textbf{Recomputation}: Trading computation for memory by recomputing attention scores during backpropagation
+\item \textbf{Fused kernels}: Optimizing GPU utilization through combined operations
+\end{enumerate}
+
+\textbf{Relevance to Model Behavior}: While FlashAttention is primarily an optimization technique, the computational constraints it addresses can indirectly affect model behavior. Memory limitations that prevent training on longer sequences can impact the model's ability to learn long-range dependencies, potentially affecting both generation accuracy and hallucination patterns.
+
+\section{Theoretical Implications for Hallucination and Generation Quality}
+
+The Transformer architecture's propensity for hallucination emerges from several theoretical considerations:
+
+\begin{enumerate}
+\item \textbf{Attention Concentration}: The softmax attention mechanism can create overconfident focus on spurious correlations
+\item \textbf{Parametric Memory}: The model's factual knowledge is embedded in parameters, making it difficult to distinguish between learned facts and learned patterns
+\item \textbf{Autoregressive Accumulation}: Errors in early tokens can compound through the generation process
+\item \textbf{Training Objective Limitations}: Next-token prediction doesn't directly optimize for factual accuracy or consistency
+\end{enumerate}
+
+Understanding these mechanisms provides the theoretical foundation for analyzing and potentially mitigating hallucination phenomena in large language models, while the architectural components described above form the basis for the model's remarkable generative capabilities.
+
+\section{Context Vector Computation in Sequence-to-Sequence Models}
+
+In the original attention mechanism for neural machine translation, the context vector $c_i$ for each target word $y_i$ is computed as:
+
+\begin{equation}
+c_i = \sum_{j=1}^{T_x} \alpha_{ij} h_j
+\end{equation}
+
+where the attention weights $\alpha_{ij}$ are calculated as:
+
+\begin{equation}
+\alpha_{ij} = \frac{\exp(e_{ij})}{\sum_{k=1}^{T_x} \exp(e_{ik})}
+\end{equation}
+
+and $e_{ij} = a(s_{i-1}, h_j)$ represents an alignment function that scores the compatibility between the decoder hidden state $s_{i-1}$ and the encoder annotation $h_j$.
+
+This formulation demonstrates the evolution from fixed context vectors to dynamic attention-based representations, laying the groundwork for the self-attention mechanisms that define modern Transformer architectures.
+
+
+\section*{LLM for CLD generation and Hallucination reduction}
+
+
+ Although LLM-based systems for CLD generation show promise to make expert model
+ building sessions more efficient [7, 16, 3], LLM hallucinations—fabricated or inconsistent
+ outputs—undermine reliability for scientific applications [20, 15]. Black-box mitigation
+ strategies (prompting [18, 1], retrieval-augmented generation [5, 19], multi-agent orches
+tration [12, 8], and LLM-as-a-judge [21] and test-time compute [9, 12, 2]) and white-box
+ approaches (fine-tuning [4], RLHF [10] activation monitoring [17]) have been found to
+ reduce LLM hallucinations. LLM-as-a-judge advantage is context-awareness, but its vul
+nerable to (transformer-architectural) biases [6, 11]. We combine LLM-as-a-judge with
+ a set of context-insensitive hallucination detection metrics (cosine similarity [5, 19], per
+plexity [14, 13], minimum probability [15])—an under-explored pairing that could allow
+ for bias reduction and more efficient deployment of test-time compute for the system to
+ self-correct hallucinations
+
+  CLDs are traditionally built during expert knowledge sharing sessions, and since expert time is scarce and the modelling process laborious, these sessions are difficult to organize and proceed with limited efficiently. \cite{deutsch2024}
+
+Expert time is too valuable to be spent on reiterating the variables already known to be of importance to the system, yet reiterating basics to create consensus is often precisely what a large part of these expert model building sessions is spent on, when it could be better utilized for adding specialized knowledge to the model. If an initial starting model could be provided that aligns with the consensus in scientific literature, experts can spend the limited time they have on contributing their specialized knowledge, leading to comprehensive CLDs built in a more efficient way. 
+
+This calls for a context-sensitive ‘filtration system’ that can sift through available knowledge in literature and provide a starting point by retrieving known-to-be relevant variables and relations from the scientific literature for a given problem context into a single model of the complex system, in our case a CLD. This filtration system should construct a coherent, self-consistent CLD around the target variable (i.e. lower back pain) that properly accounts for the causal interrelationships of different parts of the system (i.e. sitting time, stress, age) verifiably grounded in literature and structured enough to be easily visualized, and operationalized into a computational model, which can then be used for research or simulation purposes.
+
+
+An interesting candidate for such a filtration system is a large language model (LLM), which is trained on trillions of tokens compresses a large amount of information in its parameters, a significant portion of which consists of scientific literature—the primary source and record of most expert knowledge. LLMs have the advantage of effectively compressing orders of magnitude more information than a single expert can process in a lifetime. They also allow for the retrieval of relevant information in negligible time, as well as enabling synthesis across techniques applied in separate, often siloed, branches of science, thereby facilitating knowledge synthesis, a prerequisite to new knowledge generation.
+One could use LLMs trained on the research literature to generate an initial sketch of a causal loop diagram (CLD), as is initially explored by \cite{liu2024leveraging} \cite{Waaijers2024theoraizer}.By providing this starting point—a CLD grounded in scientific literature—the time required to develop a CLD and subsequent computational model could be significantly reduced, leading to a model that incorporates more specialized knowledge at reduced expert time cost. If the information retrieval from LLM's is sufficiently 'lossless', that is.  
+Building a CLD construction system has also been tried in the form of a LLM powered system dynamics bot \cite{hosseinichimeh2024textmapdynamicsbot}, but this bot while succesfully annotating 60 \% of links in their dataset, still misses a significant number of links and requires human corrections. 
+
+% The massive reduction in retrieval costs for obtaining information LLMs can bring, along with potential for knowledge synthesis (a prerequisite for generating new knowledge) out of trillions of tokens compressed in their weights, makes them a candidate for a paradigm shifting research assistance system, extending even beyond initial CLD generation toward automated research. If, that is, it can faithfully reproduce the relevant information from the literature. 
+
+LLMs are also known to hallucinate, which is a key challenge standing in the way if this paradigm shifting impact as knowledge retrieval and aggregation systems. The term \emph{hallucination} refers to instances where a model generates content that is not supported by the information in its training data, available retrieval sources, or current context. Concretely, an LLM is said to “hallucinate” when it fabricates claims, cites non-existent references, or asserts incorrect details with high confidence \cite{zhao2023explainability, zheng2023judging}. These hallucinations can appear plausible and coherent at a glance, but are in fact factually or logically incorrect. Hallucinations have been shown to persist despite increases in scaling with data and compute, and therefore cannot be expected to disappear as model test-time accuracy increases and need to be addressed differently \cite{varshney2023stitch}. 
+Reducing hallicinations makes CLDs generated by LLM's more accurate and robust. This thesis addresses application of different hallucination reduction methods to the CLD building system based on LLMs to increase accuracy of generated CLD's, with the goal of enhacing reliability and enabling LLM-powered knowledge generation to scientific standard.
+
+The first objective is to detect and mitigate hallucinations using
+context-sensitive LLM-based methods.
+The second objective is to detect and mitigate hallucinations using context-insensitive metrics.
+The third objective is to develop and test a hybrid verification approach, combining
+these methods for greater efficiency in hallucination reduction and reduced susceptibility to transformer architec-
+tural biases.
+The intended contribution is more efficient self-correction of hallucination by the CLD building system leading to higher validity of final CLD output at a lower compute cost and, therefore, higher value of LLM-based systems as a research assistant.
+
+% Summarizing, the rapid increase of information in research literature, combined with the inherent limitations of human time and cognitive capacity for knowledge acquisition and transmission, presents significant challenges for efficiently aggregating knowledge into Causal Loop Diagrams (CLDs) during expert sessions. Efficient expert knowledge-sharing sessions, however, facilitate the integration of diverse perspectives within a field and their aggregation into comprehensive computational models. Since a large part of experts' knowledge comes from (or is reflected in) the literature, an LLM-based system trained on this literature can provide a starting-point CLD such that experts don't spend time rehashing the basics and instead add their unique domain knowledge to the CLD. However, LLMs are prone to hallucinations, and if the starting CLD produces spurious connections instead of CLDs that are valid representations of literature findings, the generated CLD will not be a useful starting point for further research.
+
+% This work will address hallucination through a number of these mitigation methods, first separately and then in combination, 
+
+% With the goal of more efficient self-correction when hallucination occurs—leading to higher validity of final CLD output at a lower compute cost and, therefore, higher value of LLM-based systems as a research assistant.
+
+Methods for mitigating hallucination can be distinguished into white-box and black-box methods. Black-box methods do not require knowledge of model weights, parameters, or activations to be used, whereas white-box methods do. The following overview details these methods:
+
+\subsection*{Black-box Hallucination Reduction Methods}
+
+\noindent\textbf{Prompt-based:}  
+\begin{itemize}
+    \item \textbf{Prompt Engineering Techniques:} Techniques such as a system prompt detailing the model's role, Chain of Thought (CoT) prompting \cite{wei2022chain}, and providing example(s) of expected input-output task outcomes (multiple-shot learning) \cite{brown2020language}.
+    \item \textbf{Retrieval-Augmented Generation:} Relevant context is retrieved by embedding both the query and a knowledge base into vector space, then selecting the most similar knowledge (using metrics like cosine similarity) to include in the prompt. Te LLM's response is then conditioned on this knowledge \cite{lewis2020retrieval}. Variations of data structures to retrieve data from include knowledge graphs. Providing valid context for conditioning has been shown to be an effective hallucination reduction method in LLMs in general \cite{tonmoy2024comprehensive} and also in the specific context of building CLDs \cite{zhang2024causal}. Retrieving a subset of the knowledge base becomes useful when the context to be used as input to the LLM exceeds its maximum window. In that case, the most relevant context, as determined by a distance metric (L2 distance, cosine similarity), is included through retrieval. It can also be used to do reverse retrieval to find which document(s) in a corpus of training data an LLM's response is based on.
+\end{itemize}
+
+\noindent\textbf{System Orchestration:}  
+\begin{itemize}
+    \item \textbf{Verification Agents:} LLM-based Agents assigned verification roles with respect to the system. Examples include LLM-as-a-judge \cite{zheng2023judging}, where an LLM judges if the output of another LLM is correct, and if not, an LLM-as-a-corrector to reflect on and correct an incorrect answer passed by a previous LLM. \cite{shinn2024reflexion}. 
+    \item \textbf{Multi-agent Ensemble:} Deploying multiple agents with seperate instruction sets in serial or parallel configurations to “divide and conquer” the reasoning process (as seen in architectures like EVER and Chain-of-Verification \cite{tonmoy2024comprehensive}).
+    \item \textbf{Test-time Compute:} Using additional compute at test time (via multi-agent ensemble and reinforcement learning) to perform chain-of-thought reasoning and correction. This approach—employed in models such as OpenAI's o1 \cite{openai2024reasoning} and DeepSeek-R1 \cite{guo2025deepseek}—improves answer quality by allowing for reflection and iterative refinement.
+\end{itemize}
+
+\noindent\textbf{Incorporation of Context-insensitive Metrics:}  
+Context-insensitive metrics use statistical properties of generated responses, independent of semantic interpretation, to detect potential hallucinations.
+\begin{itemize}
+    \item \textbf{Cosine Similarity to Retrieved Sources:} By computing the cosine similarity between cited source material and the LLM-generated response, deviations (i.e., low similarity) can signal hallucination.
+    \item \textbf{Perplexity and Log-Likelihood Analysis:} High perplexity scores may indicate that the output diverges from the training distribution, serving as a flag for hallucinated content \cite{varshney2023stitch}.
+    \item \textbf{Semantic Entropy for Hallucination Detection:} Elevated semantic entropy—measuring uncertainty over the meaning of generated responses—may point to hallucinated content \cite{farquhar2024detecting}.
+    \item \textbf{Hamiltonian Interpretation of Multi-Hop Reasoning Paths:} Analyzing the trajectory of multi-hop reasoning, modeled as a Hamiltonian system, can help identify unstable chains indicative of hallucination \cite{marin2024optimizing}.
+\end{itemize}
+
+\subsection*{White-box Hallucination Reduction Methods}
+
+\begin{itemize}
+    \item \textbf{Fine-tuning \& RLHF:} Involves retraining model weight matrices using input-output examples and associated scores in a reinforcement learning framework. involves retraining weight matrices of the model given a set of input-output examples and associated scores to be used in a reinforcement learning setup to improve the accuracy of the model in a given task. This has been shown to increase the relevancy of responses of smaller models to be competitive with larger models and reduce hallucinations \cite{ouyang2022rlhf}. Fine-tuning can be done at lower training cost and with less loss of generality by employing LoRa (low-rank adaptation) and selecting only a subset of layers to fine-tune \cite{hu2021lora}.  
+    \item \textbf{Test-time compute}
+  Test-time compute has emerged as the primary paradigm driving progress in reasoning large language models (LLMs). This approach deploys additional compute resources during inference to enhance the quality of the final output. One key motivation behind test-time compute is the diminishing returns observed during the pre-training phase—additional compute yields progressively smaller efficiency gains as models scale \cite{kaplan2020scaling}. In practice, test-time compute leverages a combination of multi-agent ensembles, reinforcement learning, and chain-of-thought reasoning steps. LLM ensembles are arranged in a serial configuration with carefully designed prompts, enabling them to “divide and conquer” the reasoning process into distinct steps. These steps often involve reflecting on and correcting errors made by preceding agents in the chain, either through explicit programming or as an emergent behavior.Moreover, the system can operate either serially or via multiple parallel branches. In the latter case, intermediate results are systematically aggregated and evaluated to ensure the overall coherence of the reasoning process, ultimately producing a single, refined final answer.This methodology is employed in models such as OpenAI's o1 \cite{openai2024reasoning}—although beyond mentioning the use of reasoning steps, multiple LLM calls, and reinforcement learning, specific technical details remain undisclosed—and more recently in DeepSeek-R1 \cite{guo2025deepseek}, for which implementation code has been published.
+    \item \textbf{Activation Pattern Monitoring:} Activation pattern monitoring involves monitoring model internals to map occurrences of hallucinations to specific neurons or layers within the model and reduce these by steering activations \cite{wang2024adaptive}. Other research has shown neurons which exhibit undesirable characteristics, such as having very high sensitivity, can contribute to hallucinations, and this can be addressed using neural dropout during fine-tuning \cite{varshney2023stitch}.
+    \item \textbf{Predictive Analysis of System Capacity:} Predictive analysis of system capacity based on the eigenvalue spectrum of model weight matrices: Research from Chris Martin et al. has shown that model layers that strike a good balance between overfitting and underfitting have an alpha exponent of between 2 and 4 \cite{martin2021predicting} \cite{martin2019traditional} \cite{martin2021predicting}. It remains to be investigated information could possibly be used to predict performance on tasks in addition to scores in the task itself, or to find a threshold for determining enough fine-tuning training that holds up in the context of a CLD building system.
+\end{itemize}
+
+Another pre-requisite for building a reliable knowledge synthesis CLD building system using is to determine whether the generating LLM architecture is in principle capable of generating new knowledge.  Recent research indicates that Large Language Models (LLMs) can synthesize new knowledge by integrating information from scientific literature and datasets, enabling scientific inference and explanation \cite{Zheng2023}.
+
+In chemistry, AI systems powered by LLMs have been developed to autonomously design, plan, and execute complex experiments, showcasing their potential in generating new scientific insights \cite{Feng2023}. Recent shows AI systems can be zero shot hypothesis generators \cite{Qi2023} and multiple LLMs can even be setup to work together and form an autonomous 'AI scientist' \cite{lu2024ai}. LLM based systems have also been specifically used for discovery of causal graphs \cite{zhang2024causal}. This indicates their potential for being a valuable generating model for a CLD building system.
+
+However, as extensively discussed also mentioned in our aforementioned hallucination discussion, ensuring the factual accuracy of knowledge synthesized by LLMs remains a challenge, as studies have shown that while LLMs can generate coherent and contextually relevant information, their outputs may not always be reliable \cite{Wang2024}.
+
+To enhance the knowledge synthesis capabilities of LLMs, researchers have proposed modular frameworks that integrate specialized language models, allowing for the dynamic incorporation of new, domain-specific knowledge into general-purpose LLMs \cite{Qi2023}. Domain specific Finetuning has also shown promise to increase accuracy of knowledge generated by these LLM's \cite{Susnjak2024}.
+
+For this thesis, the possibility of pretraining an open-source LLM from scratch on a curated set of scientific papers containing CLD data was briefly considered to enhance accuracy in CLD generation. This approach aligns with training methodologies used for models such as GPT, Anthropic's models, and the LLaMA series. An additional advantage of pretraining from scratch is the ability to verify, through direct access to the training data, whether the model generates CLDs beyond its training set—thereby assessing its capability for genuine knowledge synthesis. Examining feasability of pretraining DeepSeek V3 671B and LLAMA 3.2 yielded the following findings:  training DeepSeek V3 requires approximately 2.788 million H800 GPU hours, and even with a supercomputer like Snellius (offering 352 H100 GPUs) \cite{snellius}, the estimated training time would be around 330 days. Although H100 GPUs avaialbe on snellius are more capable than H800 GPUs, the scenario remains impractical. Other models, such as LLaMA 305B, would require even more computational resources (an estimated 30.45 million GPU hours). Moreover, significant implementation challenges (e.g., the absence of publicly available training code and the enormous data requirements) render this approach unfeasible.
+In addition to prohibitive compute and data costs, other research has also demonstrated the knowledge synthesis capabilities of LLMs \cite{Feng2023}, \cite{lu2024ai}, \cite{Wang2024}. Consequently, training LLMs from scratch was deemed outside the scope of this research.
+
+Recently, groundbreaking finetuning techniques have emerged that could significantly enhance CLD generation accuracy while requiring orders of magnitude less compute and data. One such open-source approach—fine-tuning models on valid reasoning traces (structured Chain-of-Thought processes leading to correct results)—has demonstrated a drastic reduction in the number of training samples needed to achieve strong performance in mathematical and reasoning tasks. With just 1,000 diverse, high-quality samples generated by a reasoning model (Google Gemini Pro), this method can fine-tune an open-source model, Alibaba’s QWEN-25B, to match the performance of a state-of-the-art competitive model (in this case, OpenAI’s o1) in just 26 minutes using 16 H100 GPUs \cite{s1simpletesttimescaling}.
+
+What makes this result groundbreaking is the orders-of-magnitude reduction in both cost and computational requirements, while maintaining effectiveness.  Similar techniques are now being leveraged in leading reasoning models such as OpenAI’s o3-mini, o1, and DeepSeek’s R1, pushing AI’s reasoning capabilities beyond the expectations set by prior pretraining scaling laws \cite{kaplan2020scaling}. As a result, fine-tuning an LLM for the CLD-building system using reasoning traces appears feasible, even with constrained compute and data resources.
+
+Future research aimed at improving the CLD building system could explore fine-tuning on validated CLD reasoning traces obtained by using a CLD building system—ideally verified by experts or, at a minimum, assessed by LLM-as-a-judge—to enhance final CLD accuracy. 
+
+The reasoning step would then be the rationale described by the LLM for adding a node to the CLD, where the reasoning trace or chain would be all reasoning steps over time required to arrive at the final CLD model state, which would then be validated by an expert. We would then apply the finetuning methodology of an open source model on these reasoning traces, instead of reasoning traces generated by another reasoning model. While it remains to be seen if training on these different types of reasoning traces yields similar results, the important analogies between the CLD model building process as designed at present and test time compute process used to generate the reasoning traces (serial test time compute, chain of thought prompting leasing to reasoning traces), suggest promising potential.
+
+However, before exploring this potential, a set of validated reasoning traces is required. Running the system with the proposed hallucination reduction methods could help ensure the quality of these traces while also accelerating the validation process. By removing invalid or fixing reasoning traces before they are passed to experts, this approach increases the likelihood that only high-quality examples undergo validation, making the validation process more efficient and reliable.
+
+Now that an overview of relevant methods has been provided, the next section will describe which of these techniques will be combined in what way to to reduce hallucinations and enhance reliability of the CLD system in this thesis.
+
+The first context-sensitive method that will be used to detect hallucination is LLM-as-a-judge.
+Recent studies indicate that LLM-as-a-Judge-derived accuracy metrics align more closely with human evaluations than traditional, context-insensitive metrics—achieving up to 80\% agreement with human evaluators \cite{li2024llms}. LLM-as-a-judge has been setup succesfully to verify outputs of an LLM based research system \cite{lu2024ai}. using an LLM-as-a-corrector has also been used to reflect on outputs known to contain hallucinations, to 'fix' the reasoning step, which is employed when deploying serial test-time compute and 'reflect' prompts \cite{shinn2024reflexion,varshney2023stitch,wei2022chain}. This makes them strong candidates for evaluating CLD system outputs in a context-aware way, especially when expert human evaluation is scarce. As such, they serve as our initial verification mechanism. 
+
+Robust verification and annotation are essential for trust in the resulting CLD. By systematically reviewing each causal link—whether generated by the model or derived from a retrieval mechanism—we can identify uncertain or fabricated edges and remove them before they become part of the final model, or indicate the uncertainty beloning to a certain link. This mirrors established best practices in conceptual modeling, where structural uncertainties should never be ignored. Instead, they must be documented so that the final model remains transparent and allows for straightforward validation.
+
+However, LLMs are not without flaws, as accuracy has been shown to decrease with an increased context window size, and the likelihood of hallucination rises when information is incomplete (i.e., having only an abstract of a paper instead of the entire text) \cite{Wang2024}. Setting up LLM-as-a-Judge has also been shown to be susceptible to adversarial attacks \cite{shi2024optimization, li2024llms}. Moreover, using one LLM to evaluate another could amplify structural biases inherent to the Transformer architecture.
+
+This motivates a hybrid approach that combines LLM-based evaluation with complementary, context-insensitive metrics. Statistical properties have been used to detect hallucinations with some success \cite{varshney2023stitch, farquhar2024detecting}. Retrieval-Augmented Generation (RAG)—which involves feeding the context to the prompt that has the minimum distance (in terms of cosine similarity or Euclidean distance) in vector space to the user query—has also been shown to reduce hallucinations \cite{lewis2020retrieval}, including in the context of CLD discovery \cite{zhang2024causal}. However, using RAG requires similarity between the initial query and the training corpus, necessitating a search over the corpus used to train the generating LLM, which is not available for many state-of-the-art closed-source models.  However, certain provider API's (e.g. the perplexity API) can return the sources that the LLM used to generate answers. 
+
+This means we can still apply the principle of checking the similarity between the answer and the source indicated by the LLM, using a “Reverse RAG” setup: first, we generate an answer; then, we check if it has sufficient cosine similarity with the chunks of source material the LLM cites. The OpenAI API also returns log probabilities over the tokens, which can be used to calculate context-insensitive metrics, concretely the following context-insensitive metrics will be considered: 
+% Robust verification and annotation are essential for trust in the resulting CLD. By systematically reviewing each causal link—whether generated by the model or derived from a retrieval mechanism—we can identify uncertain or fabricated edges and remove them before they become part of the final model, or indicate the uncertainty. This mirrors established best practices in conceptual modeling, where structural uncertainties should never be ignored. Instead, they must be documented so that the final model remains transparent and allows for straightforward validation.
+
+% As for feasibility 
+
+Cosine similarity score between the chunk(s) of the source cited by the LLM and the LLM-generated answer.
+Logit-based metrics derived from the LLM’s output: (a) perplexity and (b) minimum probability (as defined in \cite{varshney2023stitch}).
+While these methods have been explored individually, their combined use with LLM-as-a-Judge remains under-examined \cite{tonmoy2024comprehensive}. An added advantage of these statistical properties is their relatively low computational cost and domain-agnostic nature, which could allow verification of reasoning traces without requiring expert intervention.
+
+If these methods can be effectively integrated, it may be possible to reduce hallucinations beyond what is achievable using LLM-as-a-Judge, ensemble model techniques (parallel or serial calls to LLMs), or RLHF setups alone. Specifically, the context-insensitive metrics could serve as early indicators of hallucination, helping optimize compute resource allocation (e.g., strategically deploying LLM-as-a-Judge calls) for hallucination correction. This could lead to more efficient use of test-time compute to build the CLD. Test time compute has proven central to achieving state-of-the-art reasoning. If we can use context-insensitive metrics to deploy test-time compute more efficiently, this could reduce costs, potentially increase speed, and serve as a scoring mechanism for the generated relationships in the CLD, thereby increasing trust in the model-building process.
+
+In summary, the goal is to implement a combination of context-sensitive and context-insensitive hallucination reduction methods in the LLM-based CLD-building system to generate more accurate final CLDs in a more efficient manner. The effectiveness of these methods will be evaluated through the following experiments:
+
+
+
+\section{Defenition of Hallucination}
+
+OpenAI why language models hallucinate:
+
+https://www.arxiv.org/abs/2509.04664
+
+
+"The paper argues that LLM hallucinations arise naturally from the pretraining objective: by reducing generation to an “Is-It-Valid” binary classification problem, the authors show that even with error-free data, cross-entropy–trained base models will still produce errors (notably on arbitrary facts or under model misspecification), extending prior single-occurrence bounds to settings with prompts and explicit “I don’t know.” 
+arXiv
+
+They then explain why post-training doesn’t eliminate the problem: prevalent 0–1 graded benchmarks penalize abstentions and uncertainty, so models are effectively rewarded for confident guesses, which sustains overconfident hallucinations. 
+arXiv
+
+As a remedy, the authors call for socio-technical changes to primary evaluations and leaderboards—modifying scoring to stop penalizing calibrated uncertainty—rather than adding more standalone hallucination tests"
+
+\section{Test time compute}
+
+Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters
+
+https://arxiv.org/abs/2408.03314
+
+"The paper shows that scaling test-time compute—via search against process reward model (PRM) verifiers and iterative revision of answers—works best when allocated adaptively per-prompt ("compute-optimal" strategy), yielding up to ~4× efficiency gains over best-of-N sampling. In FLOPs-matched tests, adding test-time compute to a smaller model can beat a ~14× larger model on easy/medium problems (especially when inference tokens $\ll$ pretraining tokens), but the hardest questions still favor more pretraining—so train-time and test-time compute aren't 1-to-1 substitutes."
+
+\label{LR}

@@ -1,0 +1,441 @@
+% Chapter: Global Sensitivity Analysis
+\chapter{Global Sensitivity Analysis}
+\label{chap:sensitivity}
+
+\section{Introduction}
+
+Experimental studies in machine learning and natural language processing often involve multiple hyperparameters and configuration choices whose effects on system performance are not fully understood. While grid search and random search explore the parameter space to find optimal configurations, they do not reveal \emph{which} parameters matter most, \emph{how} parameters interact, or whether certain parameters can be safely fixed without sacrificing performance. Global sensitivity analysis (GSA) addresses these questions by systematically quantifying the influence of input parameters on output variance.
+
+This chapter presents a comprehensive global sensitivity analysis of the hallucination detection experiments described in Chapters~\ref{chap:methods} and~\ref{chap:experiments}. We employ Sobol sensitivity analysis \citep{sobol1993sensitivity, saltelli2010variance}, a variance-based method that decomposes output uncertainty into contributions from individual parameters and their interactions. This analysis serves three critical purposes:
+
+\begin{enumerate}
+    \item \textbf{Parameter Prioritization}: Identifying which experimental parameters most strongly influence hallucination detection accuracy, precision, and recall, thereby guiding future optimization efforts.
+    
+    \item \textbf{Interaction Detection}: Revealing whether parameters operate independently or exhibit significant interactions, which has implications for optimization strategies.
+    
+    \item \textbf{Model Simplification}: Determining which parameters have negligible influence and can be fixed to reduce experimental complexity and computational cost.
+\end{enumerate}
+
+The remainder of this chapter is organized as follows: Section~\ref{sec:sa_background} provides the theoretical foundation of variance-based sensitivity analysis and Sobol indices. Section~\ref{sec:sa_methodology} describes our experimental design, including parameter selection, sampling strategy, and computational implementation. Section~\ref{sec:sa_results} presents the sensitivity analysis results for each research question. Finally, Section~\ref{sec:sa_discussion} discusses the implications of these findings for hallucination detection system design.
+
+\section{Theoretical Background}
+\label{sec:sa_background}
+
+\subsection{Global Sensitivity Analysis}
+
+Sensitivity analysis examines how uncertainty in model outputs can be attributed to different sources of uncertainty in model inputs \citep{saltelli2008global}. Consider a computational model $Y = f(\mathbf{X})$, where $Y$ is a scalar output and $\mathbf{X} = (X_1, X_2, \ldots, X_D)$ is a vector of $D$ input parameters. The goal of global sensitivity analysis is to quantify the contribution of each $X_i$ (and interactions among parameters) to the total variance in $Y$.
+
+Unlike local sensitivity analysis methods, which examine the effect of small perturbations around a nominal point (e.g., partial derivatives), global sensitivity analysis explores the entire parameter space. This is crucial when:
+
+\begin{itemize}
+    \item The model is non-linear or non-monotonic
+    \item Parameters may interact in complex ways
+    \item The full range of plausible parameter values must be considered
+    \item No single ``baseline'' parameter configuration is known a priori
+\end{itemize}
+
+These conditions all hold for LLM-based hallucination detection systems, where temperature parameters influence generation stochasticity, the number of judges affects consensus mechanisms, and various thresholds interact in determining classification outcomes.
+
+\subsection{Variance-Based Sensitivity Analysis}
+
+Variance-based methods \citep{sobol1993sensitivity} decompose the total variance of the output into contributions from individual inputs and their interactions. Given that input parameters $X_1, \ldots, X_D$ are independent random variables, the variance of the output can be decomposed using the ANOVA (Analysis of Variance) framework:
+
+\begin{equation}
+V(Y) = \sum_{i=1}^{D} V_i + \sum_{i<j} V_{ij} + \cdots + V_{1,2,\ldots,D}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $V_i = V[E(Y \mid X_i)]$ is the variance contribution from parameter $X_i$ alone (first-order effect)
+    \item $V_{ij} = V[E(Y \mid X_i, X_j)] - V_i - V_j$ is the variance contribution from the interaction between $X_i$ and $X_j$ (second-order effect)
+    \item Higher-order terms represent interactions among three or more parameters
+\end{itemize}
+
+This decomposition is unique when the input parameters are independent \citep{saltelli2010variance}.
+
+\subsection{Sobol Indices}
+
+Sobol indices \citep{sobol1993sensitivity} are normalized variance contributions that quantify the importance of each parameter and their interactions. For parameter $X_i$, we define:
+
+\subsubsection{First-Order Sensitivity Index}
+
+The first-order Sobol index $S_i$ measures the main effect of parameter $X_i$:
+
+\begin{equation}
+S_i = \frac{V_i}{V(Y)} = \frac{V[E(Y \mid X_i)]}{V(Y)}
+\label{eq:sobol_s1}
+\end{equation}
+
+$S_i$ represents the expected reduction in output variance if $X_i$ were known with certainty, without considering interactions. It quantifies the \emph{direct} or \emph{additive} contribution of $X_i$ to output uncertainty.
+
+\subsubsection{Total-Effect Sensitivity Index}
+
+The total-effect Sobol index $S_T^i$ measures the total contribution of parameter $X_i$, including all interactions involving $X_i$:
+
+\begin{equation}
+S_T^i = 1 - \frac{V[E(Y \mid \mathbf{X}_{\sim i})]}{V(Y)} = \frac{E[V(Y \mid \mathbf{X}_{\sim i})]}{V(Y)}
+\label{eq:sobol_st}
+\end{equation}
+
+where $\mathbf{X}_{\sim i}$ denotes all parameters except $X_i$. $S_T^i$ represents the expected remaining variance if all parameters except $X_i$ were known. It quantifies the parameter's importance when accounting for interactions with other parameters.
+
+\subsubsection{Interpretation}
+
+The relationship between $S_i$ and $S_T^i$ reveals the nature of a parameter's influence:
+
+\begin{itemize}
+    \item $S_i \approx S_T^i$: The parameter operates independently with minimal interactions
+    \item $S_i < S_T^i$: The parameter exhibits significant interactions with others; the difference $(S_T^i - S_i)$ quantifies the interaction strength
+    \item $S_i \approx 0, S_T^i > 0$: The parameter's influence is entirely through interactions
+    \item $S_T^i \approx 0$: The parameter is non-influential and can be fixed without affecting output variance
+\end{itemize}
+
+By convention, parameters with $S_T^i \geq 0.1$ are considered influential, while those with $S_T^i < 0.05$ are considered negligible \citep{saltelli2008global}.
+
+\subsubsection{Second-Order Indices}
+
+Second-order Sobol indices $S_{ij}$ quantify pairwise interactions:
+
+\begin{equation}
+S_{ij} = \frac{V_{ij}}{V(Y)} = \frac{V[E(Y \mid X_i, X_j)] - V_i - V_j}{V(Y)}
+\label{eq:sobol_s2}
+\end{equation}
+
+A large $S_{ij}$ indicates that parameters $X_i$ and $X_j$ interact strongly, meaning their combined effect on $Y$ cannot be understood by examining each parameter independently. This has important implications for optimization: parameters with strong interactions should be tuned jointly rather than sequentially.
+
+\subsubsection{Mathematical Properties}
+
+Sobol indices satisfy important properties:
+
+\begin{enumerate}
+    \item \textbf{Normalization}: $\sum_{i=1}^{D} S_i + \sum_{i<j} S_{ij} + \cdots = 1$ (the indices sum to unity)
+    \item \textbf{Bounded}: $0 \leq S_i \leq 1$ and $0 \leq S_T^i \leq 1$ for all $i$
+    \item \textbf{Relationship}: $S_T^i \geq S_i$ for all $i$ (total effect is always at least as large as first-order effect)
+\end{enumerate}
+
+\subsection{Saltelli Sampling Method}
+
+Computing Sobol indices requires estimating multidimensional integrals of the form $E[Y \mid X_i = x_i]$. While Monte Carlo integration could be used, Saltelli et al.~\citep{saltelli2010variance} developed an efficient sampling scheme specifically designed for Sobol index estimation.
+
+The Saltelli scheme generates a sample matrix by:
+
+\begin{enumerate}
+    \item Drawing two independent $N \times D$ random matrices $\mathbf{A}$ and $\mathbf{B}$ from the parameter space using a low-discrepancy sequence (typically Sobol sequences, unrelated to Sobol indices)
+    
+    \item For each parameter $i$, constructing a matrix $\mathbf{C}_i$ where all columns come from $\mathbf{A}$ except column $i$, which comes from $\mathbf{B}$
+    
+    \item For second-order indices, constructing matrices where two columns come from $\mathbf{B}$ and the rest from $\mathbf{A}$
+\end{enumerate}
+
+This yields a total of $N(2D + 2)$ parameter combinations (or $N(D + 2)$ if second-order indices are not computed). For our experiments with $D = 4$ parameters and $N = 128$ base samples, this produces 1,280 unique configurations.
+
+The Saltelli scheme is more efficient than naive Monte Carlo sampling because it reuses function evaluations across multiple Sobol index estimates, reducing the total number of model runs required while maintaining statistical accuracy \citep{saltelli2010variance}.
+
+\subsection{Convergence and Sample Size}
+
+The accuracy of Sobol index estimates depends on the sample size $N$. As $N$ increases, the Monte Carlo error decreases approximately as $\mathcal{O}(N^{-1/2})$ \citep{saltelli2010variance}. In practice:
+
+\begin{itemize}
+    \item $N = 500$--$1000$ base samples typically provide reasonable estimates
+    \item $N = 1000$--$10000$ provides high-quality estimates for publication
+    \item Convergence should be assessed by computing indices for increasing $N$ and checking for stability
+\end{itemize}
+
+For our study, we selected $N = 128$, balancing computational feasibility (1,280 experiments per research question) with statistical rigor. We assess convergence by computing Sobol indices for subsamples of increasing size and verifying that estimates stabilize (Section~\ref{sec:sa_convergence}).
+
+\section{Methodology}
+\label{sec:sa_methodology}
+
+\subsection{Research Questions and Parameters}
+
+We conduct separate sensitivity analyses for each of the three research questions, as they involve different parameter spaces and experimental configurations.
+
+\subsubsection{RQ1: LLM-as-a-Judge and Corrector}
+
+\textbf{Research Question}: How effectively can LLM judges detect hallucinated edges, and can correction improve accuracy?
+
+\textbf{Parameters Analyzed} (Table~\ref{tab:rq1_params}):
+
+\begin{table}[htbp]
+\centering
+\caption{RQ1 Sensitivity Analysis Parameters}
+\label{tab:rq1_params}
+\begin{tabular}{lccl}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{corruption\_rate} & $[0.0, 1.0]$ & Continuous & Fraction of edges corrupted \\
+\texttt{judge\_temperature} & $[0.0, 1.0]$ & Continuous & Judge LLM temperature \\
+\texttt{num\_judges} & $\{1, 3, 5\}$ & Discrete & Number of judges for consensus \\
+\texttt{corrector\_temperature} & $[0.0, 1.0]$ & Continuous & Corrector LLM temperature \\
+\texttt{generator\_temperature} & $[0.3, 1.0]$ & Continuous & Edge generation temperature \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Outcome Metrics}: Accuracy, Precision, Recall, F1 Score, Correction Success Rate
+
+\textbf{Fixed Parameters}: \texttt{judge\_edges = true}, \texttt{run\_correction = true}, \texttt{ci\_enable = false}
+
+\subsubsection{RQ2: Context-Insensitive Metrics}
+
+\textbf{Research Question}: Can context-insensitive (CI) metrics predict when LLM judges will identify edges as hallucinations?
+
+\textbf{Parameters Analyzed} (Table~\ref{tab:rq2_params}):
+
+\begin{table}[htbp]
+\centering
+\caption{RQ2 Sensitivity Analysis Parameters}
+\label{tab:rq2_params}
+\begin{tabular}{lccl}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{judge\_temperature} & $[0.0, 1.0]$ & Continuous & Judge LLM temperature \\
+\texttt{num\_judges} & $\{1, 3, 5\}$ & Discrete & Number of judges for consensus \\
+\texttt{ci\_overlap\_ratio} & $[0.0, 0.5]$ & Continuous & CI metric window overlap \\
+\texttt{generator\_temperature} & $[0.3, 1.0]$ & Continuous & Edge generation temperature \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Outcome Metrics}: Accuracy, Precision, Recall, F1 Score, AUC-ROC (for CI metric thresholds)
+
+\textbf{Fixed Parameters}: \texttt{corruption\_rate = 0.0}, \texttt{judge\_edges = true}, \texttt{ci\_enable = true}
+
+\textbf{Rationale}: RQ2 examines non-corrupted edges to understand how CI metrics predict judge behavior. No corruption is introduced, so \texttt{corruption\_rate} is fixed at zero.
+
+\subsubsection{RQ3: Smart Test-Time Compute}
+
+\textbf{Research Question}: Can we reduce computational cost by selectively judging only edges flagged by CI metrics?
+
+\textbf{Parameters Analyzed} (Table~\ref{tab:rq3_params}):
+
+\begin{table}[htbp]
+\centering
+\caption{RQ3 Sensitivity Analysis Parameters}
+\label{tab:rq3_params}
+\begin{tabular}{lccl}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{perplexity\_threshold} & $[0.0, 100.0]$ & Continuous & Threshold for perplexity flagging \\
+\texttt{min\_prob\_threshold} & $[0.0, 1.0]$ & Continuous & Threshold for min probability \\
+\texttt{max\_entropy\_threshold} & $[0.0, 5.0]$ & Continuous & Threshold for max entropy \\
+\texttt{cosine\_sim\_threshold} & $[0.0, 1.0]$ & Continuous & Threshold for cosine similarity \\
+\texttt{ci\_overlap\_ratio} & $[0.0, 0.5]$ & Continuous & CI metric window overlap \\
+\texttt{judge\_temperature} & $[0.0, 1.0]$ & Continuous & Selective judging temperature \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Outcome Metrics}: Compute Savings (\%), Accuracy, Precision, Recall, F1 Score
+
+\textbf{Fixed Parameters}: \texttt{corruption\_rate = 0.0}, \texttt{judge\_edges = true}, \texttt{ci\_enable = true}
+
+\textbf{Rationale}: RQ3 builds on RQ2 by using CI metric thresholds to determine which edges require expensive LLM judging. The thresholds themselves become parameters to optimize.
+
+\subsection{Experimental Design}
+
+\subsubsection{Sample Generation}
+
+For each research question, we generate Sobol samples using the Saltelli scheme with $N = 128$ base samples. This yields:
+
+\begin{itemize}
+    \item \textbf{RQ1}: $128 \times (2 \times 5 + 2) = 1,536$ experiments (5 parameters)
+    \item \textbf{RQ2}: $128 \times (2 \times 4 + 2) = 1,280$ experiments (4 parameters)
+    \item \textbf{RQ3}: $128 \times (2 \times 6 + 2) = 1,792$ experiments (6 parameters)
+\end{itemize}
+
+For each parameter, the range specified in Tables~\ref{tab:rq1_params}--\ref{tab:rq3_params} defines the bounds for uniform sampling. Discrete parameters (e.g., \texttt{num\_judges}) are sampled from the continuous range and then rounded to the nearest valid value.
+
+We use the SALib Python library \citep{herman2017salib} for sample generation and Sobol index computation, which implements the Saltelli sampling scheme and provides numerically stable estimators for $S_i$, $S_T^i$, and $S_{ij}$.
+
+\subsubsection{Experiment Configuration}
+
+Each Sobol sample defines a unique parameter configuration. We automatically generate YAML configuration files for the existing \texttt{multirun\_parameter\_experiments()} framework (Chapter~\ref{chap:methods}) with the following structure:
+
+\begin{lstlisting}[language=yaml,caption={Generated Sobol configuration example},label={lst:sobol_config}]
+param_grid:
+  judge_temperature: [0.23]      # Single value per sample
+  num_judges: [3]
+  ci_overlap_ratio: [0.17]
+  generator_temperature: [0.54]
+
+runs: 1                           # One run per configuration
+excel_files:
+  - "Social_norms_and_obesity_prevalence.xlsx"
+prompt_files:
+  - "prompts_Nitai_C.yaml"
+
+sobol_metadata:
+  sample_id: 42
+  sensitivity_analysis: true
+\end{lstlisting}
+
+This design ensures compatibility with the existing experimental infrastructure without requiring code modifications (see Appendix~\ref{app:sensitivity_implementation} for implementation details).
+
+\subsubsection{Causal Loop Diagrams}
+
+For consistency and computational feasibility, we focus sensitivity analysis on a single representative CLD: \emph{Social Norms and Obesity Prevalence} \citep{karanfil2008social}. This CLD contains 18 nodes and 23 edges, providing sufficient complexity while remaining tractable for large-scale experimentation.
+
+We validate that findings generalize by comparing sensitivity results across multiple CLDs for a subset of experiments (see Section~\ref{sec:sa_generalization}).
+
+\subsubsection{Outcome Metrics}
+
+For each experiment, we compute standard classification metrics:
+
+\begin{itemize}
+    \item \textbf{Accuracy}: $\frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}$
+    \item \textbf{Precision}: $\frac{\text{TP}}{\text{TP} + \text{FP}}$
+    \item \textbf{Recall}: $\frac{\text{TP}}{\text{TP} + \text{FN}}$
+    \item \textbf{F1 Score}: $\frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$
+\end{itemize}
+
+where TP, TN, FP, FN are true positives, true negatives, false positives, and false negatives, respectively, with respect to hallucination detection.
+
+For RQ3, we additionally compute:
+\begin{itemize}
+    \item \textbf{Compute Savings}: Percentage of edges that do not require LLM judging due to CI metric filtering
+\end{itemize}
+
+\subsection{Implementation}
+
+We implemented the sensitivity analysis pipeline as a modular extension to the existing codebase, following the Model-View-Controller architecture pattern:
+
+\begin{itemize}
+    \item \textbf{Model} (\texttt{sobol\_analyzer.py}): Sample generation and Sobol index computation using SALib
+    \item \textbf{Data} (\texttt{sensitivity\_data\_loader.py}): Loading and aggregation of experimental results
+    \item \textbf{View} (\texttt{sensitivity\_visualizer.py}): Visualization of sensitivity indices and parameter rankings
+    \item \textbf{Controller} (\texttt{sensitivity\_master\_pipeline.py}): Orchestration of the end-to-end workflow
+\end{itemize}
+
+The complete implementation is available in the project repository under \texttt{parameter\_tuning\_experiments/sensitivity\_analysis/}.
+
+\subsection{Computational Considerations}
+
+Each experiment involves:
+\begin{enumerate}
+    \item Edge generation from a CLD using GPT-4o ($\sim$20 API calls)
+    \item Citation retrieval and validation ($\sim$20 searches)
+    \item LLM judging with 1--5 judges ($\sim$20--100 API calls)
+    \item CI metric computation (local processing)
+\end{enumerate}
+
+With an average runtime of 3--5 minutes per experiment and costs of approximately \$0.10--\$0.30 per run, the full sensitivity analysis requires:
+
+\begin{itemize}
+    \item \textbf{Time}: 60--120 hours of wall-clock time (parallelizable to 15--30 hours with 4 parallel workers)
+    \item \textbf{Cost}: \$120--\$450 per research question
+    \item \textbf{Total}: \$360--\$1,350 for all three RQs
+\end{itemize}
+
+These costs are justifiable given that sensitivity analysis provides insights that cannot be obtained from traditional grid search or random search approaches.
+
+\subsection{Convergence Assessment}
+\label{sec:sa_convergence}
+
+To verify that $N = 128$ provides stable Sobol index estimates, we compute indices for increasing subsample sizes: $N \in \{32, 48, 64, 80, 96, 112, 128\}$. For each subsample, we use the first $N(2D + 2)$ experiments from the full Saltelli sample.
+
+Convergence is assessed by:
+\begin{enumerate}
+    \item Plotting $S_i$ and $S_T^i$ as functions of $N$ for each parameter
+    \item Computing the coefficient of variation (CV) across the last three sample sizes
+    \item Verifying that CV $< 0.1$ for all influential parameters ($S_T^i > 0.1$)
+\end{enumerate}
+
+Results are presented in Section~\ref{sec:sa_results}.
+
+\section{Statistical Interpretation}
+
+\subsection{Confidence Intervals}
+
+SALib provides bootstrap confidence intervals for Sobol indices using the method of Jansen \citep{jansen1999analysis}. We report 95\% confidence intervals for all $S_i$ and $S_T^i$ estimates.
+
+A parameter is considered significantly influential if the lower bound of the 95\% confidence interval for $S_T^i$ exceeds 0.05. This conservative threshold accounts for estimation uncertainty while identifying parameters with non-negligible effects.
+
+\subsection{Multiple Testing}
+
+When interpreting multiple Sobol indices simultaneously, we must account for multiple comparisons. While no formal multiple testing correction is typically applied to Sobol indices (as they are not hypothesis tests), we adopt a conservative interpretation strategy:
+
+\begin{itemize}
+    \item Parameters are classified as influential only if $S_T^i \geq 0.1$ (not just statistically distinguishable from zero)
+    \item We focus interpretation on the top-ranked parameters (by $S_T^i$) rather than all parameters with non-zero effects
+    \item Cross-validation across multiple outcome metrics provides additional evidence of parameter importance
+\end{itemize}
+
+\subsection{Limitations}
+
+Several limitations of Sobol sensitivity analysis should be acknowledged:
+
+\begin{enumerate}
+    \item \textbf{Independence Assumption}: Sobol indices assume input parameters are independent. While we control parameter values independently in our experiments, there may be implicit dependencies (e.g., optimal \texttt{num\_judges} may depend on \texttt{judge\_temperature}). Second-order indices partially address this by quantifying interactions.
+    
+    \item \textbf{Variance-Based}: Sobol indices quantify variance contributions, not other distributional properties. A parameter might significantly affect the mean or tail probabilities without contributing much to variance.
+    
+    \item \textbf{Computational Cost}: The $N(2D + 2)$ sample requirement limits the number of parameters that can be analyzed simultaneously. We address this by conducting separate analyses for each research question.
+    
+    \item \textbf{Generalization}: Sensitivity patterns may differ across CLDs, model versions, or prompts. We assess generalization in Section~\ref{sec:sa_generalization}.
+\end{enumerate}
+
+Despite these limitations, Sobol sensitivity analysis remains the gold standard for global sensitivity analysis due to its theoretical rigor, interpretability, and ability to detect interactions \citep{saltelli2008global}.
+
+\section{Results}
+\label{sec:sa_results}
+
+[This section will be populated with actual experimental results]
+
+\subsection{RQ1: Judge and Corrector Sensitivity}
+
+[To be completed after experiments]
+
+\subsection{RQ2: Context-Insensitive Metrics Sensitivity}
+
+[To be completed after experiments]
+
+\subsection{RQ3: Smart Test-Time Compute Sensitivity}
+
+[To be completed after experiments]
+
+\subsection{Convergence Analysis}
+
+[Convergence plots and analysis]
+
+\subsection{Generalization Across CLDs}
+\label{sec:sa_generalization}
+
+[Cross-CLD validation results]
+
+\section{Discussion}
+\label{sec:sa_discussion}
+
+[Interpretation and implications - to be completed after results]
+
+\subsection{Parameter Prioritization for Optimization}
+
+[Which parameters to focus on]
+
+\subsection{Interaction Effects and Joint Optimization}
+
+[Which parameters must be tuned together]
+
+\subsection{Model Simplification Opportunities}
+
+[Which parameters can be fixed]
+
+\subsection{Implications for System Design}
+
+[How findings inform practical deployment]
+
+\section{Conclusion}
+
+This chapter presented a comprehensive global sensitivity analysis of hallucination detection experiments using Sobol indices. The variance-based approach quantified the influence of key parameters---including LLM temperatures, number of judges, and CI metric configurations---on detection accuracy, precision, and recall. By decomposing output variance into first-order, total-effect, and second-order contributions, we identified the most influential parameters for each research question and revealed significant interactions that would not be apparent from one-factor-at-a-time analysis or simple grid search.
+
+The findings guide future optimization efforts by indicating which parameters merit careful tuning versus which can be fixed at default values. Moreover, the identification of strong parameter interactions informs the design of intelligent hyperparameter optimization strategies that account for joint effects. The methodology presented here is broadly applicable to other LLM-based systems where parameter influence is not well understood.
+
+Future work could extend this analysis to additional CLDs, alternative LLM models, and longer time horizons to assess the stability of sensitivity patterns. Additionally, extending the analysis to higher-order interactions (third-order and beyond) could reveal more complex parameter dependencies, though at significant computational cost.
+
+
+
+
+

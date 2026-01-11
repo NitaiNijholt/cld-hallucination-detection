@@ -1,0 +1,193 @@
+\chapter{Prompt Engineering Ablation Study}
+\label{ch:ablation}
+
+\section{Introduction}
+
+Prompt engineering has emerged as a critical technique for optimizing large language model (LLM) performance on domain-specific tasks. To systematically evaluate the effectiveness of various prompting strategies for automated causal loop diagram generation, we conducted an ablation study comparing nine prompt variants across three causal loop diagrams. This chapter presents the experimental design, results, and interpretation of prompt engineering techniques drawn from recent literature.
+
+\section{Methodology}
+
+\subsection{Experimental Design}
+
+We evaluated nine prompt variants across three ground-truth causal loop diagrams:
+\begin{itemize}
+    \item \textbf{CLD 1}: Depressive symptoms in response to stressors (34 edges)
+    \item \textbf{CLD 2}: Social norms and obesity prevalence (11 edges)
+    \item \textbf{CLD 3}: Emergency department visits by older persons (62 edges)
+\end{itemize}
+
+All experiments used GPT-4.1 as the generator model with consistent hyperparameters (temperature=0.7, top\_p=1.0). Performance was measured using the F1 score, which balances precision and recall in edge discovery.
+
+\subsection{Prompt Engineering Techniques}
+
+Table~\ref{tab:prompt_techniques} presents a classification matrix of prompt engineering techniques employed in each variant, based on established literature.
+
+\begin{table}[htbp]
+\centering
+\caption{Prompt Engineering Techniques Classification Matrix}
+\label{tab:prompt_techniques}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Prompt} & \textbf{CoT\textsuperscript{1}} & \textbf{Few-Shot\textsuperscript{2}} & \textbf{Role\textsuperscript{3}} & \textbf{Decomp\textsuperscript{4}} & \textbf{RAG\textsuperscript{5}} \\
+\midrule
+Nitai\_A & & \checkmark & \checkmark & & \\
+Nitai\_B & \checkmark & \checkmark & \checkmark & \checkmark & \\
+Nitai\_C & \checkmark\checkmark & \checkmark\checkmark & \checkmark & \checkmark & \\
+Nitai\_E & \checkmark\checkmark & \checkmark & \checkmark & \checkmark & \checkmark\checkmark \\
+Rick\_A & & \checkmark & \checkmark\checkmark & & \\
+Rick\_B & \checkmark & \checkmark\checkmark & \checkmark\checkmark & \checkmark\checkmark & \\
+Cillian\_B & & \checkmark & \checkmark & \checkmark & \\
+Cillian\_C & & \checkmark & \checkmark & \checkmark\checkmark & \\
+Current & & \checkmark & & & \\
+\bottomrule
+\end{tabular}
+\vspace{0.2cm}
+
+\raggedright
+\footnotesize
+\textsuperscript{1}Chain-of-Thought (Wei et al., 2022); \textsuperscript{2}Few-Shot Learning (Brown et al., 2020); \textsuperscript{3}Role Prompting (2024 survey); \textsuperscript{4}Task Decomposition (Zhou et al., 2022); \textsuperscript{5}RAG with mandatory citations.\\
+\vspace{0.1cm}
+\textit{Legend:} \checkmark = basic; \checkmark\checkmark = strong implementation
+\end{table}
+
+\textbf{Key Prompt Distinctions:}
+\begin{itemize}
+    \item \textbf{Nitai variants}: Progressive complexity from baseline (A) to Chain-of-Thought reasoning (B, C), culminating in RAG-augmented prompting (E). Nitai\_C introduces 6 relationship types (POSITIVE, NEGATIVE, COMPLEX, DELAYED, NONLINEAR, NONE) versus 3 in baseline.
+    
+    \item \textbf{Rick variants}: Emphasis on academic rigor and system dynamics best practices. Rick\_A implements a 5-category negative case taxonomy (NONE, INDIRECT, SLOW, OUTOFCONTEXT, UNKNOWN). Rick\_B features the most comprehensive systematic decomposition with explicit confounding analysis.
+    
+    \item \textbf{Cillian variants}: Cillian\_B employs intervention-based framing emphasizing causal mechanisms. Cillian\_C uses hypothesis testing with definition-strict evaluation to minimize hallucination.
+    
+    \item \textbf{Current}: Minimal baseline control with basic prompting and 5 relationship types.
+\end{itemize}
+
+\section{Results}
+
+\subsection{Overall Performance Ranking}
+
+Figure~\ref{fig:ablation_f1_ordered} presents the average F1 scores across all three causal loop diagrams for each prompt variant, ordered from lowest to highest performance. This ranking provides a clear overview of which prompt engineering strategies were most effective.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../data_science/parameter_tuning_experiments/ablation_study_f1_ordered.pdf}
+    \caption{Average F1 scores for prompt variants across three causal loop diagrams, ordered from lowest to highest performance. Nitai\_C, incorporating both system-level and user-level Chain-of-Thought prompting with complex relationship types, achieved the highest performance (F1=0.460). Color coding indicates performance tiers: green (F1 ≥ 0.45), blue (0.35 ≤ F1 < 0.45), orange (0.25 ≤ F1 < 0.35), and red (F1 < 0.25). The red dashed line shows the mean (0.321), and the purple dotted line shows the median (0.356).}
+    \label{fig:ablation_f1_ordered}
+\end{figure}
+
+\subsection{Performance Across Individual CLDs}
+
+Figure~\ref{fig:ablation_grouped} provides a detailed breakdown of F1 scores for each causal loop diagram alongside the average performance, revealing important patterns in how different prompts perform across varying problem complexities.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.98\textwidth]{../data_science/parameter_tuning_experiments/ablation_study_grouped_with_avg.pdf}
+    \caption{F1 scores by prompt variant and individual CLDs, ordered by average F1 performance. Each prompt shows four bars: CLD 1 (blue), CLD 2 (red), CLD 3 (green), and Average F1 (orange, with values labeled). The horizontal purple dashed line indicates the overall mean F1 (0.321). Notable patterns include consistently poor performance on CLD 2 across all variants and high variance in performance across CLDs within individual prompts.}
+    \label{fig:ablation_grouped}
+\end{figure}
+
+\subsection{Performance Summary}
+
+Table~\ref{tab:f1_scores} provides detailed F1 scores for each prompt variant across the three CLDs.
+
+\begin{table}[htbp]
+\centering
+\caption{F1 Scores by Prompt Variant and Causal Loop Diagram}
+\label{tab:f1_scores}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Prompt} & \textbf{CLD 1} & \textbf{CLD 2} & \textbf{CLD 3} & \textbf{Average} \\
+\midrule
+Nitai\_C & 0.591 & 0.204 & 0.583 & \textbf{0.460} \\
+Nitai\_A & 0.590 & 0.218 & 0.400 & 0.403 \\
+Nitai\_B & 0.588 & 0.092 & 0.455 & 0.378 \\
+Current & 0.588 & 0.239 & 0.286 & 0.371 \\
+Rick\_B & 0.444 & 0.186 & 0.438 & 0.356 \\
+Nitai\_E & 0.438 & 0.207 & 0.385 & 0.343 \\
+Cillian\_B & 0.515 & 0.152 & 0.286 & 0.318 \\
+Rick\_A & 0.380 & 0.145 & 0.269 & 0.265 \\
+Cillian\_C & 0.000 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key Findings}
+
+\textbf{Overall Performance:}
+\begin{itemize}
+    \item \textbf{Best Performance}: Nitai\_C achieved the highest average F1 score (0.460). However, this variant differs from others in multiple dimensions (dual-level Chain-of-Thought, relationship taxonomy, examples), preventing attribution to any single factor.
+    
+    \item \textbf{Performance Range}: The range between best (0.460) and second-worst (0.265) performers is 0.195, indicating substantial impact of prompt engineering choices. The mean F1 across all variants was 0.321 with a standard deviation of 0.132.
+\end{itemize}
+
+\textbf{CLD-Specific Patterns (from Figure~\ref{fig:ablation_grouped}):}
+\begin{itemize}
+    \item \textbf{CLD 2 Challenge}: All variants performed worst on CLD 2 (Social Norms \& Obesity), with F1 scores ranging from 0.00 to 0.24. The reasons for this consistent underperformance are unclear and require further investigation.
+    
+    \item \textbf{High Variance}: Within-prompt standard deviations across CLDs ranged from 0.18 to 0.25, indicating that prompt performance is highly sensitive to problem characteristics. For example, Nitai\_B achieved F1=0.588 on CLD 1 but only 0.092 on CLD 2.
+    
+    \item \textbf{Consistent Excellence}: Nitai\_C showed balanced performance across CLD 1 (0.591) and CLD 3 (0.583), suggesting robust generalization despite moderate performance on CLD 2 (0.204).
+\end{itemize}
+
+\textbf{Technique-Specific Observations:}
+\begin{itemize}
+    \item \textbf{RAG Trade-off}: Nitai\_E (with mandatory citations) showed 25\% lower performance than Nitai\_C, suggesting that strict citation requirements may limit valid relationship discovery despite reducing hallucination risk.
+    
+    \item \textbf{Complete Failure}: Cillian\_C's zero performance across all CLDs indicates that overly restrictive definition-grounded evaluation can be counterproductive, potentially rejecting all causal relationships due to insufficient grounding in provided definitions alone.
+\end{itemize}
+
+\section{Interpretation}
+
+\subsection{Chain-of-Thought Effectiveness}
+
+The progression from Nitai\_A (baseline) → Nitai\_B (user-level CoT) → Nitai\_C (dual-level CoT) demonstrates incremental performance gains, with Nitai\_C achieving 14\% improvement over the baseline. This supports Wei et al.'s (2022) findings that explicit reasoning steps enhance complex task performance. However, the modest gains suggest that Chain-of-Thought's benefits may be task-dependent and diminish for domain-specific reasoning where the model already possesses relevant knowledge.
+
+\subsection{Multiple Confounding Factors}
+
+While Nitai\_C achieved the best performance (F1=0.460), it differs from other variants in multiple ways simultaneously (dual-level Chain-of-Thought, 6 relationship types, specific examples), making it impossible to isolate which factors drive its superior performance. The performance difference from Nitai\_A (0.403) could stem from any combination of these design choices. Without controlled ablation of individual components, claims about the isolated contribution of specific features (e.g., relationship taxonomy complexity) remain speculative.
+
+\subsection{CLD-Specific Performance Variation}
+
+All prompt variants achieved substantially lower F1 scores on CLD 2 (Social Norms \& Obesity), with scores ranging from 0.00 to 0.24 compared to 0.00--0.59 on CLD 1 and 0.00--0.58 on CLD 3. The reasons for this consistent underperformance remain unclear from the available data. Possible explanations include differences in problem complexity, domain characteristics, or ground truth construction methodology, but our experimental design does not allow us to distinguish between these factors.
+
+\subsection{RAG and Citation Requirements}
+
+Nitai\_E's underperformance relative to Nitai\_C (0.343 vs. 0.460) reveals a critical trade-off: while mandatory citations ground responses in scientific literature, they introduce availability bias, potentially excluding valid causal mechanisms not well-documented in accessible sources. For emerging or interdisciplinary relationships, this constraint may be overly restrictive. This finding suggests that RAG should be used selectively rather than as a universal requirement.
+
+\subsection{Systematic Decomposition vs. Chain-of-Thought}
+
+Rick\_B (F1=0.356), employing systematic decomposition with explicit confounding checks, underperformed Nitai\_C's Chain-of-Thought approach by 23\%. This contrasts with Zhou et al.'s (2022) finding that least-to-most prompting outperforms CoT on some benchmarks, suggesting that decomposition strategies may be less effective when the reasoning steps are not naturally sequential or when the task requires holistic pattern recognition rather than step-by-step problem solving.
+
+\subsection{Intervention Framing}
+
+Cillian\_B's moderate performance (F1=0.318) despite strong mechanism focus indicates that intervention-based framing alone is insufficient without complementary techniques like Chain-of-Thought or rich examples. The dramatic failure of Cillian\_C demonstrates that anti-hallucination measures must be carefully calibrated to avoid over-constraining valid outputs—its definition-strict approach appears to have rejected nearly all proposed relationships as insufficiently grounded.
+
+\section{Limitations}
+
+\begin{itemize}
+    \item \textbf{Sample Size}: Only three CLDs limits generalizability across diverse system dynamics domains. The high variance observed across CLDs (Figure~\ref{fig:ablation_grouped}) suggests that performance patterns may differ substantially for other problem types.
+    
+    \item \textbf{Single Run}: Each prompt variant was tested once per CLD, preventing estimation of within-prompt variance and statistical significance testing.
+    
+    \item \textbf{Model Specificity}: Results apply to GPT-4.1; performance patterns may differ for other LLMs with different architectures, training data, or parameter scales.
+    
+    \item \textbf{Metric Focus}: F1 score captures edge discovery accuracy but not semantic quality of causal explanations, mechanistic plausibility, or consistency with domain expertise.
+    
+    \item \textbf{Prompt Authorship}: Different prompt variants were designed by different researchers (Nitai, Rick, Cillian), introducing potential confounding between technique implementation and designer expertise.
+\end{itemize}
+
+\section{Conclusions}
+
+This ablation study demonstrates that prompt engineering choices significantly impact LLM performance on causal discovery tasks, with F1 scores ranging from 0.00 to 0.46 across nine variants. Key recommendations for prompt design include:
+
+\begin{enumerate}
+    \item \textbf{Implement dual-level Chain-of-Thought}: Embed reasoning steps in both system and user prompts for complex reasoning tasks. The 14\% improvement from baseline to Nitai\_C validates this approach.
+    
+    \item \textbf{Balance grounding with flexibility}: Avoid overly restrictive requirements (citation mandates, definition-strict evaluation) that may over-constrain outputs. Nitai\_E's mandatory citations and Cillian\_C's strict grounding both underperformed more flexible approaches.
+    
+    \item \textbf{Test across multiple problems}: Given the substantial performance variation across CLDs (within-prompt variance of 0.18--0.25), single-problem evaluation is insufficient for assessing prompt effectiveness.
+    
+    \item \textbf{Acknowledge confounding}: Without systematic component-level ablation, attributing performance to specific prompt features (e.g., relationship taxonomies, role assignments) is speculative. Future studies should isolate individual factors.
+\end{enumerate}
+
+The finding that Nitai\_C outperforms more elaborate decomposition strategies (Rick\_B) suggests that for causal reasoning tasks, explicit step-by-step prompting within a single inference pass may be more effective than breaking tasks into sequential subtasks. However, the consistently poor performance on CLD 2 across all variants (including the best-performing Nitai\_C at F1=0.204) indicates limitations in current prompt engineering approaches that require further investigation. Future work should: (1) conduct controlled component-level ablations to isolate the effects of individual prompt features, (2) expand evaluation to larger and more diverse CLD datasets, (3) investigate why certain problem types resist prompt engineering interventions, and (4) explore the interaction between prompt strategies and model architecture.

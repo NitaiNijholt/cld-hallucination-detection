@@ -1,0 +1,94 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[style=apa,backend=biber]{biblatex}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% Bibliography file (inline for this example)
+
+
+@misc{wu2025llmdiscovercausalityrestricteddiscovercausalityrestricted,
+      title={LLM Cannot Discover Causality, and Should Be Restricted to Non-Decisional Support in Causal Discovery}, 
+      author={Xingyu Wu and Kui Yu and Jibin Wu and Kay Chen Tan},
+      year={2025},
+      eprint={2506.00844},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2506.00844}, 
+}
+
+@article{kiciman2024causal,
+  title={Causal Reasoning and Large Language Models: Opening a New Frontier for Causality},
+  author={K{\i}c{\i}man, Emre and Ness, Robert and Sharma, Amit and Tan, Chenhao},
+  journal={arXiv preprint arXiv:2305.00050},
+  year={2024},
+  month={August}
+}
+
+
+@misc{joshi2024llmspronefallaciescausal,
+      title={LLMs Are Prone to Fallacies in Causal Inference}, 
+      author={Nitish Joshi and Abulhair Saparov and Yixin Wang and He He},
+      year={2024},
+      eprint={2406.12158},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2406.12158}, 
+}
+
+@article{pipeline2025,
+  title={LLM-Powered, Expert-Refined Causal Loop Diagramming via Pipeline Algebra},
+  author={Smith, Thomas R. and others},
+  journal={Systems},
+  volume={13},
+  number={9},
+  pages={784},
+  year={2025},
+  month={September},
+  publisher={MDPI},
+  doi={10.3390/systems13090784}
+}
+
+
+\addbibresource{references.bib}
+
+% Document information
+\title{What is Hallucination in LLM-Based Causal Loop Diagram Generation?}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{What is Hallucination in LLM-Based Causal Loop Diagram Generation?}
+
+Hallucination in Large Language Models refers to instances where models generate plausible but factually incorrect, unverifiable, or fabricated content. LLMs are trained to predict the next most likely token based on patterns in training data rather than to verify truth, making hallucinations an inherent feature of their design rather than a simple bug \parencite{masterofcode2023}. In the context of causal loop diagram generation, these hallucinations manifest as structural and semantic errors that compromise the validity of the generated causal models.
+
+\subsection{Manifestations in CLD Generation}
+
+Hallucinations in LLM-based CLD generation can be categorized into several distinct types:
+
+\textbf{Fabricated Causal Relationships.} LLMs may add variables, drivers, and causal links that extend beyond what is justified by the source text, drawing from their knowledge base rather than grounding relationships in the provided material \parencite{pipeline2025}. This knowledge augmentation, while potentially useful, risks introducing causally incorrect relationships.
+
+\textbf{Polarity Errors.} A class of hallucinations involves mis-signed causal links that can flip reinforcing loops into balancing loops or vice versa, fundamentally altering the system's behavior \parencite{pipeline2025}. Additionally, LLMs may assign ambiguous or unknown polarities to causal links, particularly when dealing with broad or poorly defined variables \parencite{pipeline2025}.
+
+\textbf{Structural Inconsistencies.} Common structural hallucinations include incorrect causal paths, bidirectional arrows where intermediate variables are needed, duplicate or synonym variables that should be consolidated, and ``starburst'' nodes with excessive connections \parencite{pipeline2025}. These errors violate established CLD conventions and reduce model interpretability.
+
+\textbf{Temporal and Order-Based Fallacies.} LLMs exhibit susceptibility to inferring causal relations from the sequential order of entity mentions in text (X mentioned before Y implies X causes Y) and suffer from the \textit{post hoc} fallacy where temporal precedence is mistaken for causation. This represents a fundamental confusion between correlation and causation.
+
+\subsection{The Causation-Correlation Problem}
+
+At the core of CLD hallucinations lies a deeper issue: LLMs excel at capturing correlations from training data but struggle to distinguish these from genuine causal relationships, often learning spurious correlations rooted in linguistic patterns and social biases rather than true causal mechanisms. This stems from their autoregressive, correlation-driven modeling approach, which inherently lacks the theoretical grounding required for causal reasoning \parencite{wu2025llmdiscovercausalityrestricted}.
+
+The implications for CLD generation are significant: while LLMs can achieve high average accuracy on certain causal discovery benchmarks, they simultaneously make simple, unpredictable mistakes that reveal fundamental gaps in causal understanding \parencite{kiciman2024causal}. This unpredictability poses particular challenges for automated CLD generation, where even a single hallucinated link or incorrect polarity can propagate through feedback loops and fundamentally misrepresent system dynamics.
+
+\printbibliography
+
+\end{document}

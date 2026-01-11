@@ -1,0 +1,263 @@
+================================================================================
+THESIS METHODS SECTION: PROMPTING STRATEGIES FOR LLM-AS-JUDGE
+================================================================================
+
+EXPERIMENTAL DESIGN OVERVIEW
+--------------------------------------------------------------------------------
+
+We evaluated three prompting strategies for LLM-as-judge in evaluating causal 
+explanations within Causal Loop Diagrams (CLDs). This design allows us to test 
+whether (1) generic reasoning decomposition improves judgment accuracy, and (2) 
+domain-specific adaptation provides additional benefits for causal evaluation tasks.
+
+The three prompting strategies were applied to two evaluation tasks:
+  - Correctness Judgment: Assessing the logical soundness of causal explanations
+  - Citation Verification: Evaluating whether citations support causal claims
+
+
+PROMPTING STRATEGIES
+--------------------------------------------------------------------------------
+
+1. ZERO-SHOT BASELINE
+   Description: Direct judgment without reasoning scaffolding or explicit criteria
+   
+   Implementation: Minimal prompt asking the LLM to evaluate causal reasoning 
+   quality or citation support without providing explicit evaluation steps or 
+   criteria.
+   
+   Theoretical grounding: Establishes baseline LLM performance on causal 
+   evaluation tasks without interventions.
+   
+   Citation: N/A (baseline condition)
+
+
+2. ZERO-SHOT CHAIN-OF-THOUGHT (CoT)
+   Description: Generic reasoning decomposition via the "Let's think step by 
+   step" prompt addition
+   
+   Implementation: Implements Kojima et al.'s (2022) Zero-Shot CoT approach by 
+   adding "Let's think step by step" immediately before requesting the judgment. 
+   This simple phrase triggers step-by-step reasoning without requiring 
+   hand-crafted exemplars or explicit criteria.
+   
+   Theoretical grounding: Kojima et al. (2022) demonstrated that this single 
+   prompt addition significantly improves reasoning performance across diverse 
+   tasks, including:
+     - MultiArith: 17.7% → 78.7% accuracy
+     - GSM8K: 10.4% → 40.7% accuracy
+     - Improvements on symbolic reasoning, date understanding, and logical tasks
+   
+   The authors argue this reveals "untapped and understudied fundamental zero-shot 
+   capabilities of LLMs" and suggests "high-level, multi-task broad cognitive 
+   capabilities may be extracted by simple prompting."
+   
+   Citation:
+   Kojima, T., Gu, S. S., Reid, M., Matsuo, Y., & Iwasawa, Y. (2022). 
+   Large Language Models are Zero-Shot Reasoners. In Advances in Neural 
+   Information Processing Systems (NeurIPS 2022). arXiv:2205.11916
+
+
+3. MECHANISTIC CHAIN-OF-THOUGHT (Bradford Hill Framework)
+   Description: Domain-adapted prompting using four Bradford Hill criteria 
+   identified as having strong consensus across modern causal inference approaches
+   
+   Implementation: Prompts explicitly guide evaluation using four criteria:
+   
+     (1) STRENGTH OF ASSOCIATION (including confounding analysis)
+         - Effect sizes and association strengths
+         - Discussion of potential confounding variables
+         - Evidence that relationships persist after controlling for confounders
+         - Consideration of alternative explanations
+     
+     (2) TEMPORALITY
+         - Temporal ordering (cause precedes effect)
+         - Ruling out reverse causation
+         - Appropriate time lag between cause and effect
+         - Longitudinal evidence of temporal sequence
+     
+     (3) PLAUSIBILITY (causal mechanisms and mediation)
+         - Description of HOW causes produce effects
+         - Biological/psychological/social mechanism evidence
+         - Identification of mediating variables or pathways
+         - Specific and empirically supported mechanisms (not just theoretical)
+     
+     (4) EXPERIMENT/DESIGN (implications for exchangeability)
+         - Experimental or quasi-experimental study designs
+         - Designs that enhance causal inference (RCTs, natural experiments)
+         - Comparability between exposed and unexposed groups
+         - Control for factors affecting exchangeability
+   
+   Theoretical grounding: Bradford Hill (1965) proposed nine viewpoints for 
+   assessing causality in epidemiology. Shimonovich et al. (2020) conducted a 
+   systematic comparison of Bradford Hill's criteria with modern causal inference 
+   approaches (Directed Acyclic Graphs, Sufficient-Component Cause models, and 
+   GRADE methodology). They identified four criteria with strong consensus across 
+   all approaches:
+   
+     "Modern comparisons identified commonality on four viewpoints: strength of 
+     association (including analysis of plausible confounding); temporality; 
+     plausibility (encoded by DAGs or SCC models to articulate mediation and 
+     interaction, respectively); and experiments (including implications of study 
+     design on exchangeability)." (Shimonovich et al., 2020, p. 873)
+   
+   These four criteria align with established mechanistic explanation frameworks 
+   in philosophy of science:
+   
+     - Mechanistic plausibility: Machamer, Darden, and Craver (2000) define 
+       mechanisms as "entities and activities organized such that they are 
+       productive of regular changes from start or set-up to finish or 
+       termination conditions," emphasizing that causal explanations must 
+       specify HOW causes produce effects.
+     
+     - Causal direction and intervention: Woodward (2003) argues that "X is a 
+       cause of Y if and only if there is a possible intervention on X that 
+       changes Y," grounding causality in directional, interventional reasoning.
+     
+     - Temporality: Universally recognized as fundamental to causality. 
+       Shimonovich et al. (2020) note: "Temporality is considered fundamental 
+       to causality; an exposure must precede an outcome."
+   
+   Citations:
+   Bradford Hill, A. (1965). The environment and disease: Association or 
+   causation? Proceedings of the Royal Society of Medicine, 58(5), 295-300.
+   
+   Shimonovich, M., Pearce, A., Thomson, H., Keyes, K., & Katikireddi, S. V. 
+   (2021). Assessing causality in epidemiology: revisiting Bradford Hill to 
+   incorporate developments in causal thinking. European Journal of 
+   Epidemiology, 36(9), 873-887. https://doi.org/10.1007/s10654-020-00703-7
+   
+   Machamer, P., Darden, L., & Craver, C. F. (2000). Thinking about Mechanisms. 
+   Philosophy of Science, 67(1), 1-25.
+   
+   Woodward, J. (2003). Making Things Happen: A Theory of Causal Explanation. 
+   Oxford: Oxford University Press.
+
+
+RESEARCH QUESTIONS
+--------------------------------------------------------------------------------
+
+PRIMARY RESEARCH QUESTION:
+Does domain-adapted Chain-of-Thought prompting improve LLM-as-judge accuracy 
+for evaluating causal explanations in system dynamics models?
+
+SPECIFIC HYPOTHESES:
+
+H1: Chain-of-Thought prompting improves judgment accuracy compared to zero-shot 
+    baseline (CoT vs. Baseline)
+    
+    Expected: Yes, based on CoT literature showing 8-40% improvements on 
+    reasoning tasks (Kojima et al., 2022)
+
+H2: Mechanistic focus in CoT further improves accuracy for causal evaluation 
+    tasks (Mechanistic CoT vs. generic CoT)
+    
+    Expected: Yes, based on domain-specific adaptation showing improvements 
+    (e.g., CausalCoT achieving 8.37 percentage point improvement over baseline 
+    prompting; Jin et al., 2023)
+
+H3: Mechanistic CoT reduces false positives (accepting incorrect causal reasoning)
+    
+    Expected: Yes, because explicit mechanism checking and temporality 
+    verification should catch spurious claims
+
+H4: Improvements generalize across different types of causal relationships 
+    (POSITIVE, NEGATIVE, COMPLEX, etc.)
+    
+    Exploratory: Test if mechanistic focus helps more for complex relationships
+
+H5: Benefits of mechanistic prompting are consistent across both correctness 
+    evaluation and citation verification tasks
+    
+    Expected: Mechanistic focus may provide larger benefits for citation 
+    verification, as citations must provide mechanistic evidence to support 
+    causal claims
+
+
+SCIENTIFIC CONTRIBUTION
+--------------------------------------------------------------------------------
+
+Novel Application Domain:
+While prior work has demonstrated Chain-of-Thought's effectiveness for causal 
+discovery tasks (Jin et al., 2023; Wei et al., 2022), this is the first study 
+to systematically evaluate prompting strategies for LLM-as-judge in causal 
+explanation evaluation, specifically for system dynamics models.
+
+Methodological Contribution:
+This work extends LLM prompting research by:
+  1. Applying established prompting techniques (Zero-Shot CoT) to a novel 
+     evaluation task (LLM-as-judge for causal reasoning)
+  2. Developing and testing domain-adapted prompts grounded in causal inference 
+     theory (Bradford Hill criteria)
+  3. Comparing generic vs. domain-specific prompting strategies
+  4. Testing generalization across two related but distinct evaluation tasks 
+     (correctness judgment and citation verification)
+
+Practical Contribution:
+Findings directly inform the design of automated evaluation tools for Causal 
+Loop Diagram generation, with implications for:
+  - Reducing hallucinations in AI-assisted system dynamics modeling
+  - Improving quality control for LLM-generated causal explanations
+  - Enhancing citation verification in scientific knowledge systems
+
+
+IMPLEMENTATION DETAILS
+--------------------------------------------------------------------------------
+
+Prompt Files:
+  - Zero-Shot Baseline (Correctness): prompts_correctness_baseline.yaml
+  - Zero-Shot Baseline (Citation): prompts_citation_baseline.yaml
+  - Zero-Shot CoT (Correctness): prompts_correctness_cot.yaml
+  - Zero-Shot CoT (Citation): prompts_citation_cot.yaml
+  - Mechanistic CoT (Correctness): prompts_correctness_mechanistic_v2.yaml
+  - Mechanistic CoT (Citation): prompts_citation_mechanistic_v2.yaml
+
+All prompts maintain consistent:
+  - Input variables (source, target, relationship, motivation, citations)
+  - Output format (VERDICT, SCORE, REASON)
+  - Scoring scheme (1.0 = fully correct/supported, 0.5 = partial, 0.0 = incorrect/unsupported)
+
+Version: 2.0.0 (for CoT and Mechanistic variants)
+
+
+EXPECTED METRICS
+--------------------------------------------------------------------------------
+
+Accuracy Metrics:
+  - Overall accuracy (agreement with ground truth)
+  - False positive rate (Type I error: accepting incorrect explanations)
+  - False negative rate (Type II error: rejecting correct explanations)
+  - F1 score (harmonic mean of precision and recall)
+  - Cohen's kappa (inter-rater reliability with ground truth)
+
+Consistency Metrics:
+  - Inter-trial consistency (same prompt, temperature > 0)
+  - Paraphrase robustness (same meaning, different wording)
+
+Efficiency Metrics:
+  - Average response length (tokens)
+  - Number of tokens generated
+  - Inference time
+
+
+ADDITIONAL SUPPORTING REFERENCES
+--------------------------------------------------------------------------------
+
+For context on LLM causal reasoning capabilities:
+
+Jin, Z., Chen, Y., Leeb, F., Gresele, L., Kamal, O., Lachapelle, S., ... & 
+Schölkopf, B. (2023). Can Large Language Models Infer Causation from 
+Correlation? In International Conference on Learning Representations (ICLR 2024). 
+arXiv:2306.05836
+
+Kıcıman, E., Ness, R., Sharma, A., & Tan, C. (2023). Causal Reasoning and 
+Large Language Models: Opening a New Frontier for Causality. arXiv:2305.00050
+
+Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter, B., Xia, F., ... & 
+Zhou, D. (2022). Chain-of-Thought Prompting Elicits Reasoning in Large 
+Language Models. In Advances in Neural Information Processing Systems 
+(NeurIPS 2022). arXiv:2201.11903
+
+
+================================================================================
+END OF METHODS SECTION
+================================================================================

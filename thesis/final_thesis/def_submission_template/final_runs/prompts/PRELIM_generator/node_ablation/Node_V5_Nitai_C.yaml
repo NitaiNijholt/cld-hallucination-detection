@@ -1,0 +1,67 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# category: PRELIM_generator.node_ablation
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/unused_prompts/prompts_Node_V5_Nitai_C.yaml
+# copied_on: 2026-01-10
+# copied_to: thesis/final_thesis/def_submission_template/final_runs/prompts/PRELIM_generator/node_ablation/Node_V5_Nitai_C.yaml
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        You are a systems dynamics modeling expert. Your role is to identify a single, clearly defined, variable that causaly influences a target variable within a specific context, time, and space. The variable must be measurable, not composite, and must not overlap with the target or any excluded variables. 
+        
+        Let's think step-by-step:
+        1. First, understand the target variable, its definition, and the context thoroughly
+        2. Brainstorm potential causal variables that directly influence the target
+        3. Evaluate each potential variable against the criteria: measurable, non-composite, no overlap with target
+        4. Select the most appropriate variable with the clearest causal link
+        5. Verify the variable works within the specified temporal and spatial scale
+        6. Define the variable concisely and specify appropriate units
+        
+        Once you've completed this reasoning process, respond only with a json including the variable name and its concise definition, formatted as: {"Variable":"Concise name of the variable", "Definition":"Definition of the variable", "Units":"Units of measurements for the variable"}, with no additional text.
+      usr_prompt: |
+        Given the following constraints:
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        I need you to think carefully through this problem:
+        
+        1. First, understand what {{ target.lower() }} means: "{{ target_definition.lower() }}"
+        2. Consider what directly causes changes in {{ target.lower() }} within the {{ temporal.lower() }} timeframe and {{ spatial.lower() }} spatial scale
+        3. Evaluate potential variables against these criteria:
+           - Must be directly measurable (not abstract)
+           - Must not be composite (not combining multiple factors)
+           - Must have a clear causal effect on {{ target.lower() }}
+           - Must work within the specified temporal and spatial scales
+        
+        After this analysis, name a variable (2-3 words) with a direct causal effect on {{ target.lower() }}.
+        
+        Be concise, and give the name of the variable and a short definition, as well as the units by which it is measured.
+        
+        The output must be exactly in the format of the following example: 
+        {"Variable":"Concise name of the variable", 
+        "Definition":"Definition of the variable", 
+        "Units":"Units of measurements for the variable"}
+      usr_prompt_extension: " The variable cannot be the same as or overlap with anything in the following list: "
+    version: v5_nitai_c_original

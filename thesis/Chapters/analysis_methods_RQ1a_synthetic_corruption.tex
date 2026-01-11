@@ -1,0 +1,133 @@
+\chapter{Statistical Methods for RQ1a: Corruption Detection Analysis}
+
+\section{Experimental Design}
+
+We employed a repeated measures design with three within-subjects factors: three CLDs (Depressive symptoms, Social norms, Emergency department), three judge prompts (Baseline, Mechanistic, SCE), and three independent runs per condition, yielding N=27 experimental observations (3×3×3). Each run consisted of approximately 503 edges (60 corrupted, ~443 clean), which were aggregated into run-level summary statistics (precision, recall, F1, accuracy, AUC-ROC) to maintain statistical independence and avoid pseudoreplication.
+
+\section{Assumption Testing}
+
+\subsection{Shapiro-Wilk Test for Normality}
+
+\textbf{Formula:}
+\begin{equation}
+W = \frac{(\sum_{i=1}^{n} a_i x_{(i)})^2}{\sum_{i=1}^{n} (x_i - \bar{x})^2}
+\end{equation}
+
+where $x_{(i)}$ are ordered sample values and $a_i$ are constants derived from expected values of order statistics.
+
+\textbf{Purpose:} The Shapiro-Wilk test assesses whether sample data follow a normal distribution, a key assumption for parametric tests. The test statistic W ranges from 0 to 1, with values close to 1 indicating normality. We reject the null hypothesis of normality if p < 0.05, indicating the data significantly deviate from a normal distribution. All our metrics showed p > 0.13, confirming normality.
+
+\subsection{Levene's Test for Homogeneity of Variances}
+
+\textbf{Formula:}
+\begin{equation}
+W = \frac{(N-k)}{(k-1)} \cdot \frac{\sum_{i=1}^{k} n_i(\bar{Z}_{i\cdot} - \bar{Z}_{\cdot\cdot})^2}{\sum_{i=1}^{k}\sum_{j=1}^{n_i}(Z_{ij} - \bar{Z}_{i\cdot})^2}
+\end{equation}
+
+where $Z_{ij} = |Y_{ij} - \tilde{Y}_{i\cdot}|$ (absolute deviations from group medians).
+
+\textbf{Purpose:} Levene's test evaluates whether variances are equal across groups (prompts), which is required for ANOVA and t-tests. The test compares the variability of absolute deviations from group medians. We reject homogeneity if p < 0.05, indicating heteroscedasticity. All our metrics showed p > 0.63, confirming homogeneous variances across prompts.
+
+\section{Primary Statistical Tests}
+
+\subsection{Repeated Measures ANOVA}
+
+\textbf{Formula (One-Way ANOVA approximation):}
+\begin{equation}
+F = \frac{MS_{between}}{MS_{within}} = \frac{\sum_{i=1}^{k} n_i(\bar{X}_{i} - \bar{X})^2/(k-1)}{\sum_{i=1}^{k}\sum_{j=1}^{n_i}(X_{ij} - \bar{X}_i)^2/(N-k)}
+\end{equation}
+
+\textbf{Effect Size (Eta-squared):}
+\begin{equation}
+\eta^2 = \frac{SS_{between}}{SS_{total}}
+\end{equation}
+
+\textbf{Purpose:} Repeated measures ANOVA tests whether there are any significant differences among three or more related groups (our three prompts across CLDs). The F-statistic compares between-group variance to within-group variance, with larger values indicating greater differences. We used one-way ANOVA as an approximation since our design involves the same CLDs tested with different prompts. Eta-squared quantifies the proportion of total variance explained by prompt differences, with $\eta^2$ > 0.14 considered large effects.
+
+\subsection{Paired t-Test}
+
+\textbf{Formula:}
+\begin{equation}
+t = \frac{\bar{D}}{s_D / \sqrt{n}}
+\end{equation}
+
+where $\bar{D}$ is the mean difference, $s_D$ is the standard deviation of differences, and $n$ is the number of pairs.
+
+\textbf{95\% Confidence Interval:}
+\begin{equation}
+CI = \bar{D} \pm t_{\alpha/2, df} \cdot \frac{s_D}{\sqrt{n}}
+\end{equation}
+
+\textbf{Purpose:} Paired t-tests compare two related groups by analyzing the differences between paired observations (same CLD, different prompts). The test assumes differences are normally distributed and calculates whether the mean difference is significantly different from zero. We applied Bonferroni correction for multiple comparisons ($\alpha$ = 0.05/3 = 0.0167) to control family-wise error rate. The confidence interval provides a range of plausible values for the true mean difference.
+
+\subsection{Cohen's d (Effect Size for t-tests)}
+
+\textbf{Formula (Paired samples):}
+\begin{equation}
+d = \frac{\bar{D}}{s_D}
+\end{equation}
+
+where $\bar{D}$ is the mean difference and $s_D$ is the standard deviation of differences.
+
+\textbf{Purpose:} Cohen's d measures the standardized effect size, expressing the difference between groups in standard deviation units, independent of sample size. Effect sizes are interpreted as small (d $\approx$ 0.2), medium (d $\approx$ 0.5), large (d $\approx$ 0.8), or very large (d > 1.0). This metric is crucial for distinguishing between statistical significance (influenced by sample size) and practical significance (magnitude of real-world difference). Our results showed Cohen's d values of 4.5-5.6, indicating extremely large practical differences.
+
+\section{Non-Parametric Alternatives}
+
+\subsection{Friedman Test}
+
+\textbf{Formula:}
+\begin{equation}
+\chi_r^2 = \frac{12}{nk(k+1)} \sum_{j=1}^{k} R_j^2 - 3n(k+1)
+\end{equation}
+
+where $R_j$ is the sum of ranks for group j, n is the number of blocks (CLDs), and k is the number of groups (prompts).
+
+\textbf{Purpose:} The Friedman test is the non-parametric alternative to repeated measures ANOVA, comparing multiple related groups using rank-based methods without assuming normality. The test ranks observations within each block (CLD) and compares rank sums across groups. Although our data met parametric assumptions, we included Friedman tests as a conservative robustness check. The chi-square statistic assesses whether rank distributions differ significantly across prompts.
+
+\subsection{Wilcoxon Signed-Rank Test}
+
+\textbf{Formula:}
+\begin{equation}
+W = \sum_{i=1}^{n} \text{sgn}(x_{2,i} - x_{1,i}) \cdot R_i
+\end{equation}
+
+where $R_i$ is the rank of $|x_{2,i} - x_{1,i}|$ and sgn is the sign function.
+
+\textbf{Purpose:} The Wilcoxon signed-rank test is the non-parametric alternative to paired t-tests, comparing two related groups using ranks of absolute differences rather than raw values. The test is robust to outliers and does not assume normality of differences. We applied Bonferroni correction ($\alpha$ = 0.0167) for multiple pairwise comparisons. While less powerful than parametric tests when assumptions are met, Wilcoxon tests provide confirmatory evidence of our parametric findings.
+
+\section{Binary Classification Metrics}
+
+\subsection{AUC-ROC (Area Under Receiver Operating Characteristic Curve)}
+
+\textbf{Formula:}
+\begin{equation}
+AUC = P(s_{positive} > s_{negative})
+\end{equation}
+
+where $s$ represents the score assigned to randomly selected positive and negative instances.
+
+\textbf{Computational Formula (using trapezoidal rule):}
+\begin{equation}
+AUC = \sum_{i=1}^{n-1} \frac{(TPR_i + TPR_{i+1})}{2} \cdot (FPR_i - FPR_{i+1})
+\end{equation}
+
+\textbf{Purpose:} AUC-ROC measures the classifier's ability to discriminate between positive (corrupted) and negative (clean) instances across all possible decision thresholds. AUC = 0.5 indicates random guessing, while AUC = 1.0 indicates perfect discrimination. Values between 0.7-0.8 are considered acceptable, 0.8-0.9 excellent, and >0.9 outstanding. This metric is particularly valuable as it is threshold-independent, providing a single summary of classification performance that is robust to class imbalance.
+
+\subsection{Point-Biserial Correlation}
+
+\textbf{Formula:}
+\begin{equation}
+r_{pb} = \frac{\bar{X}_1 - \bar{X}_0}{s_n} \sqrt{\frac{n_1 n_0}{n(n-1)}}
+\end{equation}
+
+where $\bar{X}_1$ and $\bar{X}_0$ are mean scores for corrupted and clean edges, $s_n$ is the standard deviation of all scores, and $n_1$, $n_0$ are group sizes.
+
+\textbf{Purpose:} Point-biserial correlation measures the relationship between a binary variable (corrupted vs. clean) and a continuous variable (judge's aggregate score), assessing how well scores discriminate between classes. Values range from -1 to +1, with larger absolute values indicating stronger discrimination. We expected negative correlations since higher scores indicate better quality (clean edges), while corrupted edges should receive lower scores. Values of $|r|$ > 0.5 indicate moderate-to-strong discrimination ability.
+
+\section{Statistical Software and Significance Levels}
+
+All statistical analyses were performed using Python 3.10 with scipy.stats (version 1.11.0) and numpy (version 1.24.0). We set the significance level at $\alpha$ = 0.05 for main effects (ANOVA, Friedman) and $\alpha$ = 0.0167 for pairwise comparisons (Bonferroni-corrected for three comparisons: 0.05/3). Effect sizes were reported alongside p-values to distinguish statistical from practical significance, following current best practices in psychological and computational research.
+
+\section{Summary}
+
+This methodological framework combines rigorous assumption testing (Shapiro-Wilk, Levene's) with both parametric (ANOVA, paired t-tests) and non-parametric (Friedman, Wilcoxon) approaches, ensuring robust conclusions regardless of distributional assumptions. The inclusion of multiple effect size measures (Cohen's d, eta-squared, AUC-ROC, point-biserial r) provides a comprehensive assessment of both statistical and practical significance, addressing the limitations of relying solely on p-values with small sample sizes (N=3 per condition).

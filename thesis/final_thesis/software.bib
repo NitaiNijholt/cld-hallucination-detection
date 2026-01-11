@@ -1,0 +1,280 @@
+% ============================================================================
+% SOFTWARE CITATIONS
+% ============================================================================
+% This file contains citations for all software packages used in this research.
+% Following WORCS (Workflow for Open Reproducible Code in Science) principles.
+% See: Van Lissa et al. (2021) https://doi.org/10.3233/DS-210031
+% ============================================================================
+
+% === Programming Language ===
+
+@manual{python3,
+  title        = {Python: A dynamic, open source programming language},
+  author       = {{Python Software Foundation}},
+  year         = {2024},
+  url          = {https://www.python.org/},
+  note         = {Version 3.10+}
+}
+
+% === LLM APIs and Providers ===
+
+@misc{openai2023gpt4,
+  title        = {{GPT-4} Technical Report},
+  author       = {{OpenAI}},
+  year         = {2023},
+  eprint       = {2303.08774},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CL},
+  url          = {https://arxiv.org/abs/2303.08774},
+  doi          = {10.48550/arXiv.2303.08774}
+}
+
+@misc{anthropic2024claude3,
+  title        = {The Claude 3 Model Family: Opus, Sonnet, Haiku},
+  author       = {{Anthropic}},
+  year         = {2024},
+  url          = {https://assets.anthropic.com/m/61e7d27f8c8f5919/original/Claude-3-Model-Card.pdf},
+  note         = {Claude 3.5 Sonnet used for LLM-as-Judge experiments}
+}
+
+% === Search APIs ===
+
+@misc{bravesearchapi,
+  title        = {Brave Search API Documentation},
+  author       = {{Brave Software}},
+  year         = {2026},
+  url          = {https://api.search.brave.com/app/documentation/web-search/get-started},
+  note         = {Accessed 2026-01-02}
+}
+
+% === Data Analysis and Scientific Computing ===
+
+@article{harris2020numpy,
+  title        = {Array programming with {NumPy}},
+  author       = {Charles R. Harris and K. Jarrod Millman and St{\'{e}}fan J. van der Walt and Ralf Gommers and Pauli Virtanen and David Cournapeau and Eric Wieser and Julian Taylor and Sebastian Berg and Nathaniel J. Smith and Robert Kern and Matti Picus and Stephan Hoyer and Marten H. van Kerkwijk and Matthew Brett and Allan Haldane and Jaime Fern{\'{a}}ndez del R{\'{i}}o and Mark Wiebe and Pearu Peterson and Pierre G{\'{e}}rard-Marchant and Kevin Sheppard and Tyler Reddy and Warren Weckesser and Hameer Abbasi and Christoph Gohlke and Travis E. Oliphant},
+  year         = {2020},
+  month        = sep,
+  journal      = {Nature},
+  volume       = {585},
+  number       = {7825},
+  pages        = {357--362},
+  doi          = {10.1038/s41586-020-2649-2},
+  publisher    = {Springer Science and Business Media {LLC}},
+  url          = {https://doi.org/10.1038/s41586-020-2649-2}
+}
+
+@inproceedings{mckinney2010pandas,
+  author       = {Wes McKinney},
+  title        = {Data Structures for Statistical Computing in Python},
+  booktitle    = {Proceedings of the 9th Python in Science Conference},
+  pages        = {56--61},
+  year         = {2010},
+  editor       = {St{\'e}fan van der Walt and Jarrod Millman},
+  doi          = {10.25080/Majora-92bf1922-00a}
+}
+
+@article{virtanen2020scipy,
+  author       = {Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E. and Haberland, Matt and Reddy, Tyler and Cournapeau, David and Burovski, Evgeni and Peterson, Pearu and Weckesser, Warren and Bright, Jonathan and {van der Walt}, St{\'e}fan J. and Brett, Matthew and Wilson, Joshua and Millman, K. Jarrod and Mayorov, Nikolay and Nelson, Andrew R. J. and Jones, Eric and Kern, Robert and Larson, Eric and Carey, C J and Polat, {\.I}lhan and Feng, Yu and Moore, Eric W. and {VanderPlas}, Jake and Laxalde, Denis and Perktold, Josef and Cimrman, Robert and Henriksen, Ian and Quintero, E. A. and Harris, Charles R. and Archibald, Anne M. and Ribeiro, Ant{\^o}nio H. and Pedregosa, Fabian and {van Mulbregt}, Paul and {SciPy 1.0 Contributors}},
+  title        = {{SciPy} 1.0: Fundamental Algorithms for Scientific Computing in Python},
+  journal      = {Nature Methods},
+  year         = {2020},
+  volume       = {17},
+  pages        = {261--272},
+  doi          = {10.1038/s41592-019-0686-2}
+}
+
+% === Machine Learning ===
+
+@article{pedregosa2011sklearn,
+  title        = {Scikit-learn: Machine Learning in {P}ython},
+  author       = {Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V. and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P. and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
+  journal      = {Journal of Machine Learning Research},
+  volume       = {12},
+  pages        = {2825--2830},
+  year         = {2011}
+}
+
+@article{lemaitre2017imblearn,
+  author       = {Guillaume Lema{\^i}tre and Fernando Nogueira and Christos K. Aridas},
+  title        = {Imbalanced-learn: A Python Toolbox to Tackle the Curse of Imbalanced Datasets in Machine Learning},
+  journal      = {Journal of Machine Learning Research},
+  year         = {2017},
+  volume       = {18},
+  number       = {17},
+  pages        = {1--5},
+  url          = {http://jmlr.org/papers/v18/16-365.html}
+}
+
+% === Visualization ===
+
+@article{hunter2007matplotlib,
+  author       = {Hunter, J. D.},
+  title        = {Matplotlib: A 2D graphics environment},
+  journal      = {Computing in Science \& Engineering},
+  volume       = {9},
+  number       = {3},
+  pages        = {90--95},
+  publisher    = {IEEE COMPUTER SOC},
+  doi          = {10.1109/MCSE.2007.55},
+  year         = {2007}
+}
+
+@article{waskom2021seaborn,
+  doi          = {10.21105/joss.03021},
+  url          = {https://doi.org/10.21105/joss.03021},
+  year         = {2021},
+  publisher    = {The Open Journal},
+  volume       = {6},
+  number       = {60},
+  pages        = {3021},
+  author       = {Michael L. Waskom},
+  title        = {seaborn: statistical data visualization},
+  journal      = {Journal of Open Source Software}
+}
+
+% === Graph Analysis and Databases ===
+
+@inproceedings{hagberg2008networkx,
+  title        = {Exploring network structure, dynamics, and function using {NetworkX}},
+  author       = {Hagberg, Aric A. and Schult, Daniel A. and Swart, Pieter J.},
+  booktitle    = {Proceedings of the 7th Python in Science Conference (SciPy2008)},
+  editor       = {Varoquaux, G{\"a}el and Vaught, Travis and Millman, Jarrod},
+  address      = {Pasadena, CA USA},
+  pages        = {11--15},
+  year         = {2008}
+}
+
+@book{robinson2013neo4j,
+  title        = {Graph Databases},
+  author       = {Robinson, Ian and Webber, Jim and Eifrem, Emil},
+  year         = {2013},
+  publisher    = {O'Reilly Media},
+  isbn         = {978-1-4493-5626-2},
+  note         = {Neo4j graph database used for storing causal loop diagrams}
+}
+
+@manual{elasticsearch2024,
+  title        = {Elasticsearch},
+  author       = {{Elastic N.V.}},
+  year         = {2024},
+  url          = {https://www.elastic.co/elasticsearch/},
+  note         = {Version 8.x, used for document retrieval}
+}
+
+% === Data Validation and LLM Integration ===
+
+@software{pydantic2024,
+  author       = {Samuel Colvin and Eric Jolibois and Hasan Ramezani and Adrian Garcia Badaracco and Terrence Dorsey and David Montague and others},
+  title        = {Pydantic: Data Validation Using Python Type Hints},
+  year         = {2024},
+  publisher    = {Zenodo},
+  version      = {2.9},
+  doi          = {10.5281/zenodo.8421425},
+  url          = {https://github.com/pydantic/pydantic},
+  note         = {Used for structured output validation in LLM pipelines}
+}
+
+% === Interactive Computing ===
+
+@inproceedings{kluyver2016jupyter,
+  title        = {Jupyter Notebooks -- a publishing format for reproducible computational workflows},
+  author       = {Thomas Kluyver and Benjamin Ragan-Kelley and Fernando P{\'e}rez and Brian Granger and Matthias Bussonnier and Jonathan Frederic and Kyle Kelley and Jessica Hamrick and Jason Grout and Sylvain Corlay and Paul Ivanov and Dami{\'a}n Avila and Safia Abdalla and Carol Willing},
+  booktitle    = {Positioning and Power in Academic Publishing: Players, Agents and Agendas},
+  year         = {2016},
+  pages        = {87--90},
+  publisher    = {IOS Press}
+}
+
+@article{perez2007ipython,
+  author       = {P{\'e}rez, Fernando and Granger, Brian E.},
+  title        = {{IP}ython: a System for Interactive Scientific Computing},
+  journal      = {Computing in Science and Engineering},
+  volume       = {9},
+  number       = {3},
+  pages        = {21--29},
+  month        = {May/June},
+  year         = {2007},
+  url          = {https://ipython.org},
+  issn         = {1521-9615},
+  doi          = {10.1109/MCSE.2007.53},
+  publisher    = {IEEE Computer Society}
+}
+
+% === Web Framework ===
+
+@manual{flask2024,
+  title        = {Flask Documentation},
+  author       = {{Pallets Projects}},
+  year         = {2024},
+  url          = {https://flask.palletsprojects.com/},
+  note         = {Web framework for backend API}
+}
+
+% === Database and Caching ===
+
+@incollection{bayer2012sqlalchemy,
+  place        = {Mountain View},
+  title        = {SQLAlchemy},
+  booktitle    = {The Architecture of Open Source Applications Volume II: Structure, Scale, and a Few More Fearless Hacks},
+  publisher    = {aosabook.org},
+  url          = {http://aosabook.org/en/sqlalchemy.html},
+  author       = {Bayer, Michael},
+  editor       = {Brown, Amy and Wilson, Greg},
+  year         = {2012}
+}
+
+@misc{redis2024,
+  title        = {Redis},
+  author       = {Salvatore Sanfilippo and {Redis Ltd.}},
+  year         = {2024},
+  url          = {https://redis.io/},
+  note         = {In-memory data store for caching}
+}
+
+% === Document Processing ===
+
+@misc{pymupdf2024,
+  author       = {{Artifex Software, Inc.}},
+  title        = {PyMuPDF: Python bindings for the MuPDF library},
+  year         = {2024},
+  url          = {https://pymupdf.io/},
+  note         = {Used for PDF document processing}
+}
+
+@misc{beautifulsoup2024,
+  title        = {Beautiful Soup Documentation},
+  author       = {Richardson, Leonard},
+  year         = {2024},
+  url          = {https://www.crummy.com/software/BeautifulSoup/},
+  note         = {HTML/XML parsing library}
+}
+
+% === Excel and Data Export ===
+
+@misc{openpyxl2024,
+  author       = {Eric Gazoni and Charlie Clark},
+  title        = {openpyxl -- A Python library to read/write Excel 2010 xlsx/xlsm files},
+  year         = {2024},
+  url          = {https://openpyxl.readthedocs.io/}
+}
+
+% === Utilities ===
+
+@software{tqdm2024,
+  author       = {{tqdm developers}},
+  title        = {tqdm: A fast, Extensible Progress Bar for Python and CLI},
+  year         = {2024},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.595120},
+  url          = {https://github.com/tqdm/tqdm}
+}
+
+@misc{httpx2024,
+  author       = {{Encode OSS}},
+  title        = {HTTPX: A next-generation HTTP client for Python},
+  year         = {2024},
+  url          = {https://www.python-httpx.org/}
+}
+
+% === Open Science ===
+

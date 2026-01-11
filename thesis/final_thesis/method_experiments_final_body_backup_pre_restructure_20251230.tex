@@ -1,0 +1,1083 @@
+\section{Datasets}
+%==============================================================================
+
+\subsection{CLD Domains}
+Three domain-specific Causal Loop Diagrams (CLDs) representing distinct scientific disciplines:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Depressive Symptoms~\cite{uleman2024triangulation}:} Biopsychosocial model (14 variables, 34 edges) capturing feedback loops between cognitive, behavioral, and physiological factors in depressive states. Constructed via triangulation of group model building, literature review, and causal discovery.
+    \item \textbf{Social Norms \& Obesity~\cite{crielaard2020socialnorms}:} Public health model (10 variables, 12 edges) representing interplay between social norms, body weight perception, and behavioral dynamics. Developed using system dynamics modeling with the HELIUS cohort.
+    \item \textbf{Older Persons Emergency Department~\cite{smeekes2023emergency}:} Healthcare systems model (34 variables, 66 edges) of factors influencing older persons' ED utilization patterns. Constructed through group model building with interdisciplinary clinical experts.
+\end{enumerate}
+
+\textbf{Note on ``edges'' and validation edges used in evaluation.} Throughout Results, an \textbf{edge} is defined as an ordered (source, target) \textit{edge slot} with a relationship label in \{\texttt{POSITIVE}, \texttt{NEGATIVE}, \texttt{NONE}\}, i.e., the full directed pair set with \textit{Edges} $=|V|(|V|-1)$ represented by the \texttt{All Edges} table. The effective number of ground-truth validation edges used for scoring is the count of rows with \texttt{In Validation Graph = Yes} (so \textit{TP}+\textit{FN} equals the validation-edge count under this representation).
+
+\subsection{Context Parameters for LLM Generation}
+
+Each CLD was configured with domain-specific context parameters extracted from the source Excel files. These parameters are provided to the LLM generator to guide causal reasoning within appropriate temporal, spatial, and domain boundaries:
+
+\begin{table}[H]
+\centering
+\caption{LLM Context Parameters by CLD (Extracted from Validation Excel Files)}
+\label{tab:cld_context}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{l}{\textit{\textbf{Depressive Symptoms CLD}}} \\
+Target & How biopsychosocial factors interact to influence the development and persistence of depressive symptoms in healthy adults \\
+Spatial Scale & Psychological, social, behavioral, and biological variables \\
+Temporal Scale & Medium- to long-term processes, capturing changes over weeks to months as stressors accumulate and symptoms evolve \\
+Scope & Individual-level stress response mechanisms \\
+\midrule
+\multicolumn{2}{l}{\textit{\textbf{Social Norms \& Obesity CLD}}} \\
+Target & Variations in social norms and cultural perceptions of body weight across different ethnic and gender groups \\
+Spatial Scale & Amsterdam, focusing on specific sociocultural groups within the city \\
+Temporal Scale & Monthly time steps \\
+Scope & Adults aged 18+ from six sociocultural groups in Amsterdam: Dutch, Moroccan, and South-Asian Surinamese men and women \\
+\midrule
+\multicolumn{2}{l}{\textit{\textbf{Older Persons Emergency Department CLD}}} \\
+Target & Why individuals aged 65 and older in Amsterdam visit the emergency department \\
+Spatial Scale & Local healthcare context and experiences of older adults within this urban setting \\
+Temporal Scale & Hours to days (inferred from healthcare decision-making timeline) \\
+Scope & Patient-level factors, healthcare system factors, social environment, and socioeconomic/contextual influences \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Rationale:} Following system dynamics principles~\cite{sterman2002system}, variables acting on smaller temporal scales than the variable of interest can be averaged out, while variables on larger scales can be treated as constants. By specifying explicit temporal boundaries, the LLM generator is guided to focus on causal mechanisms operating within the relevant timeframe---e.g., acute stressor responses (weeks--months) for depressive symptoms versus monthly social dynamics for obesity prevalence. Similarly, spatial scale constrains whether causal relationships operate at the individual, community, or healthcare system level. The scope parameter further constrains the domain of variables the LLM should consider.
+
+\subsection{CLD Selection Rationale}
+Ground truth CLDs were selected from peer-reviewed publications with explicitly defined causal structures (named variables, directed edges, polarities). The three CLDs span distinct scientific domains---biopsychosocial health, public health behavior, and healthcare systems---reducing the risk of domain-specific overfitting. CLD sizes range from 12 to 66 edges (validation sets: Social Norms 12, Depressive 34, Older Persons ED 66), providing variation in system complexity.
+
+\textbf{Limitation:} All three CLDs fall within the health domain, limiting generalizability to other fields (e.g., economics, ecology, engineering). Additionally, these CLDs represent expert-hypothesized relationships rather than empirically validated causal effects---a common limitation in complex systems where controlled experiments are infeasible~\cite{uleman2024triangulation,crielaard2020socialnorms,smeekes2023emergency}. Evaluation therefore measures reproduction of published expert models, which may or may not be causally correct.
+
+\subsection{Edge Structure}
+Each CLD edge contains: \textbf{source/target variables} (named entities with definitions), \textbf{relationship polarity} (\texttt{POSITIVE}/\texttt{NEGATIVE}/\texttt{NONE}), \textbf{causal motivation} (natural language mechanism explanation), and \textbf{scientific citations} (peer-reviewed references).
+
+\textbf{Key Parameters (Generator):} \texttt{model=gpt-4.1}, \texttt{temperature=0.7}, \texttt{top\_p=1}
+
+\subsection{Temperature Selection}
+
+The generator temperature (T=0.7) was validated through a sensitivity analysis measuring how temperature affects the \textbf{generator's} ability to recover edges from literature-derived ground truth CLDs.
+
+\textbf{Experimental Setup:}
+\begin{itemize}[noitemsep]
+    \item \textbf{CLDs:} All three validation CLDs: Social Norms (10 nodes, 12 edges), Depressive Symptoms (14 nodes, 34 edges), Older Persons Emergency Department (34 nodes, 66 edges)
+    \item \textbf{Generator:} GPT-4.1 with Nitai\_C prompt (same as all other experiments)
+    \item \textbf{Ground Truth:} Literature-derived CLDs (GT Lit)---published CLDs from peer-reviewed sources
+    \item \textbf{Temperatures:} T$\in$\{0.0, 0.3, 0.5, 0.7, 1.0\} (5 levels spanning full range)
+    \item \textbf{Runs:} 3 per temperature per CLD (seeds 10, 20, 30), totaling 45 generation experiments
+    \item \textbf{Metric:} Edge F1 comparing generated edges against GT Lit (same metric as RQ1a GT Lit experiments)
+\end{itemize}
+
+\textbf{Statistical Analysis:} One-way ANOVA tested whether temperature significantly affects edge F1 performance. ANOVA assumptions (normality via Shapiro-Wilk, homogeneity via Levene's test) were verified. Effect size is reported as eta-squared ($\eta^2$), with interpretation following Cohen's guidelines: $<0.01$ negligible, 0.01--0.06 small, 0.06--0.14 medium, $\geq$0.14 large.
+
+\textbf{Note on T=0.0:} While temperature=0.0 theoretically produces deterministic outputs, empirical testing showed variation across runs, confirming that OpenAI's API does not guarantee perfect reproducibility even at T=0.0~\cite{openai2024api}. This justifies including T=0.0 in the sensitivity analysis with multiple runs rather than a single run.
+
+Results are presented in Table~\ref{tab:temperature_sensitivity} in the Results section.
+
+\paragraph{Judge and Corrector Temperatures.}
+For the evaluation and correction modules, temperature settings were selected based on their distinct functional roles, following established practices in the literature. The \textbf{Judge} (LLM-as-a-Judge) uses a low temperature (\texttt{T=0.0}--\texttt{0.4}) to maximize consistency and reproducibility of verdicts, minimizing stochastic variance in evaluation~\citep{liu2023gevalnlgevaluationusing, zheng2024judging}.
+
+The \textbf{Corrector} uses a higher temperature (\texttt{T=0.7}) to facilitate exploration and diversity in generating refinements, preventing the model from collapsing into local minima where it cannot recover from an earlier error which next token generation is conditioned on, which can result from greedy decoding at \texttt{T=0.0}. This choice is supported by the Self-Refine framework which demonstrates the efficacy of iterative refinement with \texttt{T=0.7}~\citep{madaan2023selfrefineiterativerefinementselffeedback}.
+
+The \textbf{Corruptor} also uses \texttt{T=0.7} with the same model as the generator (GPT-4.1) to create hallucinations that are stylistically indistinguishable from valid generations. LLMs exhibit self-preference bias~\citep{zheng2024judging}, favoring their own generation style. By matching the corruptor's model and temperature to the generator's, we minimize stylistic distributional shifts, ensuring that hallucinations must be detected based on \textit{content} rather than stylistic artifacts, thereby creating a more rigorous adversarial test.
+
+\subsection{Generator Prompt Selection}
+
+The generator prompts (Nitai\_C) used in all experiments were selected based on prior ablation studies:
+
+\textbf{Edge Generation Ablation:} Nine prompt variants were evaluated across three CLDs, testing Chain-of-Thought (CoT), task decomposition, RAG/citation requirements, and relationship taxonomy complexity. The Nitai\_C variant (dual-level CoT with 6 relationship types) achieved the highest average F1 (0.460), outperforming baseline (0.371) by 24\%. Key findings: (1) CoT improved performance progressively (Nitai\_A$\rightarrow$B$\rightarrow$C), (2) mandatory citations reduced performance by 25\% (Nitai\_E vs. Nitai\_C), and (3) overly restrictive grounding caused complete failure (Cillian\_C: F1=0.00). See Appendix~\ref{sec:ablation_edge} for full results.
+
+\textbf{Node Generation Ablation:} Seven prompt variants were evaluated in a 7$\times$3$\times$5 factorial design (105 runs total). ANOVA revealed no statistically significant differences between variants ($F=0.81$, $p=0.57$), with F1 scores ranging from 0.617 to 0.677. This suggests node generation is robust to prompt engineering choices, unlike edge generation. See Appendix~\ref{sec:ablation_node} for full results.
+
+\subsection{Generator Model Selection}
+
+Before running the main study, we performed a one-shot generator model comparison to select a single frontier LLM for all subsequent CLD generation experiments.
+
+\textbf{Models compared.} We compared three generator models: GPT-4.1 (OpenAI), Sonar-Pro (Perplexity), and Claude Sonnet 4 (Anthropic).
+
+\textbf{Dataset and setup.} For each of the three validation CLDs (Depressive, Social Norms, Emergency Dept), we generated a complete \texttt{All Edges} table using the same node set as the literature ground truth and the same generator prompt (Nitai\_C), with \texttt{temperature=0.7}. Corruption and judging were disabled (\texttt{corruption\_rate=0.0}, \texttt{judge\_edges=False}) so that models are compared purely on edge recovery against GT Lit.
+
+\textbf{Metric computation.} For each model--CLD run, we compute confusion-matrix counts (TP/FP/FN) directly from the resulting \texttt{All Edges} sheet, then compute precision, recall, and F1:
+\[
+\text{Precision}=\frac{TP}{TP+FP},\quad
+\text{Recall}=\frac{TP}{TP+FN},\quad
+F1=\frac{2PR}{P+R}.
+\]
+We also compute an \textbf{aggregate micro-averaged} score by pooling TP/FP/FN across all three CLDs and recomputing precision/recall/F1 on the pooled counts (equivalent to micro-averaging over edges).
+
+\textbf{Selection rule.} We select the generator with the highest aggregate (micro-averaged) F1, prioritizing balanced precision/recall. As a secondary constraint, we require token-level log probabilities (logits) for downstream CI-metric extraction in RQ2; among the compared models, this is available for GPT-4.1.
+
+\textbf{Reproduction.} The analysis is reproduced by \texttt{python final\_runs/generator\_model\_comparison\_analysis/analyze\_generator\_models.py}, which reads the per-model per-CLD result workbooks and computes the above metrics, and emits the thesis table \texttt{final\_runs/generator\_model\_comparison\_analysis/generator\_model\_comparison.tex}. The one-shot generation runs were produced using \texttt{final\_runs/generator\_model\_comparison\_analysis/run\_generator\_model\_comparison.py}.
+
+\subsection{Random Baseline Methodology}
+
+To contextualize the LLM generator's performance, we establish a structural random baseline by computing expected edge F1 for Erd\H{o}s-R\'enyi random graphs G(n,m) matching each validation CLD's node and edge counts. This baseline represents the performance achievable by randomly selecting edges between the same nodes, without any causal reasoning.
+
+\textbf{Random Baseline:} For each validation CLD, we generate 1000 random directed graphs with identical node sets and edge counts, computing edge precision, recall, and F1 against the ground truth. The 95\% CI is computed using the z-distribution (n=1000).
+
+\textbf{LLM Generator:} Edge F1 is computed from 3 generation runs per CLD (seeds 10, 20, 30). Per-CLD 95\% CI uses the t-distribution (n=3).
+
+Results are presented in Table~\ref{tab:random_baseline} and Figure~\ref{fig:random_baseline_final} in the Results section.
+
+%==============================================================================
+\section{Master Experimental Overview}
+%==============================================================================
+
+Table~\ref{tab:master} provides a complete overview of all experimental configurations across research questions.
+
+\begin{table}[H]
+\centering
+\caption{Master Experimental Configuration with Hypotheses}
+\label{tab:master}
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}l l l l l l c X@{}}
+\toprule
+\textbf{RQ} & \textbf{Task} & \textbf{GT} & \textbf{Varies} & \textbf{Fixed} & \textbf{Model} & \textbf{N} & \textbf{Hypothesis} \\
+\midrule
+\multirow{4}{*}{1a} 
+  & Corr. & Lit & CLD s$\in$\{10,20,30\} & s=42, T=0 & 4.1 & 27 & \multirow{2}{*}{H1 (Corr.): Low judge score $\Rightarrow$ halluc.} \\
+  & Corr. & Synth & Corr.\ s$\in$\{1,2,3\} & rate=30\% & 4.1 & 27 & \\
+  & Cit. & Lit & CLD s$\in$\{10,20,30\} & s=42, T=0 & 4.1 & 36 & \multirow{2}{*}{H2 (Cit.): Low judge score $\Rightarrow$ halluc.} \\
+  & Cit. & Synth & Corr.\ s$\in$\{1,2,3\} & rate=30\% & 5m & 36 & \\
+\midrule
+\multirow{2}{*}{1b}
+  & Corr. & Synth & CLD s$\in$\{10,20,30\} & 3 prompts & 4.1 & 27 & \multirow{2}{*}{H3 (Corr.): Correction $\uparrow$ F1 (reduces halluc.)} \\
+  & Corr. & Lit & CLD s$\in$\{10,20,30\} & 3 prompts & 4.1 & 27 & \\
+\midrule
+\multirow{2}{*}{2}
+  & CI & Lit & CLD s$\in$\{10,20,30\} & Logits & 4.1 & 63 & H4 (CI): $\uparrow$PPL / $\downarrow P_{min}$ / $\uparrow H_{win}$ $\Rightarrow$ halluc. \\
+  & CosSim & Lit & CLD s$\in$\{10,20,30\} & Embeds & mpnet & 36 & H5 (CosSim): Low narr.-cit.\ sim.\ $\Rightarrow$ halluc. \\
+\midrule
+\multirow{3}{*}{3}
+  & DR & Lit & TP/FP/FN & 1 iter, 5 src & GPT-5 & 285 & H6 (DR): Det.Rate$_{\text{TP}}$ $>$ Det.Rate$_{\text{FP}}$ \\
+  & HV & DR+ & FP/FN strat. & $t\in$\{0.5--0.9\} & Human & 50 & H7 (HV): Applic.\ threshold $\Rightarrow$ causal validity \\
+  & Smart & Lit & Judge score & Mech.\ $\leq$0.5 & GPT-5 & 142 & H8 (Smart): Selective DR $\uparrow$ cost-efficiency \\
+\bottomrule
+\end{tabularx}
+\vspace{0.3em}
+
+\scriptsize
+\textit{Legend:} s=seed, T=Temp, 4.1=GPT-4.1, 5m=GPT-5-mini, GPT-5=GPT-5 (heavy), PPL=Perplexity, $P_{min}$=Min Prob, $H_{win}$=Max Window Entropy, DR=Deep Research, HV=Human Validation, Det.Rate=Detection Rate, Applic.=Applicability, Mech.=Mechanistic. \\
+\textit{Common:} 3 CLDs $\times$ 3 prompts (correctness) or 4 prompts (citation, incl.\ Mech-Lit). Generator T=0.7, Corruptor T=0.7. halluc.=hallucination (FP$\lor$FN w.r.t.\ GT).
+\end{table}
+
+\subsection{Experimental Design Rationale}
+\begin{itemize}[noitemsep]
+    \item \textbf{GT Lit experiments:} CLD generation varies (seeds 10, 20, 30) $\rightarrow$ tests judge generalization across CLD instances
+    \item \textbf{GT Synth experiments:} Corruption varies (seeds 1, 2, 3), base CLD fixed $\rightarrow$ isolates corruption detection ability
+    \item \textbf{Seed separation:} Methodological independence between paradigms (10/20/30 vs 1/2/3)
+\end{itemize}
+
+\textbf{Confound Prevention:} The seed structure explicitly controls for potential confounds. In GT Synth experiments, fixing the base CLD while varying only the corruption seed ensures that performance differences reflect the judge's ability to detect different corruption patterns---not differences in underlying CLD structure. Any variation across runs is attributable solely to which edges were corrupted and how, eliminating CLD structure as a confounding variable. In GT Lit experiments, CLD structure variation is intentional: we deliberately test whether the judge generalizes across different valid CLD realizations rather than memorizing patterns from a single instance. The seed separation (10/20/30 for generation vs. 1/2/3 for corruption) maintains methodological independence, ensuring no overlap between the random states governing CLD creation and corruption processes.
+
+\subsection{Statistical Power}
+
+Post-hoc power analysis assessed the probability of detecting observed effects at $\alpha = 0.05$ using achieved effect sizes (Cohen, 1988 conventions).
+
+\subsubsection{RQ1a: Judge Prompt Sensitivity}
+Friedman test with $k=3$ prompts (or $k=4$ for citation including Mechanistic-Lit), $n=9$ blocks (3 CLDs $\times$ 3 runs) per experiment type. Blocking on (CLD, run) pairs controls for instance-level variance while isolating the prompt effect. For correctness judges, observed effects were large (Kendall's $W = 0.48$--$0.70$), yielding achieved power $>0.99$. For citation judges, effects were small-to-medium (Kendall's $W \approx 0.29$--$0.30$). Effect sizes follow Kendall's W interpretation: $<0.1$ negligible, $0.1$--$0.3$ small, $0.3$--$0.5$ medium, $\geq 0.5$ large.
+
+\subsubsection{RQ1b: Corrector Evaluation}
+\textbf{Blocked (repeated-measures) design.} The corrector is evaluated over $n=9$ matched blocks per experiment, where each block corresponds to a unique (CLD, run) pair (3 CLDs $\times$ 3 runs). Within each block, we compare outcomes across corrector prompt variants, which controls for CLD-specific difficulty and run-to-run variation.
+
+\textbf{Two distinct hypotheses.} We separate \textit{efficacy} from \textit{prompt effects}:
+\begin{itemize}[noitemsep]
+    \item \textbf{Efficacy (primary RQ1b question):} does the corrector improve performance relative to doing nothing? We test whether median $\Delta$F1 differs from 0 using a one-sample Wilcoxon signed-rank test on $\Delta$F1 (post-correction minus pre-correction) across the 9 blocks.
+    \item \textbf{Prompt effect (secondary):} do prompt variants (Baseline, CoT, Mechanistic) differ \textit{under the same blocks}? We test this using a Friedman test with (CLD, run) as blocks and report Kendall's $W$ as effect size. When the omnibus Friedman test is significant, we run post-hoc paired Wilcoxon signed-rank tests between prompt pairs within the same blocks, with Bonferroni correction over the 3 pairs ($\alpha_{\text{adj}}=0.0167$).
+\end{itemize}
+
+\subsubsection{RQ2: Nested Data Structure}
+Edge-level analyses ($n = 31{,}704$ edges) achieve power $\approx 1.0$ for any detectable correlation. However, edges are nested within CLDs ($n = 3$), creating a hierarchical structure. Cross-domain generalization claims are limited by the small number of independent clusters---empirically confirmed by leave-one-CLD-out validation showing substantial AUC degradation (RF: $0.987 \rightarrow 0.630$).
+
+\subsubsection{RQ3: Deep Research}
+Post-hoc power analysis assesses achieved power given the observed effect size and sample sizes. For the primary TP--FP discrimination test ($n_{\text{TP}}=44$, $n_{\text{FP}}=178$), we compute achieved power using a two-proportion z-test power formula. Additionally, we calculate the minimum detectable effect (Cohen's $h$) required to achieve 80\% power at $\alpha=0.05$, enabling assessment of whether the study was adequately powered to detect the observed effect. Power calculations are implemented using \texttt{statsmodels.stats.power}.
+
+\subsection{Multiple Comparison Corrections}
+
+Given the multiple statistical tests performed across research questions, we applied Bonferroni corrections to control family-wise error rate. Tests were grouped into families by research question, as each RQ addresses a distinct hypothesis:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{RQ1a (Prompt Sensitivity):} For each of 4 experiments, Friedman omnibus test followed by pairwise Wilcoxon signed-rank post-hoc tests. With $k=3$ prompts, 3 pairwise comparisons per metric yield $\alpha_{\text{adj}} = 0.0167$; with $k=4$ prompts, 6 comparisons yield $\alpha_{\text{adj}} = 0.0083$.
+    \item \textbf{RQ1b (Corrector prompt effect):} 2 omnibus Friedman prompt-effect tests (Synthetic and Ground Truth), Bonferroni correction across these two tests ($\alpha_{\text{adj}} = 0.025$). If omnibus tests are significant, we report post-hoc paired Wilcoxon prompt-pair comparisons within each experiment with Bonferroni correction over 3 pairs ($\alpha_{\text{adj}}=0.0167$). Efficacy vs.\ $\Delta$F1$=0$ is tested via one-sample Wilcoxon signed-rank tests on $\Delta$F1 (reported as supporting evidence for RQ1b).
+    \item \textbf{RQ2 (CI Metrics):} 4 single-metric tests, Bonferroni correction ($\alpha_{\text{adj}} = 0.0125$)
+    \item \textbf{RQ3 (Deep Research):} 3 Fisher's exact tests, Bonferroni correction ($\alpha_{\text{adj}} = 0.017$)
+\end{itemize}
+
+All significant findings reported in the Results section survive correction: RQ1a prompt effects (Friedman $p < 0.05$, post-hoc $p < \alpha_{\text{adj}}$), RQ3 TP--FN and FP--FN discrimination ($p < \alpha_{\text{adj}}$). Non-significant findings (RQ1b, RQ3 TP--FP) remain unchanged. Both raw and Bonferroni-adjusted p-values are reported in result figures.
+
+\textit{Reproduction:} Each analysis script computes corrections internally:
+\begin{itemize}[noitemsep]
+    \item RQ1a: \texttt{uv run python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py}
+    \item RQ1b: \texttt{uv run python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py}
+    \item RQ2: \texttt{uv run python final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py}
+    \item RQ3: \texttt{uv run python final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py}
+\end{itemize}
+
+%==============================================================================
+\section{Hallucination Definition}
+\label{sec:hallucination_definition}
+%==============================================================================
+
+\subsection{Manifestations}
+Hallucinations = \textbf{incorrectness in causal links}: erroneous \textit{absence} (FN) or \textit{presence} (FP) of links, wrong direction, or wrong causal narrative.
+
+\subsection{Operationalization}
+\begin{itemize}[noitemsep]
+    \item \textbf{GT Lit:} CLD from peer-reviewed literature. \textbf{Hallucination = FP/FN} w.r.t. literature CLD.
+    \item \textbf{GT Synth:} LLM-corrupted edges. \textbf{Hallucination = corrupted edges} (corrupted=True).
+\end{itemize}
+
+\subsection{Corruption Process (HaluEval-inspired~\cite{li2023halueval})}
+The Corruptor introduces controlled errors to test judge detection (see Appendix~\ref{alg:corruption} for algorithmic details). Three corruption types with \textbf{rate=0.3}, balanced distribution:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Motivation corruption:} Replaces valid explanations with plausible-but-flawed reasoning
+    \item \textbf{Spurious edges:} Converts \texttt{NONE} $\rightarrow$ false positive links (\texttt{POSITIVE}/\texttt{NEGATIVE})
+    \item \textbf{Polarity flips:} Inverts \texttt{POSITIVE} $\leftrightarrow$ \texttt{NEGATIVE}
+\end{enumerate}
+
+\textbf{Key Parameters (Corruptor):} \texttt{model=gpt-4.1}, \texttt{temp=0.7}, \texttt{top\_p=1}, \texttt{rate=0.3}
+
+%==============================================================================
+\section{Retrieval Strategy: Generate-then-Search}
+\label{sec:retrieval_strategy}
+%==============================================================================
+
+\subsection{Motivation}
+
+Traditional Retrieval-Augmented Generation (RAG) systems follow a \textbf{search-then-generate} paradigm: first retrieve relevant documents from a corpus, then condition the language model's generation on the retrieved context~\cite{lewis2020rag}. While effective for factoid question answering, this approach faces critical limitations when applied to complex reasoning tasks such as causal loop diagram construction.
+
+\subsection{The Overconstraining Problem}
+
+Search-first approaches introduce a dependency on retrieval quality that can \textbf{overconstrain} the model's output:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Retrieval bottleneck:} If the retrieval system fails to surface relevant documents---due to indexing gaps, suboptimal query formulation, or domain vocabulary mismatch---the model cannot access valid knowledge even if it exists in its parametric memory. Generator ablations confirm this: mandatory citation requirements reduced performance by 25\%, and overly restrictive grounding caused complete failure (F1=0.00).
+    \item \textbf{Corpus coverage limitations:} Scientific literature databases may lack coverage of interdisciplinary relationships, emerging hypotheses, or domain-specific mechanisms that are well-represented in LLM pretraining data but not yet indexed in targeted search corpora.
+    \item \textbf{Query formulation paradox:} Constructing effective search queries requires knowing what causal relationships to look for---but in CLD generation, these relationships are precisely what the model is trying to discover. This creates a chicken-and-egg problem where retrieval cannot effectively guide generation.
+\end{itemize}
+
+\subsection{Generate-then-Search Approach}
+
+We adopt a \textbf{generate-then-search} paradigm that decouples generation from retrieval:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Unconstrained Generation:} The LLM generates candidate causal relationships using its full parametric knowledge, without retrieval constraints. This leverages the model's internalized understanding of scientific relationships from pretraining.
+    \item \textbf{Post-hoc Evidence Search:} Generated edges are subsequently validated by searching for supporting evidence (Citation Judge in RQ1a; Deep Research in RQ3). The search targets the \textit{generated} causal claim, enabling focused queries.
+\end{enumerate}
+
+\textbf{Rationale:} This design treats retrieval as a \textit{validation} mechanism rather than a \textit{constraint} on generation. The LLM's parametric knowledge---derived from extensive pretraining on scientific literature---serves as the primary source for hypothesis generation. Search is then used to verify whether generated hypotheses have literature support, rather than limiting generation to only what retrieval surfaces.
+
+\subsection{Trade-offs}
+
+\textbf{Advantages:}
+\begin{itemize}[noitemsep]
+    \item Avoids false negatives from retrieval failures---valid relationships are not missed due to search limitations
+    \item Enables generation of cross-domain relationships that may not be co-indexed in any single corpus
+    \item Leverages the LLM's ability to synthesize knowledge across its training corpus
+    \item Query formulation becomes tractable: search for evidence of a \textit{specific} claim rather than open-ended exploration
+\end{itemize}
+
+\textbf{Limitations:}
+\begin{itemize}[noitemsep]
+    \item May generate more false positives (hallucinations) without retrieval grounding during generation
+    \item Requires robust post-hoc validation to filter incorrect relationships
+    \item Places greater burden on judge/validator components to distinguish valid from hallucinated edges
+\end{itemize}
+
+Our experimental design (RQ1a--RQ3) specifically evaluates whether post-hoc validation can adequately filter LLM-generated hallucinations, testing the viability of this generate-then-search paradigm for scientific knowledge synthesis.
+
+%==============================================================================
+\section{RQ1: Judge Capability Verification (TruthfulQA)}
+%==============================================================================
+
+Before evaluating LLM-as-a-Judge on CLD-specific tasks, we first verify that the correctness-based judge has baseline hallucination detection capability using TruthfulQA~\cite{lin2022truthfulqa}---a benchmark specifically designed to test whether language models generate truthful answers. This establishes that any CLD-specific failures reflect domain challenges rather than fundamental judge limitations.
+
+\subsection{Dataset}
+
+\textbf{TruthfulQA:} A benchmark of 817 questions designed to elicit imitative falsehoods---answers that are false but would be produced by models trained on human text. Each question has both truthful and hallucinated answer variants.
+
+\textbf{Sample Construction:} We construct a balanced dataset of 1,634 question-answer pairs:
+\begin{itemize}[noitemsep]
+    \item \textbf{Truthful answers (n=817):} Correct, factually accurate responses
+    \item \textbf{Hallucinated answers (n=817):} Plausible but factually incorrect responses (imitative falsehoods)
+\end{itemize}
+
+\textbf{Task:} The judge must classify each answer as \texttt{CORRECT} (truthful) or \texttt{INCORRECT} (hallucinated) based solely on factual accuracy assessment.
+
+\subsection{Judge Configuration}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Rationale} \\
+\midrule
+Model & GPT-4.1 & Consistent with RQ1a CLD experiments \\
+Temperature & 0.0 & Deterministic for reproducibility \\
+Seed & 42 & Fixed random seed \\
+Prompt & Baseline correctness & Same prompt structure as RQ1a \\
+Max tokens & 250 & Sufficient for verdict + reasoning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Metrics}
+
+Standard binary classification metrics with \texttt{Hallucinated} as the positive class:
+\begin{itemize}[noitemsep]
+    \item \textbf{Accuracy:} Overall correct classifications / total samples
+    \item \textbf{Precision:} Of answers flagged as hallucinated, proportion that are actually hallucinated
+    \item \textbf{Recall:} Of actual hallucinations, proportion correctly identified
+    \item \textbf{F1 Score:} Harmonic mean of precision and recall
+    \item \textbf{Specificity:} Of truthful answers, proportion correctly accepted
+\end{itemize}
+
+\subsection{Hypothesis}
+
+If the correctness judge has genuine hallucination detection capability, we expect high performance on TruthfulQA (Accuracy $>$ 80\%, F1 $>$ 0.80). Strong TruthfulQA performance combined with weak CLD performance would indicate that CLD hallucinations are uniquely challenging---requiring domain expertise or citation verification that correctness judging alone cannot provide.
+
+%==============================================================================
+\section{RQ1a: LLM-as-a-Judge Hallucination Detection}
+%==============================================================================
+
+\subsection{Judge Definition}
+\textbf{Input:} Variables, relationship type, causal narrative, prompt type
+
+\textbf{Process:} LLM-as-a-judge~\cite{zheng2024llmasajudge} assesses edge against criteria (see Appendix~\ref{alg:judge_correctness} and~\ref{alg:judge_citation} for algorithmic details):
+\begin{itemize}[noitemsep]
+    \item \textbf{Type A (Correctness):} Verifies logical/scientific coherence of causal claim
+    \item \textbf{Type B (Citation):} Verifies if Brave-fetched articles (up to 5) support causal narrative
+\end{itemize}
+
+\textbf{Output Scores:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Correctness:} 0=Incorrect, 0.5=Partially correct, 1=Correct
+    \item \textbf{Citation:} 0=Not supported, 0.5=Partially supported, 1=Fully supported
+\end{itemize}
+
+\subsection{Prompt Variants}
+\begin{enumerate}[noitemsep]
+    \item \textbf{Baseline} (1500 max output tokens): Direct evaluation without scaffolding
+    \item \textbf{Mechanistic} (1500 max output tokens): Structured multi-criteria evaluation using Bradford Hill-aligned framework~\cite{shimonovich2020bradford} (Plausibility, Temporality, Strength, Coherence)
+    \item \textbf{Chain-of-Thought} (10000 max output tokens): Explicit step-by-step reasoning~\cite{kojima2022large} with systematic evaluation of causal logic
+    \item \textbf{Mechanistic-Lit} (1500 max output tokens, citation judge only): Mechanistic prompt enhanced with explicit literature grounding requirements---evaluates whether causal mechanisms are documented in peer-reviewed sources
+\end{enumerate}
+
+\textit{Note: Max output tokens (base: 1499/1500, mech: 255/1500, CoT: 1534/10000, mech-lit: 1487/1500) across variants (correctness, citation, corruption) no truncation detected. See Appendix~\ref{sec:token_verification} for per-variant breakdown.}
+
+\subsection{Experimental Design}
+\textbf{Sample:} 3 prompts $\times$ 3 CLDs $\times$ 3 runs = \textbf{27 runs} for correctness judging; 4 prompts $\times$ 3 CLDs $\times$ 3 runs = \textbf{36 runs} for citation judging (includes Mechanistic-Lit variant). See Table~\ref{tab:master} for complete configuration.
+
+\subsection{Performance Metrics}
+\begin{itemize}[noitemsep]
+    \item \textbf{AUC-ROC:} Area under ROC curve (judge score vs. hallucination status)
+    \item \textbf{Correlation ($r$):} Point-biserial correlation between judge score and hallucination label
+    \item \textbf{Classification} (threshold: judge score $\leq 0.5$ = Hallucination): Precision, Recall, \textbf{F1} = $\frac{2 \cdot TP}{2 \cdot TP + FP + FN}$
+\end{itemize}
+
+\textbf{Baseline:} Random classification corresponds to AUC = 0.5 (diagonal on ROC curve). This represents the expected performance of a classifier that assigns labels uniformly at random, ignoring all input features. AUC = 0.5 means the classifier has no discriminative power---it cannot distinguish hallucinations from correct edges better than chance. Classifiers must exceed this threshold to demonstrate predictive value; AUC significantly above 0.5 indicates the model captures meaningful signal. We use this baseline throughout all ROC analyses.
+
+%==============================================================================
+\section{RQ1a Validation Studies}
+%==============================================================================
+
+Having established the experimental design for LLM-as-a-Judge, we conduct three validation studies to assess judge reliability: (1) external validation on an independently expert-constructed CLD, and (2) human-LLM agreement analysis measuring inter-rater reliability.
+
+\subsection{External Validation on Ulemans Expert CLD}
+
+To validate the citation-based judge on an independently expert-validated dataset, we conducted a search provider comparison study using the Ulemans Alzheimer's disease CLD.
+
+\subsubsection{Dataset}
+
+\textbf{Ulemans CLD:} A 150-edge causal loop diagram for Alzheimer's disease, constructed through Group Model Building (GMB) with 17 domain experts. Unlike our three primary CLDs (which were extracted from published literature), the Ulemans CLD represents direct expert consensus with accompanying bibliographic references.
+
+\textbf{Source:} Expert-validated CLD with bibliographic citations (not web URLs), requiring citation URL resolution via academic search APIs.
+
+\subsubsection{Experimental Design}
+
+\textbf{Search Providers (4):}
+\begin{enumerate}[noitemsep]
+    \item \textbf{OpenAlex:} Open scholarly database (100M+ papers)
+    \item \textbf{Brave Search:} General web search with academic filtering (tested with/without domain whitelist)
+    \item \textbf{Perplexity:} AI-powered search with academic focus
+    \item \textbf{PubMed:} NCBI biomedical literature database (35M+ citations)
+\end{enumerate}
+
+\textbf{Citation Fetchers (2):}
+\begin{enumerate}[noitemsep]
+    \item \textbf{Jina AI Reader:} Paywall-bypassing document fetcher using LLM-optimized content extraction
+    \item \textbf{ContentScraper:} Standard web scraping (BeautifulSoup-based)
+\end{enumerate}
+
+\textbf{Configuration:} 4 providers $\times$ 2 fetchers $\times$ 150 edges = 1,200 total judgments.
+
+\textbf{Judge:} Citation-based judge (GPT-4.1, baseline prompt) consistent with RQ1a experiments.
+
+\subsubsection{Metrics}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Average Score:} Mean judge score (0--1) across all edges per provider/fetcher
+    \item \textbf{Coverage:} Percentage of edges with successfully fetched citation content
+    \item \textbf{Score Difference:} ContentScraper score $-$ Jina AI score (measures fetcher impact)
+\end{itemize}
+
+\subsubsection{Hypothesis}
+
+If the judge's low scores on expert CLDs (observed in RQ1a GT Lit) are due to search infrastructure limitations, we expect significant variation across providers/fetchers. If scores remain consistently low across all configurations, this confirms a fundamental validation gap between expert reasoning and literature-based verification.
+
+\subsection{Human-LLM Agreement Validation}
+
+To validate that LLM citation judges produce reliable verdicts, we conducted human expert validation measuring inter-rater agreement between LLM judge outputs and a domain expert (Mick).
+
+\subsubsection{Dataset}
+
+\textbf{Sample:} 72 causal edges across 3 independent validation files, spanning 2 CLDs and 2 CLD-generating models:
+\begin{enumerate}[noitemsep]
+    \item \textbf{File 1 (MIck\_1):} 30 edges from Depressive symptoms CLD, generated by GPT-4.1
+    \item \textbf{File 2 (Claude-4-sonnet):} 30 edges from Depressive symptoms CLD, generated by Claude 4 Sonnet
+    \item \textbf{File 3 (result\_excel\_path):} 12 edges from Social norms CLD, generated by GPT-4.1
+\end{enumerate}
+
+\textbf{Human Validator:} Domain expert (Mick) provided categorical verdicts for each edge: Not supported (0), Partially supported (0.5), or Fully supported (1).
+
+\textbf{LLM Judge:} Citation-based judge (GPT-4.1, temperature=0.0, baseline prompt) consistent with RQ1a experiments.
+
+\subsubsection{Inter-Rater Reliability Metrics}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Cohen's $\kappa$:} Chance-corrected agreement measure; $\kappa = \frac{P_o - P_e}{1 - P_e}$ where $P_o$ = observed agreement, $P_e$ = expected agreement by chance
+    \item \textbf{Agreement Rate:} Percentage of edges where LLM and human verdicts match exactly
+    \item \textbf{Pearson $r$:} Correlation between LLM and human scores (0, 0.5, 1 scale)
+\end{itemize}
+
+\textbf{Interpretation (Landis \& Koch, 1977):} $\kappa < 0.20$ = slight; $0.21$--$0.40$ = fair; $0.41$--$0.60$ = moderate; $0.61$--$0.80$ = substantial; $> 0.80$ = almost perfect.
+
+\subsubsection{Baseline Comparison}
+
+To contextualize LLM-human agreement, we compare against human inter-rater reliability from prior GMB validation studies. A human-human baseline of $\kappa \approx 0.60$ (80\% agreement) on comparable expert validation tasks establishes the ceiling for automated judge performance.
+
+\subsubsection{Hypothesis}
+
+If citation-based LLM judges reliably assess evidence quality, we expect: (1) substantial agreement with human expert ($\kappa > 0.60$), (2) agreement comparable to or exceeding human inter-rater baseline, and (3) consistent performance across different CLDs and generators.
+
+%==============================================================================
+\section{RQ1b: LLM-as-a-Corrector Evaluation}
+%==============================================================================
+
+\subsection{Corrector Definition}
+\textbf{Input:} Variables, relationship type, causal narrative, judgement from LLM-as-a-judge
+
+\textbf{Process:} Changes edge by (see Appendix~\ref{alg:corrector} for algorithmic details):
+\begin{itemize}[noitemsep]
+    \item \textbf{a) Changing relationship type:} e.g., \texttt{None}$\rightarrow$\texttt{Positive}, \texttt{Negative}$\rightarrow$\texttt{None}
+    \item \textbf{b) Revising motivation:} Rewriting causal narrative with improved reasoning/evidence
+\end{itemize}
+
+\subsection{Direction Correction Mechanism}
+Because all pairs are evaluated bidirectionally ($A \rightarrow B$ and $B \rightarrow A$), direction errors are corrected via type changes:
+
+\textbf{Example:} If $A \rightarrow B$ is erroneous (should be $B \rightarrow A$):
+$A \xrightarrow{\texttt{NONE}} B$ (remove wrong) + $B \xrightarrow{\texttt{POS}} A$ (add correct)
+
+\subsection{Experimental Design}
+\textbf{Sample:} 3 corrector prompts (Baseline, CoT, Mechanistic) $\times$ 3 CLDs $\times$ 3 runs = \textbf{27 runs} per ground truth type (GT Synth and GT Lit), using the Baseline Judge prompt for all corrector evaluations. Only correctness-based correction conducted; citation corrector omitted due to high rejudging cost. See Table~\ref{tab:master}.
+
+\subsection{Evaluation Metrics}
+\begin{itemize}[noitemsep]
+    \item \textbf{$\Delta$F1, $\Delta$Precision, $\Delta$Recall:} Change from pre- to post-correction w.r.t. GT
+    \item \textbf{$\Delta$Judge Score:} $\text{mean}(\text{corrected edges}) - \text{mean}(\text{original edges})$
+\end{itemize}
+
+%==============================================================================
+\section{RQ2: Context-Insensitive Hallucination Detection}
+%==============================================================================
+
+\subsection{Dataset}
+63 deduplicated files (36 citation, 27 correctness) from GT Lit experiments; 31,704 total edges; 15.2\% hallucination rate. CI metrics captured during CLD generation. Ensemble classifiers (Phases 4--6) use a 16,507-edge subset (35 citation files) where all 4 UQ metrics are available. See Table~\ref{tab:master}.
+
+\subsection{Context-Insensitive (CI) Metrics}
+\label{sec:ci_metrics_definition}
+Context-insensitive metrics are computed solely from the generator LLM's internal signals during edge generation---they do not require external context (e.g., retrieved documents, knowledge bases) to evaluate. This makes them computationally cheap compared to context-sensitive methods like LLM-as-a-Judge. We capture four CI metrics from generator logits and embeddings (see Appendix~\ref{alg:ci_metrics} for algorithmic details):
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{Formula} & \textbf{Expected} \\
+\midrule
+Perplexity & $\displaystyle\exp\left(\frac{1}{n}\sum_{i=1}^{n} -\log P(x_i)\right)$ & $\uparrow \Rightarrow$ halluc \\[1.5ex]
+Min Probability & $\displaystyle\min_i P(x_i)$ & $\downarrow \Rightarrow$ halluc \\[1.5ex]
+Max Window Entropy & $\displaystyle\max_w \frac{1}{|w|} \sum_{t \in w} H_k(t)$ & $\uparrow \Rightarrow$ halluc \\[1.5ex]
+Cosine Similarity & $\displaystyle\max_c \frac{\mathbf{e}_{narr} \cdot \mathbf{e}_c}{\|\mathbf{e}_{narr}\| \|\mathbf{e}_c\|}$ & $\downarrow \Rightarrow$ halluc \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Where: $P(x_i) = \exp(\text{logprob}_i)$, $H_k(t)$ = entropy over top-$k$ tokens, $\mathbf{e}$ = embeddings (mpnet, $d=768$)
+
+\subsubsection{Implementation Choices}
+
+\begin{table}[H]
+\centering
+\caption{CI Metric Implementation Parameters and Rationale}
+\label{tab:ci_params}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l l X@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Source} & \textbf{Rationale} \\
+\midrule
+NLL cap & 20.0 (token), 10.0 (avg) & Design choice & Prevents single outlier tokens ($P < 2 \times 10^{-9}$) from dominating average; final cap ensures perplexity $\leq 22{,}026$ for interpretability \\
+Window size & 5 & Design choice & Balances local uncertainty detection with noise smoothing; covers $\sim$1 clause of generated text \\
+Top-$k$ & 5 & \cite{openai2024api} & Default from \texttt{top\_logprobs} parameter; captures meaningful alternative tokens \\
+Embedding model & all-mpnet-base-v2 & \cite{muennighoff2023mteb} & Highly-ranked general-purpose model (768-dim); best quality-speed trade-off per 2022 MTEB benchmark \\
+Batch size & 64 & Design choice & Optimized for GPU memory; larger batches showed no quality improvement \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Perplexity computation:} Two-stage capping prevents numerical instability: (1) individual token NLL values are capped at 20.0 before averaging ($\text{nll}_i = \min(-\log P(x_i), 20.0)$), preventing single outlier tokens ($P < 2 \times 10^{-9}$) from dominating; (2) the average NLL is capped at 10.0, bounding perplexity at $e^{10} \approx 22{,}026$---still a strong uncertainty signal while remaining interpretable.
+
+\textbf{Min Probability:} The minimum token probability across the entire generated sequence, representing the ``confidence floor''---the single least-confident token prediction. Low minimum probability indicates at least one token was generated with high uncertainty, which may signal a potential hallucination point. This metric is complementary to perplexity: while perplexity captures average uncertainty, min probability captures worst-case uncertainty.
+
+\textbf{Max Window Entropy:} Two-step aggregation detects localized uncertainty spikes: (1) at each token position, compute entropy over top-$k=5$ alternatives returned by the API~\cite{openai2024api}: $H_k(t) = -\sum_{j=1}^{k} \tilde{p}_j \log \tilde{p}_j$ where $\tilde{p}_j = \text{softmax}(\text{logprob}_j)$; (2) apply a sliding window of size 5 to compute rolling averages via \texttt{np.convolve}, then return the maximum: $H_{\text{max-win}} = \max_i \frac{1}{w}\sum_{t=i}^{i+w-1} H_k(t)$. This identifies the highest-uncertainty region in the generated text.
+
+\textbf{Cosine Similarity:} Embeddings are computed locally using \texttt{all-mpnet-base-v2}~\cite{reimers2019sentencebert} (768-dim, 384 token limit). Citation texts are chunked with adaptive window: chunk size $= \max(256, \min(4000, |\text{motiv.}|))$ characters, 20\% overlap, de-duplicated. This adaptive sizing ensures chunks remain within the model's 384-token context (motivations average 56 tokens, max 137; implied chunks 57--176 tokens). For each edge, $\text{sim} = \max_c \cos(\mathbf{e}_{\text{narr}}, \mathbf{e}_c)$ over all citation chunks. Available only for citation experiments.
+
+\textbf{Model Selection:} We selected \texttt{all-mpnet-base-v2} based on benchmarking against Qwen3-Embedding-8B (Appendix~\ref{sec:embedding_benchmark}): 22$\times$ faster (3.0 vs.\ 67.3~ms/doc) with superior MTEB reranking performance (59.36 vs.\ 51.56)~\cite{muennighoff2023mteb}.
+
+\subsection{Hallucination Definition}
+$\text{Hallucination} = (\text{Classification} = \text{FP}) \lor (\text{Classification} = \text{FN})$ w.r.t. GT Lit
+
+\subsection{Analysis Pipeline (6 Phases)}
+\begin{enumerate}[noitemsep]
+    \item \textbf{Phase 1-3:} Per-file analysis (N=63): AUC-ROC, Pearson $r$, t-test per CI metric; aggregate meta-analysis
+    \item \textbf{Phase 4 (RFE):} Recursive Feature Elimination~\cite{pedregosa2011sklearn} with 5-fold stratified CV on \textit{all} 16,507 pooled edges. Each classifier performs independent feature selection; best classifier (by CV AUC) determines features for Phase 5--6. Classifiers: LogReg, RF, GradBoost (Neural Network excluded---incompatible with RFE). \textit{Output:} Mean CV AUC across 5 folds per classifier; best classifier's selected features passed downstream.
+    \item \textbf{Phase 5 (Ensemble):} Uses features from the best Phase 4 classifier (Random Forest selected all 4 CI metrics) on 70/30 train-test split (stratified). Training set (70\%): 5-fold CV for model comparison. Test set (30\%): held-out final evaluation. Classifiers: all 4 (adds Neural Network). \textit{Output:} CV AUC (on training portion) + Test AUC (on held-out portion).
+    \item \textbf{Phase 6 (Leave-One-CLD-Out):} Cross-domain generalization via leave-one-CLD-out CV. Train on 2 CLDs, test on held-out 3rd CLD; repeat for each of 3 CLDs. \textit{Output:} Mean AUC across 3 held-out CLD tests.
+\end{enumerate}
+
+\subsection{Limitations}
+CI metrics not applicable for GT Synth (corruption post-generation, logits not captured). Cosine similarity only for Citation Judge (requires fetched embeddings).
+
+%==============================================================================
+\section{RQ3: Deep Research Literature Validation}
+%==============================================================================
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Methodological Note:} The original RQ3 design proposed \textit{smart test-time compute allocation}---using CI metrics to selectively deploy the LLM-as-a-corrector. This was predicated on: (1) RQ2 CI metrics generalizing across CLDs, and (2) RQ1b correctors effectively repairing hallucinations. Neither condition was met (see Discussion, Section~\ref{sec:rq3_pivot}). We therefore pivoted to an alternative approach: \textbf{Deep Research validation}, which asks whether automated literature search can distinguish valid from hallucinated causal claims.
+
+This section presents Deep Research as an \textbf{exploratory pilot study}. Given time constraints from the late pivot, the experimental design is less comprehensive than RQ1--RQ2: single-run (no replication), limited parameter ablation, and no end-to-end pipeline integration. The findings establish baseline detection rates and identify core challenges, providing groundwork for future research.
+}}
+\end{center}
+
+\vspace{0.5em}
+
+To test whether automated literature-based research can validate causal claims, we deploy a multi-agent Deep Research (DR) system that iteratively searches scientific literature for evidence supporting or refuting causal relationships. This section documents the system architecture and experimental design.
+
+\subsection{Experimental Setup}
+
+\textbf{Models:} The Deep Research system uses a two-tier model architecture:
+\begin{itemize}[noitemsep]
+    \item \textbf{Heavy model (GPT-5):} Used for complex reasoning tasks requiring high accuracy---hypothesis evaluation, article selection, causal evidence detection, judgment, and verdict synthesis. Temperature = 0.3.
+    \item \textbf{Light model (GPT-5-mini):} Used for high-volume, lower-complexity tasks---iterative web search and evidence scoring. Temperature = 0.3.
+\end{itemize}
+
+\textbf{Framework:} PydanticAI~\cite{pydanticai2024} with typed agent definitions and structured JSON outputs via Pydantic models.
+
+\textbf{Search API:} Brave Search API with academic domain filtering (23 trusted domains including PubMed, arXiv, Nature, NEJM, Cochrane Library).
+
+\textbf{Parallelization:} Asynchronous execution via \texttt{asyncio.gather()} for parallel search threads and evidence scoring. Batch size = 5 edges processed concurrently.
+
+\textbf{Run Date:} October 12--13, 2025.
+
+\subsection{System Definition}
+\label{sec:rq3_dr_system}
+
+\textbf{Input:} Each CLD edge is converted to a causal claim in the format:
+\begin{quote}
+\texttt{"\{Source\} causes \{Target\}. \{Motivation\}"}
+\end{quote}
+where \textit{Source} and \textit{Target} are the variable names, and \textit{Motivation} is the natural language mechanism explanation from the CLD edge.
+
+\textbf{Output:} For each edge, the system returns a structured verdict containing:
+\begin{itemize}[noitemsep]
+    \item \textbf{Verdict:} One of \texttt{supported}, \texttt{partially\_supported}, \texttt{unsupported}, or \texttt{inconclusive}
+    \item \textbf{Confidence:} Self-assessed confidence score (1--10)
+    \item \textbf{Direct Causal Evidence Found:} Boolean flag indicating whether direct (non-correlational) evidence was identified
+    \item \textbf{Strongest Evidence:} URL, verbatim cited passage, and study type (e.g., RCT, meta-analysis) for the strongest causal evidence
+    \item \textbf{Evidence URLs:} Complete list of supporting scientific sources
+\end{itemize}
+
+\subsection{Multi-Agent Architecture}
+
+The system is implemented using the PydanticAI framework~\cite{pydanticai2024} with typed agent definitions and structured outputs. Seven specialized LLM agents are coordinated by a Python orchestrator class in a multi-iteration pipeline (see Appendix~\ref{alg:deep_research} for algorithmic details):
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Multi-Agent Pipeline}
+\label{tab:dr_agents}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\textwidth}{@{}l l l l X@{}}
+\toprule
+\textbf{Component} & \textbf{Model} & \textbf{Input} & \textbf{Output} & \textbf{Purpose} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Orchestrator}} \\
+\texttt{DeepResearchManager} & Python & Causal claim & FinalVerdict & Coordinate agent execution: iteration loop (max 3), early stopping on direct evidence, time limit (2 min), parallelization via \texttt{asyncio.gather()} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{LLM Agents}} \\
+\texttt{hypothesis\_evaluator} & GPT-5 & Causal claim & SearchPlan & Generate 3--4 targeted search queries, keywords, and potential confounders \\
+\texttt{search\_agent} & GPT-5-mini & Search query & List[SearchResult] & Execute iterative web searches (4--6 calls per query thread, max 5) \\
+\texttt{evidence\_scorer} & GPT-5-mini & Evidence content & EvidenceScore & Score relevance (1--10) and methodological quality (1--10) \\
+\texttt{article\_selector} & GPT-5 & Snippets + scores & ArticleSelection & Select 2--3 articles most likely to contain causal evidence for full-text fetch \\
+\texttt{judgment\_agent} & GPT-5 & Evidence + scores & EvidenceJudgment & Judge whether accumulated evidence supports the claim \\
+\texttt{causal\_evidence\_detector} & GPT-5 & All search results & CausalEvidenceEvaluation & Detect \textit{direct} causal evidence (RCTs, experiments, meta-analyses only) \\
+\texttt{verdict\_agent} & GPT-5 & All data & FinalVerdict & Synthesize final verdict with evidence summary and limitations \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Model Selection:} GPT-5 (``heavy'' model) is used for complex reasoning tasks (hypothesis generation, judgment, causal detection, verdict synthesis), while GPT-5-mini (``light'' model) handles high-volume tasks (iterative search, evidence scoring) for cost efficiency.
+
+\input{figures/deep_research_flowchart}
+
+\subsection{Pipeline Execution Flow}
+
+The research process follows an 8-step pipeline with parallel execution where possible:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Search Plan Generation:} The \texttt{hypothesis\_evaluator} generates 3--4 search queries based on the causal claim, plus the verbatim motivation as Query \#1 for direct matching.
+    
+    \item \textbf{Parallel Search Execution:} All queries execute in parallel via \texttt{asyncio.gather()}. Each query thread receives fresh conversation history to prevent token accumulation across threads. The \texttt{search\_agent} makes 4--6 iterative \texttt{web\_search} tool calls per query, with a hard limit of 5 searches per thread.
+    
+    \item \textbf{Evidence Scoring (Parallel):} All retrieved evidence is scored in parallel. Each source receives two scores:
+    \begin{itemize}[noitemsep]
+        \item \textit{Relevance} (1--10): How directly the evidence addresses the specific causal claim
+        \item \textit{Quality} (1--10): Methodological rigor based on study design (RCTs $>$ cohort $>$ case-control $>$ cross-sectional)
+    \end{itemize}
+    
+    \item \textbf{Smart Article Selection:} The \texttt{article\_selector} identifies 2--3 articles from snippets most likely to contain causal evidence based on causal language (``caused'', ``intervention'', ``RCT''), study design, and quality scores.
+    
+    \item \textbf{Full-Text Fetching:} Selected articles are fetched in full using BeautifulSoup HTML parsing (max 50K characters per article) to provide richer context for causal evidence detection.
+    
+    \item \textbf{Direct Causal Evidence Detection:} The \texttt{causal\_evidence\_detector} evaluates \textit{all} search results with strict criteria---only RCTs, experimental manipulations, natural experiments, and meta-analyses qualify as direct causal evidence. Correlational or observational studies are explicitly excluded.
+    
+    \item \textbf{Judgment:} The \texttt{judgment\_agent} assesses whether accumulated evidence supports the claim, providing confidence and optional claim modifications.
+    
+    \item \textbf{Final Verdict Synthesis:} The \texttt{verdict\_agent} integrates all evidence, scores, and judgments into a final verdict with key evidence summaries, limitations, and future research directions.
+\end{enumerate}
+
+\subsection{Search Infrastructure}
+
+\textbf{Search Provider:} Brave Search API with academic domain filtering.
+
+\textbf{Trusted Academic Domains (23):} Results from the following domains are prioritized: \texttt{pubmed.ncbi.nlm.nih.gov}, \texttt{arxiv.org}, \texttt{scholar.google.com}, \texttt{nature.com}, \texttt{science.org}, \texttt{cell.com}, \texttt{nejm.org}, \texttt{bmj.com}, \texttt{plos.org}, \texttt{frontiersin.org}, \texttt{springer.com}, \texttt{wiley.com}, \texttt{sciencedirect.com}, \texttt{tandfonline.com}, \texttt{sage.com}, \texttt{jstor.org}, \texttt{cochranelibrary.com}, \texttt{nih.gov}, \texttt{who.int}, \texttt{cdc.gov}, \texttt{academic.oup.com}, \texttt{cambridge.org}, \texttt{elsevier.com}.
+
+\textbf{Query Enhancement:} All queries are automatically appended with ``scientific study research evidence'' to bias toward academic content.
+
+\textbf{Retry Strategy:} 3 retries with exponential backoff for transient failures (status codes 429, 500, 502, 503, 504). Timeouts: 10s connect, 40s read.
+
+\subsection{Early Stopping Criteria}
+
+The system terminates early when any of the following conditions are met:
+\begin{itemize}[noitemsep]
+    \item \textbf{Strong evidence found:} Direct causal evidence detected AND $\geq$3 high-quality sources (relevance $\geq 8$, quality $\geq 7$)
+    \item \textbf{High confidence support:} Judgment supported with confidence $\geq 8$
+    \item \textbf{Time limit:} 120 seconds elapsed
+    \item \textbf{Max iterations:} Configured iteration limit reached
+\end{itemize}
+
+\subsection{Experimental Configuration}
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Experimental Parameters}
+\label{tab:dr_params}
+\footnotesize
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Rationale} \\
+\midrule
+\texttt{max\_iterations} & 1 & Single research iteration for efficiency \\
+\texttt{minimum\_evidence\_count} & 2 & Low threshold for fast results \\
+\texttt{max\_sources\_per\_query} & 5 & 5 results per web search call \\
+\texttt{MAX\_SEARCHES} (hard limit) & 5 & Per-query thread limit to control token usage \\
+\texttt{time\_limit} & 120s & Prevent runaway searches \\
+\texttt{batch\_size} & 5 & Parallel edge processing in batches \\
+Full-text max length & 50K chars & Prevent token overload from long articles \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Metrics}
+
+\textbf{Detection Rate:} The primary metric is the percentage of edges where \texttt{direct\_causal\_found = True}:
+\[
+\text{Detection Rate} = \frac{|\{e : \texttt{direct\_causal\_found}(e) = \texttt{True}\}|}{|E|} \times 100\%
+\]
+This measures the system's ability to find \textit{causal} (not just correlational) evidence in the scientific literature.
+
+\textbf{TP-FP Discrimination Gap:}
+\[
+\Delta_{\text{TP-FP}} = \text{DetectionRate}_{\text{TP}} - \text{DetectionRate}_{\text{FP}}
+\]
+A positive gap indicates the system can distinguish expert-accepted edges from LLM hallucinations. We consider $\Delta > 20$ percentage points as meaningful discrimination.
+
+\textbf{Confidence Scores:} Mean self-assessed confidence (1--10) by classification. Tests whether the system can reliably self-assess the validity of its findings.
+
+\textbf{Hypothesis (H6):} If Deep Research can validate causal claims, we expect: (1) high detection rate for TP (expert-accepted edges should have literature support), (2) low detection rate for FP (hallucinations should lack support), and (3) significant TP-FP gap ($>$20 percentage points).
+
+\subsection{Statistical Testing (Aggregate and Per-CLD)}
+
+We test whether Deep Research discriminates between classes using pairwise two-sample proportion comparisons on the binary outcome \texttt{direct\_causal\_found}.
+
+\textbf{Aggregate discrimination tests (pooled across CLDs).} We construct 2$\times$2 contingency tables of \textit{Found} vs.\ \textit{Not Found} for each pairwise comparison among TP, FP, and FN. For each pair, we report Fisher's exact test p-values and Cohen's $h$ effect sizes (with 95\% CI). We treat the three pairwise comparisons (TP--FP, TP--FN, FP--FN) as a single family and apply Bonferroni correction with $m=3$ ($\alpha_{\text{adj}}=0.05/3 \approx 0.017$), reporting both raw and adjusted p-values.
+
+\textbf{Per-CLD discrimination tests.} To quantify domain dependence, we repeat the same three pairwise tests \textit{within each CLD} (Depressive, Social Norms, Older Persons). Within each CLD, we again apply Bonferroni correction over the three within-CLD pairwise tests ($m=3$) and report raw and adjusted p-values and Cohen's $h$.
+
+\textbf{Implementation reference (reproducible).} Both the aggregate test table and the per-CLD pairwise table are generated by \texttt{python final\_runs/RQ3\_deep\_research/run\_rq3\_analysis.py}, which computes Fisher's exact tests, Cohen's $h$ (via the arcsine transform), and Bonferroni-adjusted p-values consistent with the Results tables (\texttt{rq3\_main\_table.tex} and \texttt{rq3\_per\_cld\_table.tex}).
+
+\subsection{Dataset}
+
+\textbf{Source:} 285 edges from RQ1a ground truth experiments, classified by GT Lit validation. Complete coverage of all 3 CLDs with TP, FP, and FN edges from each domain.
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Validation Dataset}
+\label{tab:dr_dataset}
+\footnotesize
+\begin{tabular}{@{}l c l@{}}
+\toprule
+\textbf{Classification} & \textbf{Edges} & \textbf{Definition} \\
+\midrule
+True Positives (TP) & 44 & Expert-accepted causal relationships (present in GT Lit) \\
+False Positives (FP) & 178 & LLM-generated edges absent from GT Lit \\
+False Negatives (FN) & 63 & Edges present in GT Lit but rejected by LLM \\
+\midrule
+\textbf{Total} & \textbf{285} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{CLDs:} Edges drawn from all 3 CLDs with complete classification coverage:
+\begin{itemize}[noitemsep]
+    \item Depressive Symptoms: 84 edges (28 TP, 50 FP, 6 FN)
+    \item Social Norms: 17 edges (5 TP, 6 FP, 6 FN)
+    \item Older Persons Emergency Department: 184 edges (11 TP, 122 FP, 51 FN)
+\end{itemize}
+
+\textbf{Runs:} Single run per edge (no replication) due to computational cost.
+
+\subsection{Computational Cost}
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Computational Cost and Edge Space by CLD}
+\label{tab:dr_cost}
+\footnotesize
+\begin{tabular}{@{}l r r r r r r@{}}
+\toprule
+\textbf{CLD} & \textbf{Vars} & \textbf{Possible} & \textbf{Analyzed} & \textbf{TN} & \textbf{Tokens} & \textbf{Cost} \\
+\midrule
+Depressive & 14 & $14 \times 13 = 182$ & 84 & 98 & 21.8M & \$58 \\
+Social Norms & 10 & $10 \times 9 = 90$ & 17 & 73 & 4.4M & \$12 \\
+Older Persons & 34 & $34 \times 33 = 1122$ & 184 & 938 & 44.3M & \$177 \\
+\midrule
+\textbf{Total} & --- & \textbf{1,394} & \textbf{285} & \textbf{1,109} & \textbf{70.4M} & \textbf{\$247} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Cost Calculation:} At GPT-5 rates (\$2.50/M input, \$10/M output), with actual input/output token splits from logs: total cost = \textbf{\$247} for 285 edges (\textbf{\$0.87/edge avg}). Avg tokens/edge = 247K. This high per-edge cost---driven by multi-agent orchestration (avg 40 API calls/edge), iterative search, and full-text retrieval---motivates the single-run design.
+
+\textbf{Comparison:} Deep Research is $\sim$119$\times$ more expensive per edge than citation judging (\$0.0073/edge with GPT-5-mini) and $\sim$512$\times$ more expensive than correctness judging (\$0.0017/edge).
+
+\textbf{True Negative Coverage:} DR was only run on TP, FP, and FN edges (n=285, 20.4\% of edge space). True Negatives---the 1,109 edges neither LLM-generated nor expert-included---were \textbf{not} analyzed due to cost. Running DR on all TNs would cost an additional $\sim$\$269 and could reveal literature-supported relationships that \textit{both} experts and LLM missed.
+
+\textbf{Reproduction:} \texttt{python final\_runs/cost\_analysis/compute\_dr\_costs.py}
+
+\subsection{Limitations}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{No replication:} Single run per edge prevents uncertainty quantification and statistical testing of detection rates
+    \item \textbf{Correlational confound:} Literature may contain correlational studies for plausible-but-incorrect relationships, confounding causal validation
+    \item \textbf{Full-text access:} Paywalled articles may limit evidence quality; only abstracts and snippets available for many sources
+    \item \textbf{Search API dependency:} Results depend on Brave Search's indexing; specialized databases (PubMed full-text) not directly queried
+\end{itemize}
+
+\subsection{Exploratory Analysis: Ground Truth Enrichment}
+\label{sec:gt_enrichment_method}
+
+Beyond detection rate analysis, we explore whether Deep Research results could \textit{enrich} the expert-constructed ground truth. The hypothesis is that some FP edges (``hallucinations'') represent valid causal relationships that experts omitted due to time constraints, scope decisions, or disciplinary blind spots---not because they lack scientific support.
+
+We evaluate two enrichment scenarios:
+
+\textbf{Scenario 1: Enriched Ground Truth (FP Promotion)}
+\begin{enumerate}[noitemsep]
+    \item \textbf{Identify DR-validated FPs:} FP edges where \texttt{direct\_causal\_found = True}
+    \item \textbf{Promote to TP:} Reclassify these edges as True Positives in an ``enriched ground truth''
+    \item \textbf{Recompute metrics:} Calculate Precision, Recall, and F1 against the enriched GT
+\end{enumerate}
+
+\textit{Question:} ``What if experts missed valid literature-supported relationships?''
+
+\textbf{Scenario 2: LLM+DR System (FP Promotion + FN Discovery)}
+\begin{enumerate}[noitemsep]
+    \item \textbf{Start with Scenario 1:} Enriched GT with promoted FPs
+    \item \textbf{Identify DR-validated FNs:} FN edges where \texttt{direct\_causal\_found = True}
+    \item \textbf{Add to system output:} In a complete LLM+DR pipeline, DR would search comprehensively and discover these literature-supported edges the LLM missed
+    \item \textbf{Recompute metrics:} TP includes discovered FNs; FN decreases accordingly
+\end{enumerate}
+
+\textit{Question:} ``What could a complete LLM+DR system achieve if DR both validated LLM output AND discovered additional literature-supported edges?''
+
+\textbf{Rationale:} Scenario 1 tests whether expert GT underestimates LLM quality. Scenario 2 tests the theoretical ceiling of an integrated LLM+DR pipeline where literature search augments generation.
+
+\textbf{Critical Caveats (see Discussion for details):}
+\begin{itemize}[noitemsep]
+    \item \textbf{Domain variation:} FP promotion rates vary substantially across CLDs (28\% Depressive vs 76\% Older Persons), suggesting inconsistent enrichment
+    \item \textbf{Correlational confound:} DR may validate correlational rather than causal evidence, inflating FP promotion
+    \item \textbf{Circularity risk:} LLM-based DR validating LLM-generated edges could introduce systematic bias
+    \item \textbf{No expert review:} Enrichment is automated; promoted edges require domain expert validation
+    \item \textbf{Preliminary status:} Results are exploratory pending open-source dataset release for community validation
+\end{itemize}
+
+\textbf{Reproduction:} \texttt{python final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py}
+
+\subsection{Human Validation Sampling}
+\label{sec:rq3_human_validation}
+
+To validate the Deep Research verdicts, we performed stratified random sampling of edges for human review. From the 285 edges across all three CLDs, we first filtered to include only edges where direct causal evidence was identified (\texttt{direct\_causal\_found=True}), yielding 169 eligible edges. We then applied proportional stratified sampling across two dimensions: (1) CLD and (2) classification type (TP, FP, FN). Sample sizes for each stratum were calculated proportionally to their population size, with a minimum of one edge per stratum to ensure representation of all CLD-classification combinations. The target sample size was 50 edges (29.6\% of eligible edges). This resulted in 10 edges from the Depressive Symptoms CLD (29.4\%), 3 from Social Norms (27.3\%), and 37 from Older Persons (29.8\%), reflecting the underlying distribution. By classification, we sampled 9 TP edges (29.0\%), 32 FP edges (28.8\%), and 9 FN edges (33.3\%). Within each stratum, edges were selected using Python's \texttt{random.sample()} function with a fixed seed (42) for reproducibility. The final sample was then shuffled to randomize presentation order and prevent reviewer bias from sequential patterns.
+
+\textbf{Reproduction:} \texttt{python final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py}
+
+\vspace{0.25em}
+\textbf{Human applicability rubric.} In addition to a categorical verdict (\texttt{causal}, \texttt{different\_vars, causal}, \texttt{invalid}), each sampled edge was assigned a continuous evidence applicability score \texttt{Fully applicable} \(\in[0,1]\), capturing how well the retrieved evidence matches the \textit{specific} (source, target, mechanism) claim rather than merely topical overlap. Scores were assigned using a coarse rubric: \(1.0=\) exact match; \(0.8\text{--}0.9=\) causal match but with different operationalizations/measures; \(\approx 0.7=\) partial claim match (e.g., evidence supports \(A\rightarrow B\) but the edge asserts \(A\rightarrow(B \wedge C)\)); \(\approx 0.6=\) analogous/proxy constructs; \(\le 0.5=\) weak/non-causal study design or otherwise insufficient evidence quality. This rubric is used in Results to choose an applicability threshold and to extrapolate from the validated sample to the full DR dataset.
+
+\subsection{Threshold Selection and Sensitivity Analysis}
+\label{sec:rq3_threshold_selection}
+
+To determine the optimal applicability threshold for filtering DR verdicts, we perform sensitivity analysis across threshold values $t \in \{0.5, 0.6, 0.7, 0.8, 0.9\}$.
+
+\textbf{Sensitivity metrics.} For each threshold $t$, we compute on the validated sample:
+\begin{itemize}[noitemsep]
+    \item \textbf{Coverage (pass rate):} Fraction of edges with applicability $\geq t$
+    \item \textbf{Correct-causal rate:} Fraction of passing edges labeled \texttt{causal} by human reviewer
+    \item \textbf{95\% Wilson CI:} Confidence interval for the correct-causal rate
+\end{itemize}
+
+\textbf{Threshold selection rule (Elbow/Gradient).} We select the threshold that maximizes the coverage-correctness trade-off using a gradient-based decision rule:
+\begin{enumerate}[noitemsep]
+    \item Construct the trade-off curve: $x(t) = \text{coverage}$, $y(t) = \text{correct-causal rate}$
+    \item For each adjacent threshold pair moving from stricter to looser (e.g., $0.8 \rightarrow 0.7$), compute:
+    \[
+    \text{score} = \frac{\Delta \text{coverage}}{|\Delta \text{correctness}|}
+    \]
+    \item Select the threshold at the \textit{end} of the segment with maximum score (the ``elbow'' point where coverage gains diminish relative to correctness losses)
+\end{enumerate}
+
+This rule identifies the threshold offering the best trade-off between including more edges (higher coverage) and maintaining evidence quality (higher correct-causal rate).
+
+\subsection{Extrapolation from Validation Sample}
+\label{sec:rq3_extrapolation}
+
+To estimate enrichment potential for the full DR dataset from the 50-edge validated sample, we apply a two-stage extrapolation:
+
+\textbf{Stage 1: Sample statistics.} From the validated sample at the selected threshold $t^*$:
+\begin{itemize}[noitemsep]
+    \item Compute the pass rate: fraction of validated edges with applicability $\geq t^*$
+    \item Compute the correct-causal rate among passing edges (with Wilson 95\% CI)
+\end{itemize}
+
+\textbf{Stage 2: Full dataset projection.} For the full DR dataset ($n=285$ edges):
+\begin{itemize}[noitemsep]
+    \item Count edges where \texttt{direct\_causal\_found=True} per classification (FP, FN)
+    \item Estimate edges above threshold: $\hat{n}_{\text{above}} = n_{\text{direct}} \times \text{pass\_rate}_{\text{sample}}$
+    \item Estimate truly causal edges: $\hat{n}_{\text{causal}} = \hat{n}_{\text{above}} \times \text{causal\_rate}_{\text{sample}}$
+    \item Conservative estimate uses the lower bound of the 95\% CI for causal rate
+\end{itemize}
+
+\textbf{Enrichment scenarios.} We compute projected F1 under two scenarios:
+\begin{itemize}[noitemsep]
+    \item \textbf{Scenario 1 (Enriched GT):} Promote estimated FP edges to TP in the ground truth
+    \item \textbf{Scenario 2 (LLM+DR):} Additionally add estimated FN discoveries to system output
+\end{itemize}
+
+\textbf{Caveats:} Extrapolation assumes the validated sample is representative of the full dataset. The stratified sampling design ensures proportional representation, but small strata (e.g., Social Norms with $n=3$) have high sampling variance. Results are reported with point estimates and conservative (lower CI) bounds to reflect this uncertainty.
+
+\textbf{Reproduction:} \texttt{python final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py}
+
+%==============================================================================
+\section{Prompt Sensitivity Analysis}
+%==============================================================================
+
+To quantify how prompt engineering choices affect performance, we perform sensitivity analysis measuring the variance explained by prompt choice.
+
+\subsection{Statistical Framework}
+We treat prompt variant as a categorical factor and test for differences using a two-stage non-parametric approach that accounts for the repeated-measures structure of our data:
+
+\textbf{Stage 1: Omnibus Test (Friedman).} For each metric (F1, AUC-ROC), we apply the Friedman test with (CLD, run) pairs as blocks ($n=9$ blocks = 3 CLDs $\times$ 3 runs). This design treats each CLD-run combination as a matched set, isolating the prompt effect while controlling for CLD-specific difficulty and run-to-run variance.
+
+\textbf{Stage 2: Post-hoc Pairwise Tests (Wilcoxon).} When Friedman is significant ($p < 0.05$), we conduct pairwise Wilcoxon signed-rank tests between all prompt pairs, applying Bonferroni correction ($\alpha_{\text{adj}} = 0.05 / k(k-1)/2$ where $k$ = number of prompts).
+
+\textbf{Effect Size:} We report Kendall's coefficient of concordance:
+\begin{equation}
+W = \frac{12 \cdot \chi^2_F}{n \cdot k \cdot (k-1)}
+\end{equation}
+where $\chi^2_F$ is the Friedman statistic, $n$ = number of blocks, and $k$ = number of prompts. Effect sizes are interpreted as: $W < 0.1$ negligible, $0.1$--$0.3$ small, $0.3$--$0.5$ medium, $\geq 0.5$ large~\cite{landis1977measurement}.
+
+\subsection{Input Characterization}
+Prompts are embedded using MPNet~\cite{reimers2019sentencebert} (768-dim) and cosine distance from baseline characterizes semantic difference: $d(p_i, p_j) = 1 - \cos(\mathbf{e}_i, \mathbf{e}_j)$. Distances are reported descriptively but not used in the statistical test.
+
+\textbf{Corrector prompts:} Due to cumulative design (500--960 tokens), corrector prompts exceed MPNet's 384-token limit. We use Jina Embeddings v2~\cite{gunther2023jina} (8192-token context) for distance computation only.
+
+\subsection{Output Quantification}
+For judges: F1 score (per-run observations across CLDs). For correctors: F1 $\Delta$ = post-correction minus pre-correction F1.
+
+\subsection{Scope}
+\begin{itemize}[noitemsep]
+    \item \textbf{Judge (RQ1a):} 4 experiments $\times$ 3--4 prompt variants (Baseline, CoT, Mechanistic, and Mechanistic-Lit for citation)
+    \item \textbf{Corrector (RQ1b):} 2 experiments $\times$ 3 prompts (cumulative design)
+\end{itemize}
+
+%==============================================================================
+\section{Computational Efficiency Analysis}
+%==============================================================================
+
+\subsection{Motivation}
+Understanding the computational cost of CLD generation and validation is important for evaluating the value proposition of the method compared to human group model building and other automated causal discovery methods. We analyze time and cost scaling to characterize: (1) the relationship between CLD size and computational requirements, (2) the cost-performance trade-off between correctness and citation-based validation, and (3) model efficiency (GPT-4.1 vs. GPT-5-mini).
+
+\subsection{Metrics Extraction}
+From each experiment file, we extract from the \texttt{LLM Usage Stats} sheet:
+\begin{itemize}[noitemsep]
+    \item \textbf{Inference Time (s):} Wall-clock time for LLM API calls
+    \item \textbf{Token Counts:} Prompt tokens, completion tokens, and total tokens
+    \item \textbf{Number of Edges/Nodes:} From the \texttt{All Edges} sheet
+\end{itemize}
+
+\subsection{Cost Estimation}
+Estimated costs use OpenAI API pricing (December 2024):
+\begin{itemize}[noitemsep]
+    \item \textbf{GPT-4.1:} \$2.00/1M input, \$8.00/1M output tokens
+    \item \textbf{GPT-5-mini:} \$0.15/1M input, \$0.60/1M output tokens (97\% cheaper)
+\end{itemize}
+
+\subsection{Theoretical Complexity}
+Since each edge is judged independently, time complexity is $O(E)$ where $E$ is the number of edges. For dense CLDs where $E \approx N(N-1)$, this implies $O(N^2)$ scaling with respect to nodes. We verify this empirically by fitting linear (time vs. $E$) and quadratic (time vs. $N$) models and reporting $R^2$ values.
+
+\subsection{Parallelization}
+The pipeline supports parallel execution at multiple stages:
+\begin{itemize}[noitemsep]
+    \item \textbf{Edge generation:} Parallel pairwise relationship discovery (\texttt{max\_workers=3--10})
+    \item \textbf{Citation filling:} Parallel web search and document retrieval (\texttt{citation\_fill\_max\_workers=5})
+    \item \textbf{Judging:} Parallel edge evaluation (\texttt{judge\_max\_workers=10})
+\end{itemize}
+
+\textbf{Theoretical speedup:} With $W$ workers and $E$ edges, wall-clock time scales as $O(E/W)$, providing up to $W\times$ speedup. In practice, speedup is limited by: (1) API rate limits (OpenAI: 10K RPM for GPT-4.1), (2) I/O overhead for web search, and (3) load balancing inefficiency for small $E$.
+
+\textbf{Empirical verification:} We benchmark parallelization speedup using 34 API calls (simulating the Depressive CLD) with worker counts of 1, 3, 5, and 10 (3 runs each). Speedup is calculated as $T_{\text{sequential}} / T_{\text{parallel}}$ and efficiency as $\text{Speedup} / W \times 100\%$.
+
+\textbf{Note:} Reported inference times in experiment files represent cumulative API call duration (sum of individual calls), not wall-clock time. Parallelization reduces wall-clock time while maintaining similar cumulative API time.
+
+%==============================================================================
+\section{Statistical Assumption Testing and Reproducibility}
+\label{sec:assumption_testing}
+%==============================================================================
+
+All statistical tests in this thesis include explicit assumption verification. This section documents the tests used and provides commands for reproducibility.
+
+\subsection{Uncertainty Reporting Rule}
+\label{sec:uncertainty_rule}
+
+For repeated measurements (across CLDs, runs/seeds, or CV folds), we report \textbf{mean [min, max]} as an assumption-free summary. 95\% confidence intervals are reserved for instance-level evaluations with large independent sample sizes ($N \geq 30$). Table~\ref{tab:uncertainty_rule} summarizes this rule.
+
+\begin{table}[H]
+\centering
+\caption{Uncertainty Reporting Rule (Applied Consistently Throughout)}
+\label{tab:uncertainty_rule}
+\footnotesize
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{Result Type} & \textbf{Reporting Format} & \textbf{Rationale} \\
+\midrule
+Repeated evaluations & mean [min, max] & Assumption-free summary of central \\
+(CLDs, runs/seeds, CV folds) & & tendency and observed variability; \\
+ & & avoids over-interpreting small-$n$ repeats \\
+ & & and correlated CV folds \\
+\midrule
+Instance-level evaluation & 95\% CI & Inferential interval when a meaningful \\
+($N \geq 30$ test instances) & (bootstrap or Wilson) & sampling model and sufficient sample \\
+ & & size are available \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation:} mean [min, max] is descriptive---it summarizes what was observed without distributional assumptions. 95\% CIs are inferential under the stated model. CV fold scores are not independent draws (folds share training data), so fold-based intervals should not be interpreted as strict confidence intervals regardless of $k$.
+
+\subsection{Non-Parametric Testing Framework (RQ1a)}
+
+For RQ1a prompt sensitivity analysis, we use non-parametric tests (Friedman + Wilcoxon) which do not require normality or homogeneity of variance assumptions. This choice is motivated by:
+\begin{itemize}[noitemsep]
+    \item \textbf{Small sample size:} With only $n=9$ blocks per experiment, parametric assumptions are difficult to verify reliably
+    \item \textbf{Repeated-measures structure:} Blocking on (CLD, run) pairs creates a matched design best analyzed with Friedman
+    \item \textbf{Robustness:} Non-parametric tests are robust to outliers and non-normal distributions
+\end{itemize}
+
+The Friedman test is the non-parametric equivalent of repeated-measures ANOVA, ranking observations within each block and testing whether rank sums differ across treatments. Post-hoc Wilcoxon signed-rank tests compare paired differences between specific prompts.
+
+\textbf{Reproduction commands:}
+\begin{verbatim}
+# RQ1a Prompt Sensitivity (Friedman + Wilcoxon)
+uv run python data_science/parameter_tuning_experiments/\
+    analyze_rq1a_aggregate_enhanced.py --base_dir final_runs/RQ1a_*
+
+# Temperature Sensitivity
+uv run python final_runs/temperature_sensitivity_assumption_tests.py
+\end{verbatim}
+
+Output figures include inline statistical annotations with Friedman p-values, Kendall's W effect sizes, and significant pairwise differences.
+
+\subsection{Proportion Test Assumptions (RQ3)}
+
+For proportion comparisons (TP vs.\ FP detection rates), we verify:
+\begin{itemize}[noitemsep]
+    \item \textbf{Sample size adequacy:} All expected cell counts $\geq 5$ for chi-square test validity
+    \item \textbf{Test selection:} Both two-proportion $z$-test and Fisher's exact test are reported; Fisher's is preferred for robustness
+\end{itemize}
+
+\textbf{Reproduction command:}
+\begin{verbatim}
+python3 final_runs/RQ3_deep_research/rq3_statistical_test.py
+\end{verbatim}
+
+\subsection{RQ2 Non-Parametric Methods}
+
+RQ2 uses non-parametric methods that do not require normality assumptions:
+\begin{itemize}[noitemsep]
+    \item \textbf{Group comparisons:} Mann-Whitney U test (robust to non-normal distributions)
+    \item \textbf{Uncertainty quantification:} Bootstrap confidence intervals (10,000 resamples; assumption-free)
+    \item \textbf{Correlation:} Pearson $r$ is robust for large $n$ ($>$16,000 edges) via CLT; Spearman's $\rho$ reported for validation
+\end{itemize}
+
+See \texttt{data\_science/rq2\_phase*.py} scripts for implementation.
+
+\subsection{Effect Size Reporting}
+
+All significant findings include standardized effect sizes with interpretation following Cohen (1988):
+\begin{itemize}[noitemsep]
+    \item \textbf{Cohen's $f$ (ANOVA):} $<$0.10 negligible, 0.10--0.25 small, 0.25--0.40 medium, $\geq$0.40 large
+    \item \textbf{Cohen's $d$ (paired differences):} $<$0.20 negligible, 0.20--0.50 small, 0.50--0.80 medium, $\geq$0.80 large
+    \item \textbf{Cohen's $h$ (proportions):} Same thresholds as $d$
+    \item \textbf{Pearson $r$ (correlation):} $<$0.10 negligible, 0.10--0.30 small, 0.30--0.50 medium, $\geq$0.50 large
+\end{itemize}
+
+\textbf{Data Availability:} All analysis scripts and raw data are available in the project repository. See \texttt{final\_runs/} for experiment results and reproducible analysis pipelines.
+
+%==============================================================================

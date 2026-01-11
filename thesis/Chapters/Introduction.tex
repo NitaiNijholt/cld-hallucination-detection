@@ -1,0 +1,42 @@
+\chapter{Introduction}
+
+ Uniquely combining LLM-as-a-judge with context-insensitive hallucination mitigation,
+ our CLD building system generates self-corrected, uncertainty-quantified intial CLDs,
+ redirecting experts attention in CLD-building session from reiterating consensus to adding
+ specialized knowledge to models. Rigorous CLDs translate into coherent computational
+ models for research and (intervention) simulation. Findings can reduce hallucinations
+ and increase efficiency of test-time compute in multi-agent LLM-based research systems.
+
+ An agent is a specialized unit with an objective function and unique state. This heterogeneity of state makes the agent suited to adress a smaller subtask given the whole. As long as tasks can be broken up into smaller, less complex subtasks, and the architecture behind the agent decision making allows for higher effiency in solving these subtasks than serving the whole. Transformer based large language models are candidate for such an architecture, as the computational requirements for solving the tasks scale with the input sequence length, L, squared, or O(L2).
+ Also, the possibility for these models to operate as a markovchain, where the next token prodability dsitrbution is predicted given the previous tokens in the context, allows the output to be heavily influenced by how a specific task is broken down into subtasks, and also the specific wording of the instructions. 
+ The fact that Language models operate on the level of langauge, allows less clear cut instructional definitions and gives the architecture flexbility, in terms that it can give an output even if the instructions are less specifically or even imperfectly defined, although this ofcoursee will influence output quality.
+
+ This makes the core task for a developer of an transformer LLM based multi agent system to build a system that preloads the context window with usefull information, or to give the LLM tools to gather this usefull information itself and load it into its context. This can be through Retrieval (yielding Retrieval Augmented Generation or RAG architecture), invoking computation (function calling, tool use), and is facilitated by structured input and output formats. These innovations come together in Anthropics recent Model Context Protocol, which provides a standardized structured format for the model to access and use tools and prompts, and thereby allowing LLM's to access 10000's of tools allowing variations of above.
+
+ Another aspect that needs consideration for a system to be considered agentic is control flow of the application. If this is determined by the programmer and deterministic, the LLM powered functions operate in a static control flow unchangable by the agent itself. However, a truely agentic system should, by virtue of the information it gathers about the problem context, be able to steer the control flow to more optimally lead to a soltion to a problem. i.e. the intermediate outputs of computation done should, if usefull, help make a better decision about the next operation needed. (information gathering, processing, evaluating task progress, halting, etc.). Therefor a true agentic system whould be able to infleunce the control flow to solve a problem.
+
+ Deciding then if a multi-agent approach (where agent(s) decide the control flow) to your problem is the optimal one, one should therefor consider the following aspects.
+
+ - Task complexity
+ Is your task too complex to be solvable by a single agent?
+ - Task decompositionality \& interdepedence
+ This the task meaningfully and divisible into smaller coherent parts? What is the dependency structure between these parts
+
+
+Reasoning is a balance between exporlation (information gathering) and exploitation (using or processing that information). In an automated reasoning process, there exists a balance between obtaining enough information to solve the problem, and processing this information in such a way that a solution is arived at in an efficient manner. As both information retrieval and processing incur costs, and it may not be clear beforehand if the right solution to a problem can be found until the computation is ran, exploring this search space efficiently is a difficult problem, especially because when these systems are employed for knowledge gain, the solutions of the problems is by definition unkonwn.
+
+
+Having agent decide the control flow allows for dynamism in this process, because through its training it has acquired a framework to evaluate new information stored in its weights due to the training process. However, this requires a call to an LLM to evaluate and decide, and therefor also incur associated cost.
+If the criteria is clear and measureable, such as for example accuracy against a set baseline, or in a scenario where a target is not known, we can use other indicators to indicate which action should be taken, this can reduce the cost and result in a smart test time compute strategy.
+
+To this end, we test the following LLM based and measure based metrics with the goal of finding a more efficient test time compute deployment strategy:
+
+    - LLM as a judge; analogous to self reflection
+    - LLM as a corrector; analogous to incorporating feedback
+    - Contect insensitive white box; model logits; analogous to felt uncertainty in humans
+    - context insensitive black box; cosine similarity, analogous to a double check against source materials
+
+
+ 
+ 
+\label{Introduction}

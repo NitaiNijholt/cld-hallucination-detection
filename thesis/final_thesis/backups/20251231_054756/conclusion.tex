@@ -1,0 +1,151 @@
+%==============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%==============================================================================
+
+This thesis investigated whether corpus-independent methods can detect and mitigate hallucinations in LLM-generated Causal Loop Diagrams (CLDs), addressing a critical reliability challenge as LLM-based systems are increasingly deployed for scientific knowledge generation. Across three research questions, we systematically evaluated LLM-as-a-Judge configurations, uncertainty quantification (UQ) metrics, and automated literature validation through Deep Research. Our findings reveal both the promise and the fundamental limitations of current approaches, while uncovering an unexpected result: many LLM-generated edges classified as ``hallucinations'' against expert ground truth may represent overlooked-but-valid causal relationships supported by scientific literature.
+
+%------------------------------------------------------------------------------
+\subsection{Summary of Contributions}
+\label{sec:conclusion_contributions}
+%------------------------------------------------------------------------------
+
+\paragraph{Baseline Validation of LLM-Generated CLDs.}
+We found that GPT-4.1 can recover substantially more ground-truth edges than a Monte Carlo structural random baseline, achieving 2.2--3.4$\times$ improvement across three health-domain CLDs under our GT Lit operationalization. This supports the viability of a generate-first paradigm as an alternative to text-to-CLD approaches, wherein LLMs can propose candidate causal relationships from parametric knowledge without requiring an external corpus at generation time.
+
+\paragraph{LLM-as-a-Judge Evaluation (RQ1a).}
+We present a systematic evaluation of LLM-as-a-Judge methods for CLD hallucination detection, comparing correctness-based and citation-based approaches across multiple prompt variants and ground truth definitions. Our key findings include:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Partial transfer of hallucination detection capability.} A correctness judge that performs strongly on TruthfulQA (F1=0.874) and synthetic CLD corruptions (F1=0.65--0.82, AUC well above chance) shows substantially degraded performance on expert literature ground truth (F1=0.15--0.55), with meaningful discrimination appearing only for specific domain-prompt combinations (Mechanistic prompt on Depressive and Emergency Dept CLDs).
+    
+    \item \textbf{Human-comparable citation judging with systematic bias.} Citation-based judges achieve substantial agreement with domain experts ($\kappa=0.618$, 80.6\% agreement, $r=0.732$), comparable to human-human inter-rater reliability. However, all disagreements exhibit systematic leniency---the LLM never under-estimates evidence support---making citation judges appropriate for screening/triage but insufficient for strict validation without expert oversight.
+    
+    \item \textbf{Prompt sensitivity is setting-dependent.} Correctness judges are strongly prompt-sensitive on synthetic corruptions ($W\approx0.70$) but this sensitivity diminishes substantially on literature ground truth. Citation judge prompt effects are small-to-medium ($W\approx0.29$--0.30) and do not survive multiple comparison correction.
+\end{itemize}
+
+\paragraph{Corrector Limitations (RQ1b).}
+We demonstrated that LLM-as-a-Corrector, guided by correctness judge feedback, yields modest improvements on synthetic corruptions (macro $\Delta$F1=+0.075, $p=.031$) but is ineffective on literature ground truth (macro $\Delta$F1$\approx$-0.02). Critically, the corrector consistently improves judge scores while failing to improve ground truth alignment, manifesting a classic Goodhart's Law phenomenon: optimizing for the proxy metric (judge satisfaction) rather than the target metric (expert agreement). This suggests that judge-corrector feedback loops have fundamental limitations in this domain.
+
+\paragraph{UQ Metrics (RQ2).}
+We evaluated logit-derived uncertainty quantification metrics and embedding-based similarity for predicting hallucinated edges, finding:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Weak single-metric signal.} The strongest single metric is cosine similarity (AUC=0.671), while logprob-derived metrics provide weaker discrimination (AUC$\approx$0.55). Notably, cosine similarity exhibits a counterintuitive relationship direction (higher similarity associated with hallucinations), suggesting topical alignment rather than causal faithfulness.
+    
+    \item \textbf{Cross-domain generalization failure.} High-capacity ensemble classifiers (Random Forest: Phase 5 AUC=0.987) degrade sharply under leave-one-CLD-out evaluation (Phase 6 AUC=0.630), indicating strong CLD-specific overfitting. Simpler models (Logistic Regression, Neural Network) show smaller performance drops but remain limited (Phase 6 AUC$\approx$0.66--0.67).
+    
+    \item \textbf{Auxiliary rather than standalone utility.} Generator UQ metrics are better viewed as auxiliary features for monitoring/triage rather than as domain-robust hallucination detectors.
+\end{itemize}
+
+\paragraph{Deep Research Validation (RQ3 Pivot).}
+Given that RQ2 metrics did not generalize and the RQ1b corrector did not improve ground truth quality, we pivoted RQ3 to explore automated multi-agent literature search (Deep Research) as an alternative form of test-time compute for validating causal claims. Our exploratory pilot revealed:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{DR does not reliably discriminate TP from FP in aggregate.} The TP--FP detection gap (8.1 percentage points, $p=.38$, Cohen's $h=0.17$) is not statistically significant. However, DR successfully distinguishes both TP and FP from FN edges (gaps survive correction).
+    
+    \item \textbf{A majority of ``hallucinations'' have literature support.} DR retrieves direct causal evidence for 62.4\% of false positive edges and 42.9\% of false negative edges, suggesting that expert ground truth may underestimate LLM quality by excluding literature-supported relationships due to scope decisions, disciplinary blind spots, or oversight.
+    
+    \item \textbf{Domain-dependent utility.} Per-CLD analysis shows strong TP--FP discrimination in the Depressive CLD (+36 pp, significant) but weak discrimination in Social Norms (+13 pp) and Older Persons (+6 pp), indicating DR's utility is domain-dependent.
+    
+    \item \textbf{Variable mismatch as dominant failure mode.} Human validation of DR output reveals that the primary failure mode is not outright non-causal evidence, but causal evidence for different constructs or measures than the edge's stated variables. An applicability threshold ($t\geq0.7$) calibrates DR's aggregate signal into more realistic enrichment estimates.
+    
+    \item \textbf{Substantial enrichment potential under strong assumptions.} Counterfactual analysis shows that if DR-validated FP edges were treated as correct, F1 could improve from 0.267 (expert GT) to 0.705--0.779. Human-calibrated estimates are more conservative but still substantial ($\Delta$F1=+0.260 to +0.315).
+    
+    \item \textbf{Cost-efficiency through selective deployment.} Smart-trigger DR (deploying only on edges flagged uncertain by the Mechanistic correctness judge) achieves approximately 57\% of full-deployment enrichment gains at roughly 50\% of the computational cost, demonstrating that uncertainty-guided selective deployment can improve cost-efficiency.
+\end{itemize}
+
+%------------------------------------------------------------------------------
+\subsection{Theoretical Implications}
+\label{sec:conclusion_theory}
+%------------------------------------------------------------------------------
+
+\paragraph{Reframing ``Hallucination'' in Structured Knowledge Generation.}
+Our findings challenge the conventional framing of LLM ``hallucinations'' as uniformly erroneous outputs. In the CLD domain, what appears as a false positive against expert ground truth can reflect multiple phenomena: (i) a genuinely unsupported fabrication, (ii) a literature-supported relationship omitted from the expert CLD for scope or modeling reasons, and/or (iii) a case where retrieved evidence is causal but only partially applicable to the specific (source, target, mechanism) claim due to construct or measurement mismatch. This distinction between \textit{fabrication} and \textit{overlooked-but-valid} (or \textit{related-but-not-identical}) relationships has important implications: LLM-generated CLDs should not be evaluated solely against expert models as absolute truth, but treated as candidate structures whose disputed edges warrant validation via calibrated evidence review (retrieval plus human applicability assessment).
+
+\paragraph{The Limits of Judge-Corrector Feedback Loops.}
+The failure of the corrector to improve literature-ground-truth (GT Lit) quality despite consistently improving judge scores highlights a limitation of judge-conditioned correction in this setting: without external grounding (e.g., literature retrieval, expert validation, or calibrated applicability thresholds), the system can optimize for a proxy evaluation signal rather than expert-grounded correctness. This Goodhart-like dynamic suggests that effective CLD improvement requires incorporating external validation signals, such as literature-grounded review and the Deep Research approach explored in RQ3.
+
+\paragraph{Domain Specificity in Causal Reasoning.}
+Performance varied substantially across CLDs, with discrimination sometimes collapsing toward chance in some domains and prompts while remaining meaningful in others (e.g., stronger separations in Depressive under specific configurations). This domain dependency suggests that LLM-based causal judging and literature validation are not uniformly transferable across problem settings. Plausible drivers include differences in variable ontology clarity, evidence availability, and the fit between the causal criteria encoded in prompts and the domain's typical evidence base; however, this thesis does not isolate these mechanisms. Future work should therefore investigate which domain characteristics predict LLM causal reasoning efficacy and under what conditions mechanistic prompting generalizes.
+
+%------------------------------------------------------------------------------
+\subsection{Practical Implications}
+\label{sec:conclusion_practice}
+%------------------------------------------------------------------------------
+
+\paragraph{LLMs as Starting Points, Not Final Validators.}
+Our results support using LLM-generated CLDs as initial drafts for expert model-building sessions, rather than as authoritative outputs. The 2.2--3.4$\times$ improvement over random baselines, combined with linear $O(E)$ computational scaling, makes LLM generation cost-effective for producing candidate CLDs that experts can refine. However, the inability of judges to reliably distinguish expert-true from expert-false edges---except in specific domain-prompt configurations---precludes unsupervised deployment.
+
+\paragraph{Screening Rather Than Validation.}
+Citation-based judges, with their substantial human agreement and systematic leniency bias, are appropriate for \textit{screening} low-confidence edges for human review. The Mechanistic correctness judge, which showed the most reliable discrimination on literature ground truth, can similarly flag uncertain edges for targeted validation through more expensive methods (e.g., Deep Research).
+
+\paragraph{Cost-Effective Deep Research Deployment.}
+For applications where ground truth enrichment is valuable, the smart-trigger deployment strategy---running expensive Deep Research only on judge-flagged edges---provides a favorable cost-accuracy tradeoff. At an estimated \$0.87 per edge, full Deep Research on large CLDs is prohibitively expensive, but selective deployment can achieve meaningful enrichment at manageable cost.
+
+%------------------------------------------------------------------------------
+\subsection{Limitations}
+\label{sec:conclusion_limitations}
+%------------------------------------------------------------------------------
+
+This thesis has several limitations that constrain the generalizability of its conclusions:
+
+\paragraph{Model and Domain Scope.}
+All experiments used GPT-4.1 as the primary generator and GPT-5-mini for cost-sensitive citation experiments. Findings may not generalize to other LLM architectures. The three ground truth CLDs are exclusively in the health domain; causal reasoning performance in other domains (economics, physics, social sciences) remains untested.
+
+\paragraph{Ground Truth Definition.}
+We operationalized ``hallucination'' as deviation from expert-constructed CLDs, treating expert models as ground truth despite their acknowledged limitations (scope decisions, blind spots, biases). This definition may classify valid literature-supported relationships as hallucinations and limits transfer validity to non-CLD hallucination constructs.
+
+\paragraph{Sample Size and Statistical Power.}
+With only three CLDs and three runs per condition, statistical power at the CLD level is limited. Effect size estimates carry substantial uncertainty, and some null results (e.g., prompt effects not surviving correction) may reflect insufficient power rather than true null effects. Conversely, edge-level analyses ($n = 31{,}704$ edges) achieve power $\approx 1.0$, enabling detection of even trivially small effects that may lack practical significance. This power asymmetry---underpowered at the CLD level, overpowered at the edge level---reflects the nested data structure: under the edge-slot representation, CLDs contribute different numbers of ordered (source, target) pairs ($|V|(|V|-1)$), so larger CLDs dominate edge-level statistics while still representing only single independent observations at the domain level. Statistical significance at the edge level should therefore be interpreted cautiously, with attention to effect sizes and cross-CLD generalization rather than p-values alone.
+
+\paragraph{Deep Research Exploratory Status.}
+The RQ3 pivot to Deep Research was conducted as a single-run, non-ablated exploratory pilot. The DR system has many degrees of freedom (query count, iteration depth, scoring thresholds, agent prompts) that were not systematically varied. Enrichment estimates rely on strong assumptions about within-CLD applicability distribution generalization and edge-independence that require validation.
+
+\paragraph{Confirmation Bias Risk.}
+Deep Research searches for evidence \textit{supporting} causal claims, introducing confirmation bias. Edges with retrievable supporting literature may still be invalidated by contradicting evidence not retrieved. The system also inherits publication bias from the underlying literature.
+
+\paragraph{Computational Constraints.}
+True Negative edges (1,109 of 1,394 possible) were not analyzed with Deep Research due to cost (\$269 estimated), leaving the TN analysis incomplete and potentially biasing enrichment estimates.
+
+%------------------------------------------------------------------------------
+\subsection{Future Research Directions}
+\label{sec:conclusion_future}
+%------------------------------------------------------------------------------
+
+\paragraph{Cross-Domain Validation.}
+The domain-dependent performance observed across CLDs motivates systematic evaluation across diverse disciplines. Future work should investigate whether LLM causal reasoning is fundamentally more effective in mechanistic domains (biology, medicine) versus behavioral domains (social sciences, psychology), and whether domain-specific prompt engineering can close performance gaps.
+
+\paragraph{Deep Research Ablation and Optimization.}
+A rigorous ablation study of the Deep Research system---varying search breadth, iteration depth, agent configurations, and scoring thresholds---would identify the most cost-effective components and enable principled system design rather than the intuition-driven approach necessitated by time constraints in this thesis.
+
+\paragraph{Multi-Model Ensembles.}
+Given that different LLMs exhibit different hallucination patterns (e.g., Claude-Sonnet-4's high recall/low precision versus GPT-4.1's balanced performance), multi-model ensemble generation or judging may improve robustness through complementary failure modes.
+
+\paragraph{Active Learning Integration.}
+The systematic leniency of citation judges suggests an active learning paradigm: edges flagged as low-confidence by LLM judges could be prioritized for human expert review, with expert feedback used to calibrate judge thresholds and potentially fine-tune judge models.
+
+\paragraph{Addressing False Negatives.}
+The 36 residual false negatives (expert-included, neither LLM-generated nor DR-recovered) represent tacit expert knowledge not captured in retrievable literature. Future work should investigate whether targeted elicitation methods (e.g., prompting with related concepts, multi-turn dialogue) can reduce this gap.
+
+\paragraph{Causal Context Integration.}
+Deep Research currently evaluates edges in isolation. Integrating CLD-level causal context (mediators, confounders, feedback loops) into the validation process could improve the accuracy of causal evidence applicability assessment and reduce the variable mismatch failure mode.
+
+%------------------------------------------------------------------------------
+\subsection{Concluding Remarks}
+\label{sec:conclusion_remarks}
+%------------------------------------------------------------------------------
+
+This thesis shows that LLMs can meaningfully contribute to Causal Loop Diagram construction, generating structures that substantially outperform random baselines and that, when validated through appropriate methods, can serve as useful starting points for expert model-building. However, current corpus-independent hallucination detection methods---whether judge-based, logit-based, or correction-based---do not yet reliably distinguish expert-true from expert-false causal edges across domains.
+
+The most significant finding may be the reconceptualization of ``hallucination'' itself in this context. The substantial proportion of LLM-generated edges classified as false positives against expert ground truth that nonetheless have retrievable causal evidence (62.4\%) suggests that the expert-LLM disagreement space contains overlooked-but-valid relationships alongside genuine fabrications. This reframing positions LLMs not merely as reproducers of expert consensus, but as tools for surfacing literature-supported causal relationships that experts may have missed---a function that becomes increasingly valuable as system complexity grows and the edge space ($O(|V|^2)$) exceeds the capacity for exhaustive expert deliberation.
+
+As LLM capabilities continue to advance, the methods evaluated here---particularly the combination of uncertainty-guided selective deployment with literature-grounded validation---provide a foundation for integrating LLM-generated scientific knowledge into rigorous research workflows. The path forward requires not replacing expert judgment, but augmenting it: using LLMs to handle the scalable synthesis task while reserving expert attention for the specialized contributions that only domain knowledge can provide.
+
+
+
+
+
+
+
+

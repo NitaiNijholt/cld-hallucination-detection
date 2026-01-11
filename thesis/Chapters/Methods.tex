@@ -1,0 +1,486 @@
+\chapter{Methods: Experimental Setup}
+\label{Methods}
+We design three complementary experiments to evaluate LLM-driven generation of Causal Loop Diagrams (CLDs). The experiments take place in the context of a CLD building system adhering to the algorithm implemented by Andrew Crossley (see Table 1 for an overview of the algorithm). The system begins with a target variable and user-defined context, iteratively proposing new variables and pairwise relationships, each accompanied by an LLM-generated rationale and cited source. We define a hallucination when the rationale contradicts itself, does not match its cited source, or fails user-specified criteria (e.g., causal relevance, measurability, non-overlapping). Final diagrams are verified against a separate, smarter reasoning LLM (OpenAI o1, for example) or human experts in a later stage if feasible to reduce circularity (i.e., LLMs judging LLMs).
+
+\textbf{Research Question 1:} "Can LLM-as-a-judge and LLM-as-a-corrector method be used to increase final CLD accuracy?"
+\begin{itemize}
+\item RQ 1a: "Can LLM-as-a-judge be used to detect hallucinations?"
+\item RQ 1b: "Can LLM-as-a-corrector be used to correct hallucinations?"
+\end{itemize}
+\textbf{Experiment 1: LLM-as-a-judge}
+
+To address RQ1, we select some known-to-be-correct ground truth CLDs, then create spurious versions by deliberately altering links and providing a spurious rationale. An LLM-as-a-judge checks each link's rationale and source, which flags possible hallucinations. An "LLM-as-a-corrector" revises or removes flagged links. We compare final CLD accuracy and compute cost to a baseline with no verification. We expect the judge/corrector method to yield more accurate final CLDs.
+
+\textbf{Research Question 2:} "Can context insensitive metrics be used to detect hallucinations?"
+
+\textbf{Experiment 2: Context-insensitive metrics}
+We measure perplexity, minimum probability, and cosine similarity between the generated rationale and its cited text, correlating these metrics with flagged hallucinations. This indicates whether these low-compute cost, context-insensitive measures can effectively predict hallucinations and serve as a type of uncertainty quantification. We expect lower minimum probability and higher perplexity respectively to correspond to higher likelihood of hallucination, and higher cosine similarity with (chunks) of the cited source to indicate lower likelihood of hallucination.
+
+\textbf{Research Question 3:} "Can context-insensitive metrics when used as hallucination indicators be used to deploy test-time compute to correct hallucinations more efficiently?"
+
+\textbf{Experiment 3: Combined approach (Original Design)}
+We selectively apply LLM-as-a-judge and LLM-as-a-corrector only when context-insensitive metrics exceed certain thresholds—a "smart" test-time compute strategy. We compare final CLD accuracy and compute usage to an always-on approach ("dumb" test-time compute), which applies LLM-as-a-judge and LLM-as-a-corrector on every link and variable rationale, assessing whether targeted interventions reduce hallucinations more efficiently. We expect the smart deployment of test-time compute to increase efficiency and still meaningfully increase final CLD accuracy.
+
+\textit{\textbf{Methodological Pivot:} The original RQ3 design was predicated on two conditions: (1) RQ2 CI metrics generalizing across CLDs, and (2) RQ1b correctors effectively repairing hallucinations. Our findings did not support either condition—CI metrics showed poor cross-CLD generalization, and the corrector exhibited deletion-dominant behavior rather than genuine repair. Given these results, we pivoted RQ3 to an exploratory pilot study: \textbf{Deep Research validation}, which asks whether automated literature search can validate causal claims. This alternative approach is documented in the standalone methods document and presented as exploratory work. See Discussion (Section~\ref{sec:rq3_pivot}) for detailed rationale.}
+
+
+\section{Methods: Implementation}\label{sec:methods}
+
+\subsection{System Architecture and Multi-Agent Orchestration}
+
+The experimental platform is implemented as a stateful multi-agent system within the \texttt{CausalDiscovery} class (\texttt{data\_science/modules.py:176--300}). The architecture comprises three specialized LLM agents operating in coordinated phases, with comprehensive performance tracking and persistence:
+
+\paragraph{Generator Agent}
+Iterative variable discovery via structured prompting (\texttt{prompts\_Nitai\_C.yaml:23--60}) produces measurable causal variables with formal definitions and measurement units. Exclusion lists prevent duplication; prompts maintain spatiotemporal context. Inference settings are role-specific and configurable (default: \(\text{temperature}=0.7\), \(\text{top\_p}=1.0\)).
+
+\paragraph{Corruptor Agent}
+The function \texttt{generate\_spurious\_motivation()} synthesizes semantically plausible but factually incorrect relationship rationales (\texttt{prompts\_Nitai\_C.yaml:200--214}), introducing ``subtle but fundamental'' causal flaws while preserving scientific plausibility. The corruption rate is configurable in \([0,1]\). Replacement logic preserves original motivations (\texttt{original\_motivation}), writes spurious versions (\texttt{spurious\_motivation}), flags edges (\texttt{is\_corrupted = True}), and updates edge properties via \texttt{update\_relationship\_properties()} for complete experimental traceability.
+
+\paragraph{Judge Agent Ensemble}
+A heterogeneous ensemble validates relationships via (i) citation-based external knowledge checks (search-provider integration) and (ii) internal consistency analysis driven by \texttt{edgeVerifier} prompts. Ensembles support mixed providers and majority voting.
+
+\paragraph{Infrastructure and Monitoring}
+All agent interactions are persisted to Neo4j with ACID guarantees (development binding set in \texttt{force\_neo4j\_fix.py:20--22} to \texttt{bolt://localhost:7687}). Performance tracking uses \texttt{inference\_times} and \texttt{api\_call\_counts} (\texttt{modules.py:258--269}) to support cost analyses. When providers expose token log-probabilities, token-level \(\log p\) traces are captured for context-insensitive (CI) metrics.
+
+\subsection{Ground-Truth Dataset Specification}
+
+Experiments use standardized Excel-formatted causal loop diagrams (CLDs) in \texttt{data\_science/ground\_truth\_CLDs/} with three sheets:
+\begin{itemize}
+  \item \textbf{Variable\_definitions}: triplets \([\,\text{name}, \text{definition}, \text{units}\,]\) with 15--25 variables per dataset.
+  \item \textbf{Variable\_links}: \([\,\text{source}, \text{target}, \text{polarity}\,]\) relationships with 20--40 edges per dataset.
+  \item \textbf{Context}: temporal scales (minutes--years), spatial scales (individual--population), domain metadata.
+\end{itemize}
+The loader \texttt{excel\_cld\_loader\_v3.py} implements validation for missing sheets, maps polarity (\texttt{POSITIVE}/\texttt{NEGATIVE}/\texttt{BALANCING}) to relationship types, and constructs NetworkX graphs with cycle detection for CLD validation.
+
+\subsection{Advanced Prompting and Chain-of-Thought Integration}
+
+Prompt engineering (\texttt{data\_science/parameter\_tuning\_experiments/alternative\_prompts/}) enforces structured reasoning:
+
+\paragraph{Variable Generation}
+A six-step reasoning protocol requires explicit checks of measurability, compositionality, and temporal/spatial constraints prior to selection. Outputs pass JSON schema validation.
+
+\paragraph{Relationship Discovery}
+Mediation-aware prompting supplies full variable inventories to discourage spurious direct links when intermediaries exist; prompts demand mechanistic causal explanations (not correlations).
+
+\paragraph{Judge Verification}
+A four-point scale (\textsc{Supported}/\textsc{Partially Supported}/\textsc{Contradicted}/\textsc{Unaddressed}) with mandatory justification is applied per-citation, followed by multi-round aggregation.
+
+\subsection{Context-Insensitive Metrics Implementation}
+
+The \texttt{logit\_metrics.py} module provides provider-agnostic uncertainty quantification from token log-probabilities. A standardized pipeline (\texttt{\_compute\_and\_trace\_metrics\_from\_logprobs()}, \texttt{modules.py:102--130}) normalizes vendor-specific formats.
+
+\paragraph{Perplexity}
+\[
+\operatorname{ppl} = \exp\!\left(-\frac{1}{N}\sum_{i=1}^N \log P(t_i)\right),
+\]
+computed via \texttt{compute\_avg\_nll()} and \texttt{compute\_perplexity()}.
+
+\paragraph{Minimum Token Probability}
+Least-confident token within a rationale, \(\min_i P(t_i)\), via \texttt{compute\_min\_prob()}, used to trigger selective judging.
+
+\paragraph{Maximum Window Entropy}
+Sliding-window entropy over top-\(k\) token distributions detects localized uncertainty spikes:
+\[
+H = -\sum_{j} P(w_j)\log P(w_j),
+\]
+with default \(k=5\), window \(=5\) (\texttt{compute\_max\_window\_entropy()}).
+
+\paragraph{Semantic Alignment (Batched)}
+Cosine similarity between rationale embeddings and citation chunks uses OpenAI \texttt{text-embedding-3-small}. Batched computation (\texttt{compute\_alignment\_batch()}, default \(\text{batch\_size}=64\)) tracks usage via \texttt{\_EMBED\_STATS}. Chunking uses overlapping windows (default \(20\%\) overlap; CLI \texttt{--ci-chunk-chars}, \texttt{--ci-overlap}).
+
+\subsection{LLM-as-a-Judge Aggregation Framework}
+
+\paragraph{Citation Acquisition}
+Missing citations are fetched by \texttt{fill\_in\_missing\_citations()} using:
+\begin{itemize}
+  \item \textbf{Brave} API with trusted-domain filters (\texttt{search\_engine\_copy.py}, \texttt{citation\_whitelist\_copy.py}); up to 5 results capped at 50 words/400 characters.
+  \item \textbf{Perplexity} web-search LLM fallback.
+  \item \textbf{Hybrid} LLM extraction followed by search validation.
+\end{itemize}
+
+\paragraph{Per-Citation Evaluation}
+\texttt{judge\_all\_edges\_with\_citations\_serial(approach="per\_citation\_aggregate")} yields structured verdicts with explicit rationales.
+
+\paragraph{Multi-Judge Ensembles}
+Pools of 1--5 judges (e.g., GPT-4.1, GPT-4o, Claude-3.7-Sonnet, Perplexity) with ephemeral clients and majority voting; disagreements are logged.
+
+\paragraph{Quantitative Verdict Mapping}
+\[
+\textsc{Supported}\!\to\!1.0,\quad
+\textsc{Partially Supported}\!\to\!0.5,\quad
+\textsc{Contradicted/Unaddressed}\!\to\!0.0.
+\]
+Per-edge aggregation For n judges:
+\[
+\text{aggregate\_score}=\frac{1}{n}\sum_{c=1}^{n}\text{score}_c,
+\]
+with secondary LLM aggregation into \emph{Fully/Partially/Not supported}. Both JSON details (\texttt{judge\_message}) and scalar scores are stored on edges.
+
+\subsection{Smart Test-Time Compute Allocation}
+
+Thresholds from ROC analyses on development data govern selective judge activation. High-uncertainty relationships (high perplexity, low \(\min P\), high entropy, low alignment) trigger full judging; high-confidence edges bypass it. Cost-effectiveness is tracked via tokenized usage per component.
+
+\subsection{Experimental Design and Statistical Framework}
+
+\paragraph{Parameter Space}
+Grid configurations (\texttt{experiment\_28\_04\_2025\_config.yaml}) span:
+\begin{itemize}
+  \item Model combinations (Generator/Corruptor/Judge providers).
+  \item Temperature \(0.1\)–\(1.0\) and top-\(p\) per role.
+  \item Judge ensembles (1, 3, 5 judges).
+  \item Corruption rates \(0.0, 0.15, 0.3\).
+  \item Parallelization (\texttt{parallel=True}, \texttt{max\_workers=3}) with \texttt{ThreadPoolExecutor} for \(N\times N\) discovery.
+\end{itemize}
+
+\paragraph{Reproducibility}
+UUID session IDs (\texttt{self.session\_id}) isolate runs; environment bindings use \texttt{force\_neo4j\_fix.py}. Rolling log handlers (\texttt{cli/run\_experiment.py:27--59}); JSON/CSV parameter capture.
+
+\paragraph{Statistical Analysis}
+\texttt{mean\_and\_95ci\_bounds()} computes percentile 95\% CIs; cross-run aggregation supports multi-CLD/prompt/parameter comparisons; cost-effectiveness via \texttt{inference\_times}, \texttt{api\_call\_counts}; stratified evaluations across datasets and support levels.
+
+\subsection{Output Artifacts and Evaluation Metrics}
+
+\paragraph{Edge-Level CSVs}
+Each edge includes:
+\begin{itemize}
+  \item Classification: TP/FP/FN/TN vs.\ ground truth.
+  \item Graph membership flags (session vs.\ validation).
+  \item Judge outcomes: verdict label, aggregate score, per-citation \texttt{judge\_message}.
+  \item CI metrics: perplexity, min\_prob, max-window entropy, cosine similarity.
+  \item Relationship details: source/target, type, (truncated) motivation, citation URLs.
+\end{itemize}
+
+\paragraph{Summary Statistics}
+Precision/recall/F1 with CIs, stratified by citation support, corruption status, CI quartiles, and graph-theoretic counts (discovered/validation edges, TP/FP/FN/TN).
+
+\paragraph{Export Pipeline}
+Files follow:
+\[
+\{\texttt{model}\}\_\{\texttt{search\_provider}\}\_\texttt{judge}\_\{\texttt{judge\_model}\}\_\{\texttt{dataset}\}\_\{\texttt{timestamp}\}\_\{\texttt{filter\_type}\}. \{\texttt{csv}|\texttt{xlsx}\}.
+\]
+All runs include session UUIDs, parameter configs, timings, API counts, and error logs.
+
+\subsection{Implementation Mapping to Research Questions}
+
+\paragraph{RQ1: LLM-as-a-Judge and Corrector Efficacy}
+\texttt{judge\_all\_edges\_with\_citations\_serial()} (\texttt{"per\_citation\_aggregate"} and \texttt{"all\_citations\_at\_once"}) compares judging strategies. Controlled corruptions via \texttt{generate\_spurious\_motivation()} provide labeled hallucination scenarios. Multi-judge voting quantifies agreement and consensus reliability.
+
+\paragraph{RQ2: CI Metrics as Hallucination Indicators}
+CI metrics (perplexity, min\_prob, entropy, alignment) correlate with judge verdicts at edge level. ROC/PR analyses assess predictive validity for selective judging.
+
+\paragraph{RQ3: Smart Test-Time Compute}
+Threshold-triggered judging is contrasted with always-on judging; tokenized usage enables accuracy-per-cost comparisons.
+
+\subsection{Reproducibility and Scientific Standards}
+
+All components adopt explicit versioning (prompts, model specs), comprehensive logging (session UUIDs, parameters), and standardized outputs to facilitate independent replication.
+
+\subsection{Mathematical Foundations and Algorithmic Complexity}
+
+\subsubsection{Information-Theoretic Framework}
+Token information content: \(I(t_i)=-\log_2 P(t_i)\). Sequence entropy for rationale \(T\):
+\[
+H(T) = -\sum_{i} P(t_i)\log_2 P(t_i).
+\]
+Cross-entropy between citation-derived semantics \(p\) and rationale semantics \(q\):
+\[
+H(p,q) = -\sum_i p(i)\log q(i).
+\]
+Mutual information between CI metrics and judge verdicts:
+\[
+I(\text{CI},\text{Judge}) = \sum_{c,j} P(c,j)\log_2\!\frac{P(c,j)}{P(c)P(j)}.
+\]
+
+% \subsubsection{Graph-Theoretic Formulations}
+% A CLD is \(G=(V,E,W)\) where \(W:E\to\mathbb{R}\) maps edges to support scores. Density \(\delta=\lvert E\rvert/(\lvert V\rvert(\lvert V\rvert-1))\). Paths are read from powers of the adjacency matrix \(A^k\). Centralities: degree \(C_D\), betweenness \(C_B\), and PageRank-weighted by edge supports.
+
+% \subsubsection{Algorithmic Complexity}
+% Relationship enumeration is \(\mathcal{O}(N^2\,T_{\text{LLM}})\) time and \(\mathcal{O}(N^2\,S_{\text{prop}})\) space. Judge evaluation scales as \(\mathcal{O}(\lvert E\rvert\,C\,J^2)\) with \(C\) citations and \(J\) judges. Brave search is sublinear in index size with batched overhead \(\mathcal{O}(B\log N_{\text{docs}} + N_{\text{results}})\).
+
+\subsection{Neo4j Graph database Architecture}
+
+\subsubsection{Schema and Properties}
+\begin{verbatim}
+CREATE (v:variable {
+  name: String,
+  definition: String,
+  units: String,
+  session_id: String,
+  target: Boolean,
+  deleted: Boolean,
+  spatiotemporal: Map
+});
+\end{verbatim}
+
+\begin{verbatim}
+CREATE (s)-[r:POSITIVE|NEGATIVE {
+  motivation: String,
+  spurious_motivation: String,
+  original_motivation: String,
+  is_corrupted: Boolean,
+  citations: List<String>,
+  session_id: String,
+
+  perplexity: Float,
+  min_prob: Float,
+  max_window_entropy: Float,
+
+  judge_verdict: String,
+  aggregate_verdict: String,
+  aggregate_score: Float,
+  judge_message: String,
+
+  generation_time: Float,
+  inference_tokens: Integer
+}]->(t);
+\end{verbatim}
+
+% \subsubsection{Transactions and Isolation}
+% Each run operates under a UUID-scoped boundary, ensuring atomicity, consistency, isolation, and durability. Connection pooling in \texttt{backend/db\_clients/neo4j\_client.py} supports concurrent discovery without deadlocks.
+
+\subsubsection{Indexes and Performance}
+\begin{verbatim}
+CREATE INDEX session_variable_index
+FOR (v:variable) ON (v.session_id, v.name);
+
+CREATE INDEX relationship_session_index
+FOR ()-[r]-() ON (r.session_id);
+\end{verbatim}
+Typical graphs (15--25 variables; 20--40 relations) require \(\sim\)2\,MB per session including provenance metadata.
+
+\subsection{Enhanced Statistical Methods and Experimental Design}
+
+\subsubsection{Robust Inference}
+Percentile bootstrap 95\% CIs:
+\begin{verbatim}
+mu = mean(values); lower = p2.5(values); upper = p97.5(values)
+\end{verbatim}
+Permutation tests quantify inter-judge agreement with statistic
+\[
+\tau = \sum_i \bigl(\text{observed}_i - \text{expected}_i\bigr)^2
+\]
+against 10{,}000 label permutations. Mann--Whitney \(U\) quantifies CI-metric effect sizes across corruption conditions:
+\[
+U = R_1 - \frac{n_1(n_1+1)}{2}.
+\]
+
+\subsubsection{Multiple Comparisons and Power}
+Holm--Bonferroni controls FWER at \(\alpha=0.05\) across \(k\) CI tests. Benjamini--Hochberg controls FDR in exploratory prompt sweeps. Power for detecting \(d=0.5\) with 80\% yields \(n \approx 32\) per condition:
+\[
+n = 2\left(\frac{z_{\alpha/2}+z_\beta}{d}\right)^2.
+\]
+
+% \subsubsection{Designs}
+% Factorial grids examine interactions among models, temperatures, corruption, and ensemble sizes. Nested CV (outer: across CLDs; inner: hyperparameters) avoids optimistic bias. Propensity matching balances confounders (edge complexity, citation count).
+
+\subsubsection{Bayesian Modeling}
+Hierarchical models capture variability at edge/session/dataset levels. A weakly-informative prior,
+\(\text{aggregate\_score} \sim \mathrm{Beta}(2,2)\),
+supports stable estimation. Posterior predictive checks compare simulated vs.\ observed CI and verdict distributions.
+
+\subsection{Deep Learning Theory and Embedding Mathematics}
+
+\paragraph{Embedding Geometry}
+OpenAI \texttt{text-embedding-3-small} vectors lie on \(S^{1535}\subset\mathbb{R}^{1536}\). Cosine similarity:
+\[
+\mathrm{sim}(v_1,v_2)= v_1\cdot v_2 = \|v_1\|\,\|v_2\|\cos\theta.
+\]
+Batching cost scales as \(\mathcal{O}(B\,T\,d)\) with batch size \(B\), token count \(T\), and dimension \(d\).
+
+\paragraph{Attention and Representations}
+Multi-head attention weights:
+\[
+A_{h,i,j} = \operatorname{softmax}\!\left(\frac{(Q_h W_i^Q)(K_h W_j^K)^{\top}}{\sqrt{d_k}}\right).
+\]
+Layer-wise behaviors: early (syntax/entities), middle (relations/logic), late (discourse/judgment). Sinusoidal positional encodings preserve structure in enumerated citations.
+
+\paragraph{Similarity Interpretation and Chunking}
+\(\cos\theta \in [-1,1]\) interprets alignment (1 perfect, 0 orthogonal, \(-1\) contradictory). Overlapping chunks with stride \(s\) and window \(w\) yield overlap \(r=(w-s)/w\) (default \(r=0.2\)).
+
+% \subsection{Comprehensive Error Analysis and Robustness Engineering}
+
+% \paragraph{Failure Modes}
+% \emph{Generator}: JSON parsing, constraint violations, duplicates, context truncation. \emph{Judge}: inter-judge inconsistency, citation fetch errors, rate limits, parsing ambiguity. \emph{Corruptor}: automated quality control via similarity/plausibility composite.
+
+% \paragraph{Degradation and Recovery}
+% Session isolation prevents error cascades; failed edges retain partial data and null CI metrics. Citation failures produce:
+% \begin{verbatim}
+% "citations": [], "citation_source": "GENERATION_ONLY",
+% "judge_verdict": "NO_CITATION"
+% \end{verbatim}
+% Retries use exponential backoff with jitter.
+
+\subsection{Performance Optimization and Systems Engineering}
+
+\subsubsection{Parallel Processing}
+\begin{verbatim}
+with ThreadPoolExecutor(max_workers=max_workers) as ex:
+    futures = {ex.submit(self.process_variable_pair, pair, rate, vars): pair
+               for pair in pairs}
+\end{verbatim}
+Empirical scaling: \(P=3\) yields \(\sim 2.7\times\) speedup (90\% efficiency); \(P=8\) \(\sim 6.2\times\) (78\%); \(P=16\) bottlenecks on API rate limits.
+
+\subsubsection{Rate Limiting and Cost Optimization}
+\begin{verbatim}
+class RateLimiter:
+    def __init__(self, calls_per_minute=60):
+        self.calls_per_minute = cpm; self.call_times = []
+    def acquire(self):
+        now = time.time()
+        self.call_times = [t for t in self.call_times if now - t < 60]
+        if len(self.call_times) >= self.calls_per_minute:
+            time.sleep(60 - (now - self.call_times[0]))
+\end{verbatim}
+Total cost per CLD \(C_{\text{total}} = C_{\text{gen}} + C_{\text{judge}} + C_{\text{embed}} + C_{\text{search}}\), with tokenized accounting per component.
+
+% \subsubsection{Caching and Memory}
+% Citation reuse (\texttt{ci\_fetch\_reuse}) avoids redundant fetches; an LRU embedding cache attains \(\sim 0.73\) hit rate on repeated runs. Typical memory profile: base \(\sim\)200\,MB; per-variable \(\sim\)1\,KB; per-edge \(\sim\)5\,KB; per-CLD \(\sim\)1.5\,MB.
+
+\subsection{Variable Generation Input and Context Inference}
+
+To ensure fair evaluation of LLM variable generation capabilities, we distinguish between seeded inputs (derived from validation data) and truly generated outputs. This section describes the information provided to the LLM during variable generation.
+
+\subsubsection{Target Variable Seeding}
+
+Each validation CLD specifies a designated target variable in its Context sheet (e.g., ``Depressive Symptoms'' for the depression CLD, ``Obesity Prevalence'' for the obesity CLD). This target variable is extracted and provided to the variable generation system, serving as the anchor around which related causal variables are discovered. The target is created as the first node in the session graph with the property \texttt{target=True}.
+
+Formally, given a validation CLD with variable set \(V_{\text{val}}\) and designated target \(t_{\text{val}} \in V_{\text{val}}\), the generation process initializes with \(G = \{t_{\text{val}}\}\) and iteratively expands \(G\) by querying the LLM for variables causally related to \(t_{\text{val}}\).
+
+This seeding approach reflects realistic usage scenarios where domain experts specify an outcome of interest, but introduces a methodological consideration: the target receives an automatic perfect match during evaluation, slightly inflating similarity metrics (see Section~\ref{sec:adjusted_metrics}).
+
+\subsubsection{Context Inference from Validation Nodes}
+
+Rather than providing the LLM with explicit domain descriptions or paper abstracts, we infer contextual framing directly from the validation variable names. This approach tests whether the system can reconstruct appropriate domain context from minimal structural information.
+
+The inference process operates as follows:
+
+\paragraph{Step 1: Extract Validation Variable Names}
+Given validation variables \(V_{\text{val}} = \{v_1, v_2, \ldots, v_n\}\), extract the set of variable names \(\mathcal{N} = \{\text{name}(v_i)\}_{i=1}^n\).
+
+\paragraph{Step 2: LLM-Based Context Inference}
+A separate LLM call (using the same generator model, e.g., GPT-4.1) analyzes \(\mathcal{N}\) to infer:
+\begin{itemize}
+\item \textbf{Temporal Scale}: Expected duration of causal effects (e.g., ``days to weeks'', ``2--5 years'', ``decades'')
+\item \textbf{Spatial Scale}: System level of operation (e.g., ``individual level'', ``community level'', ``national level'')
+\item \textbf{Domain}: Research field or discipline (e.g., ``public health'', ``environmental science'', ``economics'')
+\item \textbf{Context Description}: Brief 1--2 sentence characterization of the causal system under study
+\end{itemize}
+
+The inference prompt instructs the model to be ``specific and evidence-based from the variable names provided,'' returning structured JSON output.
+
+\paragraph{Step 3: Context List Construction}
+The inferred attributes are formatted into a context list:
+\[
+\mathcal{C} = \{\text{``Domain: ''} + d, \text{``Context: ''} + c, \text{``Temporal Scale: ''} + t, \text{``Spatial Scale: ''} + s\},
+\]
+where \(d\), \(c\), \(t\), and \(s\) denote the inferred domain, description, temporal scale, and spatial scale, respectively.
+
+\paragraph{Step 4: Variable Generation with Inferred Context}
+The generator LLM receives a prompt of the form:
+\begin{verbatim}
+Target Variable: {target} (measured in {units})
+Temporal Scale: {temporal}
+Spatial Scale: {spatial}
+Context: {context_list}
+Name a variable (2-3 words) with a direct causal effect on 
+the target variable {target}, defined as "{definition}",
+over the timeframe {temporal} and spatial scale {spatial}.
+\end{verbatim}
+
+Critically, the LLM does \emph{not} receive:
+\begin{itemize}
+\item The original research paper or abstract
+\item Explicit domain expertise or literature context
+\item The full set of validation variables (only their names for context inference)
+\end{itemize}
+
+This design isolates the LLM's ability to generate domain-appropriate causal variables from minimal structural cues, while maintaining ecological validity through realistic target specification.
+
+
+\subsection{Variable Matching Methodology}
+
+To evaluate the performance of LLM-generated causal variables against ground truth validation sets, we developed a three-tiered matching framework that captures both exact semantic equivalence and partial similarity.
+
+\subsubsection{Binary Matching (Stage 1)}
+
+We employed batch LLM-based semantic matching to identify exact or near-exact variable correspondences. For each generated variable \(g\) and validation variable \(v\), a language model (GPT-5-nano) assessed semantic equivalence and assigned a confidence score \(c \in [0,1]\). Pairs with \(c \geq 0.8\) were classified as matches, yielding a binary mapping \(M_1 : G \to V\), where \(G\) and \(V\) denote the sets of generated and validation variables, respectively.
+
+Binary precision, recall, and F1-score were computed as:
+\begin{align*}
+\text{Precision} &= \frac{|M_1|}{|G|}, \\
+\text{Recall} &= \frac{|M_1|}{|V|}, \\
+\text{F1} &= \frac{2 \cdot (\text{Precision} \cdot \text{Recall})}{\text{Precision} + \text{Recall}}.
+\end{align*}
+
+\subsubsection{Cosine Similarity Metrics}
+
+To capture semantic similarity beyond binary matching, we computed cosine similarities between all variable pairs using OpenAI's \texttt{text-embedding-3-small} model (1536 dimensions). For each generated variable \(g_i\), we identified its maximum cosine similarity to any validation variable: \(s(g_i) = \max_{v \in V} \cos(g_i, v)\). Similarly, for each validation variable \(v_j\), \(s(v_j) = \max_{g \in G} \cos(g, v_j)\).
+
+Cosine-based metrics were then calculated as:
+\begin{align*}
+\text{Cosine Precision} &= \frac{1}{|G|} \sum_{g_i \in G} s(g_i), \\
+\text{Cosine Recall} &= \frac{1}{|V|} \sum_{v_j \in V} s(v_j).
+\end{align*}
+
+\subsubsection{Hybrid Matching (Two-Stage Bipartite)}
+
+To combine the strengths of both approaches while avoiding double-counting, we implemented a two-stage greedy bipartite matching algorithm:
+
+\paragraph{Stage 1:} Variables matched by the LLM (\(M_1\)) receive a similarity score of 1.0.
+
+\paragraph{Stage 2:} For the remaining unmatched variables (\(G' = G \setminus \text{dom}(M_1)\) and \(V' = V \setminus \text{range}(M_1)\)), we performed greedy bipartite matching based on cosine similarity. To focus on meaningful similarities, we first filter candidate pairs to those above the 90th percentile of all pairwise cosine similarities, establishing an adaptive threshold \(\tau_{90}\). Candidate pairs \((g, v)\) with \(\cos(g, v) \geq \tau_{90}\) are then sorted by decreasing similarity, and pairs are assigned sequentially, ensuring each variable participates in at most one match. This yields a secondary mapping \(M_2 : G' \to V'\) with associated similarity scores \(s(g, v)\).
+
+The hybrid score for each generated variable was:
+\[
+h(g) = \begin{cases}
+1.0 & \text{if } g \in \text{dom}(M_1), \\
+s(g, M_2(g)) & \text{if } g \in \text{dom}(M_2), \\
+0.0 & \text{otherwise}.
+\end{cases}
+\]
+
+Hybrid precision and recall were computed as the mean hybrid scores across generated and validation variables, respectively. This approach ensures that \(\text{Binary} \leq \text{Hybrid} \leq \text{Cosine}\), providing a nuanced assessment that rewards both exact matches and partial semantic overlap while maintaining one-to-one correspondence in the matching process.
+
+\paragraph{Key advantages of this methodology:}
+\begin{itemize}
+\item \textbf{Interpretability}: Binary metrics provide clear success/failure signals.
+\item \textbf{Granularity}: Hybrid metrics capture partial credit for near-misses.
+\item \textbf{Robustness}: Two-stage matching prevents double-counting and maintains theoretical consistency.
+\item \textbf{Scalability}: Batch LLM calls and vectorized cosine computations enable efficient evaluation.
+\end{itemize}
+\subsubsection{Adjusted Metrics for Seeded Variables}
+\label{sec:adjusted_metrics}
+
+As described earlier, the target variable is seeded from the validation CLD and automatically receives a perfect match score of 1.0. While this reflects realistic usage (domain experts specify targets), it introduces a systematic bias in evaluation metrics. To isolate true generation performance, we compute adjusted metrics that exclude the seeded target from both generated and validation sets.
+
+Formally, let \(t_{\text{seed}}\) denote the seeded target variable. The adjusted variable sets are:
+\begin{align*}
+G_{\text{adj}} &= G \setminus \{t_{\text{seed}}\}, \\
+V_{\text{adj}} &= V \setminus \{t_{\text{seed}}\}, \\
+M_{\text{adj}} &= \{(g, v) \in M : g \neq t_{\text{seed}} \land v \neq t_{\text{seed}}\}.
+\end{align*}
+
+Adjusted binary metrics are computed as:
+\begin{align*}
+\text{Adj. Precision} &= \frac{|M_{\text{adj}}|}{|G_{\text{adj}}|}, \\
+\text{Adj. Recall} &= \frac{|M_{\text{adj}}|}{|V_{\text{adj}}|}, \\
+\text{Adj. F1} &= \frac{2 \cdot \text{Adj. Precision} \cdot \text{Adj. Recall}}{\text{Adj. Precision} + \text{Adj. Recall}}.
+\end{align*}
+
+Similarly, adjusted hybrid metrics exclude the seeded target from hybrid score calculations:
+\begin{align*}
+\text{Adj. Hybrid Precision} &= \frac{1}{|G_{\text{adj}}|} \sum_{g \in G_{\text{adj}}} h(g), \\
+\text{Adj. Hybrid Recall} &= \frac{1}{|V_{\text{adj}}|} \sum_{v \in V_{\text{adj}}} h(v),
+\end{align*}
+where \(h(g)\) and \(h(v)\) are computed as in the standard hybrid approach but restricted to \(G_{\text{adj}}\) and \(V_{\text{adj}}\).
+
+\paragraph{Impact of Adjustment}
+The magnitude of adjustment depends on CLD size. For small CLDs (10--15 variables), removing one seeded variable can shift F1 scores by 5--10 percentage points. For larger CLDs (50+ variables), the impact is negligible (\(<2\%\)). In our experiments with CLDs of 10--34 variables, adjusted metrics provide a more conservative and fair assessment of generation capability.
+
+Both unadjusted and adjusted metrics are reported in experimental results, with adjusted metrics serving as the primary comparison for prompt evaluation and system performance assessment.
+
+%% RQ2 Statistical Analysis Methods
+\input{chapters/rq2_statistical_analysis}
+
+ 
+\label{Methods}

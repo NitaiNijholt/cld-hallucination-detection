@@ -1,0 +1,63 @@
+% Improved version of Embedding-Based Grounding Metrics section (lines 149-191)
+% Original preserved in lit_review_ci_metrics_background.tex
+
+\subsection{Embedding-Based Grounding Metrics}
+\label{sec:lit_embedding_grounding}
+
+Complementing LUQ metrics, embedding-based similarity between a candidate text span $t$ and an external reference $s$ provides a context-sensitive grounding check. More generally, for any text span whose support is being assessed (e.g., an LLM output, a human-written claim, or an intermediate system-generated hypothesis), the cosine similarity between the candidate text $t$ and a chosen reference text $s$ can serve as a soft grounding signal:
+\begin{equation}
+\text{sim}(\mathbf{e}_{t}, \mathbf{e}_{s}) = \frac{\mathbf{e}_{t} \cdot \mathbf{e}_{s}}{\|\mathbf{e}_{t}\| \|\mathbf{e}_{s}\|}
+\end{equation}
+where $\mathbf{e}_{t}$ and $\mathbf{e}_{s}$ are embedding vectors of the candidate text span $t$ and the chosen reference text $s$, respectively. Low similarity may indicate that the candidate text is weakly supported by (or inconsistent with) the chosen reference---including cases where a claim is paired with an irrelevant or mismatched reference (``attribution hallucination'') \citep{tonmoy2024comprehensive,batista2025safeimprovingllmsystems}.
+
+\paragraph{Design choices: reference text and input/query text.} The usefulness of embedding-based grounding depends on what is selected as the reference text $s$ and what is embedded as the input/query $x$ (when retrieval is involved). Valid choices for the \emph{reference text} $s$ include: (i) an explicitly cited span or paragraph, (ii) retrieved passages provided as context (e.g., RAG evidence), (iii) a gold-standard evidence snippet in an evaluation dataset, (iv) a full document section (trading precision for coverage), or (v) other machine-generated text intended as evidence (e.g., a judge's retrieved quote). Likewise, the \emph{input/query text} $x$ can be the original user prompt, the model's full answer, an extracted atomic claim, or a structured hypothesis (e.g., a causal edge narrative). These choices induce different failure modes (e.g., dilution when embedding long answers, overconstraint when using retrieval context as the only reference) and therefore matter when comparing grounding approaches later in this thesis.
+
+Unlike LUQ metrics, which are purely intrinsic to the generation process, embedding-based grounding requires access to external reference material. This represents both a strength (verification against source text becomes feasible) and a limitation (access to reference material is required). Furthermore, proprietary model providers do not provide access to the training corpus of their language models, making direct source attribution infeasible in such cases, as the mapping between a generated sequence and its original training sources is unavailable.
+
+\subsubsection{Retrieval-Augmented Generation}
+
+The canonical Retrieval-Augmented Generation (RAG) approach \citep{lewis2020retrieval} uses an input sequence $x$ to retrieve passages $z$ from a knowledge base $\mathcal{K}$ according to a retrieval objective, typically based on embedding similarity:
+\begin{equation}
+z^* = \argmax_{z \in \mathcal{K}} \text{sim}(\mathbf{e}_x, \mathbf{e}_z)
+\end{equation}
+The retrieved passage(s) are then provided as context to a generator, producing an output sequence $y$ conditioned on both $x$ and the retrieved evidence (e.g., $p_\theta(y \mid x, z^*)$), with retrieval typically parameterized as $p_\eta(z \mid x)$ \citep{lewis2020retrieval}.
+
+Modern LLM web interfaces from providers such as Anthropic, OpenAI, Google, and Perplexity incorporate search-augmented generation, combining iteratively refined web searches with RAG to produce grounded responses \citep{wu2025clashevalquantifyingtugofwarllms}. This approach aims to anchor generation in retrievable sources, reducing the risk of hallucination and provide direct attribution.
+
+\subsubsection{Limitations of Retrieval-Constrained Generation}
+
+A notable limitation of the RAG paradigm is that retrieval may \textit{overconstrain} generation, leading to a failure mode where the model, instructed to condition its response solely on retrieved content, fails to assert a true claim simply because the retrieval process did not surface supporting evidence \citep{liu2023lostmiddle}. This occurs even when an unconstrained model---drawing on its parametric knowledge---might have correctly inferred the relationship and there is a contradition between its unconstrained inference and the retrieved context. \citep{wu2025clashevalquantifyingtugofwarllms}.
+
+This failure mode becomes more likely as the source that would confirm the claim may not appear in search results, with the probability of this occurrence inversely related to the depth and breadth of the search. Furthermore, evidence suggests that LLM responses may synthesize knowledge from multiple sources \citep{wang2023source,park2024identifyingsourcegenerationlarge}, such that a valid claim may not be directly attributable to any single retrievable document. This synthesis property of LLMs exacerbates the recall limitations of RAG-constrained systems, as the supporting evidence for a synthesized claim may be distributed across multiple sources that are not jointly retrievable.
+
+In contrast, unconstrained generation (standard LLM inference without retrieval constraints) does not suffer from this recall limitation but is more susceptible to false positives (hallucinations), as the model may generate plausible-sounding but unsupported claims.
+
+\subsubsection{A Hybrid Approach: Generate-then-Validate}
+
+Given the complementary strengths and weaknesses of unconstrained generation and retrieval-augmented validation, we propose a hybrid approach that maximizes recall through unconstrained generation while boosting precision through post-hoc retrieval-augmented validation. This approach proceeds as follows:
+
+\begin{enumerate}
+    \item \textbf{Hypothesis Generation:} An LLM generates a hypothesized causal link with a narrative justification (e.g., ``$A$ causes $B$ through mechanism $M$'').
+    
+    \item \textbf{Evidence Retrieval and Validation:} The hypothesis is submitted as a query to a retrieval system (e.g., web search). An LLM-as-a-judge evaluates whether the retrieved evidence supports the causal narrative.
+    
+    \item \textbf{Iterative Correction:} If the judge validates the claim, the hypothesis is accepted. If not, the judge provides a rationale, and the causal narrative is revised accordingly before re-evaluation.
+\end{enumerate}
+
+This generate-then-validate paradigm separates the creative generation phase (optimized for recall) from the critical validation phase (optimized for precision), potentially yielding higher F1 scores with respect to ground truth than either approach alone.
+
+\subsubsection{Limitations of the Hybrid Approach}
+
+Several limitations of this hybrid approach warrant acknowledgment:
+
+\paragraph{Retrieval Dependency.} The quality of LLM-as-a-judge validation remains contingent on retrieval system accuracy and the availability of relevant source documents, and even position of those source texts in the context window \citep{liu2023lostmiddle}. Claims for which no supporting documentation exists in the search corpus cannot be validated, regardless of their truth value.
+
+\paragraph{Confirmation Bias.} As formulated, the system queries only for \textit{supporting} evidence and does not actively seek counter-evidence. This asymmetry may introduce confirmation bias, where claims are accepted based on partial supporting evidence without consideration of contradictory information \citep{nickerson1998confirmationbias}.
+
+\paragraph{Semantic Gap.} Embedding-based similarity may fail to capture nuanced semantic relationships. A generated claim and its purported source may have high embedding similarity while differing in critical details, or conversely, may express the same fact in sufficiently different language to register low similarity \citep{wang2022sncsecontrastivelearningunsupervised}.
+
+\noindent Despite these limitations, when a reasonable match is found between a generated sequence and a source text, this provides supporting evidence for the generated claim---a desirable starting point in scientific contexts, from which further verification or attempts at falsification can proceed. 
+
+\subsection{Summary}
+
+The relative contribution of each metric class---LUQ metrics, embedding-based grounding, and retrieval-augmented validation---to hallucination detection in a CLD generation context remains an empirical question. This thesis addresses this question through systematic evaluation across multiple experimental conditions.

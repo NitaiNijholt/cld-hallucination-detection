@@ -1,0 +1,720 @@
+% ==============================================================================
+% METHOD: Datasets and Experimental Design
+% ==============================================================================
+% This file describes the datasets and experimental setup for all research questions.
+% ==============================================================================
+
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+% ==============================================================================
+\section{Datasets}
+% ==============================================================================
+
+\subsection{Causal Loop Diagram Domains}
+
+We evaluated our methods across three domain-specific Causal Loop Diagrams (CLDs) representing distinct scientific disciplines with varying complexity and causal structure density:
+
+\begin{enumerate}
+    \item \textbf{Depressive Symptoms CLD}: A psychological/clinical domain model capturing the causal mechanisms underlying depressive symptomatology. This CLD represents feedback loops between cognitive, behavioral, and physiological factors that perpetuate or ameliorate depressive states.
+    
+    \item \textbf{Social Norms and Obesity CLD}: A public health domain model representing the complex interplay between social influences, behavioral factors, and obesity outcomes. This CLD captures reinforcing and balancing loops involving peer effects, environmental factors, and individual health behaviors.
+    
+    \item \textbf{Emergency Department Visits CLD}: A healthcare systems domain model representing factors influencing emergency department utilization patterns. This CLD includes operational, demographic, and systemic factors that drive patient flow and resource allocation.
+\end{enumerate}
+
+\subsection{CLD Generation and Ground Truth Establishment}
+
+Each CLD was generated using an LLM-based causal modeling pipeline that produces structured causal relationships with the following components for each edge:
+
+\begin{itemize}
+    \item \textbf{Source and Target Variables}: Named entities with formal definitions and measurement units
+    \item \textbf{Relationship Polarity}: Classification as POSITIVE, NEGATIVE, or NONE (no causal relationship)
+    \item \textbf{Causal Motivation}: Natural language explanation of the causal mechanism
+    \item \textbf{Scientific Citations}: References to peer-reviewed literature supporting the causal claim
+\end{itemize}
+
+Ground truth was established through two complementary approaches:
+\begin{enumerate}
+    \item \textbf{Citation-Based Ground Truth}: Edges validated against their cited scientific sources, where support is determined by whether the citation content substantiates the claimed causal relationship.
+    \item \textbf{Correctness-Based Ground Truth}: Edges evaluated for logical and scientific coherence of the causal reasoning, independent of external citations.
+\end{enumerate}
+
+\subsection{Experimental Configuration Strategy}
+
+The experimental design employs distinct configuration strategies for ground truth validation versus corruption detection experiments, with different sources of variability to address specific research objectives.
+
+\subsubsection{Ground Truth Experiments: Varying CLD Generation}
+
+In ground truth validation experiments, the \textbf{base CLD generation varies} across runs while judging parameters remain fixed. Each run uses a different CLD instance generated with seeds 10, 20, and 30, producing three independent CLD realizations per domain. This design tests whether the judge generalizes across different valid CLD instances rather than memorizing patterns from a single CLD structure.
+
+\begin{table}[H]
+\centering
+\caption{Ground Truth Experiment Configuration: What Varies vs. Fixed}
+\label{tab:gt_config}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Status} & \textbf{Values} \\
+\midrule
+Base CLD Generation & \textbf{VARIES} & Seeds 10, 20, 30 (different CLD per run) \\
+Prompt Variants & \textbf{VARIES} & All 3 tested per condition \\
+\midrule
+Judge Seed & Fixed & 42 \\
+Judge Temperature & Fixed & 0.0 (greedy dedcoding) \\
+Judge Model & Fixed & GPT-4.1 \\
+UQ Metrics & Fixed & Enabled \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Corruption Detection Experiments: Varying Corruption Process}
+
+In corruption detection experiments, the \textbf{base CLD is held fixed} while the corruption process varies. The same base CLD (per domain) is corrupted with different seeds (1, 2, 3), producing three independent corruption realizations. This design isolates the judge's corruption detection ability by controlling for CLD structure - any performance variation reflects the judge's response to different corruption patterns rather than different underlying CLDs.
+
+\begin{table}[H]
+\centering
+\caption{Corruption Detection Experiment Configuration: What Varies vs. Fixed}
+\label{tab:corruption_config}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Status} & \textbf{Values} \\
+\midrule
+Corruption Seed & \textbf{VARIES} & 1, 2, 3 (different corruption per run) \\
+Prompt Variants & \textbf{VARIES} & All 3 tested per condition \\
+\midrule
+Base CLD & Fixed & Same session ID per domain \\
+Judge Seed & Fixed & 42 \\
+Judge Temperature & Fixed & 0.0 (greedy dedcoding) \\
+Corruption Rate & Fixed & 30\% \\
+Corruption Temperature & Fixed & 0.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Judge Model Configuration}
+
+The judge model differs between correctness-based and citation-based corruption detection:
+
+\begin{table}[H]
+\centering
+\caption{Judge Model by Experiment Type}
+\label{tab:judge_models}
+\begin{tabular}{ll}
+\toprule
+\textbf{Experiment Type} & \textbf{Judge Model} \\
+\midrule
+Ground Truth Correctness & GPT-4.1 \\
+Ground Truth Citation & GPT-4.1 \\
+Corruption Detection Correctness & GPT-4.1 \\
+Corruption Detection Citation & GPT-5-mini \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Methodological Rationale}
+
+The seed separation between paradigms (10/20/30 for ground truth vs. 1/2/3 for corruption) ensures methodological independence: ground truth experiments test judge generalization across CLD instances, while corruption experiments test detection robustness across corruption realizations. This factorial design allows attribution of performance variation to specific experimental factors.
+
+% ==============================================================================
+\section{Experimental Design}
+% ==============================================================================
+
+\subsection{Overview}
+
+The experimental design addresses three research questions through a systematic evaluation framework:
+
+\begin{itemize}
+    \item \textbf{RQ1a}: Can an LLM-as-judge accurately validate causal relationships?
+    \item \textbf{RQ1b}: Can an LLM-based corrector improve CLD quality?
+    \item \textbf{RQ2}: Can generation-time confidence metrics detect hallucinations?
+\end{itemize}
+
+\subsection{RQ1a: Ground Truth Validation Experiments}
+
+\subsubsection{Experimental Setup}
+
+Ground truth validation experiments assess the LLM judge's ability to distinguish valid causal relationships (True Positives) from invalid ones (False Positives/Negatives) on clean, non-corrupted CLDs.
+
+\begin{table}[H]
+\centering
+\caption{Ground Truth Validation Experimental Parameters}
+\label{tab:gt_params}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+CLDs & 3 (Depressive, Social Norms, Emergency Dept) \\
+CLD Generation Seeds & 10, 20, 30 (varies per run - different CLD instance) \\
+Prompt Variants & 3 (all tested per run: Baseline, Mechanistic, CoT) \\
+Judge Model & GPT-4.1 \\
+Judge Seed & 42 (fixed) \\
+Judge Temperature & 0.0 (greedy dedcoding) \\
+Validation Approaches & Correctness-based, Citation-based \\
+UQ Metrics & Enabled (for RQ2 analysis) \\
+\midrule
+Total Conditions & 3 CLDs $\times$ 3 runs $\times$ 3 prompts $\times$ 2 approaches = 54 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Prompt Variants}
+
+All three judge prompt variants were evaluated \textbf{within each experimental condition}, providing a factorial design that allows assessment of prompt sensitivity while controlling for CLD instance and validation approach:
+
+\begin{enumerate}
+    \item \textbf{Baseline Prompt} (1500 max tokens): Direct evaluation of causal reasoning quality without explicit scaffolding. The judge assesses whether the causal explanation is logically sound and scientifically coherent.
+    
+    \item \textbf{Mechanistic Prompt} (1500 max tokens): Emphasizes evaluation of causal mechanisms specifically, requiring explicit identification of the mechanism by which the cause produces the effect.
+    
+    \item \textbf{Chain-of-Thought (CoT) Prompt} (10000 max tokens): Extended reasoning prompt that guides the judge through systematic evaluation steps, including temporal ordering, mechanism plausibility, confounder identification, and evidence assessment.
+\end{enumerate}
+
+This design means each CLD instance is judged by all three prompts, enabling within-subject comparison of prompt effectiveness.
+
+\subsubsection{Evaluation Metrics}
+
+For both citation-based and correctness-based validation:
+\begin{itemize}
+    \item \textbf{Classification Metrics}: Precision, Recall, F1 Score
+    \item \textbf{Discrimination Metrics}: ROC-AUC, Point-Biserial Correlation
+    \item \textbf{Score Distributions}: Mean judge scores with 95\% confidence intervals
+\end{itemize}
+
+\subsection{RQ1a: Corruption Detection Experiments}
+
+\subsubsection{Synthetic Corruption Protocol}
+
+To evaluate judge sensitivity to causal errors, we applied systematic corruptions to valid CLDs:
+
+\begin{table}[H]
+\centering
+\caption{Corruption Detection Experimental Parameters}
+\label{tab:corruption_params}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Base CLD & Fixed per domain (same session ID across runs) \\
+Corruption Rate & 30\% of edges \\
+Corruption Model & GPT-4.1 \\
+Corruption Temperature & 0.7 \\
+Corruption Seeds & 1, 2, 3 (varies per run - different corruption) \\
+Prompt Variants & 3 (all tested per run: Baseline, Mechanistic, CoT) \\
+Judge Model & GPT-4.1 (correctness), GPT-5-mini (citation) \\
+Judge Temperature & 0.0 (greedy dedcoding) \\
+Judge Seed & 42 (fixed) \\
+\midrule
+Total Conditions & 3 CLDs $\times$ 3 runs $\times$ 3 prompts = 27 per approach \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Corruption Types}
+
+The corruption procedure generates plausible but incorrect causal motivations through:
+\begin{itemize}
+    \item \textbf{Mechanism Substitution}: Replacing the true causal mechanism with a superficially plausible but fundamentally flawed alternative
+    \item \textbf{Direction Reversal}: Inverting the causal direction while maintaining surface coherence
+    \item \textbf{Spurious Association}: Introducing correlational language that obscures the absence of causal mechanism
+\end{itemize}
+
+The corruption model was prompted to generate motivations that ``sound scientifically plausible, use appropriate academic language and tone, contain a subtle but fundamental flaw in causal reasoning, and still connect the two variables but with incorrect mechanism.''
+
+\subsubsection{Ground Truth Labels}
+
+For corruption detection experiments:
+\begin{itemize}
+    \item \textbf{Hallucination = True}: Edge has been corrupted (corrupted=True)
+    \item \textbf{Hallucination = False}: Edge remains in original valid state
+\end{itemize}
+
+\subsection{RQ1b: Corrector Experiments}
+
+\subsubsection{Experimental Setup}
+
+Corrector experiments evaluate whether an LLM-based correction system can improve CLD quality by identifying and fixing problematic edges.
+
+\begin{table}[H]
+\centering
+\caption{Corrector Experimental Parameters}
+\label{tab:corrector_params}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Input Data Sources & Ground Truth CLDs, Synthetically Corrupted CLDs \\
+Runs per CLD & 3 \\
+Corrector Actions & Revise edge, Change relationship type \\
+Evaluation & Pre- vs. Post-correction F1, Precision, Recall \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Evaluation Design}
+
+The corrector was evaluated on two data conditions:
+\begin{enumerate}
+    \item \textbf{Ground Truth Data}: Clean CLDs where corrections should be minimal (hallucination = FP or FN in ground truth validation)
+    \item \textbf{Synthetically Corrupted Data}: CLDs with 30\% corruption rate where corrections should target corrupted edges
+\end{enumerate}
+
+Performance metrics capture:
+\begin{itemize}
+    \item $\Delta$F1, $\Delta$Precision, $\Delta$Recall: Change from pre- to post-correction
+    \item Total Actions: Number of corrective modifications attempted
+    \item Action Types: Breakdown of revisions vs. relationship type changes
+\end{itemize}
+
+\subsection{RQ2: Hallucination Detection Using UQ Metrics}
+
+\subsubsection{Experimental Setup}
+
+RQ2 investigates whether generation-time confidence metrics can serve as hallucination detectors, independent of external validation.
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Hallucination Detection Dataset}
+\label{tab:rq2_dataset}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Total Experiment Files & 63 (deduplicated) \\
+Citation-based Files & 36 \\
+Correctness-based Files & 27 \\
+Total Edges Analyzed & 16,507 \\
+Hallucination Rate & 15.2\% \\
+CLDs per Type & 21 files each (Depressive, Emergency, Social) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Uncertainty Quantification (UQ) Metrics}
+
+Four generator-based UQ metrics were extracted during CLD generation. Table~\ref{tab:uq_metrics} presents the formal definitions and expected relationship with hallucination.
+
+\begin{table}[H]
+\centering
+\caption{Uncertainty Quantification (UQ) Metric Definitions}
+\label{tab:uq_metrics}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Formula} & \textbf{Expected} \\
+\midrule
+Perplexity & $\displaystyle\exp\left(\frac{1}{n}\sum_{i=1}^{n} -\log P(x_i)\right)$ & $\uparrow \Rightarrow$ halluc \\[2ex]
+Min Probability & $\displaystyle\min_i P(x_i)$ & $\downarrow \Rightarrow$ halluc \\[2ex]
+Max Window Entropy & $\displaystyle\max_w \frac{1}{|w|} \sum_{t \in w} H_k(t)$ & $\uparrow \Rightarrow$ halluc \\[2ex]
+Cosine Similarity & $\displaystyle\max_c \frac{\mathbf{e}_{narr} \cdot \mathbf{e}_c}{\|\mathbf{e}_{narr}\| \|\mathbf{e}_c\|}$ & $\downarrow \Rightarrow$ halluc \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Where:
+\begin{itemize}
+    \item $P(x_i) = \exp(\text{logprob}_i)$ --- token probability from LLM
+    \item $H_k(t) = -\sum_j \tilde{P}_j \ln \tilde{P}_j$ --- entropy over top-$k$ tokens
+    \item $\mathbf{e}$ --- text embeddings (\texttt{all-mpnet-base-v2}, $d = 768$)
+\end{itemize}
+
+\subsubsection{Hallucination Definition}
+
+For RQ2 analysis:
+\begin{equation}
+\text{Hallucination} = (\text{Classification} = \text{FP}) \lor (\text{Classification} = \text{FN})
+\end{equation}
+
+Where:
+\begin{itemize}
+    \item \textbf{FP (False Positive)}: Edge generated but should not exist according to ground truth
+    \item \textbf{FN (False Negative)}: Edge should exist but was not generated or was incorrectly invalidated
+\end{itemize}
+
+\subsubsection{Analysis Pipeline}
+
+The RQ2 analysis followed a six-phase pipeline:
+
+\begin{enumerate}
+    \item \textbf{Phase 1}: Individual file analysis computing correlations, AUCs, and t-tests for each of 63 files
+    
+    \item \textbf{Phase 2}: Per-experiment aggregates separating citation and correctness results
+    
+    \item \textbf{Phase 3}: Grand aggregate meta-analysis across all 63 files
+    
+    \item \textbf{Phase 4}: Recursive Feature Elimination (RFE) for feature selection using 36 files with complete UQ metric coverage
+    
+    \item \textbf{Phase 5}: Ensemble classifier comparison with 5-fold cross-validation (70\% training, 30\% test)
+    
+    \item \textbf{Phase 6}: Leave-one-CLD-out cross-validation for cross-domain generalization assessment
+\end{enumerate}
+
+\subsubsection{Ensemble Classifiers}
+
+Four classification algorithms were compared:
+\begin{itemize}
+    \item Logistic Regression (baseline linear model)
+    \item Random Forest (tree-based ensemble)
+    \item Gradient Boosting (sequential ensemble)
+    \item Neural Network (multi-layer perceptron)
+\end{itemize}
+
+% ==============================================================================
+\section{Implementation Details}
+% ==============================================================================
+
+\subsection{Software and Models}
+
+\begin{itemize}
+    \item \textbf{CLD Generation Model}: GPT-4.1 (OpenAI)
+    \item \textbf{Corruption Model}: GPT-4.1 (OpenAI)
+    \item \textbf{Judge Models}:
+    \begin{itemize}
+        \item Ground Truth Validation (both approaches): GPT-4.1
+        \item Corruption Detection Correctness: GPT-4.1
+        \item Corruption Detection Citation: GPT-5-mini
+    \end{itemize}
+    \item \textbf{Structured Outputs}: Pydantic models for consistent response parsing
+    \item \textbf{Analysis Framework}: Python with scikit-learn, pandas, matplotlib
+\end{itemize}
+
+\subsection{Reproducibility}
+
+All experiments include comprehensive metadata:
+\begin{itemize}
+    \item Corruption metadata: seed, temperature, model version, timestamp
+    \item Judging metadata: prompt version, temperature, approach, model version
+    \item Session identifiers linking all experimental artifacts
+    \item Base session information documenting CLD generation parameters
+\end{itemize}
+
+Random seeds are explicitly documented with methodological separation between experimental paradigms:
+\begin{itemize}
+    \item Ground truth experiments use CLD generation seeds 10, 20, 30
+    \item Corruption experiments use corruption seeds 1, 2, 3 on fixed base CLDs
+    \item Judge seed (42) is fixed across all conditions for deterministic evaluation
+\end{itemize}
+
+% ==============================================================================
+\appendix
+% ==============================================================================
+
+\section{Reproducibility}
+\label{sec:reproducibility}
+
+This appendix provides comprehensive information for replicating all experiments, including data availability, code locations, software environment specifications, and exact execution commands.
+
+\subsection{Data Availability}
+\label{sec:data_availability}
+
+\subsubsection{Ground Truth CLD Datasets}
+
+The three ground truth CLD datasets used in all experiments are located in:
+\begin{verbatim}
+data_science/parameter_tuning_experiments/
+    ground_truth_clds_for_experiments/
+\end{verbatim}
+
+\begin{table}[H]
+\centering
+\caption{Ground Truth CLD Dataset Files}
+\label{tab:gt_files}
+\begin{tabular}{ll}
+\toprule
+\textbf{Domain} & \textbf{Filename} \\
+\midrule
+Depressive Symptoms & \texttt{Depressive\_symptoms\_in\_response\_to\_} \\
+                    & \texttt{a\_stressor\_in\_healthy\_adults.xlsx} \\
+Social Norms \& Obesity & \texttt{Social\_norms\_and\_obesity\_prevalence.xlsx} \\
+Emergency Department & \texttt{older\_persons\_emergency\_department\_} \\
+                     & \texttt{visits\_and\_interactionstitled\_spreadsheet.xlsx} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each Excel file contains:
+\begin{itemize}
+    \item Edge definitions with source and target variables
+    \item Relationship polarity (POSITIVE, NEGATIVE, or NONE)
+    \item Causal motivations with natural language explanations
+    \item Scientific citations supporting each causal claim
+    \item Generation-time confidence interval metrics
+\end{itemize}
+
+\subsubsection{Final Experiment Results}
+
+All experimental results are stored in the \texttt{final\_runs/} directory with the following structure:
+
+\begin{verbatim}
+final_runs/
+├── RQ1a_gt_lit_correctness/
+│   ├── depressive/
+│   │   └── run_{1,2,3}/
+│   ├── emergency_department/
+│   │   └── run_{1,2,3}/
+│   └── social_norms/
+│       └── run_{1,2,3}/
+├── RQ1a_gt_lit_citation/
+│   └── [same structure]
+├── RQ1a_gt_synth_correctness/  [same structure]
+├── RQ1a_gt_synth_citation/  [same structure]
+├── RQ1b_correction_experiment_*/                 [correction experiment variants]
+├── RQ2_uq_hallucination_detection/                  [UQ metrics + classifier analysis outputs]
+└── RQ3_deep_research_validation/                            [Deep Research analysis + validation artifacts]
+\end{verbatim}
+
+\subsection{Code Availability}
+\label{sec:code_availability}
+
+\subsubsection{Experiment Execution Scripts}
+
+\begin{table}[H]
+\centering
+\caption{Primary Experiment Execution Scripts}
+\label{tab:exec_scripts}
+\begin{tabular}{p{3cm}p{5cm}p{5cm}}
+\toprule
+\textbf{Experiment} & \textbf{Script} & \textbf{Dependencies} \\
+\midrule
+RQ1a Ground Truth & \texttt{run\_rq1a\_ground\_truth\_} \texttt{multirun.py} & \texttt{run\_rq1a\_ground\_truth\_} \texttt{judge.py} \\
+\addlinespace
+RQ1a Corruption (Correctness) & \texttt{run\_rq1a\_corruption\_} \texttt{multirun.py} & \texttt{run\_corruption\_detection\_} \texttt{pipeline.sh}, \texttt{run\_rq1\_phase1\_} \texttt{single\_corrupt.py}, \texttt{run\_rq1\_judge\_all\_3\_} \texttt{prompts.py} \\
+\addlinespace
+RQ1a Corruption (Citation) & \texttt{run\_rq1a\_corruption\_} \texttt{citation\_multirun.py} & \texttt{run\_rq1\_judge\_citations\_} \texttt{all\_3\_prompts.py} \\
+\addlinespace
+RQ1b Corrector & \texttt{run\_rq1b\_correction\_} \texttt{multirun.py} & \texttt{run\_rq1b\_correction\_} \texttt{single.py} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All experiment execution scripts are located in:
+\begin{verbatim}
+data_science/parameter_tuning_experiments/
+\end{verbatim}
+
+\subsubsection{Analysis Scripts}
+
+\begin{table}[H]
+\centering
+\caption{Analysis and Evaluation Scripts}
+\label{tab:analysis_scripts}
+\begin{tabular}{ll}
+\toprule
+\textbf{Analysis} & \textbf{Script Path} \\
+\midrule
+RQ1a Aggregate Analysis & \texttt{data\_science/parameter\_tuning\_experiments/} \\
+                        & \texttt{analyze\_rq1a\_aggregate\_enhanced.py} \\
+RQ1a Ground Truth Analysis & \texttt{data\_science/parameter\_tuning\_experiments/} \\
+                           & \texttt{analyze\_rq1a\_ground\_truth\_enhanced.py} \\
+RQ1b Results Analysis & \texttt{data\_science/parameter\_tuning\_experiments/} \\
+                      & \texttt{analyze\_corrector\_ablation.py} \\
+RQ2 Master Report & \texttt{data\_science/rq2\_master\_report.py} \\
+RQ2 Batch Analysis & \texttt{data\_science/rq2\_simple\_batch\_analyzer.py} \\
+RQ2 Ensemble Classifier & \texttt{data\_science/rq2\_ensemble\_classifier.py} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Prompt Configuration Files}
+
+Judge prompts are defined in YAML configuration files:
+
+\begin{table}[H]
+\centering
+\caption{Prompt Configuration Files}
+\label{tab:prompt_files}
+\begin{tabular}{ll}
+\toprule
+\textbf{Validation Type} & \textbf{Files} \\
+\midrule
+Correctness Prompts & \texttt{alternative\_prompts/prompts\_correctness\_baseline.yaml} \\
+                    & \texttt{alternative\_prompts/prompts\_correctness\_mechanistic.yaml} \\
+                    & \texttt{alternative\_prompts/prompts\_correctness\_cot.yaml} \\
+\addlinespace
+Citation Prompts & \texttt{alternative\_prompts/prompts\_citation\_baseline.yaml} \\
+                 & \texttt{alternative\_prompts/prompts\_citation\_mechanistic.yaml} \\
+                 & \texttt{alternative\_prompts/prompts\_citation\_cot.yaml} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All prompt files are located in:
+\begin{verbatim}
+data_science/parameter_tuning_experiments/alternative_prompts/
+\end{verbatim}
+
+\subsection{Software Environment}
+\label{sec:software_env}
+
+\subsubsection{Python Version}
+
+All experiments were conducted using Python 3.12.3.
+
+\subsubsection{Package Dependencies}
+
+\begin{table}[H]
+\centering
+\caption{Core Package Versions}
+\label{tab:packages}
+\begin{tabular}{ll}
+\toprule
+\textbf{Package} & \textbf{Version} \\
+\midrule
+openai & 2.2.0 \\
+pydantic & 2.11.7 \\
+scikit-learn & 1.7.1 \\
+pandas & 2.3.1 \\
+numpy & 2.2.6 \\
+scipy & 1.16.1 \\
+matplotlib & 3.10.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{OpenAI API Configuration}
+
+\begin{table}[H]
+\centering
+\caption{API Configuration Parameters}
+\label{tab:api_config}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+API Provider & OpenAI \\
+Generation Model & GPT-4.1 \\
+Corruption Model & GPT-4.1 \\
+Judge Model (Correctness) & GPT-4.1 \\
+Judge Model (Citation Corruption) & GPT-5-mini \\
+Experiment Period & November--December 2025 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Execution Commands}
+\label{sec:execution_commands}
+
+\subsubsection{RQ1a Ground Truth Experiments}
+
+Run ground truth validation experiments (generates 3 runs with different CLD seeds):
+
+\begin{verbatim}
+cd data_science/parameter_tuning_experiments/
+
+# Correctness-based ground truth
+python run_rq1a_ground_truth_multirun.py \
+    --approach correctness \
+    --output-dir ../../final_runs/RQ1a_gt_lit_correctness
+
+# Citation-based ground truth
+python run_rq1a_ground_truth_multirun.py \
+    --approach citation \
+    --output-dir ../../final_runs/RQ1a_gt_lit_citation
+\end{verbatim}
+
+\subsubsection{RQ1a Corruption Detection Experiments}
+
+Run corruption detection experiments (applies corruptions with seeds 1, 2, 3):
+
+\begin{verbatim}
+cd data_science/parameter_tuning_experiments/
+
+# Correctness-based corruption detection
+python run_rq1a_corruption_multirun.py \
+    --output-dir ../../final_runs/RQ1a_corrupted_correctness
+
+# Citation-based corruption detection
+python run_rq1a_corruption_citation_multirun.py \
+    --output-dir ../../final_runs/RQ1a_corrupted_citation
+\end{verbatim}
+
+\subsubsection{RQ1b Corrector Experiments}
+
+Run corrector experiments on both ground truth and corrupted data:
+
+\begin{verbatim}
+cd data_science/parameter_tuning_experiments/
+
+python run_rq1b_correction_multirun.py \
+    --input-dir ../../final_runs/RQ1a_gt_lit_correctness \
+    --output-dir ../../final_runs/RQ1b_corrector/ground_truth
+
+python run_rq1b_correction_multirun.py \
+    --input-dir ../../final_runs/RQ1a_corrupted_correctness \
+    --output-dir ../../final_runs/RQ1b_corrector/corrupted
+\end{verbatim}
+
+\subsubsection{RQ2 Hallucination Detection Analysis}
+
+Run the RQ2 analysis pipeline:
+
+\begin{verbatim}
+cd data_science/
+
+# Generate master report with all phases
+python rq2_master_report.py \
+    --input-dir ../final_runs \
+    --output-dir ../final_runs/RQ2_uq_hallucination_detection
+
+# Run ensemble classifier comparison
+python rq2_ensemble_classifier.py \
+    --input-dir ../final_runs/RQ2_uq_hallucination_detection
+\end{verbatim}
+
+\subsection{Output Artifacts}
+\label{sec:output_artifacts}
+
+\subsubsection{Metadata Files}
+
+Each experiment run generates metadata files documenting the exact configuration:
+
+\begin{itemize}
+    \item \textbf{\texttt{session\_info.txt}}: Base CLD session identifier and generation parameters
+    \item \textbf{\texttt{corruption\_metadata.json}}: Corruption seed, temperature, model version, timestamp, corrupted edge indices
+    \item \textbf{\texttt{judging\_metadata\_*.json}}: Per-prompt judging parameters including prompt version, temperature, approach, model version
+\end{itemize}
+
+\subsubsection{Result Files}
+
+\begin{table}[H]
+\centering
+\caption{Experiment Output File Types}
+\label{tab:output_files}
+\begin{tabular}{ll}
+\toprule
+\textbf{File Type} & \textbf{Contents} \\
+\midrule
+\texttt{judged\_*.xlsx} & Per-edge validation results with scores and classifications \\
+\texttt{*\_metrics.json} & Aggregate metrics (precision, recall, F1, AUC) \\
+\texttt{*\_confusion\_matrix.png} & Visualization of classification performance \\
+\texttt{*\_score\_distribution.png} & Distribution of judge scores by ground truth label \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Naming Convention}
+
+Output files follow a consistent naming pattern:
+\begin{verbatim}
+judged_{CLD_NAME}_{PROMPT_TYPE}_{TIMESTAMP}.xlsx
+\end{verbatim}
+
+Where:
+\begin{itemize}
+    \item \texttt{CLD\_NAME}: Identifier for the CLD domain
+    \item \texttt{PROMPT\_TYPE}: One of \texttt{baseline}, \texttt{mechanistic}, or \texttt{cot}
+    \item \texttt{TIMESTAMP}: ISO format timestamp (\texttt{YYYYMMDD\_HHMMSS})
+\end{itemize}
+
+\end{document}
+

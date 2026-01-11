@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centreing
+\caption{RQ1a: Ground Truth Classification Statistics}
+\label{tab:rq1a_gt_classification}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{CLD} & \textbf{Prompt} & \textbf{TP} & \textbf{TN} & \textbf{FP} & \textbf{FN} & \textbf{Total} \\
+\midrule
+Social Norms & Baseline & 10 & 265 & 26 & 29 & 330 \\
+ & Cot & 11 & 264 & 27 & 28 & 330 \\
+ & Mechanistic & 19 & 222 & 69 & 20 & 330 \\
+\midrule
+Depressive & Baseline & 25 & 425 & 56 & 124 & 630 \\
+ & Cot & 32 & 423 & 58 & 117 & 630 \\
+ & Mechanistic & 125 & 311 & 170 & 24 & 630 \\
+\midrule
+Emergency Dept & Baseline & 58 & 2808 & 243 & 460 & 3569 \\
+ & Cot & 63 & 2809 & 242 & 455 & 3569 \\
+ & Mechanistic & 302 & 2614 & 437 & 216 & 3569 \\
+\midrule
+\bottomrule
+\end{tabular}
+\note{TP = True Positive, TN = True Negative, FP = False Positive, FN = False Negative.}
+\end{table}

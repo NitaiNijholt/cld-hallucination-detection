@@ -1,0 +1,95 @@
+% Literature Review: Prompting Strategies for LLMs
+% Prompting paradigms and their application to causal discovery and hallucination detection
+
+Prompts have been found to be highly influential in determining LLM outputs~\citep{brown2020language, wei2022chain}. Considering the autoregressive mechanism, where each token is generated conditioned on all previous tokens including the prompt, this makes intuitive sense: the prompt establishes the context and reasoning trajectory that the model follows during generation. Even subtle variations in prompt wording, structure, or examples can lead to substantially different outputs, making prompt engineering a critical component of LLM-based systems.
+
+\subsection{Dominant Prompting Paradigms.}
+
+Three dominant paradigms have emerged in the prompting literature:
+
+\subsection{Few-Shot Prompting.}
+Few-shot prompting provides the LLM with a small number of input-output example pairs that demonstrate the desired task format and reasoning pattern~\citep{brown2020language}. By conditioning generation on these examples, models can adapt to novel tasks without parameter updates. Research has shown that few-shot prompting can improve performance by 20--50\% on classification tasks, with effectiveness depending on the quality, diversity, and ordering of examples provided. The key insight is that examples serve as implicit task specifications, allowing models to infer the desired behaviour from demonstrated patterns rather than explicit instructions.
+
+\subsection{Chain-of-Thought (CoT) Prompting.}
+Chain-of-thought prompting encourages LLMs to generate intermediate reasoning steps before producing a final answer~\citep{wei2022chain}. By decomposing complex problems into sequential reasoning traces, CoT enables models to tackle multi-step reasoning tasks that would otherwise exceed their capabilities. \citet{kojima2022large} demonstrated that even zero-shot CoT---achieved by simply appending ``Let's think step by step'' to prompts---can dramatically improve reasoning performance: accuracy on the MultiArith dataset increased from 17.7\% to 78.7\%, and on GSM8K from 10.4\% to 40.7\%. This finding suggests that LLMs possess latent reasoning capabilities that can be elicited through appropriate prompting, without requiring task-specific examples. Structured CoT variants, which impose explicit frameworks for breaking down tasks, have shown additional improvements---up to 16.8\% increases in faithfulness to grounding documents.
+
+\subsection{Role-Based Prompting.}
+Role-based prompting assigns specific personas or expert roles to guide model behaviour (e.g., ``You are a medical expert'' or ``Act as a causal reasoning specialist''). This approach has been shown to improve zero-shot reasoning capabilities, particularly in domain-specific tasks where role context activates relevant knowledge encoded during pretraining~\citep{kong2024betterzeroshotreasoningroleplay, ruangtanusak2025talklessrightenhancing}. Role assignment can be combined with other paradigms---for example, instructing a model to ``act as a causal scientist and think step by step'' combines role-based and CoT approaches.
+
+\subsection{Prompting in Causal Discovery Contexts.}
+
+In the specific context of causal discovery with LLMs, these same paradigms have been employed with varying success. \citet{kiciman2024causal} provide a comprehensive overview of LLM capabilities in causal reasoning, demonstrating that prompting strategies significantly affect performance on causal inference tasks. Their work shows that LLMs can leverage domain knowledge encoded during pretraining to make causal judgements, but that this capability is highly sensitive to prompt formulation.
+
+The ``statistical causal prompting'' (SCP) approach~\citep{takayama2025scp} combines statistical causal discovery with knowledge-based causal inference facilitated by LLMs, embedding domain expert knowledge into algorithms through carefully designed prompts. Experiments demonstrate that augmenting statistical causal discovery with LLM-derived knowledge approaches ground truth more closely than methods without prior knowledge integration. Similarly, the Autonomous LLM-Augmented Causal Discovery Framework (ALCM)~\citep{khatibi2025alcm} synergizes data-driven algorithms with LLMs through structured prompting, automating the generation of more accurate and interpretable causal graphs.
+
+However, research has also identified systematic pitfalls. \citet{joshi2024causalfallacies} show that LLMs are prone to fallacies in causal inference, such as inferring causality based on the order of entity mentions or temporal sequences rather than genuine causal structure. These findings suggest that while prompting can improve LLM performance on causal tasks, careful prompt design is essential to avoid eliciting spurious causal claims.
+
+For CLD generation specifically, \citet{liu2025leveraging} demonstrate that curated prompting techniques can produce CLDs of comparable quality to expert-constructed diagrams on simple structures. Their approach uses few-shot examples of CLD construction combined with structured output requirements. However, this work focuses on generation quality rather than hallucination detection, and does not systematically evaluate prompt variants for verification tasks.
+
+\subsection{Prompting for Hallucination Detection and Correction.}
+
+Prompting for hallucination detection represents a distinct challenge from prompting for generation or causal reasoning. While generation prompts optimise for producing coherent, relevant outputs, detection prompts must elicit critical evaluation of potentially erroneous content---a fundamentally different cognitive stance.
+
+Recent work has developed several prompting strategies specifically for hallucination detection:
+
+\begin{itemize}
+    \item \textbf{Self-verification prompting:} Methods like Chain-of-Verification (CoVe)~\citep{dhuliawala2024chain} prompt models to generate verification questions about their own outputs, answer these questions independently (to avoid confirmation bias), and then revise responses based on verification findings. This approach has shown significant hallucination reduction in free-text generation tasks.
+    
+    \item \textbf{Self-contradiction analysis:} By prompting models to generate deliberately contradictory responses and analysing inconsistencies, systems can identify claims where the model exhibits uncertainty or conflicting knowledge---potential hallucination indicators~\citep{wang2023selfconsistency, huang2025hallucination}.
+    
+    \item \textbf{Claim decomposition:} Breaking complex claims into atomic sub-claims enables more granular verification. Each sub-claim can be independently assessed for plausibility, with inconsistencies across sub-claims signalling potential errors~\citep{dhuliawala2024chain}.
+    
+    \item \textbf{Multi-agent critique:} \citet{du2023multiagentdebate} show that prompting multiple LLM instances to debate and critique each other's responses reduces hallucinations and improves factual accuracy, as errors are more likely to be identified through adversarial review.
+\end{itemize}
+
+However, none of these approaches have been specifically adapted to the causal discovery setting, where verification requires assessing whether a proposed causal relationship is scientifically plausible given domain knowledge. This gap motivates the development of domain-specific prompting strategies for CLD verification.
+
+\subsection{Bradford Hill Criteria (BHC) as a Prompting Framework.}
+
+To address the gap between general hallucination detection and CLD-specific verification, this thesis proposes a prompting method based on the BHC (BHC) for causal assessment~\citep{shimonovich2020bradford}. Originally developed for epidemiological research, the BHC provide a systematic framework for evaluating evidence for causal relationships. The nine criteria are: (1)~\textit{Strength}---the magnitude of association; (2)~\textit{Consistency}---reproducibility across studies; (3)~\textit{Specificity}---specific cause leads to specific effect; (4)~\textit{Temporality}---cause precedes effect; (5)~\textit{Biological gradient}---dose-response relationship; (6)~\textit{Plausibility}---biological or mechanistic plausibility; (7)~\textit{Coherence}---alignment with existing knowledge; (8)~\textit{Experiment}---experimental evidence supports association; and (9)~\textit{Analogy}---similar associations observed elsewhere.
+
+Shimonovich et al.~\citep{shimonovich2020bradford} conducted a systematic review of causal inference frameworks, finding that a subset of these criteria---particularly plausibility, temporality, and experiment---are ubiquitous across diverse causal assessment frameworks in epidemiology, social science, and systems thinking. We adapt these findings for CLD verification by focusing on four key criteria:
+
+\begin{itemize}
+    \item \textbf{Plausibility} assesses whether the proposed causal mechanism is scientifically reasonable given domain knowledge.
+    \item \textbf{Temporality} verifies that the causal direction is appropriate (cause must precede effect).
+    \item \textbf{Strength} evaluates the magnitude and significance of the association.
+    \item \textbf{Experiment} checks for experimental evidence supporting the association. In cases where direct experimental design is not available (e.g., general knowledge verification), we operationalise \textbf{Coherence} as a proxy to check alignment with established theory and empirical findings.
+\end{itemize}
+
+Building on this framework, we develop a ``Mechanistic'' prompt variant that structures LLM evaluation around these criteria, providing explicit guidance for assessing causal claims. This contrasts with baseline prompts (direct evaluation without scaffolding) and pure CoT prompts (step-by-step reasoning without Shimonovich-specific criteria).
+
+\subsection{Application to Judge and Corrector Roles.}
+
+We apply these prompting principles across different roles and tasks in the CLD verification pipeline:
+
+\subsection{LLM-as-a-Judge.}
+For hallucination detection, the judge receives a generated causal edge (including source variable, target variable, polarity, and causal narrative) and must assess its validity. We evaluate three prompt variants:
+\begin{enumerate}
+    \item \textbf{\PromptBaseline}: Direct evaluation instruction without reasoning scaffolding.
+    \item \textbf{\PromptCoT}: Chain-of-Thought prompting with step-by-step reasoning instruction~\citep{kojima2022large} and systematic evaluation guidance.
+    \item \textbf{\PromptMechanistic}: Structured multi-criteria evaluation using BHC-aligned criteria (Plausibility, Temporality, Strength, Coherence). In this variant, \textit{Coherence} is operationalised as a proxy for experimental evidence, as direct experimental design details are often not accessible in the general knowledge setting.
+\end{enumerate}
+
+For citation judging (assessing whether cited sources support claimed causal relationships), we additionally evaluate a \textbf{\PromptMechanisticLit} variant. This variant explicitly incorporates the \textbf{Experiment} criterion from the BHC framework, replacing Coherence, as the presence of cited literature allows for the direct assessment of study design and experimental evidence.
+
+\subsection{LLM-as-a-Corrector.}
+For hallucination correction, the corrector receives edges flagged as potentially problematic by the judge and must determine appropriate remediation actions (retain, revise motivation, change polarity, or remove). Prompt variants follow a cumulative design:
+\begin{enumerate}
+    \item \textbf{Baseline}: Examples only (control condition).
+    \item \textbf{CoT}: Examples plus step-by-step CoT reasoning instructions (1.45$\times$ baseline length).
+    \item \textbf{Mechanistic}: Examples plus CoT plus Bradford Hill causal criteria (1.91$\times$ baseline length).
+\end{enumerate}
+
+This design enables systematic evaluation of whether domain-specific prompting (BHC) provides value beyond general reasoning scaffolding (CoT) for CLD verification tasks. The experimental results (Chapter~\ref{ch:results}) compare these variants on both detection accuracy and correction effectiveness.
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,51 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{float}
+\usepackage{url}
+\usepackage{fancyvrb}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+
+\setlist{topsep=2pt, partopsep=0pt, parsep=2pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\title{Methods (Standalone Build)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+% NOTE:
+% This file is a standalone wrapper for compiling the Methods chapter in isolation.
+% The canonical Methods content lives in: method_experiments_final_body.tex
+% (which is also what thesis_full.tex inputs).
+\input{method_experiments_final_body}
+
+\bibliographystyle{plainnat}
+\bibliography{references,software}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+

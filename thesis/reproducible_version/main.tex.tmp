@@ -1,0 +1,10 @@
+% Truncate LOF/LOT entries to first sentence
+\usepackage{xstring}
+\let\origcaption\caption
+\renewcommand{\caption}[2][]{%
+  \ifx&#1&%
+    \origcaption{#2}%
+  \else%
+    \origcaption[#1]{#2}%
+  \fi%
+}

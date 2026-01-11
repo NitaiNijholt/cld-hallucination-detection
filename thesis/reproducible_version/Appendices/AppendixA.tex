@@ -1,4 +1,3 @@
-\appendix
 %==============================================================================
 
 \chapter{Function-to-Algorithm Mapping}
@@ -30,9 +29,9 @@ Table~\ref{tab:function_mapping} provides the complete tracing from result direc
  & & & compute\_max\_window\_entropy (:259) \\
  & & & get\_embedding\_local (:98) \\
 \midrule
-6 & RQ2\_hallucination\_detection/ & rq2\_ensemble\_classifier.py & train\_classifiers (:32) \\
+6 & RQ2\_uq\_hallucination\_detection/ & rq2\_ensemble\_classifier.py & train\_classifiers (:32) \\
 7 & (see Algorithm~\ref{alg:citation_fetcher}) & modules.py & fetch\_citations\_with\_jina (:265) \\
-8 & RQ3\_deep\_research/ & test\_deep\_research\_ground\_truth.py & DeepResearchManager (pydantic\_ai\_deepresearch\_orchestration.py:642) \\
+8 & RQ3\_deep\_research\_validation/ & test\_deep\_research\_ground\_truth.py & DeepResearchManager (pydantic\_ai\_deepresearch.py:642) \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -44,21 +43,31 @@ Table~\ref{tab:function_mapping} provides the complete tracing from result direc
     \item Line 11844: \texttt{correct\_edges\_serial()} when \texttt{run\_correction=True}
 \end{itemize}
 
+
 \chapter{Reproducibility}
 \label{sec:reproducibility}
 
 This appendix provides comprehensive information for replicating all experiments, including data availability, code locations, software environment specifications, and exact execution commands.
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Reproduction Scope.} A public reproduction snapshot is available at \url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction}). This repository supports \textbf{analysis reproduction}---regenerating all thesis figures and tables from the included experimental result datasets using the unified analysis pipelines. \textbf{Simulation/data-generation} (i.e., re-running the original experiments to produce new result datasets) requires the private platform repository (\texttt{CausalixAI/platform}, branch: \texttt{thesis-nitai}), which contains proprietary infrastructure and external API dependencies not included in the public snapshot.
+
+Paths in this appendix reference the public reproduction repository structure unless otherwise noted. Execution scripts for simulation (Section~\ref{sec:execution_commands}, Tables~\ref{tab:exec_scripts}) are documented for completeness but require access to the private platform.
+}}
+\end{center}
 
 \section{Data Availability}
 \label{sec:data_availability}
 
 \subsection{Ground Truth CLD Datasets}
 
-The three ground truth CLD datasets used in all experiments are located in:
+The three ground truth CLD datasets used in all experiments are available in JSON format within the public reproduction repository:
 \begin{verbatim}
-data_science/parameter_tuning_experiments/
-    ground_truth_clds_for_experiments/
+final_runs/analysis_lib/data/ground_truth_clds/
 \end{verbatim}
+
+\noindent These JSON files contain edge definitions, variable sets, and context data extracted from the original literature-derived CLDs. The analysis scripts use these files to compute ground-truth labels (TP/FP/FN) for edge evaluation.
 
 \begin{table}[H]
 \centering
@@ -70,8 +79,8 @@ data_science/parameter_tuning_experiments/
 \textbf{Domain} & \textbf{Nodes} & \textbf{Edges} & \textbf{Source} & \textbf{Filename} \\
 \midrule
 Depressive Symptoms & 14 & 34 & \citet{uleman2024triangulation} & \texttt{Depressive\_symptoms\_...\_healthy\_adults.xlsx} \\
-Social Norms \& Obesity & 10 & 12 & \citet{crielaard2020socialnorms} & \texttt{Social\_norms\_and\_obesity\_prevalence.xlsx} \\
-Older Persons ED & 34 & 66 & \citet{smeekes2023emergency} & \texttt{older\_persons\_ED\_...\_spreadsheet.xlsx} \\
+Social Norms & 10 & 12 & \citet{crielaard2020socialnorms} & \texttt{Social\_norms\_and\_obesity\_prevalence.xlsx} \\
+Emergency Department & 34 & 66 & \citet{smeekes2023emergency} & \texttt{older\_persons\_ED\_...\_spreadsheet.xlsx} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -90,10 +99,10 @@ Each Excel file contains: edge definitions (source/target), relationship polarit
 \textbf{Dataset} & \textbf{Used In} & \textbf{Size} & \textbf{Location} \\
 \midrule
 TruthfulQA~\cite{lin2022truthfulqa} & RQ1 Verification & 1,634 Q\&A pairs & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/} \\
-Physics CLDs (see below) & RQ1a Validation & 31 edges, 4 CLDs & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/} \\
-Ulemans Alzheimer CLD & RQ1a Validation & 150 edges & \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/} \\
+Physics CLDs (see below) & RQ1a Validation & 31 edges, 4 CLDs & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/} \\
+Uleman's Alzheimer CLD & RQ1a Validation & 150 edges & \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/} \\
 Human Validation Set & RQ1a Validation & 72 edges & \texttt{final\_runs/RQ1\_human\_validation\_citation\_judge/} \\
-RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research/human\_validation/} \\
+RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/human\_validation/} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -119,7 +128,18 @@ Water Tank & 6 & 7 & Pascal's Law~\cite{pascal1663equilibre}; Torricelli's Law~\
 \end{tabularx}
 \end{table}
 
-Causal structures were derived from established physical laws (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka-Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). Edge motivation text was generated by Claude 4.5 Opus to provide natural language explanations of these physics relationships and verified against the source texts. Data files: \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/*.xlsx}.
+\textbf{Construction process.} The physics CLDs were constructed as follows:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Causal structure definition:} Variables and directed edges were derived from established physical laws (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka-Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). Edge polarities (\texttt{POSITIVE}/\texttt{NEGATIVE}) follow directly from the mathematical relationships in each law.
+    \item \textbf{Motivation generation:} For each edge, causal explanations (``motivations'') were authored in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus}, among the best-benchmarked models at time of writing. The prompt pattern was: ``\textit{Write a motivation for the edge [Source] $\rightarrow$ [Target] with polarity [POSITIVE/NEGATIVE] based on [Physical Law]. Include the relevant equation and cite sources.}'' This interactive process ensured each motivation accurately reflected the underlying physics while remaining accessible.
+    \item \textbf{Reference mapping:} Each edge was annotated with bibliographic references to seminal papers and standard textbooks. Post-processing scripts (\texttt{add\_urls\_to\_references.py}, \texttt{add\_supporting\_quotes.py}) enriched the references with URLs (where publicly accessible) and supporting quotes extracted from source texts.
+    \item \textbf{Verification:} All motivations and supporting quotes were manually verified against source texts to ensure scientific accuracy. URLs were browser-verified for accessibility (\texttt{verify\_and\_fix\_urls.py}).
+    \item \textbf{Data format:} Final JSON structure: \texttt{\{source, target, polarity, motivation, references[\{short\_citation, full\_citation, url, supporting\_quote\}]\}}. Converted to Excel format via \texttt{create\_thermostat\_excel.py}.
+\end{enumerate}
+
+\noindent\textbf{Reproducibility note.} The motivation text was authored interactively (not via automated script) to ensure scientific precision. To reproduce similar motivations, one can prompt any capable LLM with the edge structure and underlying physical law, then verify against authoritative sources. The complete authored motivations, references, and all post-processing scripts are provided for full transparency.
+
+\noindent\textbf{Data locations.} JSON files: \texttt{final\_runs/validation\_RQ1a\_physics\_clds/Data/physics\_clds\_with\_references/*.json}; post-processing scripts: same directory; Excel export: \texttt{create\_thermostat\_excel.py}; pipeline documentation: \texttt{PIPELINE\_EXPLANATION.md}.
 
 \subsection{Experiment Result Datasets by Research Question}
 
@@ -133,25 +153,25 @@ Causal structures were derived from established physical laws (Newton's Law of C
 \textbf{RQ} & \textbf{Experiment} & \textbf{Files} & \textbf{Location} \\
 \midrule
 \multirow{4}{*}{RQ1a} 
-  & GT Lit Correctness & 27 & \texttt{final\_runs/RQ1a\_ground\_truth\_correctness/} \\
-  & GT Lit Citation & 36 & \texttt{final\_runs/RQ1a\_ground\_truth\_citation/} \\
-  & GT Synth Correctness & 27 & \texttt{final\_runs/RQ1a\_corruption\_detection\_correctness\_final/} \\
-  & GT Synth Citation & 36 & \texttt{final\_runs/RQ1a\_corruption\_detection\_citation\_gpt5mini/} \\
+  & GT Lit Correctness & 27 & \texttt{final\_runs/RQ1a\_gt\_lit\_correctness/} \\
+  & GT Lit Citation & 36 & \texttt{final\_runs/RQ1a\_gt\_lit\_citation/} \\
+  & GT Synth Correctness & 27 & \texttt{final\_runs/RQ1a\_gt\_synth\_correctness/} \\
+  & GT Synth Citation & 36 & \texttt{final\_runs/RQ1a\_gt\_synth\_citation/} \\
 \midrule
 \multirow{2}{*}{RQ1b}
-  & Correction GT Synth & 27 & \texttt{final\_runs/RQ1b\_correction\_experiment\_corruption/} \\
-  & Correction GT Lit & 27 & \texttt{final\_runs/RQ1b\_correction\_experiment\_ground\_truth/} \\
+  & Correction GT Synth & 27 & \texttt{final\_runs/RQ1b\_corrector\_experiment\_corruption\_*/} \\
+  & Correction GT Lit & 27 & \texttt{final\_runs/RQ1b\_corrector\_experiment\_ground\_truth\_*/} \\
 \midrule
-RQ2 & UQ Metrics Analysis & 63 & \texttt{final\_runs/RQ2\_hallucination\_detection/} \\
+RQ2 & UQ Metrics Analysis & 63 & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/} \\
 \midrule
-RQ3 & Deep Research & 285 edges & \texttt{final\_runs/RQ3\_deep\_research/} \\
+RQ3 & Deep Research & 285 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/} \\
 \midrule
 \multirow{3}{*}{Prelim.}
-  & Generator Comparison & 9 & \texttt{final\_runs/generator\_model\_comparison\_analysis/} \\
-  & Temperature Sensitivity & 45 & \texttt{final\_runs/temperature\_sensitivity/} \\
-  & Random Baseline & 3,000 & \texttt{final\_runs/random\_baseline\_generator/} \\
+  & Generator Comparison & 9 & \texttt{final\_runs/prelim\_generator\_model\_comparison/} \\
+  & Temperature Sensitivity & 45 & \texttt{final\_runs/prelim\_temperature\_sensitivity/} \\
+  & Random Baseline & 3,000 & \texttt{final\_runs/prelim\_random\_baseline\_generator/} \\
 \midrule
-Sens. & Prompt Sensitivity & 4 exp. & \texttt{final\_runs/Sensitivity\_analysis\_simple/} \\
+Sens. & Prompt Sensitivity & 4 exp. & \texttt{final\_runs/supp\_prompt\_sensitivity/} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -162,36 +182,37 @@ All experimental results are stored in the \texttt{final\_runs/} directory:
 
 \begin{verbatim}
 final_runs/
-+-- RQ1a_gt_lit_correctness/
-|   +-- depressive/run_{1,2,3}/
++-- reproduce_all_thesis_assets.py    [Master reproduction script]
++-- RQ1_unified_analysis.py           [RQ1 analysis pipeline]
++-- RQ2_unified_analysis.py           [RQ2 analysis pipeline]
++-- RQ3_unified_analysis.py           [RQ3 analysis pipeline]
++-- SUPP_unified_analysis.py          [Supplementary analyses]
++-- PRELIM_unified_analysis.py        [Preliminary analyses]
++-- create_thesis_figure_structure.py [Maps outputs to thesis paths]
++-- analysis_lib/                     [Self-contained analysis code]
+|   +-- analyze_rq1a_*.py             [RQ1a analysis scripts]
+|   +-- logit_metrics.py              [Embedding utilities]
+|   +-- data/ground_truth_clds/       [Ground truth CLD JSON files]
++-- RQ1a_gt_lit_correctness/          [GT Lit - Correctness Judge]
+|   +-- depressive/run_{1,2,3}/       [Per-CLD result files]
 |   +-- emergency_department/run_{1,2,3}/
 |   +-- social_norms/run_{1,2,3}/
-+-- RQ1a_gt_lit_citation/       [same structure]
-+-- RQ1a_gt_synth_correctness/  [same structure]
-+-- RQ1a_gt_synth_citation/  [same structure]
-+-- RQ1a_validation_physics_CLDs/     [physics CLD judge validation]
-+-- RQ1a_ulemans_citation_provider_comparison/    [external CLD validation]
-+-- RQ1b_correction_experiment_*/     [correction experiment variants]
-+-- RQ1_human_validation_citation_judge/  [human-LLM agreement]
-+-- RQ1_verification_Truth_QA/        [TruthfulQA benchmark]
-+-- RQ2_hallucination_detection/      [UQ metrics analysis]
-+-- RQ3_deep_research/                [Deep Research validation]
-+-- cost_analysis/                    [API cost computations]
-+-- embedding_model_benchmark/        [embedding model comparison]
-+-- generator_model_comparison_analysis/  [generator model selection]
-+-- parallelization_benchmark/        [parallelization speedup]
-+-- power_analysis/                   [statistical power]
-+-- random_baseline_generator/        [random graph baseline]
-+-- Sensitivity_analysis_simple/      [prompt sensitivity]
-+-- time_and_cost_scaling/            [scaling analysis]
++-- RQ1a_gt_lit_citation/             [GT Lit - Citation Judge]
++-- RQ1a_gt_synth_correctness/        [GT Synth - Correctness Judge]
++-- RQ1a_gt_synth_citation/           [GT Synth - Citation Judge]
++-- RQ1b_corrector_experiment_*/      [Corrector experiments (by prompt)]
++-- RQ2_uq_hallucination_detection/   [UQ metrics analysis]
++-- RQ3_deep_research_validation/     [Deep Research validation]
++-- validation_RQ1_truthfulqa_judge/  [TruthfulQA benchmark]
++-- validation_RQ1a_physics_clds/     [Physics CLD validation]
++-- validation_RQ1a_ulemans_external/ [Uleman's CLD validation]
++-- prelim_generator_model_comparison/    [Generator model selection]
++-- prelim_random_baseline_generator/     [Random graph baseline]
++-- prelim_temperature_sensitivity/       [Temperature sensitivity]
++-- supp_parallelization_benchmark/       [Parallelization speedup]
++-- supp_prompt_sensitivity/              [Prompt sensitivity]
++-- supp_time_cost_scaling/               [Time/cost scaling]
 \end{verbatim}
-
-\subsection{Open Science and Community Validation}
-\label{sec:open_science}
-
-To enable community validation of the exploratory enrichment and evidence-validation results, we intend to open-source the complete experimental artifacts (organized by research question) alongside the reproduction scripts described in this appendix. In particular, we invite domain experts in biopsychosocial health, emergency medicine, and public health to review the subset of false-positive and false-negative edges.
-
-\textbf{Repository:} [To be published upon thesis completion]
 
 \section{Code Availability}
 \label{sec:code_availability}
@@ -218,6 +239,8 @@ Temperature Sensitivity & \texttt{run\_temperature\_sensitivity.py} & \texttt{mo
 
 All execution scripts located in: \texttt{data\_science/parameter\_tuning\_experiments/}
 
+\noindent\textit{See also: Table~\ref{tab:analysis_scripts} (analysis scripts) and Table~\ref{tab:final_runs_script_inventory} (complete script inventory).}
+
 \subsection{Analysis Scripts}
 
 \begin{table}[H]
@@ -230,57 +253,62 @@ All execution scripts located in: \texttt{data\_science/parameter\_tuning\_exper
 \textbf{Analysis} & \textbf{Script Path} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1a: LLM-as-Judge}} \\
-RQ1a Aggregate Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyze\_rq1a\_aggregate\_enhanced.py} \\
-RQ1a Ground Truth Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyze\_rq1a\_ground\_truth\_enhanced.py} \\
-Physics CLD Validation & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/analyze\_physics\_cld\_results.py} \\
-Physics CLD Test Runner & \texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} \\
-Ulemans Provider Comparison & \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} \\
+RQ1a Aggregate Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_aggregate\_enhanced.py} \\
+RQ1a Ground Truth Analysis & \texttt{final\_runs/analysis\_lib/analyze\_rq1a\_ground\_truth\_enhanced.py} \\
+Physics CLD Validation & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} \\
+Physics CLD Test Runner & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} \\
+Uleman's Provider Comparison & \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} \\
 TruthfulQA Verification & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/runner/truthqa\_judge\_baseline\_correctness.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1b: Corrector}} \\
-RQ1b Results Analysis & \texttt{data\_science/parameter\_tuning\_experiments/analyze\_corrector\_ablation.py} \\
+RQ1b Results Analysis & \texttt{final\_runs/RQ1b\_corrector\_ablation\_analysis/scripts/analyze\_corrector\_ablation.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: UQ Metrics}} \\
-RQ2 Master Report & \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
-RQ2 Batch Analyzer & \texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyzer.py} \\
+RQ2 Master Report & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
+RQ2 Batch Analyser & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ3: Deep Research}} \\
-RQ3 Unified Analysis & \texttt{final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} \\
-RQ3 Statistical Tests & \texttt{final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} \\
-RQ3 Per-CLD Detection Rates & \texttt{final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} \\
-RQ3 Enrichment Metrics & \texttt{final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} \\
-RQ3 Human Validation & \texttt{final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} \\
-RQ3 Smart Trigger Analysis & \texttt{final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
-RQ3 Cost Efficiency Plot & \texttt{final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} \\
-RQ3 Figure Generation & \texttt{final\_runs/RQ3\_deep\_research/generate\_figures.py} \\
-RQ3 Edge Sampling & \texttt{final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} \\
-RQ3 Validation Tables & \texttt{final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} \\
+RQ3 Unified Analysis & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_unified\_analysis.py} \\
+RQ3 Statistical Tests & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_statistical\_test.py} \\
+RQ3 Per-CLD Detection Rates & \texttt{final\_runs/RQ3\_deep\_research\_validation/rq3\_per\_cld\_detection\_rates.py} \\
+RQ3 Enrichment Metrics & \texttt{final\_runs/RQ3\_deep\_research\_validation/compute\_enriched\_gt\_metrics.py} \\
+RQ3 Human Validation & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/enrichment\_extrapolation.py} \\
+RQ3 Smart Trigger Analysis & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
+RQ3 Cost Efficiency Plot & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/plot\_dr\_cost\_efficiency.py} \\
+RQ3 Figure Generation & \texttt{final\_runs/RQ3\_deep\_research\_validation/generate\_figures.py} \\
+RQ3 Edge Sampling & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/sample\_edges\_for\_validation.py} \\
+RQ3 Validation Tables & \texttt{final\_runs/RQ3\_deep\_research\_validation/scripts/generate\_validation\_distribution\_tables.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Preliminary \& Validation}} \\
-Generator Model Comparison & \texttt{final\_runs/generator\_model\_comparison\_analysis/analyze\_generator\_models.py} \\
+Generator Model Comparison & \texttt{final\_runs/prelim\_generator\_model\_comparison/analysis\_scripts/analyze\_generator\_models.py} \\
 Random Baseline Analysis & \texttt{final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} \\
-Embedding Model Benchmark & \texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} \\
+Embedding Model Benchmark & \texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py} \\
+Power Analysis & \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost \& Scaling Analysis}} \\
-Complete Cost Analysis & \texttt{final\_runs/cost\_analysis/calculate\_all\_costs.py} \\
-Per-Experiment Costs & \texttt{final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} \\
-Deep Research Costs & \texttt{final\_runs/cost\_analysis/compute\_dr\_costs.py} \\
-Token Analysis & \texttt{final\_runs/token\_call\_analysis\_RQ1a\_judge/analyze\_output\_tokens\_tiktoken.py} \\
-Time/Cost Scaling & \texttt{final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
+Complete Cost Analysis & \texttt{final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} \\
+Per-Experiment Costs & \texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} \\
+Deep Research Costs & \texttt{final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} \\
+Token Analysis & \texttt{final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} \\
+Time/Cost Scaling & \texttt{final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
+Parallelization Benchmark & \texttt{final\_runs/supp\_parallelization\_benchmark/analysis\_scripts/analyze\_parallelization\_results.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Sensitivity Analysis}} \\
-Judge Prompt Sensitivity & \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} \\
-Corrector Prompt Sensitivity & \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} \\
+Judge Prompt Sensitivity & \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} \\
+Corrector Prompt Sensitivity & \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} \\
 Temperature Assumption Tests & \texttt{final\_runs/temperature\_sensitivity\_assumption\_tests.py} \\
-Parallelization Benchmark & \texttt{final\_runs/parallelization\_benchmark/scripts/analyze\_parallelization\_results.py} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+\noindent\textit{See also: Table~\ref{tab:exec_scripts} (execution scripts) and Table~\ref{tab:final_runs_script_inventory} (complete script inventory).}
+
 \subsection{Complete \texttt{final\_runs/} Script and Command Inventory}
 \label{sec:final_runs_script_inventory}
 
-To make the artifact set auditable end-to-end, Table~\ref{tab:final_runs_script_inventory} enumerates every runnable Python script present under \texttt{final\_runs/} at thesis submission time, together with its canonical invocation from the repository root.
+To make the artefact set auditable end-to-end, Table~\ref{tab:final_runs_script_inventory} enumerates the key runnable Python scripts present under \texttt{final\_runs/} in the public reproduction repository, together with canonical invocations from the repository root.
+
+\noindent\textbf{Note:} Some scripts listed (particularly those requiring external API calls or database connections) may require additional configuration not included in the public snapshot. The unified analysis entry points are the recommended entry points for reproduction.
 
 \begin{table}[H]
 \centering
@@ -293,9 +321,13 @@ To make the artifact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \textbf{Script} & \textbf{Canonical command (from repo root)} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Unified analysis entry points}} \\
-\texttt{final\_runs/RQ1\_unified\_analysis.py} & \texttt{python final\_runs/RQ1\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ2\_unified\_analysis.py} & \texttt{python final\_runs/RQ2\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ3\_unified\_analysis.py} & \texttt{python final\_runs/RQ3\_unified\_analysis.py} \\
+\texttt{final\_runs/reproduce\_all\_thesis\_assets.py} & \texttt{uv run python final\_runs/reproduce\_all\_thesis\_assets.py} \\
+\texttt{final\_runs/RQ1\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ1\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ2\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ2\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ3\_unified\_analysis.py} & \texttt{uv run python final\_runs/RQ3\_unified\_analysis.py} \\
+\texttt{final\_runs/SUPP\_unified\_analysis.py} & \texttt{uv run python final\_runs/SUPP\_unified\_analysis.py} \\
+\texttt{final\_runs/PRELIM\_unified\_analysis.py} & \texttt{uv run python final\_runs/PRELIM\_unified\_analysis.py} \\
+\texttt{final\_runs/VALIDATION\_unified\_analysis.py} & \texttt{uv run python final\_runs/VALIDATION\_unified\_analysis.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Top-level utilities}} \\
 \texttt{final\_runs/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/aggregate\_time\_cost\_scaling.py} \\
@@ -307,74 +339,67 @@ To make the artifact set auditable end-to-end, Table~\ref{tab:final_runs_script_
 \texttt{final\_runs/RQ1\_verification\_Truth\_QA/analysis\_script/recalculate\_metrics.py} & \texttt{python final\_runs/RQ1\_verification\_Truth\_QA/analysis\_script/recalculate\_metrics.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1a validation: physics CLDs}} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/run\_physics\_cld\_tests.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/analyze\_physics\_cld\_results.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/analyze\_physics\_cld\_results.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_comparison\_table.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_comparison\_table.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_retrieval\_comparison\_table.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/generate\_retrieval\_comparison\_table.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/get\_avg\_scores.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/get\_avg\_scores.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/create\_thermostat\_excel.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/cld\_data\_files/create\_thermostat\_excel.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_supporting\_quotes.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_supporting\_quotes.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_urls\_to\_references.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/add\_urls\_to\_references.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/show\_example.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/show\_example.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} \\
-\texttt{final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_urls.py} & \texttt{python final\_runs/RQ1a\_validation\_physics\_CLDs/physics\_clds\_with\_references/verify\_urls.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/run\_physics\_cld\_tests.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/analyse\_physics\_cld\_results.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/generate\_comparison\_table.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/generate\_comparison\_table.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/generate\_retrieval\_comparison\_table.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/generate\_retrieval\_comparison\_table.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/get\_avg\_scores.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/get\_avg\_scores.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/create\_thermostat\_excel.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/create\_thermostat\_excel.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_supporting\_quotes.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_supporting\_quotes.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_urls\_to\_references.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/add\_urls\_to\_references.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/show\_example.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/show\_example.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_and\_fix\_urls.py} \\
+\texttt{final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_urls.py} & \texttt{python final\_runs/validation\_RQ1a\_physics\_clds/physics\_clds\_with\_references/verify\_urls.py} \\
 \midrule
-\multicolumn{2}{@{}l}{\textit{RQ1a validation: Ulemans citation provider comparison}} \\
-\texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} & \texttt{python final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/judge\_citation\_providers.py} \\
-\texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/compare\_jina\_vs\_scraper.py} & \texttt{python final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/compare\_jina\_vs\_scraper.py} \\
+\multicolumn{2}{@{}l}{\textit{RQ1a validation: Uleman's citation provider comparison}} \\
+\texttt{final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} & \texttt{python final\_runs/validation\_RQ1a\_ulemans\_external/judge\_citation\_providers.py} \\
+\texttt{final\_runs/validation\_RQ1a\_ulemans\_external/compare\_jina\_vs\_scraper.py} & \texttt{python final\_runs/validation\_RQ1a\_ulemans\_external/compare\_jina\_vs\_scraper.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: hallucination detection (UQ metrics)}} \\
-\texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyzer.py} & \texttt{python final\_runs/RQ2\_hallucination\_detection/rq2\_simple\_batch\_analyzer.py} \\
-\texttt{final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} & \texttt{python final\_runs/RQ2\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
+\texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} & \texttt{python final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_simple\_batch\_analyser.py} \\
+\texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} & \texttt{python final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ3: Deep Research analysis}} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_unified\_analysis.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/analyze\_deep\_research\_results.py} & \texttt{python final\_runs/RQ3\_deep\_research/analyze\_deep\_research\_results.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_statistical\_test.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} & \texttt{python final\_runs/RQ3\_deep\_research/rq3\_per\_cld\_detection\_rates.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} & \texttt{python final\_runs/RQ3\_deep\_research/compute\_enriched\_gt\_metrics.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/generate\_figures.py} & \texttt{python final\_runs/RQ3\_deep\_research/generate\_figures.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/run\_rq3\_analysis.py} & \texttt{python final\_runs/RQ3\_deep\_research/run\_rq3\_analysis.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/sample\_edges\_for\_validation.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/enrichment\_extrapolation.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/estimate\_smart\_trigger\_dr\_enrichment.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/plot\_dr\_cost\_efficiency.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/generate\_validation\_distribution\_tables.py} \\
-\texttt{final\_runs/RQ3\_deep\_research/scripts/compute\_enriched\_f1\_from\_validation.py} & \texttt{python final\_runs/RQ3\_deep\_research/scripts/compute\_enriched\_f1\_from\_validation.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/rq3\_unified\_analysis.py} & \texttt{python ...rq3\_unified\_analysis.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/analyze\_deep\_research\_results.py} & \texttt{python ...analyze\_deep\_research\_results.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/rq3\_statistical\_test.py} & \texttt{python ...rq3\_statistical\_test.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/generate\_figures.py} & \texttt{python ...generate\_figures.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/enrichment\_extrapolation.py} & \texttt{python ...enrichment\_extrapolation.py} \\
+\texttt{final\_runs/RQ3\_deep\_research\_validation/analysis\_scripts/plot\_dr\_cost\_efficiency.py} & \texttt{python ...plot\_dr\_cost\_efficiency.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost, scaling, and diagnostics}} \\
-\texttt{final\_runs/cost\_analysis/calculate\_all\_costs.py} & \texttt{python final\_runs/cost\_analysis/calculate\_all\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} & \texttt{python final\_runs/cost\_analysis/calculate\_costs\_by\_experiment.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_experiment\_costs.py} & \texttt{python final\_runs/cost\_analysis/calculate\_experiment\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/calculate\_costs\_max\_edges.py} & \texttt{python final\_runs/cost\_analysis/calculate\_costs\_max\_edges.py} \\
-\texttt{final\_runs/cost\_analysis/analyze\_token\_and\_call\_stats.py} & \texttt{python final\_runs/cost\_analysis/analyze\_token\_and\_call\_stats.py} \\
-\texttt{final\_runs/cost\_analysis/analyze\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/cost\_analysis/analyze\_output\_tokens\_tiktoken.py} \\
-\texttt{final\_runs/cost\_analysis/compute\_dr\_costs.py} & \texttt{python final\_runs/cost\_analysis/compute\_dr\_costs.py} \\
-\texttt{final\_runs/cost\_analysis/generate\_table21\_scaling\_summary.py} & \texttt{python final\_runs/cost\_analysis/generate\_table21\_scaling\_summary.py} \\
-\texttt{final\_runs/token\_call\_analysis\_RQ1a\_judge/analyze\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/token\_call\_analysis\_RQ1a\_judge/analyze\_output\_tokens\_tiktoken.py} \\
-\texttt{final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/time\_and\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
-\texttt{final\_runs/time\_and\_cost\_scaling/collect\_corrector\_timing.py} & \texttt{python final\_runs/time\_and\_cost\_scaling/collect\_corrector\_timing.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_costs\_by\_experiment.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_experiment\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_experiment\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/calculate\_costs\_max\_edges.py} & \texttt{python final\_runs/supp\_cost\_analysis/calculate\_costs\_max\_edges.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/analyse\_token\_and\_call\_stats.py} & \texttt{python final\_runs/supp\_cost\_analysis/analyse\_token\_and\_call\_stats.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/supp\_cost\_analysis/analyse\_output\_tokens\_tiktoken.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} & \texttt{python final\_runs/supp\_cost\_analysis/compute\_dr\_costs.py} \\
+\texttt{final\_runs/supp\_cost\_analysis/generate\_table21\_scaling\_summary.py} & \texttt{python final\_runs/supp\_cost\_analysis/generate\_table21\_scaling\_summary.py} \\
+\texttt{final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} & \texttt{python final\_runs/supp\_token\_analysis\_rq1a/analyse\_output\_tokens\_tiktoken.py} \\
+\texttt{final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} & \texttt{python final\_runs/supp\_time\_cost\_scaling/aggregate\_time\_cost\_scaling.py} \\
+\texttt{final\_runs/supp\_time\_cost\_scaling/collect\_corrector\_timing.py} & \texttt{python final\_runs/supp\_time\_cost\_scaling/collect\_corrector\_timing.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Sensitivity, benchmarks, and baselines}} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_simple\_rm\_anova.py} \\
-\texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} & \texttt{python final\_runs/Sensitivity\_analysis\_simple/scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} \\
-\texttt{final\_runs/parallelization\_benchmark/scripts/run\_parallelization\_benchmark.py} & \texttt{python final\_runs/parallelization\_benchmark/scripts/run\_parallelization\_benchmark.py} \\
-\texttt{final\_runs/parallelization\_benchmark/scripts/analyze\_parallelization\_results.py} & \texttt{python final\_runs/parallelization\_benchmark/scripts/analyze\_parallelization\_results.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple\_rm\_anova.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_simple\_rm\_anova.py} \\
+\texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} & \texttt{python final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/sensitivity\_analysis\_corrector\_rm\_anova.py} \\
+\texttt{final\_runs/supp\_parallelization\_benchmark/analysis\_scripts/analyze\_parallelization\_results.py} & \texttt{python ...analyze\_parallelization\_results.py} \\
 \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} & \texttt{python final\_runs/power\_analysis/compute\_power\_analysis.py} \\
-\texttt{final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} & \texttt{python final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} \\
-\texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} & \texttt{python final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py} \\
-\texttt{final\_runs/generator\_model\_comparison\_analysis/run\_generator\_model\_comparison.py} & \texttt{python final\_runs/generator\_model\_comparison\_analysis/run\_generator\_model\_comparison.py} \\
-\texttt{final\_runs/generator\_model\_comparison\_analysis/analyze\_generator\_models.py} & \texttt{python final\_runs/generator\_model\_comparison\_analysis/analyze\_generator\_models.py} \\
+\texttt{final\_runs/prelim\_random\_baseline\_generator/analysis\_scripts/compute\_random\_baseline.py} & \texttt{python ...compute\_random\_baseline.py} \\
+\texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py} & \texttt{python ...embedding\_benchmark\_real\_cld.py} \\
+\texttt{final\_runs/prelim\_generator\_model\_comparison/analysis\_scripts/analyze\_generator\_models.py} & \texttt{python ...analyze\_generator\_models.py} \\
 \bottomrule
 \end{tabular}%
 }% end resizebox
 \end{table}
 
+\noindent\textit{See also: Table~\ref{tab:exec_scripts} (execution scripts) and Table~\ref{tab:analysis_scripts} (analysis scripts) for organised by-experiment views.}
+
 \subsection{Prompt Configuration Files}
 
-All prompts use three core variants: \textit{baseline} (direct instruction), \textit{mechanistic} (Bradford Hill criteria~\cite{shimonovich2020bradford}), and \textit{cot} (chain-of-thought reasoning~\cite{kojima2022large}). Citation judges additionally include a fourth variant, \textit{mechanistic-lit}, which extends mechanistic with explicit literature grounding requirements.
+All prompts use three core variants (display names): \textit{\PromptBaseline} (direct instruction), \textit{\PromptMechanistic} (Bradford Hill criteria~\cite{shimonovich2020bradford}), and \textit{\PromptCoT} (chain-of-thought reasoning~\cite{kojima2022large}). In prompt configuration files, these correspond to the variant IDs \texttt{baseline}, \texttt{mechanistic}, and \texttt{cot}. Citation judges additionally include a fourth variant \textit{\PromptMechanisticLit} (variant ID \texttt{mech-lit}), which extends \PromptMechanistic{} with explicit literature grounding requirements.
 
 \begin{table}[H]
 \centering
@@ -409,14 +434,14 @@ Corruption & \multicolumn{2}{l}{\texttt{prompts\_Nitai\_C.yaml} (prompt IDs belo
 \toprule
 \textbf{Component} & \textbf{Details} \\
 \midrule
-Hardware & ASUS ROG Zephyrus G16 (2025) \\
-CPU & Intel Core Ultra 9 285H (16 cores, 22 threads) \\
-GPU & NVIDIA GeForce RTX 5090 Laptop (24 GB VRAM) \\
-System RAM & 32 GB DDR5 \\
-Operating System & Ubuntu 22.04 LTS (WSL2 on Windows 11) \\
-Python Version & 3.12.3 \\
-Package Manager & uv 0.5.x \\
-CUDA Version & 12.x \\
+Hardware & ASUSTeK ROG Zephyrus G16 GU605CX\_GU605CX \\
+CPU & Intel(R) Core(TM) Ultra 9 285H (16 cores, 16 logical processors) \\
+GPU & NVIDIA GeForce RTX 5090 Laptop GPU (24463 MiB VRAM; driver 576.88) \\
+System RAM & 64 GB DDR5 (8$\times$8 GB; 7467 MT/s configured) \\
+Operating System & Ubuntu 24.04.2 LTS (WSL2; kernel 6.6.87.2-microsoft-standard-WSL2; Windows build 26100.7462) \\
+Python Version & 3.10.18 (\texttt{.python-version}=3.10) \\
+Package Manager & uv 0.8.3 \\
+CUDA Version & 12.9 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -429,9 +454,9 @@ All dependencies are managed using \texttt{uv}, a fast Python package manager wi
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone repository and install dependencies
-git clone https://github.com/[repository]/causalix.ai.git
-cd causalix.ai
+# Clone public reproduction repository
+git clone https://github.com/NitaiNijholt/cld-hallucination-detection.git
+cd cld-hallucination-detection
 
 # Sync exact versions from lockfile
 uv sync
@@ -456,31 +481,31 @@ Full package dependencies with pinned versions are specified in \texttt{pyprojec
 \textbf{Package} & \textbf{Version} & \textbf{Citation} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{LLM APIs}} \\
-OpenAI API & 1.x & OpenAI (2023). GPT-4 Technical Report. arXiv:2303.08774 \\
-Anthropic API & 0.61 & Anthropic (2024). Claude 3 Model Card \\
+OpenAI API & 1.107.3 & OpenAI (2023). GPT-4 Technical Report. arXiv:2303.08774 \\
+Anthropic API & 0.61.0 & Anthropic (2024). Claude 3 Model Card \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Data Analysis}} \\
 NumPy & 2.2.3 & \citep{harris2020numpy} \\
 pandas & 2.2.3 & \citep{mckinney2010pandas} \\
-SciPy & 1.x & \citep{virtanen2020scipy} \\
+SciPy & 1.15.3 & \citep{virtanen2020scipy} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Machine Learning}} \\
-scikit-learn & 1.x & \citep{pedregosa2011sklearn} \\
-imbalanced-learn & 0.14 & \citep{lemaitre2017imblearn} \\
+scikit-learn & 1.7.2 & \citep{pedregosa2011sklearn} \\
+imbalanced-learn & 0.14.0 & \citep{lemaitre2017imblearn} \\
 \midrule
-\multicolumn{3}{@{}l}{\textit{Visualization}} \\
-Matplotlib & 3.10 & \citep{hunter2007matplotlib} \\
-seaborn & 0.13 & \citep{waskom2021seaborn} \\
+\multicolumn{3}{@{}l}{\textit{Visualisation}} \\
+Matplotlib & 3.10.1 & \citep{hunter2007matplotlib} \\
+seaborn & 0.13.2 & \citep{waskom2021seaborn} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Graph \& Database}} \\
-NetworkX & 3.4 & \citep{hagberg2008networkx} \\
-Neo4j & 5.27 & \citep{robinson2013neo4j} \\
+NetworkX & 3.4.2 & \citep{hagberg2008networkx} \\
+Neo4j & 5.27.0 & \citep{robinson2013neo4j} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{LLM Integration}} \\
-Pydantic & 2.9 & \citep{pydantic2024} \\
+Pydantic & 2.11.7 & \citep{pydantic2024} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Interactive Computing}} \\
-Jupyter & 1.1 & \citep{kluyver2016jupyter} \\
+Jupyter & 1.1.1 & \citep{kluyver2016jupyter} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -505,12 +530,18 @@ uv run python final_runs/RQ1_unified_analysis.py \
 uv run python final_runs/RQ2_unified_analysis.py \
   --run-dir final_runs/_runs/RQ2_<timestamp>
 
-# RQ3 (Deep Research analysis + figures + validation artifacts)
+# RQ3 (Deep Research analysis + figures + validation artefacts)
 uv run python final_runs/RQ3_unified_analysis.py \
   --run-dir final_runs/_runs/RQ3_<timestamp>
 \end{verbatim}
 
-For a complete directory-level overview, see \texttt{final\_runs/README\_DIRECTORY\_MAP.md}.
+For a complete directory-level overview, see \texttt{final\_runs/README\_DIRECTORY\_MAP.md}. The master reproduction script \texttt{reproduce\_all\_thesis\_assets.py} orchestrates all unified analyses and maps outputs to thesis figure paths.
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Note on Execution Scripts.} The subsections below (RQ1a--RQ3 execution commands) document the original simulation scripts used to generate experimental data. These scripts reside in the private platform repository (\texttt{data\_science/parameter\_tuning\_experiments/}) and are \textbf{not included} in the public reproduction snapshot. They are documented here for completeness and to enable full replication by examiners with platform access. For analysis reproduction using pre-computed result datasets, use the unified entry points above.
+}}
+\end{center}
 
 \subsection{RQ1 Judge Verification (TruthfulQA)}
 \label{sec:truthqa_verification}
@@ -518,7 +549,7 @@ For a complete directory-level overview, see \texttt{final\_runs/README\_DIRECTO
 Before evaluating judges on CLD-specific tasks, we verify baseline hallucination detection capability using the TruthfulQA benchmark. This sanity check helps ensure the evaluation pipeline behaves as expected before moving to the more domain-specific CLD setting; it does not, by itself, imply that any CLD-specific failures are purely domain-driven.
 
 \begin{verbatim}
-cd <repo_root>/final_runs/RQ1_verification_Truth_QA/
+cd <repo_root>/final_runs/validation_RQ1_truthfulqa_judge/
 
 # Run the TruthfulQA judge verification (baseline correctness prompt structure)
 uv run python runner/truthqa_judge_baseline_correctness.py
@@ -559,8 +590,12 @@ Max Tokens & 250 \\
 \end{itemize}
 
 \subsection{RQ1a Ground Truth Experiments}
+\label{sec:rq1a_execution}
+
+\noindent\textit{[Requires private platform repository]}
 
 \begin{verbatim}
+# Private platform: data_science/parameter_tuning_experiments/
 cd data_science/parameter_tuning_experiments/
 
 # Correctness-based ground truth
@@ -606,8 +641,88 @@ Corruption Rate & 30\% \\
 Corruption Types & Motivation (spurious explanations), Structural (new edges, polarity flips) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Dataset}} \\
-CLDs & Depressive, Social Norms, Older Persons ED \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
 Runs per CLD & 3 (seeds 1, 2, 3) \\
+Prompt Variants & 4 (Baseline, CoT, Mechanistic, Mechanistic-Lit) \\
+Total Experiments & 36 (3 CLDs $\times$ 3 runs $\times$ 4 prompts) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ1a GT Lit Correctness Judge Configuration}
+\label{tab:rq1a_gt_lit_correctness_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Judge Model & GPT-4.1 \\
+Temperature & 0.0 \\
+Seed & 42 \\
+Approach & Correctness-based judging \\
+Parallelization & 10 workers \\
+Web Search & Disabled \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
+Runs per CLD & 3 (seeds 10, 20, 30) \\
+Prompt Variants & 3 (Baseline, CoT, Mechanistic) \\
+Total Experiments & 27 (3 CLDs $\times$ 3 runs $\times$ 3 prompts) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ1a GT Synth Correctness Judge Configuration}
+\label{tab:rq1a_gt_synth_correctness_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Judge Model & GPT-4.1 \\
+Temperature & 0.0 \\
+Seed & 42 \\
+Approach & Correctness-based judging \\
+Parallelization & 10 workers \\
+Web Search & Disabled \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Corruption}} \\
+Corruption Rate & 30\% \\
+Corruption Types & Motivation (spurious), Structural (new edges, polarity flips) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
+Runs per CLD & 3 (seeds 1, 2, 3) \\
+Prompt Variants & 3 (Baseline, CoT, Mechanistic) \\
+Total Experiments & 27 (3 CLDs $\times$ 3 runs $\times$ 3 prompts) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ1a GT Lit Citation Judge Configuration}
+\label{tab:rq1a_gt_lit_citation_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Judge Model & GPT-4.1 \\
+Temperature & 0.0 \\
+Seed & 42 \\
+Approach & Citation-based judging \\
+Parallelization & 10 workers \\
+Web Search & Enabled \\
+Citation Fetcher & ContentScraper (Jina AI Reader disabled) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
+Runs per CLD & 3 (seeds 10, 20, 30) \\
 Prompt Variants & 4 (Baseline, CoT, Mechanistic, Mechanistic-Lit) \\
 Total Experiments & 36 (3 CLDs $\times$ 3 runs $\times$ 4 prompts) \\
 \bottomrule
@@ -622,17 +737,73 @@ python run_rq1b_correction_multirun.py \
     --output-dir ../../final_runs/RQ1b_corrector/ground_truth
 \end{verbatim}
 
+\begin{table}[H]
+\centering
+\caption{RQ1b Corrector (GT Synth) Configuration}
+\label{tab:rq1b_corrector_synth_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Corrector}} \\
+Corrector Model & GPT-4.1 \\
+Temperature & 0.0 \\
+Corrector Prompts & 3 (Baseline, CoT, Mechanistic) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Evaluation Judge}} \\
+Judge Model & GPT-4.1 \\
+Judge Prompt & Baseline Correctness \\
+Temperature & 0.0 \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+Input & RQ1a GT Synth flagged edges \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
+Runs per CLD & 3 (seeds 1, 2, 3) \\
+Total Experiments & 27 (3 CLDs $\times$ 3 runs $\times$ 3 prompts) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ1b Corrector (GT Lit) Configuration}
+\label{tab:rq1b_corrector_lit_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Corrector}} \\
+Corrector Model & GPT-4.1 \\
+Temperature & 0.0 \\
+Corrector Prompts & 3 (Baseline, CoT, Mechanistic) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Evaluation Judge}} \\
+Judge Model & GPT-4.1 \\
+Judge Prompt & Baseline Correctness \\
+Temperature & 0.0 \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+Input & RQ1a GT Lit flagged edges \\
+CLDs & Depressive Symptoms, Social Norms, Emergency Department \\
+Runs per CLD & 3 (seeds 10, 20, 30) \\
+Total Experiments & 27 (3 CLDs $\times$ 3 runs $\times$ 3 prompts) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{RQ1a Validation Studies}
 \label{sec:rq1a_validation}
 
 Two validation studies assess judge reliability: external validation on an independently expert-constructed CLD, and human-LLM agreement analysis.
 
-\textbf{External Validation: Ulemans CLD Citation Provider Comparison}
+\textbf{External Validation: Uleman's CLD Citation Provider Comparison}
 
-This study validates the citation-based judge on the Ulemans Alzheimer's disease CLD (150 edges) constructed through Group Model Building with 17 domain experts.
+This study validates the citation-based judge on the Uleman's Alzheimer's disease CLD (150 edges) constructed through Group Model Building with 17 domain experts.
 
 \begin{verbatim}
-cd final_runs/RQ1a_ulemans_citation_provider_comparison/
+cd final_runs/validation_RQ1a_ulemans_external/
 
 # Run citation-based judging across provider sessions and write JSON/XLSX outputs
 python judge_citation_providers.py
@@ -641,22 +812,22 @@ python judge_citation_providers.py
 # python compare_jina_vs_scraper.py
 \end{verbatim}
 
-\textbf{Script Location:} \texttt{final\_runs/RQ1a\_ulemans\_citation\_provider\_comparison/} \texttt{judge\_citation\_providers.py}
+\textbf{Script Location:} \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/} \texttt{judge\_citation\_providers.py}
 
 \begin{table}[H]
 \centering
-\caption{Ulemans Citation Provider Comparison Configuration}
+\caption{Uleman's Citation Provider Comparison Configuration}
 \label{tab:ulemans_config}
 \footnotesize
 \begin{tabular}{@{}ll@{}}
 \toprule
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
-Dataset & Ulemans Alzheimer's CLD (150 edges) \\
+Dataset & Uleman's Alzheimer's CLD (150 edges) \\
 Search Providers & OpenAlex, Brave Search (with/without whitelist), Perplexity, PubMed \\
 Citation Fetchers & Jina AI Reader, ContentScraper (BeautifulSoup-based, PDF-capable) \\
 Configurations & 4 providers $\times$ 2 fetchers = 8 \\
-Total Judgments & 1,200 (8 configs $\times$ 150 edges) \\
+Total Judgements & 1,200 (8 configs $\times$ 150 edges) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Judge Settings}} \\
 Judge Model & GPT-4.1 \\
@@ -742,7 +913,7 @@ Interpretation & Landis \& Koch (1977) guidelines \\
 
 \begin{tabular}{|p{2cm}|c|p{8cm}|}
 \hline
-\textbf{Kleur/Color} & \textbf{Score} & \textbf{Notitie / Note} \\
+\textbf{Kleur/Colour} & \textbf{Score} & \textbf{Notitie / Note} \\
 \hline
 \cellcolor{green!70!black}\textcolor{white}{Dark Green} & 1.0 & 
 Hoogste kwaliteit bewijs, causaal + wetenschappelijk, longitudinaal, RCT. Wanneer het duidelijk causaal bewijs hoeft de rest van de bronnen niet bekeken te worden. \\
@@ -772,21 +943,160 @@ Als de bron echt niet duidelijk is of er iets vreemds aan de hand is. Goed besch
 \begin{itemize}[noitemsep]
     \item \texttt{provider\_comparison\_results.json}: Per-provider metrics
     \item \texttt{human\_llm\_agreement.json}: Cohen's $\kappa$, agreement rates
-    \item \texttt{confusion\_matrices/}: Per-file agreement visualizations
+    \item \texttt{confusion\_matrices/}: Per-file agreement visualisations
 \end{itemize}
 
 \subsection{RQ2 Hallucination Detection Analysis}
+\label{sec:rq2_execution}
+
+\noindent\textit{[Requires private platform repository]}
 
 \begin{verbatim}
+# Private platform: data_science/
 cd data_science/
 
 python rq2_master_report.py \
     --input-dir ../final_runs \
-    --output-dir ../final_runs/RQ2_hallucination_detection
+    --output-dir ../final_runs/RQ2_uq_hallucination_detection
 
 python rq2_ensemble_classifier.py \
-    --input-dir ../final_runs/RQ2_hallucination_detection
+    --input-dir ../final_runs/RQ2_uq_hallucination_detection
 \end{verbatim}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 UQ Logprobs Configuration}
+\label{tab:rq2_uq_logprobs_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{UQ Metrics}} \\
+Perplexity (PPL) & Capped NLL averaging (token cap 20.0, avg cap 10.0) \\
+$P_{\min}$ & Minimum token probability \\
+$H_{\text{win}}$ & Max sliding-window entropy (window 5, top-$k$=5) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+Source & RQ1a GT Lit experiments (27 correctness files) \\
+Total Edges & 31,704 (from 63 deduplicated files) \\
+Hallucination Rate & 15.2\% \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Analysis}} \\
+Block Definition & CLD $\times$ run ($N=9$ blocks) \\
+Statistical Test & One-sample $t$-test vs.\ 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Cosine Similarity (Embeddings) Configuration}
+\label{tab:rq2_cossim_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Embedding Model}} \\
+Model & all-mpnet-base-v2 \\
+Source & sentence-transformers (Hugging Face) \\
+Similarity & Max narrative--citation-chunk cosine similarity \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Dataset}} \\
+Source & RQ1a GT Lit Citation experiments only (36 files) \\
+Ensemble Subset & 16,507 edges (35 files with all 4 metrics) \\
+Hallucination Rate & 15.2\% \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Analysis}} \\
+Block Definition & CLD $\times$ run ($N=9$ blocks) \\
+Statistical Test & One-sample $t$-test vs.\ 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Shared Experimental Configuration}
+\label{tab:rq2_shared_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+CI Metrics & Gen Perplexity, Gen Min Prob, Gen Max Window Entropy, Gen Cosine Similarity \\
+Block Definition & CLD $\times$ run ($N=9$: 3 CLDs $\times$ 3 runs) \\
+Hallucination Label & FP or FN w.r.t.\ GT Lit \\
+Scaler & StandardScaler \\
+Random State & 42 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Phases 1--3 (Single-Metric Analysis) Configuration}
+\label{tab:rq2_phases123_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Data Loading}} \\
+Input Files & 63 deduplicated experiment files (36 citation, 27 correctness) \\
+Filter & Exclude corruption experiments (\texttt{exp\_type $\in$ \{citation, correctness\}}) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Hallucination Labeling}} \\
+Label & \texttt{is\_hallucination} = True if Classification $\in$ \{FP, FN\} \\
+Ground Truth & GT Lit (literature-based correctness) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Data Cleaning}} \\
+Missing Values & Remove rows with NaN in CI metric columns \\
+Infinite Values & Replace $\pm\infty$ with NaN, then drop \\
+Min Edges/File & $\geq$10 edges required \\
+Min Class Size & $\geq$2 per class (hallucination / correct) required \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Block Aggregation}} \\
+Block Key & (CLD, run) $\Rightarrow$ $N=9$ blocks \\
+Aggregation & Mean AUC per block \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Statistical Testing}} \\
+Test & One-sample Wilcoxon signed-rank on (AUC $-$ 0.5) \\
+Alternative & Two-sided \\
+Bonferroni Correction & $m=4$ tests, $\alpha_{\text{adj}}=0.0125$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ2 Analysis Pipeline Configuration}
+\label{tab:rq2_analysis_pipeline_config}
+\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Phase} & \textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multirow{3}{*}{Phase 4 (RFE)} & Classifiers & LogReg, RandomForest, GradientBoosting \\
+ & Cross-validation & GroupKFold ($n\_splits=3$) \\
+ & Feature range & $k \in \{1,2,3,4\}$ \\
+\midrule
+\multirow{4}{*}{Phase 5 (Ensemble)} & Classifiers & LogReg, RF, GB, MLP \\
+ & Train/Test Split & 67\%/33\% (GroupShuffleSplit) \\
+ & CV on training & 3-fold GroupKFold \\
+ & Class weighting & balanced (LogReg, RF) \\
+\midrule
+\multirow{2}{*}{Phase 6 (LOCO)} & Protocol & Leave-one-CLD-out \\
+ & Scaling & StandardScaler (fit on training CLDs) \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Classifier Hyperparameters}} \\
+Logistic Regression & & max\_iter=1000, class\_weight=balanced \\
+Random Forest & & n\_estimators=100, class\_weight=balanced \\
+Gradient Boosting & & n\_estimators=100 \\
+Neural Network (MLP) & & hidden\_layers=(32,16), max\_iter=2000 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{RQ3 Deep Research Experiments}
 \label{sec:rq3_execution}
@@ -796,7 +1106,7 @@ The RQ3 Deep Research pipeline validates causal claims through automated literat
 \textbf{Stage 1: Deep Research Execution}
 
 \begin{verbatim}
-cd final_runs/RQ3_deep_research/
+cd final_runs/RQ3_deep_research_validation/
 
 # Run Deep Research on all TP/FP/FN edges from GT Lit experiments
 python test_deep_research_ground_truth.py \
@@ -823,7 +1133,7 @@ uv run python final_runs/RQ3_unified_analysis.py \
 \textbf{Stage 3: Human Validation and Extrapolation}
 
 \begin{verbatim}
-cd final_runs/RQ3_deep_research/
+cd final_runs/RQ3_deep_research_validation/
 
 # Sample edges for human validation (stratified by CLD x classification)
 uv run python scripts/sample_edges_for_validation.py
@@ -841,7 +1151,7 @@ uv run python scripts/enrichment_extrapolation.py
 \toprule
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
-Heavy Model & GPT-5 (hypothesis evaluation, judgment, verdict) \\
+Heavy Model & GPT-5 (hypothesis evaluation, judgement, verdict) \\
 Light Model & GPT-5-mini (iterative search, evidence scoring) \\
 Temperature & 1.0 (both models) \\
 Top-p & 1.0 (both models) \\
@@ -854,7 +1164,7 @@ Batch Size & 5 edges processed concurrently \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Dataset}} \\
 Total Edges & 285 (44 TP, 178 FP, 63 FN) \\
-CLDs & Depressive (84), Social Norms (17), Older Persons (184) \\
+CLDs & Depressive Symptoms (84), Social Norms (17), Emergency Department (184) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Human Validation}} \\
 Sample Size & 50 edges (29.6\% of edges with direct\_causal\_found=True) \\
@@ -896,6 +1206,59 @@ Sample Size & 50 edges (stratified by CLD $\times$ classification) \\
 \end{tabular}
 \end{table}
 
+\begin{table}[H]
+\centering
+\caption{RQ3 Human Validation Configuration}
+\label{tab:rq3_human_validation_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Sample Size & 50 edges (29.6\% of 169 eligible) \\
+Random Seed & 42 \\
+Sampling Method & Proportional stratified (CLD $\times$ classification) \\
+Filter & direct\_causal\_found = True \\
+Verdict Categories & causal, different\_vars, invalid \\
+Applicability Score & Continuous $\in [0, 1]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ3 Threshold Selection Configuration}
+\label{tab:rq3_threshold_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Thresholds Tested & $t \in \{0.5, 0.6, 0.7, 0.8, 0.9\}$ \\
+CI Method & Wilson score interval ($\alpha=0.05$) \\
+Elbow Rule & $\text{score} = \Delta x / |\Delta y|$ \\
+Selected Threshold & $t^* = 0.7$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{RQ3 Smart Trigger Configuration}
+\label{tab:rq3_smart_trigger_config}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Trigger Threshold & mean(Aggregate Score) $\leq 0.5$ \\
+Judge Used & Mechanistic Correctness (GT Lit) \\
+Applicability Threshold & 0.7 \\
+Aggregation & Mean score across 9 runs \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % Human Validation Rubric for RQ3 (Deep Research Evidence Validation)
 \begin{table}[H]
 \centering
@@ -933,7 +1296,7 @@ For each edge (row), the human validator performs the following steps: \\[0.5em]
 \hline
 \texttt{causal} & Evidence directly supports a causal relationship between the exact source and target variables. \\
 \hline
-\texttt{different\_vars, causal} & Evidence supports a causal relationship, but for related but not identical variables (e.g., similar constructs, different operationalizations). \\
+\texttt{different\_vars, causal} & Evidence supports a causal relationship, but for related but not identical variables (e.g., similar constructs, different operationalisations). \\
 \hline
 \texttt{non-causal} & Evidence shows only correlation, association, or co-occurrence---no causal mechanism or temporal precedence established. \\
 \hline
@@ -949,7 +1312,7 @@ For each edge (row), the human validator performs the following steps: \\[0.5em]
 
 \begin{tabular}{|c|c|p{9cm}|}
 \hline
-\textbf{Color} & \textbf{Score} & \textbf{Criteria} \\
+\textbf{Colour} & \textbf{Score} & \textbf{Criteria} \\
 \hline
 \cellcolor{green!70!black}\textcolor{white}{} & 1.0 & \textbf{Exact match:} Correct variables, correct constructs/measures, causal-level evidence (RCT, experimental manipulation, longitudinal with controls). \\
 \hline
@@ -967,7 +1330,7 @@ For each edge (row), the human validator performs the following steps: \\[0.5em]
 \hline
 \cellcolor{red!50} & 0.3 & Poor match: only one variable loosely related; evidence type unclear or weak. \\
 \hline
-\cellcolor{red!70} & 0.2 & Very poor match: tangential relevance only; different domain or population. \\
+\cellcolor{red!70} & 0.2 & Very poor match: tangential relevance only. \\
 \hline
 \cellcolor{red!90}\textcolor{white}{} & 0.1 & Minimal relevance: only keyword overlap; no substantive connection to claimed relationship. \\
 \hline
@@ -1019,19 +1382,21 @@ $[0.9, 1.0]$ & 2 & 8 & 4 & 14 (28.0\%) \\
 \end{table}
 
 \subsection{Generator Temperature Sensitivity Analysis}
+\label{sec:temp_sensitivity_execution}
 
 This experiment validates the generator temperature choice (T=0.7) by testing whether temperature significantly affects edge recovery performance against literature ground truth.
 
-\begin{verbatim}
-cd data_science/parameter_tuning_experiments/
+\noindent\textit{[Requires private platform repository for execution; pre-computed results available in public snapshot]}
 
+\begin{verbatim}
+# Private platform: data_science/parameter_tuning_experiments/
+cd data_science/parameter_tuning_experiments/
 python run_temperature_sensitivity.py
 \end{verbatim}
 
-\textbf{Script Location:} \texttt{data\_science/parameter\_tuning\_experiments/run\_temperature\_sensitivity.py}
+\textbf{Script Location (private):} \texttt{data\_science/parameter\_tuning\_experiments/run\_temperature\_sensitivity.py}
 
-\textbf{Results Location:} \texttt{data\_science/parameter\_tuning\_experiments/results/}\\
-\hspace*{2em}\texttt{temperature\_sensitivity\_<timestamp>/}
+\textbf{Results Location (public):} \texttt{final\_runs/prelim\_temperature\_sensitivity/}
 
 \begin{table}[H]
 \centering
@@ -1042,7 +1407,7 @@ python run_temperature_sensitivity.py
 \toprule
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
-CLDs & 3 validation CLDs (Depressive Symptoms, Social Norms \& Obesity, Emergency Department) \\
+CLDs & 3 validation CLDs (Depressive Symptoms, Social Norms, Emergency Department) \\
 Generator Model & GPT-4.1 \\
 Generator Prompt & Nitai\_C (\texttt{prompts\_Nitai\_C.yaml}) \\
 Temperature Values & \{0.0, 0.3, 0.5, 0.7, 1.0\} \\
@@ -1084,7 +1449,7 @@ generator_config = {
 }
 \end{verbatim}
 
-\textbf{Edge F1 Computation:} Generated edges are compared against the literature-derived ground truth CLD using exact matching (same source, target, and polarity). The \texttt{run\_discovery\_experiment()} function with \texttt{node\_comparison\_enable=True} computes TP/FP/FN counts, from which F1 = $\frac{2 \cdot TP}{2 \cdot TP + FP + FN}$ is derived.
+\textbf{Edge F1 Computation:} Generated edges are compared against the literature-derived ground truth CLD using exact matching (same source, target, and polarity). The \texttt{run\_discovery\_experiment()} function computes edge-level TP/FP/FN counts (via \texttt{edge\_comparison}), from which F1 = $\frac{2 \cdot TP}{2 \cdot TP + FP + FN}$ is derived.
 
 \textbf{ANOVA Computation:} One-way ANOVA via \texttt{scipy.stats.f\_oneway()} tests whether the mean F1 differs significantly across temperature groups. Groups with $n \geq 2$ are included (all 5 temperatures qualify with $n=3$ each).
 
@@ -1094,13 +1459,13 @@ generator_config = {
 This one-shot comparison selects the generator model for all subsequent experiments by evaluating GPT-4.1, Sonar-Pro, and Claude Sonnet 4 on edge recovery against literature ground truth.
 
 \begin{verbatim}
-cd final_runs/generator_model_comparison_analysis/
+cd final_runs/prelim_generator_model_comparison/
 
 # Run generation experiments (one per model per CLD)
 python run_generator_model_comparison.py
 
-# Analyze results and generate thesis table
-python analyze_generator_models.py
+# Analyse results and generate thesis table
+python analyse_generator_models.py
 \end{verbatim}
 
 \textbf{Script Location:} \texttt{final\_runs/generator\_model\_comparison\_analysis/}
@@ -1141,7 +1506,7 @@ Selection Rule & Highest aggregate F1 with logprobs availability \\
 This analysis establishes a structural random baseline by computing expected edge F1 for Erd\H{o}s-R\'enyi random graphs matching each validation CLD's node and edge counts.
 
 \begin{verbatim}
-cd final_runs/random_baseline_generator/
+cd final_runs/prelim_random_baseline_generator/
 
 python compute_random_baseline.py
 \end{verbatim}
@@ -1179,13 +1544,13 @@ CI Method & z-distribution (n=1000) \\
 
 This analysis quantifies how prompt engineering choices affect judge and corrector performance by measuring the input-output relationship between semantic prompt distance and F1 change.
 
-\textbf{Script Location (Judge):} \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/}\\
+\textbf{Script Location (Judge):} \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/}\\
 \hspace*{2em}\texttt{sensitivity\_analysis\_simple.py}
 
-\textbf{Script Location (Corrector):} \texttt{final\_runs/Sensitivity\_analysis\_simple/scripts/}\\
+\textbf{Script Location (Corrector):} \texttt{final\_runs/supp\_prompt\_sensitivity/analysis\_scripts/}\\
 \hspace*{2em}\texttt{sensitivity\_analysis\_corrector.py}
 
-\textbf{Results Location:} \texttt{final\_runs/Sensitivity\_analysis\_simple/}
+\textbf{Results Location:} \texttt{final\_runs/supp\_prompt\_sensitivity/}
 
 \begin{table}[H]
 \centering
@@ -1208,8 +1573,8 @@ Statistical Test & Friedman (blocked by CLD$\times$run), post-hoc paired Wilcoxo
 
 \textbf{Output Files:}
 \begin{itemize}[noitemsep]
-    \item \texttt{prompt\_sensitivity\_figure.png}: Judge sensitivity visualization
-    \item \texttt{corrector\_sensitivity\_figure.png}: Corrector sensitivity visualization
+    \item \texttt{prompt\_sensitivity\_figure.png}: Judge sensitivity visualisation
+    \item \texttt{corrector\_sensitivity\_figure.png}: Corrector sensitivity visualisation
     \item \texttt{prompt\_sensitivity\_table.tex}: LaTeX summary table for judge prompt effects
     \item \texttt{corrector\_sensitivity\_table.tex}: LaTeX summary table for corrector prompt effects
 \end{itemize}
@@ -1223,10 +1588,10 @@ This benchmark measures wall-clock time speedup from parallelization by comparin
 \textbf{Results Location:} \texttt{final\_runs/parallelization\_benchmark/}
 
 \begin{verbatim}
-cd final_runs/parallelization_benchmark/scripts/
+cd final_runs/supp_parallelization_benchmark/scripts/
 
 python run_parallelization_benchmark.py
-python analyze_parallelization_results.py
+python analyse_parallelization_results.py
 \end{verbatim}
 
 \begin{table}[H]
@@ -1239,7 +1604,7 @@ python analyze_parallelization_results.py
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
 Task & Correctness judging (34 API calls) \\
-Simulated CLD & Depressive symptoms (34 edges) \\
+Simulated CLD & Depressive Symptoms (34 edges) \\
 Model & GPT-4.1 \\
 Temperature & 0.3 \\
 Max Tokens & 200 \\
@@ -1254,7 +1619,7 @@ Total Benchmark Runs & 12 \\
 \begin{itemize}[noitemsep]
     \item \texttt{data/benchmark\_results\_*.xlsx}: Raw timing data (wall-clock, cumulative API time)
     \item \texttt{Figures/speedup\_comparison.png}: Speedup analysis figure
-    \item \texttt{Figures/efficiency\_analysis.png}: Parallel efficiency visualization
+    \item \texttt{Figures/efficiency\_analysis.png}: Parallel efficiency visualisation
     \item \texttt{parallelization\_summary.txt}: Results summary with speedup/efficiency
     \item \texttt{BENCHMARK\_METADATA.txt}: Full configuration JSON
 \end{itemize}
@@ -1262,20 +1627,20 @@ Total Benchmark Runs & 12 \\
 \subsection{Time and Cost Scaling Analysis}
 \label{sec:time_cost_scaling}
 
-This analysis aggregates inference time and cost metrics across all RQ1 experiments to characterize computational scaling.
+This analysis aggregates inference time and cost metrics across all RQ1 experiments to characterise computational scaling.
 
-\textbf{Script Location:} \texttt{data\_science/aggregate\_time\_cost\_scaling.py}
+\noindent\textit{[Pre-computed results available in public snapshot; script available for re-analysis]}
 
-\textbf{Results Location:} \texttt{final\_runs/time\_and\_cost\_scaling/}
+\textbf{Script Location (public):} \texttt{final\_runs/supp\_time\_cost\_scaling/analysis\_scripts/aggregate\_time\_cost\_scaling.py}
+
+\textbf{Results Location (public):} \texttt{final\_runs/supp\_time\_cost\_scaling/}
 
 \begin{verbatim}
-cd data_science/
-
-python aggregate_time_cost_scaling.py \
-    --base_dir ../RQ1_excel_snapshot_20251215/final_runs \
-    --output_dir ../final_runs/time_and_cost_scaling \
-    --gen-dir parameter_tuning_experiments/results \
-    --latex
+# From repository root:
+uv run python final_runs/supp_time_cost_scaling/analysis_scripts/\
+    aggregate_time_cost_scaling.py \
+    --base_dir final_runs \
+    --output_dir final_runs/supp_time_cost_scaling
 \end{verbatim}
 
 \begin{table}[H]
@@ -1289,7 +1654,7 @@ python aggregate_time_cost_scaling.py \
 \midrule
 Judging Data & 121 Excel files (correctness + citation experiments) \\
 Generation Data & 33 Excel files (parameter tuning results) \\
-CLDs & Depressive (34 edges), Social Norms (12 edges), Emergency Dept (66 edges) \\
+CLDs & Depressive Symptoms (34 edges), Social Norms (12 edges), Emergency Department (66 edges) \\
 Judge Types & Correctness, Citation \\
 Prompt Variants & Baseline, CoT, Mechanistic \\
 Judge Models & GPT-4.1, GPT-5-mini \\
@@ -1315,7 +1680,7 @@ GPT-5-mini & \$0.15/1M input, \$0.60/1M output tokens \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.0\textwidth]{Figures/figure1_scaling_analysis.png}
-\caption[CLD judging time scaling]{Time scaling analysis for CLD judging. \textbf{Top row:} Time vs. number of edges shows linear $O(E)$ scaling. \textbf{Bottom row:} Time vs. number of nodes shows quadratic $O(N^2)$ scaling, consistent with dense CLD structure where $E \approx N(N-1)$. Citation judging (right) is $\sim$11$\times$ slower than correctness (left) due to web search and document retrieval. Points represent per-CLD means $\pm$ 95\% CI (error bars); regression lines show fitted models with $R^2$ values. All three CLDs shown: Depressive (D), Social Norms (S), Emergency Department (E).}
+\caption[CLD judging time scaling]{Time scaling analysis for CLD judging. \textbf{Top row:} Time vs. number of edges shows linear $O(E)$ scaling. \textbf{Bottom row:} Time vs. number of nodes shows quadratic $O(N^2)$ scaling, consistent with dense CLD structure where $E \approx N(N-1)$. Citation judging (right) is $\sim$11$\times$ slower than correctness (left) due to web search and document retrieval. Points represent per-CLD means $\pm$ 95\% CI (error bars); regression lines show fitted models with $R^2$ values. All three CLDs shown: Depressive Symptoms (D), Social Norms (S), Emergency Department (E).}
 \label{fig:scaling_analysis}
 \end{figure}
 
@@ -1332,7 +1697,7 @@ GPT-5-mini & \$0.15/1M input, \$0.60/1M output tokens \\
 This experiment validates judge functionality using physics-based CLDs grounded in well-established scientific principles (Newton's laws, conservation laws, Lotka-Volterra equations), where 100\% approval is expected.
 
 \begin{verbatim}
-cd final_runs/RQ1a_validation_physics_CLDs/
+cd final_runs/validation_RQ1a_physics_clds/
 
 # Run correctness-based judging on physics CLDs
 python run_physics_cld_tests.py --approaches correctness
@@ -1340,8 +1705,8 @@ python run_physics_cld_tests.py --approaches correctness
 # Run citation-based judging on physics CLDs
 python run_physics_cld_tests.py --approaches citation
 
-# Analyze results and generate LaTeX tables
-python analyze_physics_cld_results.py
+# Analyse results and generate LaTeX tables
+python analyse_physics_cld_results.py
 \end{verbatim}
 
 \begin{table}[H]
@@ -1379,7 +1744,7 @@ Water Tank & Conservation of Mass, Torricelli's Law (1643) \\
 Computes API costs from token usage in experiment Excel files.
 
 \begin{verbatim}
-cd final_runs/cost_analysis/
+cd final_runs/supp_cost_analysis/
 
 # Complete cost analysis (RQ1a + RQ1b estimates)
 python calculate_all_costs.py
@@ -1418,13 +1783,29 @@ GPT-5-mini & \$0.15/1M input, \$0.60/1M output tokens \\
     \item \texttt{cost\_by\_experiment\_results.json}: Detailed per-experiment breakdown
 \end{itemize}
 
+\subsection{Power Analysis}
+\label{sec:power_analysis}
+
+Computes statistical power for pairwise prompt comparisons using effect sizes from experimental data.
+
+\begin{verbatim}
+cd final_runs/power_analysis/
+
+python compute_power_analysis.py
+\end{verbatim}
+
+\textbf{Output Files:}
+\begin{itemize}[noitemsep]
+    \item Console output with power estimates and required sample sizes
+\end{itemize}
+
 \subsection{Embedding Model Benchmark}
 \label{sec:embedding_benchmark_execution}
 
 Compares embedding models for cosine similarity computation in RQ2 hallucination detection.
 
 \begin{verbatim}
-cd final_runs/embedding_model_benchmark/
+cd final_runs/supp_embedding_benchmark/
 
 python embedding_benchmark_real_cld.py
 \end{verbatim}
@@ -1448,15 +1829,15 @@ Qwen3-Embedding-8B & 8B params Q4\_K\_M, 4096-dim, via Ollama \\
 \end{tabular}
 \end{table}
 
-\textbf{Key Result:} MPNet is 23$\times$ faster (3.0 ms/doc vs.\ 67.3 ms/doc), justifying its selection for batch workloads despite Qwen3's higher MTEB score.
+\textbf{Key Result:} MPNet is 23$\times$ faster (3.0 ms/doc vs.\ 67.3 ms/doc), justifying its selection for batch workloads; published MTEB results for both models are reported in Appendix~\ref{sec:embedding_benchmark} for context.
 
 \textbf{Output Files:}
 \begin{itemize}[noitemsep]
     \item \texttt{benchmark\_results.txt}: Full output with LaTeX table
 \end{itemize}
 
-\section{Output Artifacts}
-\label{sec:output_artifacts}
+\section{Output Artefacts}
+\label{sec:output_artefacts}
 
 \subsection{Metadata Files}
 
@@ -1480,7 +1861,7 @@ Each experiment run generates:
 \midrule
 \texttt{judged\_*.xlsx} & Per-edge validation results with scores and classifications \\
 \texttt{*\_metrics.json} & Aggregate metrics (precision, recall, F1, AUC) \\
-\texttt{*\_confusion\_matrix.png} & Visualization of classification performance \\
+\texttt{*\_confusion\_matrix.png} & Visualisation of classification performance \\
 \texttt{*\_score\_distribution.png} & Distribution of judge scores by ground truth label \\
 \bottomrule
 \end{tabular}
@@ -1495,7 +1876,7 @@ Where \texttt{PROMPT\_TYPE} $\in$ \{\texttt{baseline}, \texttt{mechanistic}, \te
 \section{Output Token Verification}
 \label{sec:token_verification}
 
-To verify no judge outputs were truncated due to \texttt{max\_tokens} limits, we analyzed all judge messages using the GPT-4 tokenizer (\texttt{tiktoken}).
+To verify no judge outputs were truncated due to \texttt{max\_tokens} limits, we analysed all judge messages using the GPT-4 tokenizer (\texttt{tiktoken}).
 
 \begin{table}[H]
 \centering
@@ -1518,22 +1899,22 @@ cot & Chain-of-thought reasoning & 1,534 & 10,000 & 24,266 & 59,795 & 59,304 & 9
 \begin{tablenotes}
 \small
 \item \textit{Note.} Max Tok = maximum observed output tokens via GPT-4 tokenizer (tiktoken). Limit = \texttt{max\_tokens} API parameter. Calls = total API calls. Success = HTTP 200 completions. Rate = success percentage.
-\item \textit{Reproduction:} \texttt{python final\_runs/token\_call\_analysis\_RQ1a\_judge/} \texttt{analyze\_output\_tokens\_tiktoken.py}
+\item \textit{Reproduction:} \texttt{python final\_runs/supp\_token\_analysis\_rq1a/} \texttt{analyse\_output\_tokens\_tiktoken.py}
 \end{tablenotes}
 \end{table}
 
-\textbf{Conclusion:} All outputs remained below their respective token limits. The closest approach was baseline at 1,499/1,500 tokens. No truncation artifacts (incomplete JSON, mid-sentence cutoffs) were detected. The mech\_lit variant shows lower success rate (89.0\%) due to web search failures in citation retrieval.
+\textbf{Conclusion:} All outputs remained below their respective token limits. The closest approach was baseline at 1,499/1,500 tokens. No truncation artefacts (incomplete JSON, mid-sentence cutoffs) were detected. The mech\_lit variant shows lower success rate (89.0\%) due to web search failures in citation retrieval.
 
 \chapter{Statistical Procedures Reference}
 \label{app:statistical_procedures_reference}
 
-For transparency and reproducibility, we summarize the statistical hypotheses and assumption diagnostics associated with the procedures used throughout the thesis:
+For transparency and reproducibility, we summarise the statistical hypotheses and assumption diagnostics associated with the procedures used throughout the thesis:
 
 \subsubsection{Omnibus and Post-Hoc Tests.}
 \begin{itemize}[noitemsep]
     \item \textbf{Friedman test}~\cite{friedman1937use} \textbf{(blocked prompt effect; RQ1a/RQ1b):} omnibus test of prompt effects in a repeated-measures (blocked) design using ranks within blocks (CLD$\times$run). $H_0$: prompt conditions have equal rank distributions within blocks. $H_1$: at least one prompt differs. Effect size: Kendall's $W$~\cite{kendall1939problem}.
     \item \textbf{Wilcoxon signed-rank test}~\cite{wilcoxon1945individual} \textbf{(paired post-hoc; RQ1a/RQ1b):} pairwise test on matched blocks. $H_0$: $\mathrm{median}(\Delta)=0$ for the paired prompt difference across blocks. $H_1$: $\mathrm{median}(\Delta)\neq 0$.
-    \item \textbf{Mann--Whitney U test}~\cite{mann1947test} \textbf{(RQ2 diagnostic):} compares two independent samples by rank. Used descriptively to characterize separation between hallucinated vs.\ correct edge distributions within CLDs. Effect size: rank-biserial $r$.
+    \item \textbf{Mann--Whitney U test}~\cite{mann1947test} \textbf{(RQ2 diagnostic):} compares two independent samples by rank. Used descriptively to characterise separation between hallucinated vs.\ correct edge distributions within CLDs. Effect size: rank-biserial $r$.
     \item \textbf{One-sample $t$-test (RQ2):} tests whether the mean of block-level AUCs differs from chance (0.5). $H_0$: $\mu_{\text{AUC}}=0.5$. $H_1$: $\mu_{\text{AUC}}\neq 0.5$. Valid for $n=9$ blocks given approximate normality of block means (Shapiro--Wilk $p>0.05$).
     \item \textbf{Fisher's exact test}~\cite{fisher1922interpretation} \textbf{(RQ3):} tests independence in $2\times2$ contingency tables (e.g., detection rate TP vs.\ FP). $H_0$: rates are equal. $H_1$: rates differ. Effect size: Cohen's $h$.
     \item \textbf{Kruskal--Wallis test}~\cite{kruskal1952use} \textbf{(robustness check):} non-parametric one-way ANOVA on ranks. Used to verify robustness when parametric assumptions are violated. $H_0$: all groups have the same distribution. $H_1$: at least one group differs.
@@ -1558,30 +1939,592 @@ For transparency and reproducibility, we summarize the statistical hypotheses an
 \subsubsection{RQ2 Classifier Algorithms (Ensemble Models, Hyperparameters).}
 \label{sec:rq2_classifier_notes}
 \begin{itemize}[noitemsep]
-    \item \textbf{Shared implementation (RQ2 Phases 4--6):} classifiers are implemented in scikit-learn~\cite{pedregosa2011sklearn} and trained on standardized CI metrics using \texttt{StandardScaler} (fit on training blocks only). Splits are \emph{group-aware} with \texttt{GroupShuffleSplit(test\_size=0.33, random\_state=42)} for the held-out test blocks and \texttt{GroupKFold(n\_splits=3)} for block-level CV, with groups defined as \texttt{block\_id = CLD$\times$run} (9 blocks total).
+    \item \textbf{Shared implementation (RQ2 Phases 4--6):} classifiers are implemented in scikit-learn~\cite{pedregosa2011sklearn} and trained on standardised CI metrics using \texttt{StandardScaler} (fit on training blocks only). Splits are \emph{group-aware} with \texttt{GroupShuffleSplit(test\_size=0.33, random\_state=42)} for the held-out test blocks and \texttt{GroupKFold(n\_splits=3)} for block-level CV, with groups defined as \texttt{block\_id = CLD$\times$run} (9 blocks total).
     \item \textbf{Random Forest (RF)}~\cite{breiman2001random} \textbf{(as implemented):} {\small\texttt{RandomForestClassifier(\allowbreak n\_estimators=100, class\_weight='balanced', random\_state=42)}}.
     \item \textbf{Gradient Boosting (GB)}~\cite{friedman2001greedy} \textbf{(as implemented):} {\small\texttt{GradientBoostingClassifier(\allowbreak n\_estimators=100, random\_state=42)}}.
     \item \textbf{Logistic Regression (LR)}~\cite{abd18569-0124-3b1e-9ca9-67a6fd857a26} \textbf{(as implemented):} {\small\texttt{LogisticRegression(\allowbreak max\_iter=1000, class\_weight='balanced', random\_state=42)}}.
     \item \textbf{Neural Network (MLP)}~\cite{rumelhart1986learning} \textbf{(as implemented):} {\small\texttt{MLPClassifier(\allowbreak hidden\_layer\_sizes=(32,16), max\_iter=2000, random\_state=42)}} trained via backpropagation.
 \end{itemize}
 
-\chapter{Prompt Engineering Ablation Study}
+
+\chapter{Experimental Prompts}
+\label{sec:appendix_prompts}
+% ==============================================================================
+
+This section documents the prompts used in the final experiments. Full prompt YAML files are archived in \texttt{final\_runs/prompts/} (see \texttt{final\_runs/prompts/README.md}). Below we reproduce the key prompt texts verbatim.
+
+% ------------------------------------------------------------------------------
+\section{Prompt File Locations}
+\label{sec:prompt_file_locations}
+% ------------------------------------------------------------------------------
+\noindent\textbf{Correctness Judge prompts:}
+\begin{itemize}[noitemsep]
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_baseline.yaml}
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_cot.yaml}
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_mechanistic.yaml}
+\end{itemize}
+
+\noindent\textbf{Citation Judge prompts:}
+\begin{itemize}[noitemsep]
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_baseline.yaml}
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_cot.yaml}
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_mechanistic.yaml}
+    \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_mechanistic\_lit.yaml}
+\end{itemize}
+
+\noindent\textbf{Corrector prompts:}
+\begin{itemize}[noitemsep]
+    \item \texttt{final\_runs/prompts/RQ1b\_corrector/corrector/corrector\_prompts.yaml}
+\end{itemize}
+
+\noindent\textbf{Generator prompt:}
+\begin{itemize}[noitemsep]
+    \item \texttt{final\_runs/prompts/PRELIM\_generator/final\_generator/prompts\_Nitai\_C.yaml}
+\end{itemize}
+\label{sec:correctness_prompts}
+\label{sec:citation_prompts}
+\label{sec:corrector_prompts}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Generator (Nitai\_C)}
+\label{sec:generator_prompt_text}
+% ------------------------------------------------------------------------------
+
+The generator uses two prompts: \texttt{generateNodes} (node discovery) and \texttt{generateEdges} (edge discovery). Both employ chain-of-thought reasoning and few-shot examples.
+
+\subsection{generateNodes Prompt}
+\label{sec:prompt_generateNodes}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a systems dynamics modeling expert. Your role is to identify a single,
+clearly defined, variable that causally influences a target variable within a
+specific context, time, and space. The variable must be measurable, not
+composite, and must not overlap with the target or any excluded variables.
+
+Let's think step-by-step:
+1. First, understand the target variable, its definition, and the context
+2. Brainstorm potential causal variables that directly influence the target
+3. Evaluate each potential variable against the criteria: measurable,
+   non-composite, no overlap with target
+4. Select the most appropriate variable with the clearest causal link
+5. Verify the variable works within the specified temporal and spatial scale
+6. Define the variable concisely and specify appropriate units
+
+Once you've completed this reasoning process, respond only with a JSON including
+the variable name and its concise definition, formatted as:
+{"Variable":"Concise name", "Definition":"Definition", "Units":"Units"}
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Given the following constraints:
+Target Variable: {{ target.title() }} (measured in {{ target_units }})
+Temporal Scale: {{ temporal.title() }}
+Spatial Scale: {{ spatial.title() }}
+Context: {{ context | join(', ') }}
+
+I need you to think carefully through this problem:
+
+1. First, understand what {{ target.lower() }} means: "{{ target_definition }}"
+2. Consider what directly causes changes in {{ target.lower() }} within the
+   {{ temporal.lower() }} timeframe and {{ spatial.lower() }} spatial scale
+3. Evaluate potential variables against these criteria:
+   - Must be directly measurable (not abstract)
+   - Must not be composite (not combining multiple factors)
+   - Must have a clear causal effect on {{ target.lower() }}
+   - Must work within the specified temporal and spatial scales
+
+After this analysis, name a variable (2-3 words) with a direct causal effect.
+Output format: {"Variable":"Name", "Definition":"Definition", "Units":"Units"}
+\end{verbatim}
+\end{small}
+
+\subsection{generateEdges Prompt}
+\label{sec:prompt_generateEdges}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a scientific system dynamics model expert specializing in causal loop
+diagrams. Given two variables and their definitions, your task is to determine
+the precise causal relationship between them.
+
+Approach this systematically:
+1. First, clearly understand what each variable means and how it's measured
+2. Consider the mechanisms by which the first variable might directly affect
+   the second
+3. Evaluate whether this mechanism works within the given spatial and temporal
+   scales
+4. Check for potential mediating variables that might explain the relationship
+5. Distinguish between correlation and causation - focus only on true causal
+   relationships
+6. Determine if the relationship is positive, negative, or non-existent
+7. Verify your reasoning by considering hypothetical increases and decreases
+8. Provide a concise explanation that justifies your conclusion
+
+Select the most appropriate relationship type based on causal logic, not mere
+correlation. Respond with: {"Relationship":"TYPE","Explanation":"Brief text."}
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+I need to determine if there is a causal relationship between "{{ var1 }}" and
+"{{ var2 }}" for a Causal Loop Diagram (CLD). Let me think step by step:
+
+Step 1: Understand the variables
+- Variable 1: "{{ var1 }}" defined as "{{ def1 }}"
+- Variable 2: "{{ var2 }}" defined as "{{ def2 }}"
+- Scale: Spatial = "{{ spatial }}", Temporal = "{{ temporal }}"
+
+Step 2: Consider potential causal mechanisms
+- Does a change in "{{ var1 }}" directly cause a change in "{{ var2 }}"?
+- Does this mechanism operate within the given spatial and temporal scales?
+
+Step 3: Check for mediating variables
+- Are there variables in the CLD that mediate this relationship?
+- If a mediator exists, the direct relationship should not be included
+
+Step 4: Determine relationship type
+1. POSITIVE - increase in var1 causes increase in var2 (or decrease->decrease)
+2. NEGATIVE - increase in var1 causes decrease in var2 (or decrease->increase)
+3. NONE - No causal relationship exists
+
+Example Responses:
+1. {"Relationship":"POSITIVE","Explanation":"Force causes acceleration..."}
+2. {"Relationship":"NEGATIVE","Explanation":"Resistance causes current to..."}
+3. {"Relationship":"NONE","Explanation":"No direct causal link exists..."}
+
+IMPORTANT: In case you don't know, respond with
+{"Relationship":"NONE","Explanation":"I don't know"}
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Correctness Judge}
+\label{sec:correctness_judge_prompt_text}
+% ------------------------------------------------------------------------------
+
+The correctness judge evaluates causal explanations for logical soundness. Three variants were tested.
+
+\subsection{Baseline Variant}
+\label{sec:prompt_judge_correctness_baseline}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating the quality of causal reasoning.
+Your job is to carefully read the causal explanation and determine if it is
+logically sound and scientifically coherent. Base your judgment only on the
+internal logic of the explanation, not on external knowledge or citations.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate the quality of this causal explanation:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+EXPLANATION: {{ motivation }}
+
+Based on the explanation, assess whether the causal reasoning is sound.
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+\end{verbatim}
+\end{small}
+
+\subsection{Chain-of-Thought (CoT) Variant}
+\label{sec:prompt_judge_correctness_cot}
+
+Based on Kojima et al.\ (2022)~\cite{kojima2022large}. Same system prompt as Baseline. User prompt adds the trigger phrase:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step to assess whether the causal reasoning is sound.
+
+Respond in this format:
+REASON: [Start with your step-by-step chain of thought, then provide your
+        final judgment. Make your reasoning process explicit.]
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill Criteria)}
+\label{sec:prompt_judge_correctness_mechanistic}
+
+Based on Shimonovich et al.\ (2020)~\cite{shimonovich2020bradford}, adapting four Bradford Hill criteria for qualitative CLDs: (1) Plausibility, (2) Temporality, (3) Strength, (4) Coherence.
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating causal explanations using core
+principles from the Bradford Hill causal criteria framework.
+
+You will assess explanations on FOUR key dimensions adapted for qualitative
+causal models:
+
+1. PLAUSIBILITY - Does it describe a plausible causal mechanism?
+2. TEMPORALITY - Is the causal direction justified and temporally coherent?
+3. STRENGTH - Does it convey that this is an important (not trivial) causal
+   relationship?
+4. COHERENCE - Is the reasoning internally consistent and non-circular?
+
+These criteria align with Bradford Hill's framework (Shimonovich et al., 2020)
+while being practical for conceptual models. Base your judgment only on the
+internal logic of the explanation, not on external knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate this causal explanation using four core Bradford Hill criteria:
+
+CLAIMED CAUSAL PATHWAY:
+{{ source }} -> [{{ relationship }}] -> {{ target }}
+
+PROPOSED EXPLANATION:
+{{ motivation }}
+
+Assess the explanation on these four dimensions:
+
+1. PLAUSIBILITY (Causal Mechanism):
+  - Does the explanation describe HOW {{ source }} affects {{ target }}?
+  - Is a specific mechanism or pathway described (not just assertion)?
+  - Is the mechanism scientifically plausible and non-circular?
+
+2. TEMPORALITY (Causal Direction):
+  - Does the explanation support the direction {{ source }} -> {{ target }}?
+  - Is temporal ordering appropriate (cause precedes effect)?
+  - Does it avoid reverse causation?
+
+3. STRENGTH (Relative Importance):
+  - Does the explanation convey that {{ source }} is an IMPORTANT influence?
+  - Does it suggest this is more than trivial or merely correlational?
+  - Is the causal claim stated with appropriate confidence?
+
+4. COHERENCE (Internal Consistency):
+  - Is the reasoning logically consistent and non-contradictory?
+  - Does it avoid tautological or circular arguments?
+  - Are the claims coherent with each other?
+
+Respond in this format:
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+REASON: [2-3 sentence explanation referencing which criteria were met/failed]
+
+Guidelines:
+- CORRECT: Addresses all four criteria reasonably well
+- PARTIALLY_CORRECT: Addresses 2-3 criteria well but has notable gaps
+- INCORRECT: Fails most criteria (vague, circular, wrong direction, etc.)
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Citation Judge}
+\label{sec:citation_judge_prompt_text}
+% ------------------------------------------------------------------------------
+
+The citation judge evaluates whether causal claims are supported by their cited sources. Four variants were tested.
+
+\subsection{Baseline Variant}
+\label{sec:prompt_citation_baseline}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating whether scientific claims are
+supported by their cited sources. Your job is to carefully read the
+relationship motivation and the cited sources, and determine if the motivation
+is supported. Base your judgment only on the content of the citations provided,
+not on general knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Verify if this relationship is supported by its citations:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+MOTIVATION: {{ motivation }}
+
+Here are the contents of the cited sources:
+{{ citations }}
+
+Based on the cited sources, evaluate if the relationship motivation is
+supported by the citations.
+
+Respond in this format:
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|UNADDRESSED]
+REASON: [brief explanation of your judgment]
+\end{verbatim}
+\end{small}
+
+\subsection{Chain-of-Thought (CoT) Variant}
+\label{sec:prompt_citation_cot}
+
+Based on Kojima et al.\ (2022)~\cite{kojima2022large}. Same system prompt as Baseline. User prompt adds the CoT trigger:
+
+\begin{small}
+\begin{verbatim}
+Evaluate whether the citations support this relationship claim:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+EXPLANATION: {{ motivation }}
+
+CITED SOURCES:
+{{ citations }}
+
+Let's think step by step to assess whether the explanation is adequately
+supported by the citations.
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
+SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill)}
+\label{sec:prompt_citation_mechanistic}
+
+Based on Shimonovich et al.\ (2020)~\cite{shimonovich2020bradford}. Evaluates citations against Bradford Hill criteria.
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating cited evidence using the Bradford
+Hill framework.
+
+You will assess whether citations provide evidence for four key causality
+criteria identified as having strong support across modern causal inference:
+
+1. STRENGTH OF ASSOCIATION - including confounding analysis
+2. TEMPORALITY - temporal precedence and ruling out reverse causation
+3. PLAUSIBILITY - causal mechanisms and mediation pathways
+4. EXPERIMENT/DESIGN - study design implications for exchangeability
+
+Base your judgment only on what the citations actually say, not on general
+knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate the cited evidence for this causal relationship using the Bradford
+Hill framework:
+
+CLAIMED CAUSAL PATHWAY:
+{{ source }} -> [{{ relationship }}] -> {{ target }}
+
+PROPOSED MECHANISM:
+{{ motivation }}
+
+CITED SOURCES:
+{{ citations }}
+
+Let's think step by step. Assess whether the citations provide evidence for:
+
+1. PLAUSIBILITY (Causal Mechanism):
+   - Does the explanation describe HOW {{ source }} affects {{ target }}?
+   - Is a specific mechanism or pathway described (not just assertion)?
+
+2. TEMPORALITY (Causal Direction):
+   - Does the explanation support the direction {{ source }} -> {{ target }}?
+   - Does it avoid reverse causation?
+
+3. STRENGTH (Relative Importance):
+   - Does the explanation convey that {{ source }} is an IMPORTANT influence?
+   - Is this more than trivial or merely correlational?
+
+4. COHERENCE (Internal Consistency):
+   - Is the reasoning logically consistent and non-contradictory?
+   - Does it avoid tautological or circular arguments?
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
+SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic-Literature Variant}
+\label{sec:prompt_citation_mechanistic_lit}
+
+Extends Mechanistic variant with explicit literature grounding requirements. Adds experimental evidence criterion:
+
+\begin{small}
+\begin{verbatim}
+4. EXPERIMENT/DESIGN (Implications for Exchangeability):
+   - Do citations include experimental or quasi-experimental studies?
+   - Do they discuss study designs that enhance causal inference (RCTs,
+     natural experiments)?
+   - Do they address comparability between exposed and unexposed groups?
+   - Do they consider or control for factors affecting exchangeability?
+\end{verbatim}
+\end{small}
+
+\noindent This variant requires citations to provide evidence of experimental design considerations beyond mere mechanism description, emphasizing literature-grounded causal inference.
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Corrector}
+\label{sec:corrector_prompt_text}
+% ------------------------------------------------------------------------------
+
+The corrector uses two tools: \texttt{revise\_motivation} (fix explanation, keep edge type) and \texttt{change\_edge\_type} (change polarity or remove edge). Three variants were tested.
+
+\subsection{Baseline Variant}
+\label{sec:prompt_corrector_baseline}
+
+\begin{small}
+\begin{verbatim}
+You are an expert causal reasoning corrector. You have 2 tools:
+
+1. revise_motivation: Fix incorrect motivation text (keeps same edge type)
+2. change_edge_type: Change edge type (POSITIVE/NEGATIVE/NONE) with new
+   motivation
+
+IMPORTANT: NONE represents "no causal relationship" - it's a valid type, not
+deletion.
+
+TOOL SELECTION EXAMPLES:
+
+EXAMPLE 1: Bad motivation, correct type -> revise_motivation
+Edge: "Exercise" -> "Mental Health" (POSITIVE)
+Motivation: "Exercise makes people happy"
+Judge: "Overly simplistic; doesn't explain mechanism"
+ACTION: revise_motivation(new_motivation="Exercise increases endorphin
+production and reduces cortisol, improving mental health outcomes")
+
+EXAMPLE 2: Wrong polarity -> change_edge_type
+Edge: "Vaccination Rate" -> "Disease Spread" (POSITIVE)
+Motivation: "More vaccinations lead to more disease spread"
+Judge: "Wrong polarity - vaccinations reduce disease spread"
+ACTION: change_edge_type(old_type='POSITIVE', new_type='NEGATIVE',
+new_motivation="Higher vaccination rates create herd immunity, reducing
+disease transmission")
+
+EXAMPLE 3: Should be NONE -> change_edge_type
+Edge: "Shoe Size" -> "Reading Ability" (POSITIVE)
+Motivation: "Larger shoe size indicates better reading ability"
+Judge: "No causal relationship - confounded by age"
+ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE',
+new_motivation="No direct causal link between shoe size and reading. The
+correlation is due to age as a confounding variable")
+
+DECISION RULES:
+revise_motivation: Edge type is correct, but explanation is flawed
+change_edge_type: Edge type itself is wrong (polarity, existence)
+
+Analyze the judge feedback and call the appropriate tool.
+\end{verbatim}
+\end{small}
+
+\subsection{CoT Variant}
+\label{sec:prompt_corrector_cot}
+
+Adds a 5-step reasoning framework after the examples:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step to determine the best correction action.
+
+STEP 1: Analyze the Judge Feedback
+- What specific problem did the judge identify?
+- Is it about: (a) polarity/sign, (b) mechanism/reasoning, (c) type, or
+  (d) existence?
+
+STEP 2: Assess the True Causal Relationship
+- What is the CORRECT causal relationship between these variables?
+- Should it be: POSITIVE, NEGATIVE, or NONE (no causal relationship)?
+
+STEP 3: Identify the Minimal Correction
+- If motivation is flawed but type is correct -> Use revise_motivation
+- If edge type itself is wrong -> Use change_edge_type
+
+STEP 4: Verify Your Decision
+- Does this action address the specific judge feedback?
+- Could revise_motivation work instead of change_edge_type?
+- If changing to NONE, can you explain WHY no causal relationship exists?
+
+STEP 5: Execute the Tool Call
+Call the appropriate tool with your validated reasoning.
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill)}
+\label{sec:prompt_corrector_mechanistic}
+
+Extends CoT with Bradford Hill criteria:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step, applying Bradford Hill criteria for causal assessment.
+
+STEP 1: Analyze Judge Feedback + Assess PLAUSIBILITY (Causal Mechanism)
+- What specific problem did the judge identify?
+- Does a plausible causal MECHANISM exist between source and target?
+- Is the current motivation describing the wrong mechanism, or is there NO
+  mechanism?
+
+STEP 2: Evaluate TEMPORALITY (Causal Direction)
+- What is the CORRECT causal relationship: POSITIVE, NEGATIVE, or NONE?
+- Does the causal direction make sense (source must precede target)?
+
+STEP 3: Assess STRENGTH (Relative Importance)
+- Is there a SUBSTANTIAL causal relationship, or is it trivial/negligible?
+- If motivation is flawed but strong causal relationship exists
+  -> revise_motivation
+
+STEP 4: Evaluate COHERENCE (Internal Consistency) + Verify Decision
+- Is the reasoning logically consistent and non-contradictory?
+- Does judge feedback suggest type is wrong, or just explanation needs fixing?
+
+STEP 5: Execute Tool Call
+Based on Bradford Hill assessment:
+- IF Plausibility+Temporality+Strength satisfied, but Coherence fails
+  -> revise_motivation
+- IF Temporality shows wrong direction -> change_edge_type (flip polarity)
+- IF Plausibility or Strength fail -> change_edge_type (to NONE)
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Prompt Engineering Ablation Study}
 \label{sec:ablation_edge}
 
 Prompt engineering has emerged as a critical technique for optimizing large language model (LLM) performance on domain-specific tasks. To systematically evaluate the effectiveness of various prompting strategies for automated causal loop diagram generation, we conducted an ablation study comparing nine prompt variants across three causal loop diagrams.
 
-\section{Experimental Design}
+\subsection{Experimental Design}
 
 We evaluated nine prompt variants across three ground-truth causal loop diagrams:
 \begin{itemize}[noitemsep]
-    \item \textbf{CLD 1}: Depressive symptoms in response to stressors (34 edges)
-    \item \textbf{CLD 2}: Social norms and obesity prevalence (12 edges)
-    \item \textbf{CLD 3}: Emergency department visits by older persons (66 edges)
+    \item \textbf{CLD 1}: Depressive Symptoms in response to stressors (34 edges)
+    \item \textbf{CLD 2}: Social Norms and obesity prevalence (12 edges)
+    \item \textbf{CLD 3}: Emergency Department (66 edges)
 \end{itemize}
 
 All experiments used GPT-4.1 as the generator model with consistent hyperparameters (temperature=0.7, top\_p=1.0). Performance was measured using the F1 score, which balances precision and recall in edge discovery.
 
-\section{Prompt Engineering Techniques}
+\subsection{Prompt Engineering Techniques}
 
 Table~\ref{tab:prompt_techniques} presents a classification matrix of prompt engineering techniques employed in each variant, based on established literature.
 
@@ -1622,12 +2565,12 @@ Current & & \checkmark & & & \\
     \item \textbf{Current}: Minimal baseline control with basic prompting.
 \end{itemize}
 
-\section{Results}
+\subsection{Results}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Figures/edge_ablation_f1_ordered.png}
-    \caption[Average F1 by prompt]{Average F1 scores for prompt variants across three CLDs, ordered from lowest to highest. Nitai\_C achieved highest performance (F1=0.460). Color coding: green (F1 $\geq$ 0.45), blue (0.35--0.45), orange (0.25--0.35), red ($<$0.25).}
+    \includegraphics[width=0.95\textwidth]{../Figures/edge_ablation_f1_ordered.png}
+    \caption[Average F1 by prompt]{Average F1 scores for prompt variants across three CLDs, ordered from lowest to highest. Nitai\_C achieved highest performance (F1=0.460). Colour coding: green (F1 $\geq$ 0.45), blue (0.35--0.45), orange (0.25--0.35), red ($<$0.25).}
     \label{fig:ablation_f1_ordered}
 \end{figure}
 
@@ -1652,7 +2595,7 @@ Cillian\_C & 0.000 & 0.000 & 0.000 & 0.000 \\
 \end{tabular}
 \end{table}
 
-\section{Key Findings}
+\subsection{Key Findings}
 
 \textbf{Overall Performance:}
 \begin{itemize}[noitemsep]
@@ -1662,7 +2605,7 @@ Cillian\_C & 0.000 & 0.000 & 0.000 & 0.000 \\
 
 \textbf{CLD-Specific Patterns:}
 \begin{itemize}[noitemsep]
-    \item \textbf{CLD 2 Challenge}: All variants performed worst on CLD 2 (Social Norms \& Obesity), with F1 scores 0.00--0.24.
+    \item \textbf{CLD 2 Challenge}: All variants performed worst on CLD 2 (Social Norms), with F1 scores 0.00--0.24.
     \item \textbf{High Variance}: Within-prompt SD across CLDs ranged 0.18--0.25, indicating sensitivity to problem characteristics.
 \end{itemize}
 
@@ -1672,13 +2615,13 @@ Cillian\_C & 0.000 & 0.000 & 0.000 & 0.000 \\
     \item \textbf{Complete Failure}: Cillian\_C's zero performance indicates overly restrictive definition-grounded evaluation can be counterproductive.
 \end{itemize}
 
-\section{Interpretation}
+\subsection{Interpretation}
 
 The progression Nitai\_A $\rightarrow$ Nitai\_B $\rightarrow$ Nitai\_C demonstrates incremental performance gains with Chain-of-Thought, achieving 14\% improvement over baseline. This supports Wei et al.'s~\cite{wei2022chain} findings that explicit reasoning steps enhance complex task performance.
 
 Rick\_B (F1=0.356), employing systematic decomposition, underperformed Nitai\_C's CoT approach by 23\%, suggesting decomposition strategies may be less effective when tasks require holistic pattern recognition rather than sequential problem solving.
 
-\section{Limitations}
+\subsection{Limitations}
 
 \begin{itemize}[noitemsep]
     \item \textbf{Sample Size}: Only three CLDs limits generalizability.
@@ -1686,6 +2629,57 @@ Rick\_B (F1=0.356), employing systematic decomposition, underperformed Nitai\_C'
     \item \textbf{Model Specificity}: Results apply to GPT-4.1; patterns may differ for other LLMs.
     \item \textbf{Prompt Authorship}: Different variants designed by different researchers, introducing potential confounding.
 \end{itemize}
+
+\section{Generator Design Rationale}
+\label{app:generator_design_rationale}
+% ------------------------------------------------------------------------------
+
+This section motivates the generator's decomposition into edge-level decisions and the accompanying safeguards used in our experiments.
+
+In our CLD generation system, given temporal and spatial scales and domain context, we generate a set of nodes (or, in the main experiments, insert validated nodes by fixing the node set to the ground-truth validation variables \(V\)), and then generate relationships pairwise as directed queries over ordered variable pairs \((A,B)\) and \((B,A)\) (i.e., \( |V|(|V|-1)\) candidate edges). For each directed pair, the LLM is asked whether \(A\) \emph{directly} causes \(B\) and to return a relationship type and a short causal narrative; in this study, relationship types are constrained to \{\texttt{POSITIVE}, \texttt{NEGATIVE}, \texttt{NONE}\} (Section~\ref{sec:generator_prompt_nitai_c}, Listing~\ref{lst:generator_nitai_c_yaml}). To address the limitation of reviewing links in isolation, we perform a mediation check by passing the current node set \(V\) to the edge prompt as candidate mediators. When supported by the LLM API, we also capture token-level logprobs for the edge-generation response (relationship label + narrative) and derive logprob-based uncertainty features (LUQ metrics) used in downstream hallucination detection. Algorithmic details are traced from the implementation in Section~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}). Relative to Crielaard et al.'s CLD-to-SDM pipeline (Section~\ref{sec:background_gmb}; \citet{crielaard2024refining}), this operationalises the \emph{causal link identification} step and approximates \emph{intermediary-variable documentation} via mediation checks over the current node set, while deferring richer aCLD elements such as functional forms and interaction terms to future work (i.e., these are not addressed in this thesis). Our downstream phases address evidence-quality annotation through post-hoc edge validation and remediation (LLM-as-a-Judge and LLM-as-a-Corrector) and, when allocating additional test-time compute, external evidence acquisition via Deep Research (RQ3).
+
+\section{Generator Prompt (Nitai\_C)}
+\label{sec:generator_prompt_nitai_c}
+% ------------------------------------------------------------------------------
+
+The final experiments use the \textbf{Nitai\_C} generator prompt configuration for both node generation (\texttt{generateNodes}) and edge generation (\texttt{generateEdges}). The prompt is stored at:
+
+\noindent\texttt{data\_science/parameter\_tuning\_experiments/prompts\_Nitai\_C.yaml}
+
+\noindent and is archived (as a copied file) at:
+
+\noindent\texttt{final\_runs/prompts/PRELIM\_generator/final\_generator/prompts\_Nitai\_C.yaml}
+
+\noindent (see \texttt{final\_runs/prompts/README.md} for IDs and checksums).
+
+\begin{lstlisting}[caption={Generator Prompt Configuration: Nitai\_C (\texttt{generateNodes} + \texttt{generateEdges})},label={lst:generator_nitai_c_yaml}]
+PROMPT ARCHIVE NOTE:
+- Full prompt text is archived as a copied YAML at:
+  final_runs/prompts/PRELIM_generator/final_generator/prompts_Nitai_C.yaml
+- See: final_runs/prompts/README.md
+\end{lstlisting}
+
+Three prompting strategies were evaluated for each component:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Baseline}: Direct instruction without reasoning scaffolding (control condition)
+    \item \textbf{Chain-of-Thought (CoT)}: Zero-shot CoT via ``Let's think step by step''~\citep{kojima2022large}
+    \item \textbf{Mechanistic}: Domain-specific criteria based on the Bradford Hill causal framework~\citep{shimonovich2020bradford}
+\end{enumerate}
+
+For citation judges, an additional \textbf{Mechanistic-Lit} variant combines mechanistic evaluation with explicit literature grounding requirements.
+
+% ------------------------------------------------------------------------------
+\section{Edge Generation Ablation Prompts}
+\label{sec:edge_ablation_prompts}
+% ------------------------------------------------------------------------------
+
+The full text of all nine edge-generation prompt variants used in the ablation study (Section~\ref{sec:ablation_edge}) is archived (as copies) under:
+
+\noindent\texttt{final\_runs/prompts/PRELIM\_generator/edge\_ablation/}
+
+\noindent See \texttt{final\_runs/prompts/README.md} for stable IDs and file checksums.
+
+\noindent (Prompts are not reproduced verbatim here to minimize appendix length.)
 
 \chapter{Node Generation Prompt Ablation}
 \label{sec:ablation_node}
@@ -1714,12 +2708,27 @@ Node\_V2\_Constraints & 0.617 & 0.077 & [0.578, 0.656] & -0.26 & 15 \\
 
 \textbf{Statistical Analysis:}
 \begin{itemize}[noitemsep]
-    \item One-way ANOVA: $F = 0.81$, $p = 0.567$ --- \textbf{no significant differences}
-    \item All pairwise comparisons non-significant after Bonferroni correction
-    \item Effect sizes negligible to small (Cohen's $d$ vs.\ baseline range: $-0.26$ to $+0.44$)
+    \IfFileExists{generated/node_ablation_stats.tex}{
+        \input{generated/node_ablation_stats.tex}
+    }{
+        \item One-way ANOVA: $F = 0.81$, $p = 0.567$ --- \textbf{no significant differences}
+        \item All pairwise comparisons non-significant after Bonferroni correction
+        \item Effect sizes negligible to small (Cohen's $d$ vs.\ baseline range: $-0.26$ to $+0.44$)
+    }
 \end{itemize}
 
 \textbf{Interpretation:} Unlike edge generation, node generation is robust to prompt engineering variations. The minimal baseline performed comparably to sophisticated Chain-of-Thought variants, suggesting that node identification is a simpler task for LLMs that does not benefit substantially from advanced prompting strategies.
+
+\section{Node Generation Prompts}
+\label{sec:node_prompts}
+
+The full text of all seven node-generation prompt variants used in the node ablation study (Section~\ref{sec:ablation_node}) is archived (as copies) under:
+
+\noindent\texttt{final\_runs/prompts/PRELIM\_generator/node\_ablation/}
+
+\noindent See \texttt{final\_runs/prompts/README.md} for stable IDs and file checksums.
+
+\noindent (Prompts are not reproduced verbatim here to minimize appendix length.)
 
 \chapter{Embedding Model Benchmark}
 \label{sec:embedding_benchmark}
@@ -1741,7 +2750,7 @@ Qwen3-Embedding-8B (Q4) & 8B & 4096 & 67.3 & 14.9 \\
 \end{tabular}
 \end{table}
 
-\textbf{Hardware:} NVIDIA RTX 5090 Laptop GPU (24 GB VRAM). Qwen3 run via Ollama with 4-bit quantization (Q4\_K\_M).
+\textbf{Compute setup:} Hardware details are reported in Appendix~\ref{sec:software_env} (Table~\ref{tab:system_env}). Qwen3 was run via Ollama with 4-bit quantization (Q4\_K\_M).
 
 \textbf{Test data:} Causal narratives averaged 451 characters ($\sim$100 tokens). In production, fetched citation documents are chunked up to 4,000 characters ($\sim$1,000 tokens) before embedding---longer inputs may increase per-document latency.
 
@@ -1773,11 +2782,11 @@ Summarization & 27.49 & \textbf{34.83} \\
 \textsuperscript{a}Muennighoff et al.~\cite{muennighoff2023mteb}, Table 1 (MTEB v1, 2022). \textsuperscript{b}Zhang et al.~\cite{qwen3embedding2025}, Table 7 (MTEB eng v2, 2025).
 \end{table}
 
-\textbf{Result:} MPNet achieves 22$\times$ faster inference (3.0 vs.\ 67.3~ms/doc). Qwen3-Embedding-8B achieves higher STS (+8.3 points) and overall average (+17.4 points). However, MPNet outperforms on \textit{reranking} (59.36 vs.\ 51.56)---directly relevant to our max-similarity chunk selection task. The 22$\times$ speedup with superior reranking performance justifies MPNet selection.
+\textbf{Result:} MPNet achieves 22$\times$ faster inference (3.0 vs.\ 67.3~ms/doc; Table~\ref{tab:embed_benchmark}). Since cosine-similarity scoring is used as a throughput-bound heuristic for max-similarity chunk selection, we prioritise latency; MPNet is a strong general-purpose embedding model and is widely used in practice.
 
-\textit{Note:} Scores are from different MTEB versions (v1 vs.\ v2) and thus not directly comparable. The comparison illustrates relative strengths rather than absolute rankings.
+\textit{Note:} The MTEB scores are taken from different benchmark versions (v1 vs.\ v2) and evaluation setups and are therefore \textbf{not directly comparable}. We include them only to illustrate that both models are competitive across common embedding tasks.
 
-\textbf{Script:} \texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py}
+\textbf{Script:} \texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py}
 
 %==============================================================================
 \chapter{Algorithmic Descriptions}
@@ -2063,13 +3072,13 @@ Ensemble classifiers trained on UQ metrics to predict hallucinations.
 
 \textbf{Implementation:} \texttt{rq2\_ensemble\_classifier.py:32} (\texttt{train\_classifiers})
 
-\section{Algorithm 7: Citation Fetcher}
-\label{alg:citation_fetcher}
+\section{Algorithm 7: Citation Search (Brave)}
+\label{alg:citation_search_brave}
 
-The citation fetcher retrieves scientific literature content from URLs using a two-tier architecture: Jina AI Reader as primary with ContentScraper fallback for PDF extraction.
+This procedure retrieves candidate citation URLs for a CLD edge using the Brave Search API, optionally filtered by a trusted-domain whitelist (\cite{bravesearchapi}). It is invoked during citation filling when no usable citations are available from the LLM, and can also be used to obtain candidate sources for citation-based judging.
 
 \vspace{0.25em}
-\noindent\textbf{Trusted Academic Domains (23):} Results from the following domains are prioritized (\cite{bravesearchapi}):
+\noindent\textbf{Trusted Academic Domains (23):} Results from the following domains are prioritised (\cite{bravesearchapi}):
 \begin{itemize}[noitemsep]
     \item \texttt{pubmed.ncbi.nlm.nih.gov}
     \item \texttt{arxiv.org}
@@ -2095,6 +3104,48 @@ The citation fetcher retrieves scientific literature content from URLs using a t
     \item \texttt{cambridge.org}
     \item \texttt{elsevier.com}
 \end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Citation Search (\texttt{\_search\_with\_brave} + \texttt{SearchEngine.search})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} src, rel, tgt, claim\_txt, api\_key, trusted\_domains[] (optional)} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} citations[] (URLs, up to 5)} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 0: Initialize Brave client (once per run)}} \\
+1. & search\_client $\leftarrow$ SearchEngine(api\_key, trusted\_domains) \\
+2. & session $\leftarrow$ requests.Session() with retries(total=3, backoff=1, status=\{429,500,502,503,504\}) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Build query from edge}} \\
+3. & q $\leftarrow$ ``src rel tgt claim\_txt'' \\
+4. & \textbf{if} words(q) $>$ 50: q $\leftarrow$ first\_50\_words(q) + ``...'' \\
+5. & \textbf{if} len(q) $>$ 400: q $\leftarrow$ q[0:397] + ``...'' \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: Brave Search API call}} \\
+6. & resp $\leftarrow$ GET(\texttt{https://api.search.brave.com/res/v1/web/search}, \\
+   & \quad headers=\{Accept: json, X-Subscription-Token: api\_key\}, \\
+   & \quad params=\{q: q, count: 5, search\_lang: en, extra\_snippets: True\}) \\
+7. & results $\leftarrow$ resp.json().web.results \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 3: Domain filter + URL extraction}} \\
+8. & citations $\leftarrow$ [] \\
+9. & \textbf{for each} result $\in$ results: \\
+10.& \quad url $\leftarrow$ result.url \\
+11.& \quad \textbf{if} trusted\_domains empty \textbf{or} any(domain $\in$ url.lower()): citations.append(url) \\
+12.& \textbf{return} citations \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Implementation:} \texttt{modules.py:2647} (\texttt{fill\_in\_missing\_citations}), \texttt{:2900} (\texttt{\_build\_brave\_search\_client}), \texttt{:2967} (\texttt{\_search\_with\_brave}),\\
+\texttt{search\_engine\_copy.py:47} (\texttt{SearchEngine.search}), \texttt{citation\_whitelist\_copy.py:250} (\texttt{CitationWhitelist.get\_domains})
+
+\section{Algorithm 8: Citation Fetcher}
+\label{alg:citation_fetcher}
+
+The citation fetcher retrieves scientific literature content from URLs using a two-tier architecture: Jina AI Reader as primary with ContentScraper fallback for PDF extraction.
 
 \begin{table}[H]
 \centering
@@ -2161,14 +3212,14 @@ Table~\ref{tab:dr_agents} details the complete multi-agent pipeline components u
 \texttt{search\_agent} & GPT-5-mini & Search query & List[SearchResult] & Execute iterative web searches (4--6 calls per query thread, max 5) \\
 \texttt{evidence\_scorer} & GPT-5-mini & Evidence content & EvidenceScore & Score relevance (1--10) and methodological quality (1--10) \\
 \texttt{article\_selector} & GPT-5 & Snippets + scores & ArticleSelection & Select 2--3 articles most likely to contain causal evidence for full-text fetch \\
-\texttt{judgment\_agent} & GPT-5 & Evidence + scores & EvidenceJudgment & Judge whether accumulated evidence supports the claim \\
+\texttt{judgement\_agent} & GPT-5 & Evidence + scores & EvidenceJudgement & Judge whether accumulated evidence supports the claim \\
 \texttt{causal\_evidence\_detector} & GPT-5 & All search results & CausalEvidenceEvaluation & Detect \textit{direct} causal evidence (RCTs, experiments, meta-analyses only) \\
 \texttt{verdict\_agent} & GPT-5 & All data & FinalVerdict & Synthesize final verdict with evidence summary and limitations \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{Algorithm 8: Deep Research Multi-Agent Pipeline}
+\section{Algorithm 9: Deep Research Multi-Agent Pipeline}
 \label{alg:deep_research}
 
 The Deep Research system validates causal claims through iterative literature search using a 7-agent pipeline with parallel execution.
@@ -2217,16 +3268,16 @@ The Deep Research system validates causal claims through iterative literature se
 24. & cited\_passage $\leftarrow$ causal\_eval.cited\_passage \hfill\textit{// Verbatim quote} \\
 25. & study\_type $\leftarrow$ causal\_eval.study\_type \\
 \midrule
-\multicolumn{2}{@{}l}{\textit{// Phase 6: Judgment with Early Stopping}} \\
+\multicolumn{2}{@{}l}{\textit{// Phase 6: Judgement with Early Stopping}} \\
 26. & high\_quality $\leftarrow$ \{r $\in$ all\_results : r.relevance $\geq$ 8 $\land$ r.quality $\geq$ 7\} \\
 27. & \textbf{if} direct\_found $\land$ $|$high\_quality$|$ $\geq$ 3: \\
 28. & \quad \textbf{early\_stop} \hfill\textit{// Strong evidence found} \\
-29. & judgment $\leftarrow$ judgment\_agent.run(all\_results, scores) \\
-30. & \textbf{if} judgment.verdict = ``supported'' $\land$ judgment.confidence $\geq$ 8: \\
+29. & judgement $\leftarrow$ judgement\_agent.run(all\_results, scores) \\
+30. & \textbf{if} judgement.verdict = ``supported'' $\land$ judgement.confidence $\geq$ 8: \\
 31. & \quad \textbf{early\_stop} \hfill\textit{// High confidence support} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{// Phase 7: Final Verdict Synthesis (verdict\_agent, GPT-5)}} \\
-32. & verdict $\leftarrow$ verdict\_agent.run(causal\_claim, all\_results, scores, judgment, causal\_eval) \\
+32. & verdict $\leftarrow$ verdict\_agent.run(causal\_claim, all\_results, scores, judgement, causal\_eval) \\
 33. & \textbf{return} FinalVerdict\{ \\
 34. & \quad verdict: \{supported, partially\_supported, unsupported, inconclusive\}, \\
 35. & \quad confidence: 1--10, \\
@@ -2250,54 +3301,69 @@ The Deep Research system validates causal claims through iterative literature se
 \noindent\textbf{Implementation:} \texttt{pydantic\_ai\_deepresearch\_orchestration.py} -- agents defined at lines 166--248,\\ search execution at :953, evidence scoring at :1006, early stopping at :784--795
 
 
-\chapter{Judge Score Heatmaps}
-\label{sec:appendix_judge_heatmaps}
+\section{Algorithm 10: Node Concept Similarity (Similarity-Weighted Node F1)}
+\label{alg:node_concept_similarity}
 
-This section presents detailed score heatmaps for all RQ1a experiments. The heatmaps show mean judge scores with 95\% confidence intervals for each classification type (TP, TN, FP, FN) across all CLD × prompt combinations. For a well-functioning judge: high scores for TP and TN indicate correct identification of valid edges, while low scores for FP and FN indicate correct flagging of erroneous edges as hallucinations.
+This metric quantifies conceptual overlap between a generated CLD's node set and a validation CLD's node set. It is implemented as (i) a node mapping phase (LLM- or cosine-driven, depending on mode) and (ii) a similarity-weighted score that assigns \textbf{1.0} to nodes matched in Stage~1 and assigns cosine similarity scores to a \textbf{greedy bipartite matching} over remaining unmatched nodes.
 
-\section{Ground Truth Correctness Heatmap}
-
-Figure~\ref{fig:rq1a_gt_correctness_heatmap} shows the judge score heatmap for the ground truth correctness validation. The correctness judge evaluates whether edges are factually accurate based on domain knowledge. Note the consistent high scores for TN (correctly identified non-hallucinations) across all conditions, while FP and FN classifications show lower scores indicating the judge's ability to identify problematic edges.
-
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_correctness/enhanced_analysis_latest/rq1a_ground_truth_enhanced_visualization.png}
-\caption[GT correctness: judge score heatmap]{Judge Score heatmap (mean $\pm$ 95\% CI) for ground truth correctness validation showing classification scores across CLD × prompt combinations, across 3 runs}
-\label{fig:rq1a_gt_correctness_heatmap}
-\end{figure}
+\caption{Node Concept Similarity (\texttt{compare\_session\_graph\_to\_validation}, similarity-weighted node metrics)}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_nodes $S$, validation\_nodes $V$, node\_match\_mode, cosine\_percentile $p$ (default 85), embedding\_model (default \texttt{text-embedding-3-small})} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} binary node mapping + binary node F1, cosine-only node F1, similarity-weighted (hybrid) node F1} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 0: Build node texts for embeddings}} \\
+1. & \textbf{for each} node $n \in (S \cup V)$: \\
+2. & \quad text$(n) \leftarrow$ join(\{name($n$), description/definition($n$) if present, units($n$) if present\}, `` \texttt{|} '') \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 1: Compute cosine similarities}} \\
+3. & $E_S \leftarrow$ embed(text($S$)); $E_V \leftarrow$ embed(text($V$)) \\
+4. & $C \leftarrow \mathrm{cosine}(E_S, E_V)$ \hfill\textit{// via normalized dot product} \\
+5. & $\tau \leftarrow \mathrm{percentile}(C.\mathrm{flatten}(), p)$ \\
+6. & candidates $\leftarrow \{(s,v,C[s,v]) : C[s,v] \ge \tau\}$, sorted desc. \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 2: Stage 1 mapping (mode-dependent)}} \\
+7. & \textbf{if} node\_match\_mode = \texttt{cosine}: \\
+8. & \quad node\_mapping $\leftarrow$ greedy\_max\_weight\_matching(candidates) \hfill\textit{// 1:1 matching} \\
+9. & \textbf{elif} node\_match\_mode $\in$ \{\texttt{hybrid}, \texttt{llm}\}: \\
+10. & \quad to\_check $\leftarrow$ (all pairs $S{\times}V$ if \texttt{llm} else candidates) \\
+11. & \quad positives $\leftarrow \{(s,v,C[s,v]) : \texttt{LLM\_equivalent}(s,v)=\texttt{True} \text{ for } (s,v)\in \texttt{to\_check}\}$ \\
+12. & \quad node\_mapping $\leftarrow$ greedy\_max\_weight\_matching(positives) \\
+13. & \textbf{elif} node\_match\_mode = \texttt{llm\_batch}: \\
+14. & \quad \textit{// Single LLM call proposes best match (or NO\_MATCH) with confidence} \\
+15. & \quad \textbf{for each} $s \in S$: (v\_llm, conf) $\leftarrow$ LLM\_best\_match(s, V) \\
+16. & \quad \quad \textbf{if} v\_llm $\neq$ NO\_MATCH and conf $\ge 0.7$: node\_mapping[s] $\leftarrow$ v\_llm \\
+17. & \quad \quad \textbf{else}: v$^* \leftarrow \arg\max_{v \in V} C[s,v]$; \textbf{if} $C[s,v^*] \ge 0.7$ then node\_mapping[s] $\leftarrow$ v$^*$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 3: Binary node metrics (mapping cardinality)}} \\
+18. & $P_{\mathrm{bin}} \leftarrow |$node\_mapping$|/|S|$; $R_{\mathrm{bin}} \leftarrow |$node\_mapping$|/|V|$ \\
+19. & $F1_{\mathrm{bin}} \leftarrow 2PR/(P+R)$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 4: Cosine-only node metrics (max similarity per node)}} \\
+20. & $P_{\mathrm{cos}} \leftarrow \mathrm{mean}_{s\in S}\big[\max_{v\in V} C[s,v]\big]$ \\
+21. & $R_{\mathrm{cos}} \leftarrow \mathrm{mean}_{v\in V}\big[\max_{s\in S} C[s,v]\big]$ \\
+22. & $F1_{\mathrm{cos}} \leftarrow 2PR/(P+R)$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 5: Similarity-weighted (hybrid) node metrics via two-stage bipartite matching}} \\
+23. & matched\_S $\leftarrow$ keys(node\_mapping); matched\_V $\leftarrow$ values(node\_mapping) \\
+24. & $S_u \leftarrow S \setminus$ matched\_S; $V_u \leftarrow V \setminus$ matched\_V \\
+25. & cosine\_mapping $\leftarrow \texttt{greedy\_max\_weight\_matching}(\{(s,v,C[s,v]) : s\in S_u, v\in V_u\})$ \\
+26. & score\_gen$(s) \leftarrow \begin{cases}1.0 & s \in \text{matched\_S}\\ C[s, \text{cosine\_mapping}(s)] & s \in \text{cosine\_mapping}\\ 0.0 & \text{otherwise}\end{cases}$ \\
+27. & score\_val$(v) \leftarrow \begin{cases}1.0 & v \in \text{matched\_V}\\ C[\text{cosine\_rev}(v), v] & v \in \text{range}(\text{cosine\_mapping})\\ 0.0 & \text{otherwise}\end{cases}$ \\
+28. & $P_{\mathrm{hyb}} \leftarrow \mathrm{mean}_{s\in S}[\mathrm{score\_gen}(s)]$; $R_{\mathrm{hyb}} \leftarrow \mathrm{mean}_{v\in V}[\mathrm{score\_val}(v)]$ \\
+29. & $F1_{\mathrm{hyb}} \leftarrow 2PR/(P+R)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{Ground Truth Citation Heatmap}
+\noindent\textbf{Adjusted (seed-excluding) variant:} If the target variable was \textit{seeded} from the validation CLD (e.g., the inferred target), the implementation additionally reports ``adjusted'' node metrics by excluding that variable from both $S$ and $V$ prior to metric computation.
 
-Figure~\ref{fig:rq1a_gt_citation_heatmap} shows the judge score heatmap for the ground truth citation validation. The citation judge evaluates whether edges are properly supported by literature references. Similar patterns to the correctness judge are observed, with high TN scores and variable performance on FP/FN classifications.
+\noindent\textbf{Implementation:} \texttt{modules.py:8242} (\texttt{compare\_session\_graph\_to\_validation}), \texttt{:8098} (\texttt{\_compute\_node\_cosine\_candidates}), \texttt{:8151} (\texttt{\_maximum\_weight\_bipartite\_matching})
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_lit_citation/enhanced_analysis_latest/rq1a_ground_truth_enhanced_visualization.png}
-\caption[GT citation: judge score heatmap]{Score heatmap for ground truth citation validation showing mean judge scores with 95\% confidence intervals for each classification type across all CLD × prompt combinations, across 3 runs}
-\label{fig:rq1a_gt_citation_heatmap}
-\end{figure}
 
-\section{Corruption Detection Correctness Heatmap}
-
-Figure~\ref{fig:rq1a_corr_correctness_heatmap} shows the judge score heatmap for corruption detection using the correctness judge. In this experiment, edges were artificially corrupted and the judge's task was to detect these corruptions. Low TP scores and high TN scores indicate effective discrimination between corrupted and non-corrupted edges.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_correctness/enhanced_analysis_latest/rq1a_enhanced_visualization.png}
-\caption[Corruption (correctness): judge score heatmap]{Score heatmap for corruption detection (Correctness Judge) showing mean judge scores with 95\% confidence intervals across all CLD × prompt combinations, across 3 runs}
-\label{fig:rq1a_corr_correctness_heatmap}
-\end{figure}
-
-\section{Corruption Detection Citation Heatmap}
-
-Figure~\ref{fig:rq1a_corr_citation_heatmap} shows the judge score heatmap for corruption detection using the citation judge. This experiment tests the citation judge's ability to detect artificially corrupted edges. Note the sparse FN data for some CLDs due to the experimental design focusing on corruption (FP) detection.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1.0\textwidth]{Figures/final_runs/RQ1a_gt_synth_citation/enhanced_analysis_latest/rq1a_enhanced_visualization.png}
-\caption[Corruption (citation): judge score heatmap]{Score heatmap for corruption detection (Citation Judge) showing mean judge scores with 95\% confidence intervals across all CLD × prompt combinations, across 3 runs}
-\label{fig:rq1a_corr_citation_heatmap}
-\end{figure}
 
 \chapter{ROC Curves}
 \label{sec:appendix_roc_curves}
@@ -2341,824 +3407,3 @@ This section presents ROC curves for all RQ1a experiments. \textbf{Important met
 \end{figure}
 
 % ==============================================================================
-\chapter{RQ1b Corrector Action Counts}
-% ==============================================================================
-
-This section provides the full breakdown of corrector actions for verification purposes. The main text tables show only successful actions (Revise + Change), while these tables include edges where no correction was needed (None) and API/parsing errors (Error).
-
-\section{Synthetic Corruptions Action Breakdown}
-
-\begin{table}[H]
-\centering
-\caption{RQ1b Corrector Action Counts - Synthetic Corruptions (Full Breakdown)}
-\label{tab:rq1b_action_counts_synthetic}
-\begin{threeparttable}
-\begin{tabular}{lcccccc}
-\toprule
-\textbf{Prompt} & \textbf{Edges} & \textbf{Successful} & \textbf{Revise} & \textbf{Change} & \textbf{None} & \textbf{Error} \\
-\textbf{Variant} & \textbf{Processed} & \textbf{Actions} & & & & \\
-\midrule
-Baseline & 1006 & 1003 & 453 & 550 & 0 & 3 \\
-CoT & 1006 & 995 & 471 & 524 & 7 & 4 \\
-Mechanistic & 1006 & 979 & 408 & 571 & 21 & 6 \\
-\midrule
-\textbf{Aggregate} & 3018 & 2977 & 1332 & 1645 & 28 & 13 \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\small
-\item \textit{Note.} Full breakdown of corrector actions for verification. 
-Edges Processed = total candidate edges for correction.
-Successful Actions = Revise + Change (used in main text tables).
-None = edges where corrector determined no change needed.
-Error = API/parsing errors during correction.
-Verification: Edges Processed = Revise + Change + None + Error.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\section{Ground Truth Action Breakdown}
-
-\begin{table}[H]
-\centering
-\caption{RQ1b Corrector Action Counts - Ground Truth (Full Breakdown)}
-\label{tab:rq1b_action_counts_groundtruth}
-\begin{threeparttable}
-\begin{tabular}{lcccccc}
-\toprule
-\textbf{Prompt} & \textbf{Edges} & \textbf{Successful} & \textbf{Revise} & \textbf{Change} & \textbf{None} & \textbf{Error} \\
-\textbf{Variant} & \textbf{Processed} & \textbf{Actions} & & & & \\
-\midrule
-Baseline & 418 & 413 & 122 & 291 & 0 & 5 \\
-CoT & 418 & 403 & 141 & 262 & 7 & 8 \\
-Mechanistic & 418 & 409 & 80 & 329 & 6 & 3 \\
-\midrule
-\textbf{Aggregate} & 1254 & 1225 & 343 & 882 & 13 & 16 \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\small
-\item \textit{Note.} Full breakdown of corrector actions for verification. 
-Edges Processed = total candidate edges for correction.
-Successful Actions = Revise + Change (used in main text tables).
-None = edges where corrector determined no change needed.
-Error = API/parsing errors during correction.
-Verification: Edges Processed = Revise + Change + None + Error.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\input{appendix_sensitivity}
-
-% ==============================================================================
-\chapter{Experimental Prompts}
-\label{sec:appendix_prompts}
-% ==============================================================================
-
-This section documents all prompts used in the final experiments. Each prompt variant is presented verbatim as used during evaluation. The prompts are organized by component: correctness-based judges (Section~\ref{sec:correctness_prompts}), citation-based judges (Section~\ref{sec:citation_prompts}), and correctors (Section~\ref{sec:corrector_prompts}).
-
-% ------------------------------------------------------------------------------
-\section{Generator Prompt (Nitai\_C)}
-\label{sec:generator_prompt_nitai_c}
-% ------------------------------------------------------------------------------
-
-The final experiments use the \textbf{Nitai\_C} generator prompt configuration for both node generation (\texttt{generateNodes}) and edge generation (\texttt{generateEdges}). The prompt is stored at:
-
-\noindent\texttt{data\_science/parameter\_tuning\_experiments/prompts\_Nitai\_C.yaml}
-
-\noindent and is reproduced verbatim below.
-
-\begin{lstlisting}[caption={Generator Prompt Configuration: Nitai\_C (\texttt{generateNodes} + \texttt{generateEdges})},label={lst:generator_nitai_c_yaml}]
-prompts:
-  - prompt_id: generateNodes
-    variables:
-      - name: target
-        type: string
-        description: The target variable for the Model.
-      - name: target_units
-        type: string
-        description: Units by which the Target is measured.
-      - name: target_definition
-        type: string
-        description: The user provided definition of the selected target variable.
-      - name: temporal
-        type: string
-        description: The temporal scale of the causality study.
-      - name: spatial
-        type: string
-        description: The spatial scale of the causality study.
-      - name: context
-        type: list
-        description: List of key contextual factors for the Model
-    prompts:
-      sys_prompt: >
-        You are a systems dynamics modeling expert. Your role is to identify a single, clearly defined, variable that causaly influences a target variable within a specific context, time, and space. The variable must be measurable, not composite, and must not overlap with the target or any excluded variables. 
-        
-        Let's think step-by-step:
-        1. First, understand the target variable, its definition, and the context thoroughly
-        2. Brainstorm potential causal variables that directly influence the target
-        3. Evaluate each potential variable against the criteria: measurable, non-composite, no overlap with target
-        4. Select the most appropriate variable with the clearest causal link
-        5. Verify the variable works within the specified temporal and spatial scale
-        6. Define the variable concisely and specify appropriate units
-        
-        Once you've completed this reasoning process, respond only with a json including the variable name and its concise definition, formatted as: {"Variable":"Concise name of the variable", "Definition":"Definition of the variable", "Units":"Units of measurements for the variable"}, with no additional text.
-      usr_prompt: |
-        Given the following constraints:
-        Target Variable: {{ target.title() }} (measured in {{ target_units }})
-        Temporal Scale: {{ temporal.title() }}
-        Spatial Scale: {{ spatial.title() }}
-        Context: {{ context | join(', ') }}
-        
-        I need you to think carefully through this problem:
-        
-        1. First, understand what {{ target.lower() }} means: "{{ target_definition.lower() }}"
-        2. Consider what directly causes changes in {{ target.lower() }} within the {{ temporal.lower() }} timeframe and {{ spatial.lower() }} spatial scale
-        3. Evaluate potential variables against these criteria:
-           - Must be directly measurable (not abstract)
-           - Must not be composite (not combining multiple factors)
-           - Must have a clear causal effect on {{ target.lower() }}
-           - Must work within the specified temporal and spatial scales
-        
-        After this analysis, name a variable (2-3 words) with a direct causal effect on {{ target.lower() }}.
-        
-        Be concise, and give the name of the variable and a short definition, as well as the units by which it is measured.
-        
-        The output must be exactly in the format of the following example: 
-        {"Variable":"Concise name of the variable", 
-        "Definition":"Definition of the variable", 
-        "Units":"Units of measurements for the variable"}
-      usr_prompt_extension: " The variable cannot be the same as or overlap with anything in the following list: "
-    version: 0.0.1
-  - prompt_id: generateEdges
-    variables:
-      - name: var1
-        type: str
-        description: First variable in undefined relationship.
-      - name: var2
-        type: str
-        description: Second variable in undefined relationship.
-      - name: def1
-        type: str
-        description: Definition of first variable.
-      - name: def2
-        type: str
-        description: Definition of second variable.
-      - name: spatial
-        type: str
-        description: The spatial scale of the causality study.
-      - name: temporal
-        type: str
-        description: The temporal scale of the causality study.
-      - name: variables
-        type: list[string]
-        description: List of existing variables in the CLD.
-    prompts:
-       sys_prompt: >
-        You are a scientific system dynamics model expert specializing in causal loop diagrams. Given two variables and their definitions, your task is to determine the precise causal relationship between them.
-        
-        Approach this systematically:
-        1. First, clearly understand what each variable means and how it's measured
-        2. Consider the mechanisms by which the first variable might directly affect the second
-        3. Evaluate whether this mechanism works within the given spatial and temporal scales
-        4. Check for potential mediating variables that might explain the relationship
-        5. Distinguish between correlation and causation - focus only on true causal relationships
-        6. Determine if the relationship is positive, negative, or non-existent
-        7. Verify your reasoning by considering hypothetical increases and decreases in the first variable
-        8. Provide a concise explanation that justifies your conclusion
-        
-        Select the most appropriate relationship type based on causal logic, not mere correlation. Respond with a dictionary: {"Relationship":"TYPE","Explanation":"A brief explanation.""}. Make sure there is no additional text.
-       usr_prompt: | 
-        I need to determine if there is a causal relationship between "{{ var1 }}" and "{{ var2 }}" for a Causal Loop Diagram (CLD). Let me think through this step by step:
-        
-        Step 1: Understand the variables
-        - Variable 1: "{{ var1 }}" defined as "{{ def1 }}"
-        - Variable 2: "{{ var2 }}" defined as "{{ def2 }}"
-        - Scale: Spatial = "{{ spatial }}", Temporal = "{{ temporal }}"
-        
-        Step 2: Consider potential causal mechanisms
-        - Does a change in "{{ var1 }}" directly cause a change in "{{ var2 }}" through a clear mechanism?
-        - Does this mechanism operate within the given spatial and temporal scales?
-        
-        Step 3: Check for mediating variables
-        - Are there variables in the CLD that mediate this relationship: {{ variables | join(", ") }}
-        - If a mediator exists, the direct relationship should not be included in the CLD
-        
-        Step 4: Determine relationship type
-        If there is a causal relationship, I'll classify it as one of these:
-        1. POSITIVE - An increase in "{{ var1 }}" causes an increase in "{{ var2 }}", or a decrease in "{{ var1 }}" causes a decrease in "{{ var2 }}" (direct relationship).
-        2. NEGATIVE - An increase in "{{ var1 }}" causes a decrease in "{{ var2 }}", or a decrease in "{{ var1 }}" causes an increase in "{{ var2 }}" (inverse relationship).
-        3. NONE - No causal relationship exists between "{{ var1 }}" and "{{ var2 }}".
-
-        An important condition is that in your explanation you must mention explicitly the causal relationship, i.e. "{{ var1 }}" causes "{{ var2 }}" or "{{ var2 }}" causes "{{ var1 }}", because this ensures directional causality.
-
-        Provide a brief, maximum 4-sentence explanation in the format: {"Relationship":"TYPE","Explanation":"A brief explanation."}
-        
-        Example Responses:
-        1. For a Positive Causal Relationship:
-          {"Relationship":"POSITIVE","Explanation":"Force causes acceleration in a direct causal relationship. Increasing the force on an object of constant mass directly increases its acceleration. Conversely, reducing the force directly decreases the acceleration."}
-        2. For a Negative Causal Relationship:
-          {"Relationship":"NEGATIVE","Explanation":"Electrical resistance causes current flow to change in an inverse relationship. Increasing resistance in a circuit directly reduces the current flow (assuming constant voltage). Decreasing the resistance directly increases the current."}
-        3. For No CAUSAL Relationship:
-          {"Relationship":"NONE","Explanation":"The number of birds in a city does not cause stock market performance to change. There is no known direct causal link between these variables in either direction."}
-        4. For a Mediated Relationship:
-          {"Relationship":"NONE","Explanation":"Income Levels do not directly cause Housing Prices. A mediating variable (Economic Growth) is already present in the CLD that explains the relationship between these variables."}
-
-        IMPORTANT: In case you don't know, simply respond with {"Relationship":"NONE","Explanation":"I don't know"}
-        
-        Now, define the relationship between "{{ var1 }}" ("{{ def1 }}") and "{{ var2 }}" ("{{ def2 }}") following this format: {"Relationship":"TYPE","Explanation":"A brief explanation."} , taking particular care to make sure the relationships are causal and not just correlated or associated.
-
-       usr_prompt_extension: ""
-    version: 0.0.2
-\end{lstlisting}
-
-Three prompting strategies were evaluated for each component:
-\begin{enumerate}[noitemsep]
-    \item \textbf{Baseline}: Direct instruction without reasoning scaffolding (control condition)
-    \item \textbf{Chain-of-Thought (CoT)}: Zero-shot CoT via ``Let's think step by step''~\citep{kojima2022large}
-    \item \textbf{Mechanistic}: Domain-specific criteria based on the Bradford Hill causal framework~\citep{shimonovich2020bradford}
-\end{enumerate}
-
-For citation judges, an additional \textbf{Mechanistic-Lit} variant combines mechanistic evaluation with explicit literature grounding requirements.
-
-% ------------------------------------------------------------------------------
-\section{Correctness Judge Prompts}
-\label{sec:correctness_prompts}
-% ------------------------------------------------------------------------------
-
-The correctness judge evaluates causal reasoning quality based on internal logical consistency, without reference to external citations. Each prompt uses the \texttt{judgeCorrectness} prompt ID.
-
-\subsection{Baseline}
-
-\begin{lstlisting}[caption={Correctness Judge: Baseline Prompt},label={lst:correctness_baseline}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating the quality of causal reasoning.
-Your job is to carefully read the causal explanation and determine if it is 
-logically sound and scientifically coherent.
-Base your judgment only on the internal logic of the explanation, not on 
-external knowledge or citations.
-
-USER PROMPT:
-Evaluate the quality of this causal explanation:
-
-SOURCE VARIABLE: {{ source }}
-TARGET VARIABLE: {{ target }}
-RELATIONSHIP TYPE: {{ relationship }}
-EXPLANATION: {{ motivation }}
-
-Based on the explanation, assess whether the causal reasoning is sound.
-
-Respond in this format:
-REASON: [brief explanation of your judgment]
-VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
-SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
-\end{lstlisting}
-
-\subsection{Chain-of-Thought (CoT)}
-
-\begin{lstlisting}[caption={Correctness Judge: CoT Prompt (Kojima et al., 2022)},label={lst:correctness_cot}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating the quality of causal reasoning.
-Your job is to carefully read the causal explanation and determine if it is 
-logically sound and scientifically coherent.
-Base your judgment only on the internal logic of the explanation, not on 
-external knowledge or citations.
-
-USER PROMPT:
-Evaluate the quality of this causal explanation:
-
-SOURCE VARIABLE: {{ source }}
-TARGET VARIABLE: {{ target }}
-RELATIONSHIP TYPE: {{ relationship }}
-EXPLANATION: {{ motivation }}
-
-Let's think step by step to assess whether the causal reasoning is sound.
-
-Respond in this format:
-REASON: [Start with your step-by-step chain of thought, then provide your 
-final judgment. Make your reasoning process explicit.]
-VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
-SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
-\end{lstlisting}
-
-\subsection{Mechanistic (Bradford Hill)}
-
-\begin{lstlisting}[caption={Correctness Judge: Mechanistic Prompt (Shimonovich et al., 2020)},label={lst:correctness_mechanistic}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating causal explanations using core 
-principles from the Bradford Hill causal criteria framework.
-
-You will assess explanations on FOUR key dimensions adapted for qualitative 
-causal models:
-
-1. PLAUSIBILITY - Does it describe a plausible causal mechanism?
-2. TEMPORALITY - Is the causal direction justified and temporally coherent?
-3. STRENGTH - Does it convey that this is an important (not trivial) 
-   causal relationship?
-4. COHERENCE - Is the reasoning internally consistent and non-circular?
-
-These criteria align with Bradford Hill's framework (Shimonovich et al., 2020)
-while being practical for conceptual models.
-Base your judgment only on the internal logic of the explanation, not on 
-external knowledge.
-
-USER PROMPT:
-Evaluate this causal explanation using four core Bradford Hill criteria:
-
-CLAIMED CAUSAL PATHWAY:
-{{ source }} -> [{{ relationship }}] -> {{ target }}
-
-PROPOSED EXPLANATION:
-{{ motivation }}
-
-Assess the explanation on these four dimensions:
-
-1. PLAUSIBILITY (Causal Mechanism):
-   - Does the explanation describe HOW {{ source }} affects {{ target }}?
-   - Is a specific mechanism or pathway described (not just assertion)?
-   - Is the mechanism scientifically plausible and non-circular?
-
-2. TEMPORALITY (Causal Direction):
-   - Does the explanation support the direction {{ source }} -> {{ target }}?
-   - Is temporal ordering appropriate (cause precedes effect)?
-   - Does it avoid reverse causation ({{ target }} -> {{ source }})?
-
-3. STRENGTH (Relative Importance):
-   - Does the explanation convey that {{ source }} is an IMPORTANT or 
-     SUBSTANTIAL influence on {{ target }}?
-   - Does it suggest this is more than trivial, negligible, or merely 
-     correlational?
-   - Is the causal claim stated with appropriate confidence (not overly 
-     tentative)?
-
-4. COHERENCE (Internal Consistency):
-   - Is the reasoning logically consistent and non-contradictory?
-   - Does it avoid tautological or circular arguments?
-   - Are the claims coherent with each other?
-
-Based on how well the explanation addresses these four criteria, respond:
-VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
-SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
-REASON: [2-3 sentence explanation referencing which criteria were met 
-or failed]
-
-Guidelines:
-- CORRECT: Addresses all four criteria reasonably well
-- PARTIALLY_CORRECT: Addresses 2-3 criteria well but has notable gaps
-- INCORRECT: Fails most criteria (vague, circular, wrong direction, 
-  implausible, or trivial)
-\end{lstlisting}
-
-% ------------------------------------------------------------------------------
-\section{Citation Judge Prompts}
-\label{sec:citation_prompts}
-% ------------------------------------------------------------------------------
-
-The citation judge evaluates whether scientific claims are supported by their cited sources. Each prompt uses the \texttt{judgeCitation} prompt ID.
-
-\subsection{Baseline}
-
-\begin{lstlisting}[caption={Citation Judge: Baseline Prompt},label={lst:citation_baseline}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating whether scientific claims are 
-supported by their cited sources.
-Your job is to carefully read the relationship motivation and the cited 
-sources, and determine if the motivation is supported.
-Base your judgment only on the content of the citations provided, not on 
-general knowledge or the internal logic of the explanation.
-
-USER PROMPT:
-Evaluate whether the citations support this relationship claim:
-
-SOURCE VARIABLE: {{ source }}
-TARGET VARIABLE: {{ target }}
-RELATIONSHIP TYPE: {{ relationship }}
-EXPLANATION: {{ motivation }}
-
-CITED SOURCES:
-{{ citations }}
-
-Based on the cited sources, assess whether the explanation is adequately 
-supported by the citations.
-
-Respond in this format:
-REASON: [brief explanation of your judgment]
-VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
-SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
-\end{lstlisting}
-
-\subsection{Chain-of-Thought (CoT)}
-
-\begin{lstlisting}[caption={Citation Judge: CoT Prompt (Kojima et al., 2022)},label={lst:citation_cot}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating whether scientific claims are 
-supported by their cited sources.
-Your job is to carefully read the relationship motivation and the cited 
-sources, and determine if the motivation is supported.
-Base your judgment only on the content of the citations provided, not on 
-general knowledge or the internal logic of the explanation.
-
-USER PROMPT:
-Evaluate whether the citations support this relationship claim:
-
-SOURCE VARIABLE: {{ source }}
-TARGET VARIABLE: {{ target }}
-RELATIONSHIP TYPE: {{ relationship }}
-EXPLANATION: {{ motivation }}
-
-CITED SOURCES:
-{{ citations }}
-
-Let's think step by step to assess whether the explanation is adequately 
-supported by the citations.
-
-Respond in this format:
-REASON: [brief explanation of your judgment]
-VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
-SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
-\end{lstlisting}
-
-\subsection{Mechanistic (Bradford Hill)}
-
-\begin{lstlisting}[caption={Citation Judge: Mechanistic Prompt (Shimonovich et al., 2020)},label={lst:citation_mechanistic}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating cited evidence using the 
-Bradford Hill framework.
-
-You will assess whether citations provide evidence for four key causality 
-criteria identified as having strong support across modern causal inference 
-approaches:
-
-1. STRENGTH OF ASSOCIATION - including confounding analysis
-2. TEMPORALITY - temporal precedence and ruling out reverse causation
-3. PLAUSIBILITY - causal mechanisms and mediation pathways
-4. EXPERIMENT/DESIGN - study design implications for exchangeability
-
-Base your judgment only on what the citations actually say, not on 
-general knowledge.
-
-USER PROMPT:
-Evaluate the cited evidence for this causal relationship using the 
-Bradford Hill framework:
-
-CLAIMED CAUSAL PATHWAY:
-{{ source }} -> [{{ relationship }}] -> {{ target }}
-
-PROPOSED MECHANISM:
-{{ motivation }}
-
-CITED SOURCES:
-{{ citations }}
-
-Let's think step by step. Assess whether the citations provide evidence 
-for these four criteria:
-
-1. PLAUSIBILITY (Causal Mechanism):
-   - Does the explanation describe HOW {{ source }} affects {{ target }}?
-   - Is a specific mechanism or pathway described (not just assertion)?
-   - Is the mechanism scientifically plausible and non-circular?
-
-2. TEMPORALITY (Causal Direction):
-   - Does the explanation support the direction {{ source }} -> {{ target }}?
-   - Is temporal ordering appropriate (cause precedes effect)?
-   - Does it avoid reverse causation ({{ target }} -> {{ source }})?
-
-3. STRENGTH (Relative Importance):
-   - Does the explanation convey that {{ source }} is an IMPORTANT or 
-     SUBSTANTIAL influence on {{ target }}?
-   - Does it suggest this is more than trivial, negligible, or merely 
-     correlational?
-   - Is the causal claim stated with appropriate confidence?
-
-4. EXPERIMENT/DESIGN (Implications for Exchangeability):
-   - Do citations include experimental or quasi-experimental studies?
-   - Do they discuss study designs that enhance causal inference (RCTs, natural experiments)?
-   - Do they address comparability between exposed and unexposed groups?
-   - Do they consider or control for factors affecting exchangeability?
-
-Based on how well the citations address these four Bradford Hill criteria:
-REASON: [brief explanation of your judgment]
-VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
-SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
-\end{lstlisting}
-
-\subsection{Mechanistic-Lit (Literature-Grounded)}
-
-The Mechanistic-Lit variant extends the Mechanistic prompt with explicit requirements for literature grounding. It uses the same Bradford Hill criteria structure but additionally requires that verdicts be based strictly on evidence present in the cited sources, with explicit quotation of supporting passages where applicable. This variant was designed to test whether stricter literature grounding requirements improve citation validation accuracy.
-
-\begin{lstlisting}[caption={Citation Judge: Mechanistic-Lit Prompt},label={lst:citation_mechanistic_lit}]
-SYSTEM PROMPT:
-You are a precise and fair judge evaluating cited evidence using the 
-Bradford Hill framework.
-
-You will assess whether citations provide evidence for four key causality 
-criteria identified as having strong support across modern causal inference 
-approaches:
-
-1. STRENGTH OF ASSOCIATION - including confounding analysis
-2. TEMPORALITY - temporal precedence and ruling out reverse causation
-3. PLAUSIBILITY - causal mechanisms and mediation pathways
-4. EXPERIMENT/DESIGN - study design implications for exchangeability
-
-Base your judgment only on what the citations actually say, not on 
-general knowledge.
-
-USER PROMPT:
-Evaluate the cited evidence for this causal relationship using the 
-Bradford Hill framework:
-
-CLAIMED CAUSAL PATHWAY:
-{{ source }} -> [{{ relationship }}] -> {{ target }}
-
-PROPOSED MECHANISM:
-{{ motivation }}
-
-CITED SOURCES:
-{{ citations }}
-
-Let's think step by step. Assess whether the citations provide evidence 
-for these four criteria:
-
-1. PLAUSIBILITY (Causal Mechanism):
-   - Does the explanation describe HOW {{ source }} affects {{ target }}?
-   - Is a specific mechanism or pathway described (not just assertion)?
-   - Is the mechanism scientifically plausible and non-circular?
-
-2. TEMPORALITY (Causal Direction):
-   - Does the explanation support the direction {{ source }} -> {{ target }}?
-   - Is temporal ordering appropriate (cause precedes effect)?
-   - Does it avoid reverse causation ({{ target }} -> {{ source }})?
-
-3. STRENGTH (Relative Importance):
-   - Does the explanation convey that {{ source }} is an IMPORTANT or 
-     SUBSTANTIAL influence on {{ target }}?
-   - Does it suggest this is more than trivial, negligible, or merely 
-     correlational?
-   - Is the causal claim stated with appropriate confidence?
-
-4. EXPERIMENT/DESIGN (implications for exchangeability):
-   - Do citations include experimental or quasi-experimental studies?
-   - Do they discuss study designs that enhance causal inference (RCTs, natural experiments)?
-   - Do they address comparability between exposed and unexposed groups?
-   - Do they consider or control for factors affecting exchangeability?
-
-Based on how well the citations address these four Bradford Hill criteria:
-REASON: [brief explanation of your judgment]
-VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
-SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
-\end{lstlisting}
-
-% ------------------------------------------------------------------------------
-\section{Corrector Prompts}
-\label{sec:corrector_prompts}
-% ------------------------------------------------------------------------------
-
-The corrector receives edges flagged by the judge and determines appropriate remediation actions. Two tools are available: \texttt{revise\_motivation} (fix explanation while preserving edge type) and \texttt{change\_edge\_type} (change polarity or set to NONE with new explanation).
-
-\subsection{Baseline}
-
-\begin{lstlisting}[caption={Corrector: Baseline Prompt (Examples Only)},label={lst:corrector_baseline}]
-You are an expert causal reasoning corrector. You have 2 tools:
-
-1. revise_motivation: Fix incorrect motivation text (keeps same edge type)
-2. change_edge_type: Change edge type (POSITIVE/NEGATIVE/NONE) with new 
-   motivation
-
-IMPORTANT: NONE represents "no causal relationship" - it's a valid type, 
-not deletion.
-
-===========================================================================
-TOOL SELECTION EXAMPLES
-===========================================================================
-
-EXAMPLE 1: Bad motivation, correct type -> revise_motivation
-Edge: "Exercise" -> "Mental Health" (POSITIVE)
-Motivation: "Exercise makes people happy"
-Judge: "Overly simplistic; doesn't explain mechanism"
-ACTION: revise_motivation(new_motivation="Exercise increases endorphin 
-production and reduces cortisol, improving mental health outcomes")
-
-EXAMPLE 2: Wrong polarity -> change_edge_type
-Edge: "Vaccination Rate" -> "Disease Spread" (POSITIVE)
-Motivation: "More vaccinations lead to more disease spread"
-Judge: "Wrong polarity - vaccinations reduce disease spread"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NEGATIVE', 
-new_motivation="Higher vaccination rates create herd immunity, reducing 
-disease transmission")
-
-EXAMPLE 3: Should be NONE -> change_edge_type
-Edge: "Shoe Size" -> "Reading Ability" (POSITIVE)
-Motivation: "Larger shoe size indicates better reading ability"
-Judge: "No causal relationship - confounded by age"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE', 
-new_motivation="No direct causal link between shoe size and reading. The 
-correlation is due to age as a confounding variable")
-
-EXAMPLE 4: Should be causal (currently NONE) -> change_edge_type
-Edge: "Sleep Deprivation" -> "Cognitive Performance" (NONE)
-Motivation: "No relationship between sleep and cognition"
-Judge: "Strong negative causal relationship exists"
-ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', 
-new_motivation="Sleep deprivation impairs cognitive performance by reducing 
-attention, working memory, and executive function")
-
-===========================================================================
-DECISION RULES
-===========================================================================
-
-revise_motivation: Edge type is correct, but explanation is flawed
-change_edge_type: Edge type itself is wrong (polarity, existence)
-
-Analyze the judge feedback and call the appropriate tool.
-\end{lstlisting}
-
-\subsection{Chain-of-Thought (CoT)}
-
-\begin{lstlisting}[caption={Corrector: CoT Prompt (Examples + Reasoning Framework)},label={lst:corrector_cot}]
-You are an expert causal reasoning corrector. You have 2 tools:
-
-1. revise_motivation: Fix incorrect motivation text (keeps same edge type)
-2. change_edge_type: Change edge type (POSITIVE/NEGATIVE/NONE) with new 
-   motivation
-
-IMPORTANT: NONE represents "no causal relationship" - it's a valid type, 
-not deletion.
-
-===========================================================================
-TOOL SELECTION EXAMPLES
-===========================================================================
-
-EXAMPLE 1: Bad motivation, correct type -> revise_motivation
-Edge: "Exercise" -> "Mental Health" (POSITIVE)
-Motivation: "Exercise makes people happy"
-Judge: "Overly simplistic; doesn't explain mechanism"
-ACTION: revise_motivation(new_motivation="Exercise increases endorphin 
-production and reduces cortisol, improving mental health outcomes")
-
-EXAMPLE 2: Wrong polarity -> change_edge_type
-Edge: "Vaccination Rate" -> "Disease Spread" (POSITIVE)
-Motivation: "More vaccinations lead to more disease spread"
-Judge: "Wrong polarity - vaccinations reduce disease spread"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NEGATIVE', 
-new_motivation="Higher vaccination rates create herd immunity, reducing 
-disease transmission")
-
-EXAMPLE 3: Should be NONE -> change_edge_type
-Edge: "Shoe Size" -> "Reading Ability" (POSITIVE)
-Motivation: "Larger shoe size indicates better reading ability"
-Judge: "No causal relationship - confounded by age"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE', 
-new_motivation="No direct causal link between shoe size and reading. The 
-correlation is due to age as a confounding variable")
-
-EXAMPLE 4: Should be causal (currently NONE) -> change_edge_type
-Edge: "Sleep Deprivation" -> "Cognitive Performance" (NONE)
-Motivation: "No relationship between sleep and cognition"
-Judge: "Strong negative causal relationship exists"
-ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', 
-new_motivation="Sleep deprivation impairs cognitive performance by reducing 
-attention, working memory, and executive function")
-
-===========================================================================
-STEP-BY-STEP REASONING FRAMEWORK
-===========================================================================
-
-Let's think step by step to determine the best correction action.
-
-STEP 1: Analyze the Judge Feedback
-- What specific problem did the judge identify?
-- Is it about: (a) polarity/sign, (b) mechanism/reasoning, (c) type, or 
-  (d) existence?
-
-STEP 2: Assess the True Causal Relationship
-- What is the CORRECT causal relationship between these variables?
-- Should it be: POSITIVE, NEGATIVE, or NONE (no causal relationship)?
-
-STEP 3: Identify the Minimal Correction
-- If motivation is flawed but type is correct:
-  -> Use revise_motivation (preserves type, fixes reasoning)
-
-- If edge type itself is wrong:
-  -> Use change_edge_type (changes type with new motivation)
-  Examples: POSITIVE <-> NEGATIVE, causal <-> NONE
-
-STEP 4: Verify Your Decision
-- Does this action address the specific judge feedback?
-- Could revise_motivation work instead of change_edge_type?
-- If changing to NONE, can you explain WHY no causal relationship exists?
-
-STEP 5: Execute the Tool Call
-Call the appropriate tool with your validated reasoning.
-
-===========================================================================
-
-Now apply the examples and 5-step reasoning process to the current 
-correction task.
-\end{lstlisting}
-
-\subsection{Mechanistic (Bradford Hill)}
-
-\begin{lstlisting}[caption={Corrector: Mechanistic Prompt (Examples + CoT + Bradford Hill)},label={lst:corrector_mechanistic}]
-You are an expert causal reasoning corrector. You have 2 tools:
-
-1. revise_motivation: Fix incorrect motivation text (keeps same edge type)
-2. change_edge_type: Change edge type (POSITIVE/NEGATIVE/NONE) with new 
-   motivation
-
-IMPORTANT: NONE represents "no causal relationship" - it's a valid type, 
-not deletion.
-
-===========================================================================
-TOOL SELECTION EXAMPLES
-===========================================================================
-
-EXAMPLE 1: Bad motivation, correct type -> revise_motivation
-Edge: "Exercise" -> "Mental Health" (POSITIVE)
-Motivation: "Exercise makes people happy"
-Judge: "Overly simplistic; doesn't explain mechanism"
-ACTION: revise_motivation(new_motivation="Exercise increases endorphin 
-production and reduces cortisol, improving mental health outcomes")
-
-EXAMPLE 2: Wrong polarity -> change_edge_type
-Edge: "Vaccination Rate" -> "Disease Spread" (POSITIVE)
-Motivation: "More vaccinations lead to more disease spread"
-Judge: "Wrong polarity - vaccinations reduce disease spread"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NEGATIVE', 
-new_motivation="Higher vaccination rates create herd immunity, reducing 
-disease transmission")
-
-EXAMPLE 3: Should be NONE -> change_edge_type
-Edge: "Shoe Size" -> "Reading Ability" (POSITIVE)
-Motivation: "Larger shoe size indicates better reading ability"
-Judge: "No causal relationship - confounded by age"
-ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE', 
-new_motivation="No direct causal link between shoe size and reading. The 
-correlation is due to age as a confounding variable")
-
-EXAMPLE 4: Should be causal (currently NONE) -> change_edge_type
-Edge: "Sleep Deprivation" -> "Cognitive Performance" (NONE)
-Motivation: "No relationship between sleep and cognition"
-Judge: "Strong negative causal relationship exists"
-ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', 
-new_motivation="Sleep deprivation impairs cognitive performance by reducing 
-attention, working memory, and executive function")
-
-===========================================================================
-STEP-BY-STEP REASONING WITH BRADFORD HILL CRITERIA
-===========================================================================
-
-Let's think step by step, applying Bradford Hill criteria for causal 
-assessment.
-
-STEP 1: Analyze Judge Feedback + Assess PLAUSIBILITY (Causal Mechanism)
-- What specific problem did the judge identify?
-- Does a plausible causal MECHANISM exist between source and target?
-- Is the current motivation describing the wrong mechanism, or is there 
-  NO mechanism?
-- Does the explanation describe HOW source affects target (not just 
-  that it does)?
-
-STEP 2: Evaluate TEMPORALITY (Causal Direction)
-- What is the CORRECT causal relationship: POSITIVE, NEGATIVE, or NONE?
-- Does the causal direction make sense (source must precede target)?
-- Could the polarity be reversed (POSITIVE <-> NEGATIVE)?
-- Does it avoid reverse causation?
-
-STEP 3: Assess STRENGTH (Relative Importance)
-- Is there a SUBSTANTIAL causal relationship, or is it trivial/negligible?
-- Does the relationship convey important influence (not mere correlation)?
-- If motivation is flawed but strong causal relationship exists 
-  -> revise_motivation
-- If no substantial causal relationship exists -> consider change to NONE
-
-STEP 4: Evaluate COHERENCE (Internal Consistency) + Verify Decision
-- Is the reasoning logically consistent and non-contradictory?
-- Does it avoid tautological or circular arguments?
-- Does the judge feedback suggest type is wrong, or just explanation 
-  needs fixing?
-- Does your chosen action address the specific judge feedback?
-- If changing to NONE, can you explain WHY no causal relationship exists?
-
-STEP 5: Execute Tool Call
-Based on Bradford Hill assessment and step-by-step reasoning:
-
-IF Plausibility + Temporality + Strength are satisfied, but 
-Coherence/explanation fails:
-  -> Use revise_motivation (mechanism exists, but poorly explained)
-
-IF Temporality shows wrong direction (polarity inverted):
-  -> Use change_edge_type (flip POSITIVE <-> NEGATIVE with corrected 
-     mechanism)
-
-IF Plausibility or Strength fail (no mechanism or trivial relationship):
-  -> Use change_edge_type (change to NONE with explanation)
-
-IF Currently NONE but Plausibility + Temporality + Strength support 
-causality:
-  -> Use change_edge_type (establish causal relationship with mechanism)
-
-===========================================================================
-
-Now apply the examples, 5-step reasoning, and Bradford Hill criteria to 
-correct the current edge using the tools.
-\end{lstlisting}

@@ -1,0 +1,53 @@
+\section{Literature Review}
+\label{sec:literature_review}
+
+\subsection{Landscape: CLD construction paradigms (text-to-CLD vs.\ generation)}
+\label{sec:lit_landscape}
+
+Current literature on LLM-based CLD construction can be organized into two paradigms. First, \emph{text-to-CLD} approaches (also described as \emph{causal translation}) extract variables and causal links from provided documents, and can reduce hallucination risk through retrieval grounding, but assume availability of a relevant corpus and are capped by retrieval quality. Second, \emph{corpus-independent CLD generation} synthesizes candidate causal structures from the model's parametric knowledge without requiring an external corpus; this is inexpensive and broadly applicable, but requires post-hoc verification to manage hallucinations.
+
+The remainder of this chapter reviews related work and evidence for each paradigm, then synthesizes a CLD-specific taxonomy of failure modes and verification signals, motivating the hybrid approach evaluated in this thesis (RQ1--RQ3).
+
+\input{lit_review_cld_generation}
+
+\input{lit_review_llm_as_judge}
+
+\subsection{Context-insensitive predictors and grounding signals (RQ2)}
+\label{sec:lit_rq2_signals}
+
+\input{lit_review_ci_metrics_background}
+
+\subsection{Test-time compute and multi-agent validation (RQ3 framing)}
+\label{sec:lit_test_time_compute}
+
+Test-time compute has emerged as the primary paradigm driving progress in reasoning LLMs. This approach deploys additional compute resources during inference to enhance output quality, motivated by diminishing returns observed during pre-training---additional compute yields progressively smaller efficiency gains as models scale~\citep{kaplan2020scaling}. Scaling test-time compute via search against process reward model (PRM) verifiers and iterative revision works best when allocated adaptively per-prompt (``compute-optimal'' strategy), yielding up to $\sim$4$\times$ efficiency gains over best-of-N sampling~\citep{snell2024scalingllmtesttimecompute}. In FLOPs-matched tests, adding test-time compute to a smaller model can outperform a $\sim$14$\times$ larger model on easy/medium problems, though the hardest questions still favor more pretraining. This methodology underlies models such as OpenAI's o1~\citep{openai2024reasoning} and DeepSeek-R1~\citep{guo2025deepseek}.
+
+\subsubsection{Serial Compute: Iterative Refinement}
+
+Serial test-time compute arranges LLM calls sequentially, enabling ``divide and conquer'' reasoning where each step can reflect on and correct errors from preceding stages.
+
+\paragraph{ReAct: Reasoning and Acting.} \citet{yao2023react} introduced a paradigm that interleaves chain-of-thought reasoning with actions querying external tools (e.g., search APIs, knowledge bases). Unlike pure chain-of-thought prompting---which relies solely on parametric knowledge and is prone to hallucination---ReAct grounds reasoning in retrieved evidence, allowing models to verify claims against external sources. The framework demonstrates that reasoning and action are mutually beneficial: reasoning traces guide action selection, while action observations refine subsequent reasoning, enabling iterative error correction. Empirically, ReAct reduced hallucination rates on knowledge-intensive tasks compared to reasoning-only baselines.
+
+\paragraph{Multi-Agent Debate.} \citet{du2023multiagentdebate} introduced a method where multiple LLM instances engage in multi-round debates to enhance response accuracy. Each model proposes and critiques responses over several rounds, leading to a consensus that ``significantly improves mathematical and strategic reasoning across various tasks'' and ``reduces fallacious answers and hallucinations, thereby enhancing the factual validity of generated content.'' The approach applies directly to existing black-box models using uniform procedures and prompts across different tasks.
+
+\paragraph{Chain-of-Verification (CoVe).} As discussed in Section~\ref{sec:lit_llm_as_judge}, CoVe~\citep{dhuliawala2024chain} applies iterative correction by: (1) generating a baseline response, (2) planning verification questions, (3) answering questions independently to avoid bias, and (4) generating a corrected response. CoVe reduces hallucinations but has not been adapted specifically to verify causal claims---e.g., generating verification questions about whether relationship $X \rightarrow Y$ is supported by evidence or whether polarity is correctly assigned.
+
+\paragraph{Misconception Refutation (MR).} \citet{estornell2024multillmdebate} propose editing responses rather than only selecting among them: (1) prompt an LLM to identify errors, misconceptions, and inconsistencies, then (2) prompt it again to minimally correct the response. This approach ``takes inspiration from works which demonstrate that LLMs are often more skilled at evaluating answers, compared with directly providing answers.'' The authors prove theoretically that misconception refutation increases the probability of debate converging to the correct answer. MR is particularly valuable when combined with quality and diversity pruning in multi-agent debate settings.
+
+\subsubsection{Parallel Compute: Sampling and Selection}
+
+Parallel test-time compute generates multiple candidate outputs simultaneously, then selects or aggregates results.
+
+\paragraph{Self-Consistency.} \citet{wang2023selfconsistency} introduced self-consistency, a decoding strategy that samples diverse reasoning paths and selects the most consistent answer by marginalizing over sampled paths. The key insight is that ``complex reasoning problems typically admit multiple reasoning paths that reach a correct answer.'' Unlike greedy decoding which commits to a single path, self-consistency generates multiple candidates in parallel and aggregates via majority voting. This achieved significant improvements on arithmetic and commonsense reasoning benchmarks: GSM8K (+17.9\%), SVAMP (+11.0\%), AQuA (+12.2\%), StrategyQA (+6.4\%), and ARC-challenge (+3.9\%).
+
+\paragraph{Best-of-N Sampling.} This general strategy generates $N$ candidate responses in parallel and selects the best according to a reward model or verifier. Efficiency gains are possible through compute-optimal allocation strategies that adapt $N$ based on problem difficulty~\citep{snell2024scalingllmtesttimecompute}.
+
+\subsubsection{Implications for CLD Generation}
+
+In the CLD setting, the analogous question is whether we can allocate expensive verification (judges, correctors, literature search) \emph{selectively}---triggered by early, cheap signals---rather than uniformly across all candidate edges. The original RQ3 design proposed using context-insensitive metrics as triggers for corrector deployment; the pivot to Deep Research explores an alternative: allocating test-time compute to external evidence validation rather than internal correction.
+
+\subsection{Synthesis and bridge to methods}
+\label{sec:lit_bridge_to_methods}
+
+Prior work provides many ingredients (LLM-based extraction/generation, judge-style evaluation, uncertainty proxies, retrieval grounding), but the CLD setting creates a compositional evaluation problem: correctness must be assessed at the edge level, while failure modes interact at the loop and system levels. This motivates the thesis design: RQ1 evaluates context-sensitive verification via judges and correction; RQ2 evaluates cheap context-insensitive signals; and RQ3 explores whether additional test-time compute should be spent on correction or on external evidence validation.
+

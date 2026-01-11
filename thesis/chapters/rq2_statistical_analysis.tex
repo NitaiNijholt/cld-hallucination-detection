@@ -1,0 +1,566 @@
+\section{RQ2: Context-Insensitive Metrics for Hallucination Detection}
+\label{sec:rq2_statistical_methods}
+
+This section documents the methodology for Research Question 2: \textit{Can context-insensitive (CI) metrics computed from generator LLM logits be used to detect hallucinations?}
+
+\subsection{CI Metrics: Mathematical Definitions}
+\label{sec:ci_metrics_definitions}
+
+Context-insensitive metrics are computed from the generator LLM's token-level log-probabilities during edge generation. These metrics capture model uncertainty without requiring external context or reasoning.
+
+\subsubsection{Generator Perplexity}
+
+Perplexity measures the exponential of average negative log-likelihood over generated tokens, quantifying how ``surprised'' the model is by its own output.
+
+\begin{equation}
+\text{Perplexity} = \exp\left(\frac{1}{n}\sum_{i=1}^{n} -\log P(x_i)\right)
+\label{eq:perplexity}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $n$ = number of generated tokens in the causal motivation
+    \item $P(x_i)$ = probability of token $x_i$ (from LLM logprobs: $P(x_i) = \exp(\text{logprob}_i)$)
+\end{itemize}
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_perplexity()}. Average NLL capped at 10.0 to prevent overflow (max perplexity $\approx 22{,}026$).
+
+\textbf{Interpretation:} Higher perplexity $\rightarrow$ greater model uncertainty $\rightarrow$ higher hallucination probability.
+
+\subsubsection{Generator Minimum Probability}
+
+Minimum probability identifies the ``weakest link'' in the generated sequence---the token about which the model was least confident.
+
+\begin{equation}
+\text{MinProb} = \min_{i \in \{1,\ldots,n\}} P(x_i)
+\label{eq:minprob}
+\end{equation}
+
+where $P(x_i) = \exp(\text{logprob}_i)$ from LLM logprobs.
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_min\_prob()}.
+
+\textbf{Interpretation:} Lower minimum probability $\rightarrow$ presence of highly uncertain token $\rightarrow$ higher hallucination probability.
+
+\subsubsection{Generator Maximum Window Entropy}
+
+Maximum window entropy detects localized regions of high uncertainty by computing Shannon entropy over sliding windows of top-$k$ token distributions.
+
+\begin{equation}
+\text{MaxWindowEntropy} = \max_{w \in \mathcal{W}} \left( \frac{1}{|w|} \sum_{t \in w} H_k(t) \right)
+\label{eq:maxent}
+\end{equation}
+
+where the local entropy at position $t$ over the top-$k$ tokens is:
+
+\begin{equation}
+H_k(t) = -\sum_{j=1}^{k} \tilde{P}_j(t) \cdot \ln \tilde{P}_j(t)
+\label{eq:local_entropy}
+\end{equation}
+
+and $\tilde{P}_j(t)$ is the normalized probability over top-$k$ alternatives:
+
+\begin{equation}
+\tilde{P}_j(t) = \frac{P_j(t)}{\sum_{m=1}^{k} P_m(t)}
+\label{eq:normalized_prob}
+\end{equation}
+
+\textbf{Parameters:} $k = 5$ (top-$k$ tokens), window size $= 5$ tokens, sliding with stride 1.
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_max\_window\_entropy()}. Uses \texttt{np.convolve} for rolling average.
+
+\textbf{Interpretation:} Higher max entropy $\rightarrow$ region where model was uncertain among alternatives $\rightarrow$ higher hallucination probability.
+
+\subsubsection{Generator Cosine Similarity}
+
+Cosine similarity measures semantic alignment between the generated causal motivation and fetched citation text chunks.
+
+\begin{equation}
+\text{CosineSim} = \max_{c \in \mathcal{C}} \frac{\mathbf{e}_{\text{narr}} \cdot \mathbf{e}_c}{\|\mathbf{e}_{\text{narr}}\| \cdot \|\mathbf{e}_c\|}
+\label{eq:cosine}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\mathbf{e}_{\text{narr}} \in \mathbb{R}^{d}$ = embedding of generated causal narrative (motivation)
+    \item $\mathbf{e}_c \in \mathbb{R}^{d}$ = embedding of citation chunk $c$
+    \item $\mathcal{C}$ = set of all citation chunks (up to 5 articles, chunked with 20\% overlap)
+    \item $d = 1536$ for \texttt{text-embedding-3-small} (OpenAI)
+\end{itemize}
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_alignment\_batch()}. Chunking: $\sim$2000 characters per chunk, 20\% overlap.
+
+\textbf{Interpretation:} Higher cosine similarity was \textit{expected} to indicate better grounding (lower hallucination). \textbf{Counterintuitive finding:} Higher similarity correlates with \textit{more} hallucinations (see Section~\ref{sec:cosine_paradox}).
+
+\subsubsection{Summary of CI Metrics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llcc}
+\toprule
+\textbf{Metric} & \textbf{Formula} & \textbf{Expected} & \textbf{Observed} \\
+\midrule
+Perplexity & $\exp\left(\frac{1}{n}\sum -\log P(x_i)\right)$ & $\uparrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc \\
+Min Prob & $\min_i P(x_i)$ & $\downarrow \Rightarrow$ halluc & $\downarrow \Rightarrow$ halluc \\
+Max Window Entropy & $\max_w \text{mean}(H_k(t))$ & $\uparrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc \\
+Cosine Similarity & $\max_c \cos(\mathbf{e}_{\text{narr}}, \mathbf{e}_c)$ & $\downarrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc$^*$ \\
+\bottomrule
+\end{tabular}
+\caption{CI metrics summary. $^*$Counterintuitive: higher similarity predicts \textit{more} hallucinations.}
+\label{tab:ci_metrics_summary}
+\end{table}
+
+\subsection{Statistical Analysis Methods}
+
+This section documents the statistical methodology employed to evaluate whether CI metrics predict hallucinations in LLM-generated causal discovery outputs. All analyses were implemented in Python 3.11.x using standard scientific computing libraries and employ rigorous validation with multiple comparison correction.
+
+\subsection{Study Design and Data Structure}
+
+\subsubsection{Experimental Data Structure}
+
+The RQ2 analysis operates on \textbf{63 deduplicated experimental files} from two experiment types:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Experiment Type} & \textbf{CLDs} & \textbf{Runs} & \textbf{Prompts} & \textbf{Files} \\
+\midrule
+Citation (GT Lit) & 3 & 3 & 4 & 36 \\
+Correctness (GT Lit) & 3 & 3 & 3 & 27 \\
+\midrule
+\textbf{Total} & & & & \textbf{63} \\
+\bottomrule
+\end{tabular}
+\caption{RQ2 experimental file structure. Each file contains one complete CLD generation.}
+\label{tab:rq2_file_structure}
+\end{table}
+
+\paragraph{Causal Loop Diagrams (CLDs).}
+\begin{itemize}
+    \item \textbf{Depressive symptoms}: Response to stressor in healthy adults ($\sim$210 edges/file)
+    \item \textbf{Social norms}: Social norms and obesity prevalence ($\sim$110 edges/file)
+    \item \textbf{Emergency department}: Older persons ED visits and interactions ($\sim$1190 edges/file)
+\end{itemize}
+
+\paragraph{Prompt Types.}
+\begin{itemize}
+    \item \textbf{Citation experiment (4 prompts):} baseline, cot, mechanistic\_original, mechanistic\_lit
+    \item \textbf{Correctness experiment (3 prompts):} baseline, cot, mechanistic
+\end{itemize}
+
+\paragraph{Runs.} Three independent runs (run\_1, run\_2, run\_3) per (CLD $\times$ prompt) combination, using different LLM generation seeds.
+
+\paragraph{Total Sample Size.} After pooling all 63 files: $\sim$31,700 total edges. After removing rows with missing CI metrics: $\sim$16,500 edges (52.1\% retention). Hallucination rate: $\sim$15\% (2,514 hallucinations, 13,993 correct).
+
+\subsubsection{Cross-CLD Validation Design}
+
+The analysis employed a multi-dataset validation design to assess generalizability:
+
+\begin{itemize}
+    \item \textbf{Primary dataset structure:} 3 Causal Loop Diagrams (CLDs) from the health domain
+    \begin{itemize}
+        \item CLD 1: Depressive symptoms in response to a stressor (health psychology)
+        \item CLD 2: Social norms and obesity prevalence (health behavior)
+        \item CLD 3: Older persons emergency department visits (healthcare systems)
+    \end{itemize}
+    \item \textbf{Replication structure:} 3 independent runs per CLD $\times$ prompt combination
+    \item \textbf{Total files:} 63 deduplicated experimental files
+    \item \textbf{Meta-analytic approach:} One-sample t-tests aggregating performance metrics across files
+\end{itemize}
+
+\subsubsection{Ground Truth Definition}
+
+\paragraph{Hallucination labeling.} For GT Lit experiments (citation and correctness), hallucinations are defined as:
+\begin{equation}
+\text{is\_hallucination} = \mathbb{I}(\text{Classification} = \text{FP}) \lor \mathbb{I}(\text{Classification} = \text{FN})
+\label{eq:halluc_def}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item \textbf{False Positive (FP):} Edge generated by LLM but absent from validation CLD
+    \item \textbf{False Negative (FN):} Edge present in validation CLD but not generated by LLM
+\end{itemize}
+
+\paragraph{Data availability.} CI metrics (perplexity, min\_prob, max\_window\_entropy, cosine\_similarity) computed only for edges with LLM-generated motivation text. For FN edges (missed by generator), no generation occurred, hence no logprobs available---these are excluded from individual CI metric analysis but counted in classification performance.
+
+\paragraph{Note on corruption experiments.} GT Synth (corruption) experiments are excluded from RQ2 analysis because corruption is inserted \textit{post-generation}. Generator CI metrics (computed during generation) cannot retroactively detect corruption inserted afterwards.
+
+\subsection{Statistical Test Procedures}
+
+\subsubsection{Correlation Analysis}
+
+\paragraph{Pearson Product-Moment Correlation.} For metric values \(X = (x_1, \ldots, x_n)\) and binary hallucination labels \(Y = (y_1, \ldots, y_n)\):
+\[
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2 \sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\]
+where \(\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i\) and \(\bar{y} = \frac{1}{n}\sum_{i=1}^{n}y_i\).
+
+\textbf{Hypothesis test:} Two-tailed, \(H_0: \rho = 0\), \(\alpha = 0.05\) \\
+\textbf{Assumptions:} Bivariate normality (relaxed for large \(n\) via CLT)
+
+\paragraph{Spearman Rank Correlation.} Non-parametric alternative robust to non-linearity and outliers:
+\[
+\rho_s = 1 - \frac{6\sum_{i=1}^{n}d_i^2}{n(n^2-1)}
+\]
+where \(d_i = \text{rank}(x_i) - \text{rank}(y_i)\).
+
+\textbf{Use case:} Validate Pearson results when distributional assumptions violated
+
+\subsubsection{Classification Performance Analysis}
+
+\paragraph{Receiver Operating Characteristic (ROC) Analysis.} For each threshold \(t\) applied to CI metric \(X\):
+\[
+\text{TPR}(t) = \frac{\text{TP}(t)}{\text{TP}(t) + \text{FN}(t)}, \quad \text{FPR}(t) = \frac{\text{FP}(t)}{\text{FP}(t) + \text{TN}(t)}
+\]
+
+Area under ROC curve quantifies overall discriminative ability:
+\[
+\text{AUC} = \int_0^1 \text{TPR}(\text{FPR}^{-1}(x))\,dx
+\]
+
+\textbf{Implementation:} Standard ROC curve algorithm computes (FPR, TPR) pairs at all unique threshold values; AUC computed via trapezoidal rule integration.
+
+\textbf{Interpretation scale:}
+\begin{itemize}
+    \item AUC > 0.9: Excellent discrimination
+    \item 0.8--0.9: Good
+    \item 0.7--0.8: Acceptable
+    \item 0.6--0.7: Poor
+    \item < 0.6: Fail (no better than chance)
+    \item AUC = 0.5: Chance performance (random classifier)
+\end{itemize}
+
+\paragraph{Optimal Threshold Selection.} Thresholds selected to maximize F\(_1\) score:
+\[
+F_1 = \frac{2 \cdot \text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}} = \frac{2\text{TP}}{2\text{TP} + \text{FP} + \text{FN}}
+\]
+
+\textbf{Rationale:} F\(_1\) balances precision (minimize false alarms) against recall (minimize missed hallucinations), appropriate for imbalanced classes.
+
+\textbf{Implementation:} Grid search over percentile-based thresholds:
+\begin{itemize}
+    \item Candidate thresholds: \(t \in \{\text{percentile}_{10}, \text{percentile}_{15}, \ldots, \text{percentile}_{90}\}\) of metric distribution
+    \item For each threshold \(t\), compute F\(_1\)(t) based on predicted labels
+    \item Select optimal: \(t^* = \arg\max_t F_1(t)\)
+\end{itemize}
+
+This percentile-based grid search ensures coverage across the metric's empirical distribution while avoiding extreme values that may lead to degenerate classifications (e.g., all positive or all negative predictions).
+
+\subsubsection{Permutation Tests}
+
+\textbf{Purpose:} Permutation testing provides \textit{non-parametric} validation of correlation significance without assuming a specific distribution (e.g., normality). This addresses the limitation that Pearson's \(p\)-values assume bivariate normality, which may be violated for CI metrics.
+
+\textbf{Null Hypothesis:} \(H_0\): metric values and hallucination labels are independent (no association).
+
+\paragraph{Algorithm.}
+\begin{enumerate}
+    \item Compute observed correlation: \(r_{\text{obs}} = \text{corr}(X, Y)\)
+    \item For \(i = 1, \ldots, n_{\text{perm}}\) where \(n_{\text{perm}} = 10{,}000\):
+    \begin{enumerate}
+        \item Randomly permute labels: \(Y^{(i)} = \text{permute}(Y)\)
+        \item Compute permuted correlation: \(r_{\text{perm},i} = \text{corr}(X, Y^{(i)})\)
+    \end{enumerate}
+    \item Compute two-tailed p-value:
+    \[
+    p = \frac{1}{n_{\text{perm}}}\sum_{i=1}^{n_{\text{perm}}} \mathbb{I}(|r_{\text{perm},i}| \geq |r_{\text{obs}}|)
+    \]
+\end{enumerate}
+
+where \(\mathbb{I}(\cdot)\) is the indicator function.
+
+\textbf{Null distribution:} Under \(H_0\), permuted correlations form empirical null distribution centered at zero.
+
+\textbf{Advantages over parametric tests:}
+\begin{itemize}
+    \item No distributional assumptions
+    \item Exact Type I error control (conditional on data)
+    \item Robust to outliers and skewness
+\end{itemize}
+
+\paragraph{Obtained Results.} Single-CLD analysis (Depressive Symptoms, n=182):
+\begin{itemize}
+    \item \textbf{perplexity}: \(r_{\text{obs}} = +0.331\), \(p_{\text{perm}} < 0.0001\) (10,000/10,000 permutations had \(|r| < |r_{\text{obs}}|\))
+    \item \textbf{max\_window\_entropy}: \(r_{\text{obs}} = +0.327\), \(p_{\text{perm}} < 0.0001\)
+    \item \textbf{min\_prob}: \(r_{\text{obs}} = -0.175\), \(p_{\text{perm}} = 0.0144\)
+    \item \textbf{cosine\_similarity}: \(r_{\text{obs}} = +0.293\), \(p_{\text{perm}} < 0.0001\)
+\end{itemize}
+
+All generator CI metrics demonstrated p-values below \(\alpha = 0.05\), confirming associations not attributable to chance (\texttt{rq2\_permutation\_tests.csv}).
+
+\paragraph{Multiple Comparison Correction.} Testing \(k = 4\) generator CI metrics inflates family-wise error rate (FWER). We applied Holm-Bonferroni sequential correction:
+
+For ordered p-values \(p_{(1)} \leq p_{(2)} \leq \cdots \leq p_{(k)}\), reject \(H_{0,(i)}\) if:
+\[
+p_{(i)} \leq \frac{\alpha}{k - i + 1}
+\]
+
+\textbf{Implementation:} Sequential Holm-Bonferroni method with \(\alpha = 0.05\)
+
+\textbf{FWER control:} Guarantees \(P(\text{any false rejection}) \leq \alpha\) under global null.
+
+\textbf{Correction results:} All 4 generator CI metrics remained significant after Holm-Bonferroni correction, confirming robust family-wise significance control:
+\begin{itemize}
+    \item perplexity: \(p_{\text{corrected}} < 0.0001\)
+    \item max\_window\_entropy: \(p_{\text{corrected}} < 0.0001\)
+    \item cosine\_similarity: \(p_{\text{corrected}} < 0.0001\)
+    \item min\_prob: \(p_{\text{corrected}} = 0.0144\)
+\end{itemize}
+
+\subsubsection{Bootstrap Confidence Intervals}
+
+\textbf{Purpose:} Bootstrap provides \textit{uncertainty quantification} for AUC estimates. Unlike parametric methods (e.g., DeLong's method), bootstrap makes minimal assumptions about the AUC's sampling distribution, making it robust when assumptions are violated or sample sizes are moderate.
+
+\textbf{Value:} Confidence intervals allow us to distinguish between ``AUC significantly better than chance (0.5)'' versus ``AUC estimate with large uncertainty overlapping 0.5,'' providing evidence strength beyond point estimates alone.
+
+\paragraph{Algorithm} (\(n_{\text{boot}} = 10{,}000\) resamples):
+\begin{enumerate}
+    \item For \(b = 1, \ldots, n_{\text{boot}}\):
+    \begin{enumerate}
+        \item Resample \(n\) edges with replacement: \((X^{(b)}, Y^{(b)})\)
+        \item Compute \(\text{AUC}^{(b)}\) on bootstrap sample
+    \end{enumerate}
+    \item Compute percentile 95\% CI:
+    \[
+    \text{CI}_{95\%} = [\text{AUC}_{2.5\%}, \text{AUC}_{97.5\%}]
+    \]
+    where percentiles computed from empirical bootstrap distribution \(\{\text{AUC}^{(1)}, \ldots, \text{AUC}^{(n_{\text{boot}})}\}\)
+\end{enumerate}
+
+\textbf{Stratified resampling:} Maintains class proportions in each bootstrap sample to avoid degenerate cases with single class.
+
+\textbf{Bootstrap standard error:}
+\[
+\text{SE}_{\text{boot}} = \sqrt{\frac{1}{n_{\text{boot}}-1}\sum_{b=1}^{n_{\text{boot}}}\left(\text{AUC}^{(b)} - \overline{\text{AUC}}\right)^2}
+\]
+
+\paragraph{Obtained Results.} Single-CLD analysis (Depressive Symptoms, n=182):
+\begin{itemize}
+    \item \textbf{max\_window\_entropy}: AUC = 0.762, 95\% CI [0.680, 0.836], \(\text{SE}_{\text{boot}} = 0.040\)
+    \begin{itemize}
+        \item CI excludes 0.5 \(\rightarrow\) significantly better than chance
+        \item Narrow CI indicates stable, reliable estimate
+    \end{itemize}
+    \item \textbf{perplexity}: AUC = 0.747, 95\% CI [0.657, 0.829], \(\text{SE}_{\text{boot}} = 0.044\)
+    \begin{itemize}
+        \item CI excludes 0.5 \(\rightarrow\) significantly better than chance
+    \end{itemize}
+    \item \textbf{min\_prob}: AUC = 0.602, 95\% CI [0.505, 0.694], \(\text{SE}_{\text{boot}} = 0.048\)
+    \begin{itemize}
+        \item CI barely excludes 0.5, modest performance
+    \end{itemize}
+    \item \textbf{cosine\_similarity}: AUC = 0.224, 95\% CI [0.149, 0.305], \(\text{SE}_{\text{boot}} = 0.040\)
+    \begin{itemize}
+        \item CI entirely below 0.5 \(\rightarrow\) worse than chance (inverted predictor)
+    \end{itemize}
+\end{itemize}
+
+Bootstrap distributions were approximately normal for all metrics (\texttt{rq2\_bootstrap\_ci.csv}, visualizations: \texttt{rq2\_bootstrap\_distributions.png}).
+
+\subsubsection{Group Comparisons}
+
+Independent samples t-tests compared CI metric distributions between hallucination and non-hallucination groups.
+
+\paragraph{Test statistic:}
+\[
+t = \frac{\bar{x}_{\text{halluc}} - \bar{x}_{\text{non-halluc}}}{s_p \sqrt{\frac{1}{n_{\text{halluc}}} + \frac{1}{n_{\text{non-halluc}}}}}
+\]
+
+where \(s_p\) is pooled standard deviation:
+\[
+s_p = \sqrt{\frac{(n_{\text{halluc}}-1)s_{\text{halluc}}^2 + (n_{\text{non-halluc}}-1)s_{\text{non-halluc}}^2}{n_{\text{halluc}}+n_{\text{non-halluc}}-2}}
+\]
+
+\textbf{Degrees of freedom:} \(\nu = n_{\text{halluc}} + n_{\text{non-halluc}} - 2\)
+
+\textbf{Hypothesis:} \(H_0: \mu_{\text{halluc}} = \mu_{\text{non-halluc}}\) vs. \(H_1: \mu_{\text{halluc}} \neq \mu_{\text{non-halluc}}\)
+
+\paragraph{Effect Size.} Cohen's d quantifies magnitude of group differences standardized by pooled variance:
+\[
+d = \frac{\bar{x}_{\text{halluc}} - \bar{x}_{\text{non-halluc}}}{s_p}
+\]
+
+\textbf{Interpretation guidelines} \cite{cohen1988statistical}:
+\begin{itemize}
+    \item Small effect: \(|d| \approx 0.2\)
+    \item Medium effect: \(|d| \approx 0.5\)
+    \item Large effect: \(|d| \approx 0.8\)
+\end{itemize}
+
+\subsection{Meta-Analysis Framework}
+
+\subsubsection{Cross-CLD Aggregation}
+
+Meta-analytic statistics computed across \(n_{\text{CLD}} = 3\) independent datasets with 2 runs each.
+
+\paragraph{Mean and Standard Deviation.} For statistic \(S\) (correlation \(r\) or AUC):
+\[
+\bar{S} = \frac{1}{n_{\text{analyses}}}\sum_{j=1}^{n_{\text{analyses}}} S_j, \quad s_S = \sqrt{\frac{1}{n_{\text{analyses}}-1}\sum_{j=1}^{n_{\text{analyses}}}(S_j - \bar{S})^2}
+\]
+
+\textbf{Standard deviation interpretation:} Quantifies cross-CLD stability. Low \(s_S\) (< 0.1) indicates consistent performance; high \(s_S\) (> 0.15) suggests domain-specific behavior.
+
+\paragraph{Meta-Analytic Hypothesis Tests.}
+
+\textbf{Correlation test:} \(H_0: \mu_r = 0\) (no relationship)
+\[
+t = \frac{\bar{r}}{s_r / \sqrt{n_{\text{analyses}}}}, \quad \nu = n_{\text{analyses}} - 1
+\]
+
+\textbf{AUC test:} \(H_0: \mu_{\text{AUC}} = 0.5\) (chance performance)
+\[
+t = \frac{\overline{\text{AUC}} - 0.5}{s_{\text{AUC}} / \sqrt{n_{\text{analyses}}}}, \quad \nu = n_{\text{analyses}} - 1
+\]
+
+\textbf{Implementation:} One-sample t-test comparing sample mean to null hypothesis value.
+
+\paragraph{Confidence Intervals for Meta-Statistics.}
+\[
+\bar{S} \pm t_{\alpha/2, \nu} \cdot \frac{s_S}{\sqrt{n_{\text{analyses}}}}
+\]
+
+For 95\% CI with \(n_{\text{analyses}} = 32\), \(t_{0.025, 31} \approx 2.04\), but we use normal approximation \(z_{0.025} = 1.96\) for large samples:
+\[
+\text{CI}_{95\%} = \left[\bar{S} - 1.96\frac{s_S}{\sqrt{n_{\text{analyses}}}}, \bar{S} + 1.96\frac{s_S}{\sqrt{n_{\text{analyses}}}}\right]
+\]
+
+\paragraph{Obtained Meta-Analysis Results.} Aggregated across 32 analyses (3 CLDs \(\times\) 2 runs/CLD):
+
+\textbf{Correlation meta-statistics} (testing \(H_0: \mu_r = 0\)):
+\begin{itemize}
+    \item \textbf{cosine\_similarity}: \(\bar{r} = +0.256\) [+0.232, +0.280], \(p < 0.001\)
+    \item \textbf{max\_window\_entropy}: \(\bar{r} = +0.211\) [+0.175, +0.247], \(p < 0.001\)
+    \item \textbf{perplexity}: \(\bar{r} = +0.200\) [+0.146, +0.254], \(p < 0.001\)
+    \item \textbf{min\_prob}: \(\bar{r} = -0.162\) [-0.177, -0.147], \(p < 0.001\)
+\end{itemize}
+
+\textbf{AUC meta-statistics} (testing \(H_0: \mu_{\text{AUC}} = 0.5\)):
+\begin{itemize}
+    \item \textbf{perplexity}: \(\overline{\text{AUC}} = 0.679\) [0.650, 0.709], \(s = 0.076\), \(p < 0.001\)
+    \begin{itemize}
+        \item Consistently above chance, stable across domains
+    \end{itemize}
+    \item \textbf{max\_window\_entropy}: \(\overline{\text{AUC}} = 0.667\) [0.639, 0.695], \(s = 0.072\), \(p < 0.001\)
+    \begin{itemize}
+        \item Consistently above chance, stable across domains
+    \end{itemize}
+    \item \textbf{min\_prob}: \(\overline{\text{AUC}} = 0.641\) [0.617, 0.664], \(s = 0.060\), \(p < 0.001\)
+    \begin{itemize}
+        \item Low variance (\(s < 0.1\)) indicates high stability
+    \end{itemize}
+    \item \textbf{cosine\_similarity}: \(\overline{\text{AUC}} = 0.230\) [0.214, 0.245], \(s = 0.040\), \(p < 0.001\) vs.\ 0.5
+    \begin{itemize}
+        \item Significantly \textit{worse} than chance (inverted predictor)
+    \end{itemize}
+\end{itemize}
+
+All top-performing metrics demonstrated statistically significant mean effects that were consistent across multiple independent CLDs (\texttt{rq2\_aggregate\_report\_*.md}, \texttt{aggregate\_meta\_statistics.xlsx}).
+
+\subsection{Assumptions and Diagnostics}
+
+\subsubsection{Parametric Test Assumptions}
+
+\paragraph{Normality.} CI metrics exhibit right-skewed distributions (perplexity, max window entropy). However:
+\begin{itemize}
+    \item \textbf{Correlation tests:} Large sample sizes (\(n > 100\) per CLD) invoke Central Limit Theorem, relaxing normality requirements.
+    \item \textbf{t-tests:} CLT justifies approximate normality of sampling distributions for group means.
+    \item \textbf{Validation:} Spearman rank correlation provides non-parametric alternative; permutation tests require no distributional assumptions.
+\end{itemize}
+
+\paragraph{Homoscedasticity.} Equal variance assumption for t-tests checked via Levene's test. Violations addressed using Welch's t-test (unequal variances):
+\[
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}, \quad \nu \approx \frac{(s_1^2/n_1 + s_2^2/n_2)^2}{(s_1^2/n_1)^2/(n_1-1) + (s_2^2/n_2)^2/(n_2-1)}
+\]
+
+\paragraph{Independence.} 
+\begin{itemize}
+    \item \textbf{Within-CLD:} Edges sharing variables may exhibit dependencies. Violates strict independence for correlation tests. Conservative interpretation: treat significance thresholds as approximate.
+    \item \textbf{Between-CLD:} Independent datasets ensure valid meta-analytic aggregation.
+\end{itemize}
+
+\subsubsection{Multiple Testing Considerations}
+
+Total hypothesis tests conducted:
+\begin{itemize}
+    \item 9 metrics \(\times\) 2 correlation types (Pearson, Spearman) = 18 correlation tests per CLD
+    \item 9 metrics \(\times\) 1 AUC test per CLD
+    \item 9 metrics \(\times\) 1 group comparison per CLD
+\end{itemize}
+
+\textbf{Correction strategy:}
+\begin{itemize}
+    \item \textbf{Primary analysis:} Holm-Bonferroni correction applied to 4 generator metrics (core hypotheses)
+    \item \textbf{Exploratory analysis:} Judge metrics and aggregate score treated as exploratory; p-values reported without correction but interpreted cautiously
+\end{itemize}
+
+\textbf{Recommendation:} Results with \(p < 0.01\) robust to multiple testing; borderline results (\(0.01 < p < 0.05\)) require independent validation.
+
+\subsection{Computational Implementation}
+
+\subsubsection{Software Environment}
+
+\begin{itemize}
+    \item \textbf{Python:} 3.11.x
+    \item \textbf{Core statistical libraries:} SciPy 1.11.x (statistical tests), scikit-learn 1.3.x (classification metrics), NumPy 1.25.x (numerical operations), pandas 2.0.x (data manipulation), statsmodels 0.14.x (multiple comparison correction)
+\end{itemize}
+
+\subsubsection{Analysis Pipeline Architecture}
+
+Three-stage pipeline orchestrates statistical analyses:
+
+\paragraph{Stage 1: Data Preparation.}
+\begin{itemize}
+    \item Loads experiment outputs and normalizes data format
+    \item Defines binary hallucination labels based on ground truth or judge verdict
+    \item Selects CI metric source (generator vs. judge metrics)
+    \item Exports prepared data for downstream analysis
+\end{itemize}
+
+\paragraph{Stage 2: Single-CLD Analysis.}
+\begin{itemize}
+    \item \textbf{Correlation module:} Pearson and Spearman correlations with p-values
+    \item \textbf{Classification module:} ROC curves, AUC computation, optimal threshold selection
+    \item \textbf{Validation module:} Permutation tests (\(n=10{,}000\)), bootstrap CI (\(n=10{,}000\))
+    \item \textbf{Comparison module:} Independent t-tests, Cohen's d effect sizes
+    \item \textbf{Outputs:} CSV tables (correlations, AUC scores, thresholds, validation statistics)
+\end{itemize}
+
+\paragraph{Stage 3: Meta-Analysis Aggregation.}
+\begin{itemize}
+    \item Aggregates results across multiple CLDs
+    \item Computes meta-statistics (mean, std, 95\% CI)
+    \item One-sample t-tests: correlation \(\neq 0\), AUC > 0.5
+    \item Identifies stable metrics (low cross-CLD variance)
+    \item Generates aggregate visualizations (heatmaps, forest plots)
+\end{itemize}
+
+\subsubsection{Reproducibility Specifications}
+
+\paragraph{Random seed control.} Stochastic procedures (permutation sampling, bootstrap resampling) employ explicit random seeds for reproducibility. Explicit seed values ensure exact replication across independent runs.
+
+\paragraph{Computational cost.} Approximate runtime on standard hardware (Intel i7, 16GB RAM):
+\begin{itemize}
+    \item Single-CLD analysis (4 generator metrics, \(n_{\text{perm}} = n_{\text{boot}} = 10{,}000\)): 5--10 minutes
+    \item Meta-analysis aggregation (3 CLDs, 32 analyses): 30--60 minutes total
+    \item Memory footprint: < 2GB for largest CLD (\(N \approx 1100\) edges)
+\end{itemize}
+
+\paragraph{Parallelization.} Permutation and bootstrap loops executed serially. Potential speedup via \texttt{joblib.Parallel} or \texttt{multiprocessing.Pool} (not implemented in current version).
+
+\subsection{Statistical Power and Sample Size}
+
+\paragraph{Correlation detection power.} For two-tailed correlation test at \(\alpha = 0.05\), power to detect medium effect (\(r = 0.3\)) with 80\% power:
+\[
+n \approx 84 \text{ edges}
+\]
+
+All three CLDs exceed this minimum (Depressive symptoms: \(N=182\), Social norms: \(N=90\), Emergency visits: \(N=1119\)), providing adequate power for medium effects.
+
+\paragraph{Meta-analysis power.} With 3 CLDs and multiple runs per CLD (\(n_{\text{analyses}} = 32\) for some metrics), meta-analytic tests achieve high power (> 90\%) for detecting consistent effects. However, small CLD count limits power for detecting heterogeneity (domain-specific effects).
+
+\paragraph{Limitations.} Insufficient power for detecting small effects (\(r < 0.2\)) or weak classification performance (AUC < 0.6). Null findings should be interpreted as "insufficient evidence" rather than "evidence of absence."
+
+\subsection{Summary}
+
+This statistical framework combines classical parametric methods (correlation, t-tests) with robust non-parametric validation (permutation tests, bootstrap CI) and cross-dataset meta-analysis. Holm-Bonferroni correction controls family-wise error rate across primary hypotheses. Implementation in standard Python scientific stack ensures reproducibility and extensibility. Key methodological strengths include empirical null distributions (permutation testing), assumption-free uncertainty quantification (bootstrap), and hierarchical validation (single-CLD \(\rightarrow\) meta-analysis). Primary limitation: small CLD count (\(n=3\)) restricts power for heterogeneity analyses and domain stratification.

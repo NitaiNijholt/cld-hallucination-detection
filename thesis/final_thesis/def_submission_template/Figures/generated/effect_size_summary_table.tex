@@ -1,0 +1,71 @@
+\begin{table}[H]
+\centreing
+\caption{Effect Size Summary: Hypothesis Operationalisation, Statistical Tests, and Conclusions}
+\label{tab:effect_size_summary}
+\begin{threeparttable}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llp{3.2cm}p{2.8cm}cccl}
+\toprule
+\textbf{RQ} & \textbf{Hypothesis} & \textbf{$H_0$ / $H_1$} & \textbf{Test} & \textbf{Effect} & \textbf{Value} & \textbf{$p$} & \textbf{Conclusion (decision; effect)} \\
+\midrule
+\multicolumn{8}{l}{\textit{RQ1a: LLM-as-a-Judge Validation}} \\
+\midrule
+1a & LLM-human agreement & $H_0$: $\kappa=0$ vs $H_1$: $\kappa>0$ & Cohen's $\kappa$ (n=72) & $\kappa$ & 0.618 & --- & $H_0$ rejected; substantial \\
+1a & Prompt affects F1 & $H_0$: equal medians & Friedman (9 blocks) & $W$ & 0.28 & .058 & $H_0$ not rejected; weak \\
+ & (Corr. Citation) & $H_1$: $\geq$1 differs &  &  &  &  &  \\
+ & Prompt affects F1 &  &  & $W$ & 0.70 & .001** & $H_0$ rejected; strong \\
+ & (Corr. Correctness) &  &  &  &  &  &  \\
+ & Prompt affects F1 &  &  & $W$ & 0.30 & .042* & $H_0$ rejected; moderate \\
+ & (GT Citation) &  &  &  &  &  &  \\
+ & Prompt affects F1 &  &  & $W$ & 0.48 & .013* & $H_0$ rejected; moderate \\
+ & (GT Correctness) &  &  &  &  &  &  \\
+\midrule
+\multicolumn{8}{l}{\textit{RQ1b: LLM-as-a-Corrector Evaluation}} \\
+\midrule
+1b & Corrector efficacy & $H_0$: med($\Delta$F1)$=$0 & Wilcoxon signed-rank & $d$ & +1.18 & .031* & $H_0$ rejected; large \\
+ & (Synthetic) & $H_1$: med($\Delta$F1)$\neq$0 & (9 blocks) &  &  &  &  \\
+ & Corrector efficacy & $H_0$: med($\Delta$F1)$=$0 & Wilcoxon signed-rank & $d$ & $-$0.32 & .301 & $H_0$ not rejected; medium \\
+ & (Ground Truth) & $H_1$: med($\Delta$F1)$\neq$0 & (9 blocks) &  &  &  &  \\
+\midrule
+\multicolumn{8}{l}{\textit{RQ2: Corpus-Independent Hallucination Detection}} \\
+\midrule
+2 & UQ discriminates & $H_0$: AUC$=$0.5 & One-sample $t$-test & AUC & 0.672 & $<$.001*** & $H_0$ rejected; moderate \\
+ & hallucinations & $H_1$: AUC$\neq$0.5 & (9 blocks) &  &  &  &  \\
+ & Cross-CLD & --- & Descriptive & $\Delta$AUC & 0.18 & --- & Poor generalisation \\
+ & generalisation &  & (Phase 5$\to$6) &  &  &  &  \\
+\midrule
+\multicolumn{8}{l}{\textit{RQ3: Deep Research Literature Validation}$^{\ast}$} \\
+\midrule
+3 & DR discriminates & $H_0$: $p_{\text{TP}}=p_{\text{FP}}$ & Fisher's exact & $h$ & 0.17 & 0.382 & $H_0$ not rejected; negl. \\
+ & (TP--FP) & $H_1$: $p_{\text{TP}}\neq p_{\text{FP}}$ & (Bonf. $m$=3) &  &  &  &  \\
+ & DR discriminates & $H_0$: $p_{\text{TP}}=p_{\text{FN}}$ & Fisher's exact & $h$ & 0.56 & 0.006 & $H_0$ rejected; medium \\
+ & (TP--FN) & $H_1$: $p_{\text{TP}}\neq p_{\text{FN}}$ & (Bonf. $m$=3) &  &  &  &  \\
+ & DR discriminates & $H_0$: $p_{\text{FP}}=p_{\text{FN}}$ & Fisher's exact & $h$ & 0.39 & 0.008 & $H_0$ rejected; small \\
+ & (FP--FN) & $H_1$: $p_{\text{FP}}\neq p_{\text{FN}}$ & (Bonf. $m$=3) &  &  &  &  \\
+\midrule
+\multicolumn{8}{l}{\textit{RQ3: Enrichment Analysis (Exploratory)}$^{\ast}$} \\
+\midrule
+ & Enrichment baseline & --- & Descriptive & F1 & 0.267 & --- & Baseline \\
+ & Scenario 1: Enriched GT & --- & Descriptive & $\Delta$F1 & +0.438 & --- & Exploratory \\
+ & Scenario 2: LLM+DR & --- & Descriptive & $\Delta$F1 & +0.512 & --- & Exploratory \\
+ & Human-val. Scenario 1 & --- & Extrapolation & $\Delta$F1 & +0.260 & --- & Exploratory \\
+ & Human-val. Scenario 2 & --- & Extrapolation & $\Delta$F1 & +0.315 & --- & Exploratory \\
+ & Smart compute & --- & Descriptive & $\Delta$F1/\$100 & +0.027 & --- & Exploratory \\
+\bottomrule
+\end{tabular}}
+\begin{tablenotes}[flushleft]
+\scriptsize
+\setlength{\leftskip}{0pt}
+\item \textit{Effect size interpretation.} $\kappa$: Landis-Koch (0.61--0.80 = substantial). $W$: $<$0.3 weak, 0.3--0.5 moderate, $>$0.5 strong. $d$: $<$0.2 small, 0.2--0.8 medium, $>$0.8 large.
+\item $r$: $<$0.2 weak, 0.2--0.5 moderate, $>$0.5 strong. $h$: $<$0.2 negligible, 0.2--0.5 small, 0.5--0.8 medium, $>$0.8 large.
+\item \textit{Significance.} * $p<.05$, ** $p<.01$, *** $p<.001$. RQ3 $p$-values are Bonferroni-adjusted ($\alpha_{\text{adj}}=0.0167$).
+\item \textsuperscript{$\ast$} \textit{RQ3 exploratory.} Enrichment estimates are upper-bound/extrapolated; not independently validated ground truth.
+\item \textit{RQ1a prompt tests.} Friedman with (CLD$\times$run) blocking; $W$ = Kendall's concordance.
+\item \textit{RQ1b efficacy.} One-sample Wilcoxon signed-rank on 9 blocks.
+\item \textit{RQ2 discrimination.} AUC = Area Under Curve; One-sample t-test on 9 block means (CLD$\times$run) vs 0.5.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

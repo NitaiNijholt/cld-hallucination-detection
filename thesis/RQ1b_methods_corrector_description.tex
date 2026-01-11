@@ -1,0 +1,23 @@
+\subsection{Corrector Mechanism}
+
+The LLM-as-a-corrector operates as a tool-using agent that takes corrective actions based on judge verdicts, without conducting independent evidence searches. The corrector receives edges flagged by the judge as INCORRECT, ERROR, INCONSISTENT, or having other problematic verdicts, along with:
+
+\begin{itemize}
+    \item Current edge motivation and citations (fetched from URLs if available)
+    \item Judge verdict (CORRECT, INCORRECT, PARTIALLY\_CORRECT, or ERROR)
+    \item Judge feedback message explaining the reasoning
+    \item Aggregate score across multiple judges (if applicable)
+\end{itemize}
+
+The corrector agent has access to four tools for modifying the graph:
+
+\begin{enumerate}
+    \item \textbf{revise\_motivation(source, target, rel\_type, new\_motivation)}: Rewrites the motivation text to provide better causal reasoning while preserving the edge type
+    \item \textbf{flip\_polarity(source, target, old\_type, new\_type)}: Swaps POSITIVE $\leftrightarrow$ NEGATIVE polarity
+    \item \textbf{change\_edge\_type(source, target, old\_type, new\_type, new\_motivation)}: Changes any edge type (e.g., NONE $\rightarrow$ POSITIVE, NEGATIVE $\rightarrow$ NONE)
+    \item \textbf{remove\_edge(source, target, rel\_type, reasoning)}: Deletes the edge entirely
+\end{enumerate}
+
+The agent analyzes the judge feedback and edge context, then autonomously selects and executes one or more tool calls. Critically, \textbf{the corrector does not perform web searches or fetch new evidence}---it operates solely on the information provided by the judge and existing edge citations. After corrections are applied, all edges are re-judged using the same "correctness" approach to evaluate whether the corrections improved edge quality.
+
+This design reflects a \textbf{judge-corrector pipeline} where the judge identifies problems and the corrector attempts fixes based on that feedback, rather than an independent verification system. The corrector's decisions are constrained by the judge's assessment and the available citation content, without access to external knowledge sources during correction.

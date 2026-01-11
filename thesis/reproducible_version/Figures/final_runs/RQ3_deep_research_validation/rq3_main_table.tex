@@ -1,1 +1,28 @@
-% Placeholder - run reproduction to generate this table
+\begin{table}[H]
+\centering
+\begin{minipage}{\linewidth}
+\centering
+\caption{Deep Research Detection Rate and Discrimination Analysis (n=285 edges)}
+\label{tab:rq3_results}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Classification} & \textbf{n} & \textbf{Detection Rate} & \textbf{Confidence} & \textbf{TP--X Gap} & \textbf{Cohen's $h$} & \textbf{$p$-value} \\
+\midrule
+TP (Expert-accepted) & 44 & 70.5\% & 6.59 & --- & --- & --- \\
+FP (LLM hallucinations) & 178 & 62.4\% & 6.64 & 8.1 pp & 0.17 & .38 \\
+FN (Expert-rejected) & 63 & 42.9\% & 6.78 & 27.6 pp & 0.56 & .006** \\
+\bottomrule
+\end{tabular}}
+\end{threeparttable}
+\vspace{0.5em}
+\footnotesize
+\textit{Note.} Detection rate = \% edges with direct causal evidence found. Confidence = self-assessed (1--10 scale). TP/FP/FN from RQ1a GT Lit validation across all 3 CLDs.\par
+\textit{TP--FP test.} Fisher's exact $p=.38$; OR = 1.44 [95\% CI: 0.70, 2.94]; Cohen's $h=0.17$ [95\% CI: -0.16, 0.50] (negligible); power = 17\%.\par
+\textit{TP--FN test.} Fisher's exact $p=.006**$; Cohen's $h=0.56$ [95\% CI: 0.18, 0.95] (medium); power = 82\%.\par
+\textit{FP--FN test.} Fisher's exact $p=.008**$; Cohen's $h=0.39$ [95\% CI: 0.11, 0.68] (small); power = 76\%.\par
+\textit{Multiple comparisons.} Bonferroni correction for 3 pairwise tests. TP--FP $p_{\text{adj}}=1.00$; TP--FN $p_{\text{adj}}=.02*$; FP--FN $p_{\text{adj}}=.02*$.
+
+\end{minipage}
+\end{table}

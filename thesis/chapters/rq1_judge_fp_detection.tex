@@ -1,0 +1,74 @@
+\chapter{Judge Performance in Identifying False Positives (RQ1)}
+\label{ch:rq1_results}
+
+\section{Methods}
+
+We evaluated whether LLM judges (Claude Sonnet 4.5) can distinguish true from false causal relationships in automated CLD generation. We analyzed 1,394 edges across three domains: Social Norms and Obesity (90 edges), Depressive Symptoms (182 edges), and Older Persons Emergency Department Visits (1,122 edges). Each edge was classified as True Positive (TP), False Positive (FP), True Negative (TN), or False Negative (FN) based on presence in session vs validation graphs.
+
+\section{Results}
+
+\subsection{Score Distribution by Classification}
+
+Table~\ref{tab:rq1_score_distribution} presents the distribution of judge scores across the four classification categories.
+
+\begin{table}[h]
+\centering
+\caption{Judge Score Distribution by Ground Truth Classification (N=1,394 edges)}
+\label{tab:rq1_score_distribution}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Classification} & \textbf{n} & \textbf{Mean Score} & \textbf{Median} & \textbf{SD} \\
+\midrule
+True Positive (TP)  & 42    & 0.869 & 1.000 & 0.248 \\
+False Positive (FP) & 161   & 0.873 & 1.000 & 0.239 \\
+True Negative (TN)  & 1,126 & 0.456 & 0.500 & 0.458 \\
+False Negative (FN) & 65    & 0.323 & 0.000 & 0.454 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key Findings}
+
+\subsubsection{Finding 1: Judges Cannot Distinguish False from True Positives}
+
+\textbf{FP vs TP comparison:}
+\begin{itemize}
+    \item Mean difference: 0.004 (FP slightly higher)
+    \item Mann-Whitney U test: p = 0.52 (n.s.)
+    \item Cohen's d: 0.015 (negligible effect size)
+\end{itemize}
+
+\textit{Interpretation:} No significant difference exists between false positive scores (0.873) and true positive scores (0.869), indicating judges cannot reliably detect hallucinated or incorrect causal relationships when they appear plausible.
+
+\subsubsection{Finding 2: Judges Assign Lower Scores to False Negatives}
+
+\textbf{FN vs TN comparison:}
+\begin{itemize}
+    \item Mean difference: -0.133 (FN lower than TN)
+    \item Mann-Whitney U test: p = 0.0096 (p < 0.01)
+    \item Cohen's d: -0.292 (small-to-medium effect)
+\end{itemize}
+
+\textit{Interpretation:} False negatives receive significantly lower scores (0.323) than true negatives (0.456), suggesting judges can identify some missing relationships, though the effect size is small.
+
+\subsection{Classification Performance}
+
+Using a threshold of 0.5, classification metrics were:
+
+\begin{itemize}
+    \item \textbf{Accuracy:} 59.0\%
+    \item \textbf{Precision:} 0.0\%
+    \item \textbf{Recall:} 0.0\%
+    \item \textbf{Specificity:} 59.0\%
+\end{itemize}
+
+\section{Interpretation}
+
+LLM judges \textbf{cannot reliably identify false positives} in automated causal discovery (p=0.52). The near-identical scores for FP (0.873) vs TP (0.869) indicate judges validate based on surface plausibility rather than causal validity. When relationships appear coherent and are supported by citations, judges cannot distinguish true causal mechanisms from plausible-sounding hallucinations.
+
+Judges show modest ability to detect missing relationships (FN vs TN: p<0.01), but the small effect size (d=-0.292) limits practical utility. Classification accuracy (59\%) is only marginally above chance.
+
+\textbf{Implication:} LLM judges alone are insufficient for quality assurance in causal discovery systems. High judge scores (>0.8) do not guarantee relationship validity. Critical applications require human domain expert validation.
+
+\vspace{1em}
+\noindent\textit{Dataset: 1,394 edges across 3 CLDs. Statistics: Mann-Whitney U tests (two-tailed), $\alpha$=0.05.}

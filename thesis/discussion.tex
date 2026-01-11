@@ -1,0 +1,46 @@
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+%==============================================================================
+
+\subsection{Limitations}
+
+\subsubsection{Embedding Model Selection}
+
+We selected \texttt{all-mpnet-base-v2} for cosine similarity computation based on computational efficiency and strong MTEB reranking performance. However, this is a general-purpose embedding model trained primarily on web and conversational text. Domain-specific embedding models trained on scientific literature may yield improved performance for our citation-matching task:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{SPECTER}~\cite{cohan2020specter}: Trained on citation graphs from scientific papers, explicitly modeling document-level relationships in academic text. May better capture the semantic nuances of causal mechanisms described in scientific literature.
+    \item \textbf{SciBERT embeddings}: Pre-trained on scientific corpora (Semantic Scholar), potentially better suited for biomedical and systems dynamics terminology present in our CLDs.
+    \item \textbf{PubMedBERT}: Specialized for biomedical text, relevant for health-related CLDs (Depressive Symptoms, Emergency Department).
+\end{itemize}
+
+The trade-off between general-purpose models (broader coverage, faster inference) and domain-specific models (potentially higher semantic fidelity for scientific text) remains unexplored in this work and represents a direction for future investigation.
+
+\subsubsection{Ground Truth Limitations}
+
+The literature-based ground truth (GT Lit) relies on published CLDs that may themselves contain errors or simplifications. The synthetic ground truth (GT Synth) introduces controlled corruptions but may not capture the full spectrum of hallucination types that occur during natural CLD generation.
+
+\subsubsection{Model Generalization}
+
+All experiments used GPT-4.1 as the primary LLM. Performance characteristics may differ for other foundation models (Claude, Gemini, open-source alternatives). The judge-corrector framework's effectiveness is likely model-dependent.
+
+\subsection{Future Work}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Domain-specific embeddings}: Evaluate SPECTER, SciBERT, and PubMedBERT for citation similarity to determine if scientific text embeddings improve hallucination detection.
+    \item \textbf{Cross-model evaluation}: Test the judge-corrector pipeline with diverse LLMs to assess generalization.
+    \item \textbf{Human evaluation}: Validate automated hallucination labels against expert domain scientist judgments.
+    \item \textbf{Ensemble CI metrics}: Investigate whether combining logit-based and embedding-based metrics improves classification performance beyond individual features.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+

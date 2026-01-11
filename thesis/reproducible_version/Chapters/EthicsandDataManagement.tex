@@ -19,7 +19,9 @@ This research involves the use of large language models (LLMs) for automated gen
 
 \section{Data Management}
 
-The source code for this thesis is contained within a private GitHub repository (\url{https://github.com/CausalixAI/platform}, branch: \texttt{thesis-nitai}). The repository is private because the code pertains to a startup (Causalix) that Professor Quax and the author are launching. As detailed in the Declaration of Authorship, this thesis was conducted within a shared software environment, with clear delineation of individual contributions. Access to the repository can be granted to examiners upon request.
+The full software environment used to generate experimental artefacts for this thesis is contained within a private GitHub repository (\url{https://github.com/CausalixAI/platform}, branch: \texttt{thesis-nitai}). The repository is private because the code pertains to a startup (Causalix) that Professor Quax and the author are launching. As detailed in the Declaration of Authorship, this thesis was conducted within a shared software environment, with clear delineation of individual contributions. Access to the full platform repository can be granted to examiners upon request.
+
+For computational reproducibility of the analyses and the Results chapter figures/tables, a public reproduction snapshot is provided at \url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction}). This public repository includes the analysis scripts and result datasets required to regenerate the thesis outputs; it does not include the full simulation/data-generation pipeline or proprietary platform infrastructure.
 
 \begin{table}[ht]
 \centering
@@ -27,17 +29,17 @@ The source code for this thesis is contained within a private GitHub repository 
 \hline
 \textbf{Description} & \textbf{Availability} & \textbf{License} \\
 \hline
-Thesis source code and experimental pipeline & Private GitHub repository (access on request) & Proprietary (Causalix) \\
+Full platform source code and simulation/data-generation pipeline & Private GitHub repository (access on request) & Proprietary (Causalix) \\
 \hline
 Ground truth CLDs: Depressive Symptoms, Social Norms, Emergency Department, Alzheimer's, Physics & Extracted from cited publications & Fair use for research \\
 \hline
-Generated CLD datasets & Private GitHub repository & Proprietary (Causalix) \\
+Result datasets for analysis reproduction (RQ1--RQ3, SUPP, PRELIM) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & Mixed (see repository) \\
 \hline
 RQ1 human validation data (n=72) & Private GitHub repository & Proprietary (Causalix) \\
 \hline
-RQ3 human validation data (n=50) & Available upon request & CC-BY \\
+RQ3 human validation data (n=50) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & CC-BY \\
 \hline
-Analysis scripts and notebooks & Available upon request & CC-BY \\
+Analysis scripts (reproduction snapshot) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & MIT (code) \\
 \hline
 \end{tabularx}
 \caption{Data and code availability for thesis reproducibility.}

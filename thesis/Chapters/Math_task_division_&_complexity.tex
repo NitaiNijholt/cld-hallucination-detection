@@ -1,0 +1,105 @@
+
+\begin{definition}[Computational Complexity of Transformer Processing]
+Let $L$ be the sequence length input to a transformer model. The computational complexity of the attention mechanism is $\mathcal{O}(L^2)$ and memory complexity is $\mathcal{O}(L^2)$.
+\end{definition}
+
+\begin{theorem}[Task Decomposition Efficiency]
+Consider a task requiring total sequence length $L_{total}$ that can be decomposed into $n$ subtasks with sequence lengths $L_1, L_2, \ldots, L_n$ where $\sum_{i=1}^{n} L_i = L_{total}$.
+
+The computational advantage of decomposition exists when:
+\begin{equation}
+\sum_{i=1}^{n} L_i^2 + C_{overhead} < L_{total}^2
+\end{equation}
+
+where $C_{overhead}$ represents coordination costs between agents.
+\end{theorem}
+
+\begin{proof}
+The monolithic approach requires $\mathcal{O}(L_{total}^2)$ operations. The decomposed approach requires $\sum_{i=1}^{n} \mathcal{O}(L_i^2) = \mathcal{O}(\sum_{i=1}^{n} L_i^2)$ operations plus coordination overhead $C_{overhead}$.
+
+Decomposition is beneficial when the total cost is less than monolithic processing:
+$$\sum_{i=1}^{n} L_i^2 + C_{overhead} < L_{total}^2$$
+\end{proof}
+
+\begin{lemma}[Optimal Equal Division]
+For equal task division where $L_i = \frac{L_{total}}{n}$ for all $i$, the computational savings factor is:
+\begin{equation}
+\frac{L_{total}^2}{\sum_{i=1}^{n} L_i^2} = \frac{L_{total}^2}{n \cdot \left(\frac{L_{total}}{n}\right)^2} = n
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Substituting $L_i = \frac{L_{total}}{n}$:
+\begin{align}
+\sum_{i=1}^{n} L_i^2 &= \sum_{i=1}^{n} \left(\frac{L_{total}}{n}\right)^2\\
+&= n \cdot \frac{L_{total}^2}{n^2}\\
+&= \frac{L_{total}^2}{n}
+\end{align}
+
+Therefore, the speedup factor is:
+$$\frac{L_{total}^2}{\frac{L_{total}^2}{n}} = n$$
+\end{proof}
+
+\begin{theorem}[Memory Efficiency]
+The memory savings for attention matrices under equal decomposition is:
+\begin{equation}
+\text{Memory Savings} = L_{total}^2 - \frac{L_{total}^2}{n} = L_{total}^2\left(1 - \frac{1}{n}\right)
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Break-even Analysis]
+Let $C_{overhead} = \alpha n + \beta n k + \gamma n m$ where:
+\begin{itemize}
+    \item $\alpha$ is the coordination cost per agent
+    \item $\beta k$ is the communication cost per agent (k = message size)
+    \item $\gamma m$ is the context switching cost per agent (m = model loading cost)
+\end{itemize}
+
+Task decomposition is beneficial when:
+\begin{equation}
+\frac{L_{total}^2}{n} + n(\alpha + \beta k + \gamma m) < L_{total}^2
+\end{equation}
+
+Rearranging:
+\begin{equation}
+L_{total}^2\left(1 - \frac{1}{n}\right) > n(\alpha + \beta k + \gamma m)
+\end{equation}
+\end{theorem}
+
+\begin{corollary}[Optimal Number of Agents]
+The optimal number of agents $n^*$ minimizes the total computational cost:
+\begin{equation}
+n^* = \arg\min_n \left\{\frac{L_{total}^2}{n} + n(\alpha + \beta k + \gamma m)\right\}
+\end{equation}
+
+Taking the derivative and setting to zero:
+\begin{equation}
+\frac{d}{dn}\left[\frac{L_{total}^2}{n} + n(\alpha + \beta k + \gamma m)\right] = -\frac{L_{total}^2}{n^2} + (\alpha + \beta k + \gamma m) = 0
+\end{equation}
+
+Solving for $n^*$:
+\begin{equation}
+n^* = \sqrt{\frac{L_{total}^2}{\alpha + \beta k + \gamma m}}
+\end{equation}
+\end{corollary}
+
+\begin{theorem}[Quality-Efficiency Trade-off]
+Let $A_{mono}$ be the accuracy of monolithic processing and $A_{decomp}$ be the accuracy of decomposed processing. The utility function is:
+\begin{equation}
+U = A_{decomp} \cdot \frac{L_{total}^2}{\sum_{i=1}^{n} L_i^2 + C_{overhead}} - \text{Cost}_{overhead}
+\end{equation}
+
+Decomposition is optimal when:
+\begin{equation}
+\frac{A_{decomp}}{A_{mono}} > \frac{\sum_{i=1}^{n} L_i^2 + C_{overhead}}{L_{total}^2}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Scalability Bound]
+For tasks where sequence length grows as $L_{total} = \mathcal{O}(N^p)$ with problem size $N$, and optimal decomposition maintains $n = \mathcal{O}(N^q)$, the computational complexity scales as:
+\begin{equation}
+\mathcal{O}\left(\frac{N^{2p}}{N^q}\right) + \mathcal{O}(N^q) = \mathcal{O}(N^{2p-q}) + \mathcal{O}(N^q)
+\end{equation}
+
+For $q < 2p$, the first term dominates, giving complexity $\mathcal{O}(N^{2p-q})$.
+\end{theorem}

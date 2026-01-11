@@ -1,0 +1,197 @@
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+%==============================================================================
+
+\subsection{RQ3: Methodological Pivot and Rationale}
+\label{sec:rq3_pivot}
+
+\subsubsection{Original Design and Its Prerequisites}
+
+The original RQ3 design proposed \textit{smart test-time compute allocation}: using uncertainty quantification (UQ) metrics as early hallucination indicators to selectively deploy the LLM-as-a-corrector, thereby improving efficiency while maintaining accuracy. This design was predicated on two assumptions:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{RQ2 Prerequisite:} UQ metrics would generalize across CLDs, enabling threshold-based triggering of corrective interventions.
+    \item \textbf{RQ1b Prerequisite:} The LLM-as-a-corrector would effectively repair detected hallucinations, justifying the compute investment.
+\end{enumerate}
+
+\subsubsection{Why the Original RQ3 Became Untenable}
+
+Our findings undermined both prerequisites:
+
+\textbf{RQ2 Limitation:} While UQ metrics can achieve strong within-CLD discrimination under block-level splitting (RF Phase 5 Test AUC $\approx$ 0.809), leave-one-CLD-out cross-validation still reveals poor generalization (RF Phase 6 mean AUC $\approx$ 0.629). Optimal thresholds vary substantially across domains, making universal threshold-based triggering unreliable. A ``smart'' compute allocation strategy would require domain-specific calibration, negating the efficiency gains.
+
+\textbf{RQ1b Limitation:} The LLM-as-a-corrector demonstrated \textit{deletion-dominant} behavior rather than genuine correction. Of corrective actions taken, the majority were edge removals rather than motivation revisions or polarity corrections. The corrector achieved modest F1 improvement (+0.04 on GT Lit) but primarily through conservative deletion, not repair. Selectively deploying such a corrector would simply automate edge removal rather than improve CLD quality.
+
+\subsubsection{The Pivot: Deep Research as Alternative Validation}
+
+Given these findings, we pivoted RQ3 to address a related but distinct question: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature''---a capability that would be valuable regardless of UQ metric generalization.
+
+The Deep Research system represents an alternative test-time compute strategy: rather than correcting errors, it seeks external evidence to \textit{validate} claims, potentially flagging low-evidence edges for human review rather than automated correction.
+
+\subsubsection{Limitations of the Pivot}
+
+We acknowledge that this pivot occurred late in the research timeline, constraining the depth of investigation:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Single-run design:} No replication prevents uncertainty quantification.
+    \item \textbf{Limited ablation:} We did not systematically vary search parameters, iteration counts, or evidence thresholds.
+    \item \textbf{Model confound:} Deep Research uses GPT-5/GPT-5-mini, while CLD generation used GPT-4.1. The DR system's ability to find literature evidence for edges may partially reflect the superior reasoning capabilities of GPT-5 rather than the multi-agent architecture or iterative search methodology. A controlled ablation comparing single-model direct search against the full Deep Research pipeline on identical hardware and model versions would be required to isolate the contribution of the agentic approach from the model upgrade.
+\end{itemize}
+
+Despite these constraints, the findings are informative: the moderate TP-FP discrimination gap (8.1 pp) and high FP validation rate (62.4\%) reveal that automated literature search conflates ``published correlational evidence'' with ``expert-validated causal relationships.'' This negative finding has practical implications: literature retrieval alone is insufficient for hallucination filtering; human domain expertise remains essential for distinguishing plausible-but-excluded relationships from expert-accepted ones.
+
+\subsubsection{Framing: Exploratory Pilot Study}
+
+We present the Deep Research investigation as an \textbf{exploratory pilot study} rather than a fully validated methodology. The 285-edge evaluation establishes baseline detection rates and identifies the core challenge (correlational confound), providing groundwork for future research on evidence-based causal claim validation.
+
+%------------------------------------------------------------------------------
+
+\subsection{RQ2: UQ Metrics Interpretation}
+
+\subsubsection{Addressing High RF AUC Performance}
+\textbf{Concern:} Very high in-distribution Random Forest AUC values can raise questions about leakage or overfitting (especially in nested, clustered designs).
+
+\textbf{Mitigation:} We addressed this by using block-aware splitting (GroupKFold/GroupShuffleSplit with blocks = CLD$\times$run) so that correlated edges from the same generation scenario never appear in both train and test. Under this stricter protocol, RF achieves Phase 5 Test AUC $\approx$ 0.809, and leave-one-CLD-out generalization remains limited (Phase 6 mean AUC $\approx$ 0.629). This indicates that high-capacity ensembles still learn CLD-specific patterns that do not reliably transfer across domains; UQ metrics are therefore better suited for monitoring/triage than for universal hallucination detection.
+
+\subsubsection{Cosine Similarity Dominance}
+\textbf{Concern:} Cosine Similarity dominates feature importance across all experiments.
+
+\textbf{Explanation:} Semantic similarity to retrieved evidence is inherently the most informative signal for hallucination detection. When an LLM generates a causal relationship, the degree to which that claim aligns with the supporting literature directly reflects its factual grounding. Other metrics (perplexity, entropy) capture model confidence, but not semantic accuracy relative to evidence.
+
+\subsubsection{Domain-Specific Variation}
+\textbf{Concern:} Performance varies across CLDs (as shown in cross-CLD analysis).
+
+\textbf{Acknowledgment:} This is a known limitation. Domain-specific CLDs exhibit different characteristics based on literature availability, terminological complexity, and ground truth completeness. This variation motivates our cross-CLD validation approach rather than single-domain evaluation.
+
+%------------------------------------------------------------------------------
+\subsection{Limitations}
+%------------------------------------------------------------------------------
+
+\begin{itemize}
+    \item Single model
+    \item Corrupt vs. Synth GT is not same (known, but acknowledge)
+    \item Limited temp/top\_p parameter exploration, argue temp less influential
+    \item Limited human validation samples
+    \item Budget limitation, corrupter + snippets
+    \item Local embedding model, limited retrieval precision
+    \item Confirmation bias in search
+    \item Logprob + cosine metrics may not generalize out of distribution
+    \item CLD's only in health domain
+    \item Limited stochasticity control (3 runs per combination), however large number of edges
+    \item Search provider judgement heterogeneity
+\end{itemize}
+
+\subsubsection{Empirical validation: LLM--human agreement in CLD evaluation}
+\label{sec:discussion_judge_human_agreement}
+
+To validate the applicability of LLM-as-a-Judge to causal loop diagram evaluation, we conducted human validation experiments measuring inter-rater agreement between LLM citation judges and a domain expert across 72 causal edges from three independent datasets spanning two CLDs and two generating models.
+
+\paragraph{Results.} The combined analysis yielded substantial agreement: Cohen's $\kappa = 0.618$ with 80.6\% exact agreement rate, and Pearson correlation $r = 0.732$ ($p < 0.001$) between LLM and human scores. This level of agreement meets the human inter-rater baseline ($\kappa \approx 0.60$) established in prior group model building validation studies~\citep{landis1977measurement}.
+
+\paragraph{Systematic leniency bias.} Analysis of disagreements revealed a consistent pattern: 100\% of disagreements (14/14 cases) showed the LLM judge being more permissive than the human expert. The LLM never under-estimated evidence support (zero false negatives), but did over-estimate support in cases where the human assigned lower scores. This asymmetric error profile suggests LLM citation judges provide useful but permissive screening---appropriate for identifying low-confidence edges requiring human review, but insufficient for strict validation without expert oversight.
+
+\paragraph{Domain variability.} Agreement varied by domain: from fair ($\kappa = 0.273$) on Social Norms edges to substantial ($\kappa = 0.792$) on Claude-generated Depressive symptoms edges. This variability suggests that judge reliability may depend on domain characteristics, model generating the content, or both---an important consideration for deployment in diverse CLD construction settings.
+
+\subsubsection{Limitations of Token-Level Uncertainty Quantification}
+
+Our experiments with logprob-based uncertainty quantification for hallucination detection yielded limited success. While token-level entropy and probability-based confidence measures are computationally efficient and require no additional sampling, they failed to reliably distinguish between correct and hallucinated causal relationships in our pipeline.
+
+This finding aligns with recent theoretical critiques of probability-based uncertainty estimation in generative models. Ma et al.~\cite{ma2025estimatingllmuncertainty} argue that softmax normalization fundamentally discards information about evidence strength accumulated during training. When an LLM assigns low probability to a token, this could indicate either genuine uncertainty (the model lacks relevant knowledge) or the presence of multiple valid continuations (the model has strong evidence for several alternatives). Standard entropy measures conflate these two scenarios, treating both as high uncertainty.
+
+This limitation is particularly pronounced in our causal extraction task. When generating relationship types or variable names, the model frequently encounters situations where multiple tokens are contextually appropriate---for instance, different but semantically equivalent phrasings of a causal mechanism. Probability-based methods flag these cases as unreliable, even when the model possesses robust knowledge of the underlying causal structure. Conversely, tokens generated with high confidence may reflect training frequency rather than factual grounding, particularly for common but potentially incorrect causal patterns.
+
+While approaches like LogU~\cite{ma2025estimatingllmuncertainty} attempt to recover evidence strength by modeling raw logits through Dirichlet distributions, such methods require access to internal model states that are unavailable through commercial APIs, limiting their practical applicability in our pipeline.
+
+\subsubsection{Embedding Model Selection}
+
+We selected \texttt{all-mpnet-base-v2} for cosine similarity computation based on computational efficiency and strong MTEB reranking performance. However, this is a general-purpose embedding model trained primarily on web and conversational text. Domain-specific embedding models trained on scientific literature may yield improved performance for our citation-matching task:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{SPECTER}~\cite{cohan2020specter}: Trained on citation graphs from scientific papers, explicitly modeling document-level relationships in academic text. May better capture the semantic nuances of causal mechanisms described in scientific literature.
+    \item \textbf{SciBERT embeddings}: Pre-trained on scientific corpora (Semantic Scholar), potentially better suited for biomedical and systems dynamics terminology present in our CLDs.
+    \item \textbf{PubMedBERT}: Specialized for biomedical text, relevant for health-related CLDs (Depressive Symptoms, Emergency Department).
+\end{itemize}
+
+The trade-off between general-purpose models (broader coverage, faster inference) and domain-specific models (potentially higher semantic fidelity for scientific text) remains unexplored in this work and represents a direction for future investigation.
+
+\subsubsection{Ground Truth Limitations}
+
+The literature-based ground truth (GT Lit) relies on published CLDs that may themselves contain errors or simplifications. The synthetic ground truth (GT Synth) introduces controlled corruptions but may not capture the full spectrum of hallucination types that occur during natural CLD generation.
+
+\subsubsection{Model Generalization}
+
+All experiments used GPT-4.1 as the primary LLM. Performance characteristics may differ for other foundation models (Claude, Gemini, open-source alternatives). The judge-corrector framework's effectiveness is likely model-dependent.
+
+\subsubsection{Sample Size Considerations}
+
+While our multi-CLD validation spans diverse domains, the total number of CLDs (n=3) limits the statistical power of meta-analytic conclusions. Larger-scale validation across additional domains would strengthen generalizability claims.
+
+%------------------------------------------------------------------------------
+\subsection{Future Work}
+%------------------------------------------------------------------------------
+
+\subsubsection{Completing RQ3: Deep Research Validation}
+
+The exploratory Deep Research pilot study identified the core challenge (correlational confound) but left several methodological gaps. Future work should:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Replication for uncertainty quantification}: Run Deep Research with $n \geq 3$ replicates per edge to enable statistical testing of detection rate differences and confidence interval estimation.
+    \item \textbf{Parameter ablation}: Systematically vary search iterations (1--5), evidence source limits (3--10), and quality thresholds to identify optimal configurations.
+    \item \textbf{End-to-end pipeline integration}: Test Deep Research as a filtering component in live CLD generation, measuring downstream CLD quality impact (not just detection rates).
+    \item \textbf{Human expert comparison}: Validate Deep Research verdicts against domain expert judgments at larger scale, e.g., full Deep Research runs (preferably multiple, across different CLD domains) to test how results change when extrapolation assumptions are relaxed.
+    \item \textbf{Causal vs.\ correlational discrimination}: Develop more robust criteria for distinguishing direct causal evidence from correlational associations in retrieved literature.
+\end{enumerate}
+
+\subsubsection{Revisiting Smart Test-Time Compute}
+
+The original RQ3 design remains theoretically motivated. Future work could revisit it if:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Domain-specific UQ metric thresholds}: Develop calibration procedures that tune perplexity/entropy thresholds per-CLD, potentially using a held-out validation set within each domain.
+    \item \textbf{Improved correctors}: Improve corrector performance by investigating action mismatch on a per-edge basis and calibrate such that edits translate into expert-grounded gains. RLHF on correction quality or tool-assisted evidence grounding could shift behavior.
+    \item \textbf{Hybrid triggering}: Combine UQ metrics with lightweight LLM pre-screening (e.g., a smaller model) to achieve both efficiency and cross-domain generalization.
+\end{enumerate}
+
+\subsubsection{Addressing RQ1b Corrector Limitations}
+
+The deletion-dominant corrector behavior suggests architectural or prompting limitations:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Action-specific prompting}: Design separate prompts for revision, polarity correction, and deletion decisions rather than a single multi-action prompt.
+    \item \textbf{Iterative refinement}: Allow multiple correction rounds with feedback, mimicking human revision processes.
+    \item \textbf{Evidence-grounded correction}: Integrate citation retrieval into the correction process so the corrector can propose evidence-backed revisions rather than unsupported edits.
+\end{enumerate}
+
+\subsubsection{General Methodological Extensions}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Domain-specific embeddings}: Evaluate SPECTER, SciBERT, and PubMedBERT for citation similarity to determine if scientific text embeddings improve hallucination detection.
+    \item \textbf{Cross-model evaluation}: Test the judge-corrector pipeline with diverse LLMs (Claude, Gemini, open-source) to assess generalization.
+    \item \textbf{Human evaluation}: Validate automated hallucination labels against expert domain scientist judgments at scale.
+    \item \textbf{Adaptive threshold tuning}: Develop domain-aware threshold selection methods that account for CLD-specific characteristics.
+    \item \textbf{Expanded CLD corpus}: Validate findings across a larger set of CLDs spanning additional scientific domains beyond health.
+\end{enumerate}
+
+%------------------------------------------------------------------------------
+\subsection{Data Availability and Open Science}
+%------------------------------------------------------------------------------
+
+To enable community validation of the exploratory ground truth enrichment analysis (Section~\ref{sec:gt_enrichment_results}), we commit to open-sourcing the following datasets:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Deep Research results:} Complete JSON files for all 285 edges, including \texttt{direct\_causal\_found} status, confidence scores, retrieved evidence, and source URLs
+    \item \textbf{Enriched GT analysis:} Reproducible Python scripts and output files
+    \item \textbf{The 111 DR-validated FP edges:} Specifically flagged for domain expert review to determine whether they represent (a) genuinely valid relationships experts omitted, (b) correlational rather than causal evidence, or (c) false positives from DR's search methodology
+\end{itemize}
+
+We invite domain experts in biopsychosocial health, emergency medicine, and public health to validate whether the 111 FP edges with Deep Research evidence should be incorporated into enriched ground truth CLDs. This community validation would establish whether the enriched F1 of 0.705 (vs.\ original 0.267) represents a more accurate assessment of LLM generation quality.
+
+\textbf{Repository:} [To be published upon thesis completion]
+
+
+
+
+
+
+

@@ -1,0 +1,843 @@
+\appendix
+%==============================================================================
+
+\section{Function-to-Algorithm Mapping}
+\label{sec:function_mapping}
+
+Table~\ref{tab:function_mapping} provides the complete tracing from result directories to simulation scripts to core function implementations, enabling verification of the algorithmic descriptions in Appendix~\ref{sec:algorithms}.
+
+\begin{table}[H]
+\centering
+\caption{Complete Function-to-Algorithm Mapping}
+\label{tab:function_mapping}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l l X@{}}
+\toprule
+\textbf{Algo} & \textbf{Result Directory} & \textbf{Script} & \textbf{Core Function (Line)} \\
+\midrule
+\multirow{2}{*}{1} & RQ1a\_ground\_truth\_correctness/ & run\_rq1a\_ground\_truth\_judge.py & judge\_all\_edges\_serial \\
+ & RQ1a\_corruption\_det\_correctness/ & :179 $\rightarrow$ run\_discovery\_experiment & (modules.py:4341) \\
+\midrule
+\multirow{2}{*}{2} & RQ1a\_ground\_truth\_citation/ & run\_rq1a\_ground\_truth\_judge.py & judge\_all\_edges\_with\_citations\_serial \\
+ & RQ1a\_corruption\_det\_citation/ & :179 $\rightarrow$ run\_discovery\_experiment & (modules.py:5608) \\
+\midrule
+3 & RQ1a\_corruption\_detection\_*/ & run\_rq1\_phase1\_single\_corrupt.py:74 & \_corrupt\_relationships (modules.py:1668) \\
+\midrule
+4 & RQ1b\_correction\_*/ & run\_rq1b\_correction\_single.py:121 & correct\_edges\_serial (modules.py:6834) \\
+\midrule
+\multirow{4}{*}{5} & \multirow{4}{*}{(computed during generation)} & \multirow{4}{*}{via run\_discovery\_experiment} & compute\_avg\_nll (logit\_metrics.py:177) \\
+ & & & compute\_min\_prob (:251) \\
+ & & & compute\_max\_window\_entropy (:259) \\
+ & & & get\_embedding\_local (:98) \\
+\midrule
+6 & RQ2\_hallucination\_detection/ & rq2\_ensemble\_classifier.py & train\_classifiers (:32) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Internal Dispatch:} \texttt{run\_discovery\_experiment()} (modules.py:11043) dispatches to:
+\begin{itemize}[noitemsep]
+    \item Line 11510: \texttt{\_corrupt\_relationships()} when \texttt{corruption\_rate > 0}
+    \item Line 11571: \texttt{judge\_all\_edges\_with\_citations\_serial()} when \texttt{judge\_edges=True}
+    \item Line 11623: \texttt{correct\_edges\_serial()} when \texttt{run\_correction=True}
+\end{itemize}
+
+\section{Reproducibility}
+\label{sec:reproducibility}
+
+This appendix provides comprehensive information for replicating all experiments, including data availability, code locations, software environment specifications, and exact execution commands.
+
+\subsection{Data Availability}
+\label{sec:data_availability}
+
+\subsubsection{Ground Truth CLD Datasets}
+
+The three ground truth CLD datasets used in all experiments are located in:
+\begin{verbatim}
+data_science/parameter_tuning_experiments/
+    ground_truth_clds_for_experiments/
+\end{verbatim}
+
+\begin{table}[H]
+\centering
+\caption{Ground Truth CLD Dataset Files}
+\label{tab:gt_files}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Domain} & \textbf{Filename} \\
+\midrule
+Depressive Symptoms & \texttt{Depressive\_symptoms\_in\_response\_to\_a\_stressor\_in\_healthy\_adults.xlsx} \\
+Social Norms \& Obesity & \texttt{Social\_norms\_and\_obesity\_prevalence.xlsx} \\
+Emergency Department & \texttt{older\_persons\_emergency\_department\_visits\_and\_interactions.xlsx} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each Excel file contains: edge definitions (source/target), relationship polarity, causal motivations, scientific citations, and generation-time CI metrics.
+
+\subsubsection{Final Experiment Results}
+
+All experimental results are stored in the \texttt{final\_runs/} directory:
+
+\begin{verbatim}
+final_runs/
++-- RQ1a_ground_truth_correctness/
+|   +-- depressive/run_{1,2,3}/
+|   +-- emergency_dept/run_{1,2,3}/
+|   +-- social_norms/run_{1,2,3}/
++-- RQ1a_ground_truth_citation/  [same structure]
++-- RQ1a_corrupted_correctness/  [same structure]
++-- RQ1a_corrupted_citation/     [same structure]
++-- RQ1b_corrector/              [correction results]
++-- RQ2_hallucination_detection/ [analysis outputs]
+\end{verbatim}
+
+\subsection{Code Availability}
+\label{sec:code_availability}
+
+\subsubsection{Experiment Execution Scripts}
+
+\begin{table}[H]
+\centering
+\caption{Primary Experiment Execution Scripts}
+\label{tab:exec_scripts}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+\textbf{Experiment} & \textbf{Script} & \textbf{Dependencies} \\
+\midrule
+RQ1a Ground Truth & \texttt{run\_rq1a\_ground\_truth\_multirun.py} & \texttt{run\_rq1a\_ground\_truth\_judge.py} \\
+RQ1a Corruption (Corr.) & \texttt{run\_rq1a\_corruption\_multirun.py} & \texttt{run\_corruption\_detection\_pipeline.sh} \\
+RQ1a Corruption (Cit.) & \texttt{run\_rq1a\_corruption\_citation\_multirun.py} & \texttt{run\_rq1\_judge\_citations\_all\_3\_prompts.py} \\
+RQ1b Corrector & \texttt{run\_rq1b\_correction\_multirun.py} & \texttt{run\_rq1b\_correction\_single.py} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+All execution scripts located in: \texttt{data\_science/parameter\_tuning\_experiments/}
+
+\subsubsection{Analysis Scripts}
+
+\begin{table}[H]
+\centering
+\caption{Analysis and Evaluation Scripts}
+\label{tab:analysis_scripts}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Analysis} & \textbf{Script Path} \\
+\midrule
+RQ1a Aggregate Analysis & \texttt{parameter\_tuning\_experiments/analyze\_rq1a\_aggregate\_enhanced.py} \\
+RQ1a Ground Truth Analysis & \texttt{parameter\_tuning\_experiments/analyze\_rq1a\_ground\_truth\_enhanced.py} \\
+RQ1b Results Analysis & \texttt{parameter\_tuning\_experiments/analyze\_rq1b\_results.py} \\
+RQ2 Master Report & \texttt{data\_science/rq2\_master\_report.py} \\
+RQ2 Ensemble Classifier & \texttt{data\_science/rq2\_ensemble\_classifier.py} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Prompt Configuration Files}
+
+All prompts use three variants: \textit{baseline} (direct instruction), \textit{mechanistic} (Bradford Hill criteria~\cite{shimonovich2020bradford}), and \textit{cot} (chain-of-thought reasoning~\cite{kojima2022large}).
+
+\begin{table}[H]
+\centering
+\caption{Prompt Configuration Files (12 prompts: 3 judge/corrector tasks $\times$ 3 variants + 3 corruption)}
+\label{tab:prompt_files}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Task} & \textbf{Variants} & \textbf{File(s)} \\
+\midrule
+Judge-Correctness & baseline, mech, cot & \texttt{alternative\_prompts/prompts\_correctness\_\{baseline,mechanistic,cot\}.yaml} \\
+Judge-Citation & baseline, mech, cot & \texttt{alternative\_prompts/prompts\_citation\_\{baseline,mechanistic,cot\}.yaml} \\
+Corrector & baseline, mech, cot & \texttt{corrector\_prompts.yaml} (variants within single file) \\
+\midrule
+Corruption & \multicolumn{2}{l}{\texttt{prompts\_Nitai\_C.yaml} (prompt IDs below):} \\
+\quad -- motivation & (single) & \texttt{corruptor}: generates spurious but plausible motivation \\
+\quad -- spurious edge & (single) & \texttt{generateSpuriousEdge}: NONE $\rightarrow$ false positive causal edge \\
+\quad -- polarity flip & (single) & \texttt{generateFlippedPolarity}: POS $\leftrightarrow$ NEG with new motivation \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Software Environment}
+\label{sec:software_env}
+
+\begin{table}[H]
+\centering
+\caption{System and Runtime Environment}
+\label{tab:system_env}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Component} & \textbf{Details} \\
+\midrule
+Hardware & ASUS ROG Zephyrus G16 (2025) \\
+CPU & Intel Core Ultra 9 285H (16 cores, 22 threads) \\
+GPU & NVIDIA GeForce RTX 5090 Laptop (24 GB VRAM) \\
+System RAM & 32 GB DDR5 \\
+Operating System & Ubuntu 22.04 LTS (WSL2 on Windows 11) \\
+Python Version & 3.12.3 \\
+Package Manager & uv 0.5.x \\
+CUDA Version & 12.x \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Full package dependencies with pinned versions are specified in \texttt{pyproject.toml} (104 packages). Key dependencies include OpenAI SDK, Pydantic, scikit-learn, pandas, NumPy, and Matplotlib.
+
+\subsection{Execution Commands}
+\label{sec:execution_commands}
+
+\subsubsection{RQ1a Ground Truth Experiments}
+
+\begin{verbatim}
+cd data_science/parameter_tuning_experiments/
+
+# Correctness-based ground truth
+python run_rq1a_ground_truth_multirun.py \
+    --approach correctness \
+    --output-dir ../../final_runs/RQ1a_ground_truth_correctness
+
+# Citation-based ground truth
+python run_rq1a_ground_truth_multirun.py \
+    --approach citation \
+    --output-dir ../../final_runs/RQ1a_ground_truth_citation
+\end{verbatim}
+
+\subsubsection{RQ1a Corruption Detection Experiments}
+
+\begin{verbatim}
+# Correctness-based corruption detection
+python run_rq1a_corruption_multirun.py \
+    --output-dir ../../final_runs/RQ1a_corrupted_correctness
+
+# Citation-based corruption detection
+python run_rq1a_corruption_citation_multirun.py \
+    --output-dir ../../final_runs/RQ1a_corrupted_citation
+\end{verbatim}
+
+\subsubsection{RQ1b Corrector Experiments}
+
+\begin{verbatim}
+python run_rq1b_correction_multirun.py \
+    --input-dir ../../final_runs/RQ1a_ground_truth_correctness \
+    --output-dir ../../final_runs/RQ1b_corrector/ground_truth
+\end{verbatim}
+
+\subsubsection{RQ2 Hallucination Detection Analysis}
+
+\begin{verbatim}
+cd data_science/
+
+python rq2_master_report.py \
+    --input-dir ../final_runs \
+    --output-dir ../final_runs/RQ2_hallucination_detection
+
+python rq2_ensemble_classifier.py \
+    --input-dir ../final_runs/RQ2_hallucination_detection
+\end{verbatim}
+
+\subsection{Output Artifacts}
+\label{sec:output_artifacts}
+
+\subsubsection{Metadata Files}
+
+Each experiment run generates:
+\begin{itemize}[noitemsep]
+    \item \textbf{\texttt{session\_info.txt}}: Base CLD session identifier and generation parameters
+    \item \textbf{\texttt{corruption\_metadata.json}}: Corruption seed, temperature, model, corrupted edge indices
+    \item \textbf{\texttt{judging\_metadata\_*.json}}: Per-prompt judging parameters (prompt version, temperature, model)
+\end{itemize}
+
+\subsubsection{Result Files}
+
+\begin{table}[H]
+\centering
+\caption{Experiment Output File Types}
+\label{tab:output_files}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{File Type} & \textbf{Contents} \\
+\midrule
+\texttt{judged\_*.xlsx} & Per-edge validation results with scores and classifications \\
+\texttt{*\_metrics.json} & Aggregate metrics (precision, recall, F1, AUC) \\
+\texttt{*\_confusion\_matrix.png} & Visualization of classification performance \\
+\texttt{*\_score\_distribution.png} & Distribution of judge scores by ground truth label \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Naming Convention}
+
+Output files follow: \texttt{judged\_\{CLD\_NAME\}\_\{PROMPT\_TYPE\}\_\{TIMESTAMP\}.xlsx}
+
+Where \texttt{PROMPT\_TYPE} $\in$ \{\texttt{baseline}, \texttt{mechanistic}, \texttt{cot}\} and \texttt{TIMESTAMP} = \texttt{YYYYMMDD\_HHMMSS}.
+
+\subsection{Output Token Verification}
+\label{sec:token_verification}
+
+To verify no judge outputs were truncated due to \texttt{max\_tokens} limits, we analyzed all 123,326 judge messages using the GPT-4 tokenizer (\texttt{tiktoken}).
+
+\begin{table}[H]
+\centering
+\caption{Output Token Analysis by Prompt Variant}
+\label{tab:token_analysis}
+\footnotesize
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Variant} & \textbf{Description} & \textbf{Max Tokens} & \textbf{Limit} & \textbf{Messages} \\
+\midrule
+baseline & Direct evaluation & 1499 & 1500 & 38,898 \\
+mechanistic & Bradford Hill criteria & 1298 & 1500 & 46,911 \\
+mech\_lit & Mechanistic (citation, literature) & 1487 & 1500 & 6,559 \\
+mech\_orig & Mechanistic (citation, original) & 1422 & 1500 & 4,529 \\
+cot & Chain-of-thought reasoning & 1534 & 10,000 & 26,429 \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Total}} & --- & --- & \textbf{123,326} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Conclusion:} All outputs remained below their respective token limits. The closest approach was baseline at 1499/1500 tokens (1 message). No truncation artifacts (incomplete JSON, mid-sentence cutoffs) were detected.
+
+\section{Prompt Engineering Ablation Study}
+\label{sec:ablation_edge}
+
+Prompt engineering has emerged as a critical technique for optimizing large language model (LLM) performance on domain-specific tasks. To systematically evaluate the effectiveness of various prompting strategies for automated causal loop diagram generation, we conducted an ablation study comparing nine prompt variants across three causal loop diagrams.
+
+\subsection{Experimental Design}
+
+We evaluated nine prompt variants across three ground-truth causal loop diagrams:
+\begin{itemize}[noitemsep]
+    \item \textbf{CLD 1}: Depressive symptoms in response to stressors (34 edges)
+    \item \textbf{CLD 2}: Social norms and obesity prevalence (11 edges)
+    \item \textbf{CLD 3}: Emergency department visits by older persons (62 edges)
+\end{itemize}
+
+All experiments used GPT-4.1 as the generator model with consistent hyperparameters (temperature=0.7, top\_p=1.0). Performance was measured using the F1 score, which balances precision and recall in edge discovery.
+
+\subsection{Prompt Engineering Techniques}
+
+Table~\ref{tab:prompt_techniques} presents a classification matrix of prompt engineering techniques employed in each variant, based on established literature.
+
+\begin{table}[H]
+\centering
+\caption{Prompt Engineering Techniques Classification Matrix}
+\label{tab:prompt_techniques}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Prompt} & \textbf{CoT\textsuperscript{1}} & \textbf{Few-Shot\textsuperscript{2}} & \textbf{Role\textsuperscript{3}} & \textbf{Decomp\textsuperscript{4}} & \textbf{RAG\textsuperscript{5}} \\
+\midrule
+Nitai\_A & & \checkmark & \checkmark & & \\
+Nitai\_B & \checkmark & \checkmark & \checkmark & \checkmark & \\
+Nitai\_C & \checkmark\checkmark & \checkmark\checkmark & \checkmark & \checkmark & \\
+Nitai\_E & \checkmark\checkmark & \checkmark & \checkmark & \checkmark & \checkmark\checkmark \\
+Rick\_A & & \checkmark & \checkmark\checkmark & & \\
+Rick\_B & \checkmark & \checkmark\checkmark & \checkmark\checkmark & \checkmark\checkmark & \\
+Cillian\_B & & \checkmark & \checkmark & \checkmark & \\
+Cillian\_C & & \checkmark & \checkmark & \checkmark\checkmark & \\
+Current & & \checkmark & & & \\
+\bottomrule
+\end{tabular}
+\vspace{0.2cm}
+
+\raggedright
+\footnotesize
+\textsuperscript{1}Chain-of-Thought~\cite{wei2022cot}; \textsuperscript{2}Few-Shot Learning~\cite{brown2020fewshot}; \textsuperscript{3}Role Prompting; \textsuperscript{4}Task Decomposition; \textsuperscript{5}RAG with mandatory citations.\\
+\vspace{0.1cm}
+\textit{Legend:} \checkmark = basic; \checkmark\checkmark = strong implementation
+\end{table}
+
+\textbf{Key Prompt Distinctions:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Nitai variants}: Progressive complexity from baseline (A) to Chain-of-Thought reasoning (B, C), culminating in RAG-augmented prompting (E). Nitai\_C introduces 6 relationship types versus 3 in baseline.
+    \item \textbf{Rick variants}: Emphasis on academic rigor and system dynamics best practices. Rick\_B features comprehensive systematic decomposition with explicit confounding analysis.
+    \item \textbf{Cillian variants}: Cillian\_B employs intervention-based framing. Cillian\_C uses hypothesis testing with definition-strict evaluation.
+    \item \textbf{Current}: Minimal baseline control with basic prompting.
+\end{itemize}
+
+\subsection{Results}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../data_science/parameter_tuning_experiments/ablation_study_f1_ordered.png}
+    \caption{Average F1 scores for prompt variants across three CLDs, ordered from lowest to highest. Nitai\_C achieved highest performance (F1=0.460). Color coding: green (F1 $\geq$ 0.45), blue (0.35--0.45), orange (0.25--0.35), red ($<$0.25).}
+    \label{fig:ablation_f1_ordered}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{F1 Scores by Prompt Variant and Causal Loop Diagram}
+\label{tab:f1_scores}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Prompt} & \textbf{CLD 1} & \textbf{CLD 2} & \textbf{CLD 3} & \textbf{Average} \\
+\midrule
+Nitai\_C & 0.591 & 0.204 & 0.583 & \textbf{0.460} \\
+Nitai\_A & 0.590 & 0.218 & 0.400 & 0.403 \\
+Nitai\_B & 0.588 & 0.092 & 0.455 & 0.378 \\
+Current & 0.588 & 0.239 & 0.286 & 0.371 \\
+Rick\_B & 0.444 & 0.186 & 0.438 & 0.356 \\
+Nitai\_E & 0.438 & 0.207 & 0.385 & 0.343 \\
+Cillian\_B & 0.515 & 0.152 & 0.286 & 0.318 \\
+Rick\_A & 0.380 & 0.145 & 0.269 & 0.265 \\
+Cillian\_C & 0.000 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key Findings}
+
+\textbf{Overall Performance:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Best Performance}: Nitai\_C achieved the highest average F1 score (0.460), differing from others in multiple dimensions (dual-level CoT, relationship taxonomy, examples).
+    \item \textbf{Performance Range}: Range of 0.195 between best (0.460) and second-worst (0.265) performers. Mean F1 = 0.321, SD = 0.132.
+\end{itemize}
+
+\textbf{CLD-Specific Patterns:}
+\begin{itemize}[noitemsep]
+    \item \textbf{CLD 2 Challenge}: All variants performed worst on CLD 2 (Social Norms \& Obesity), with F1 scores 0.00--0.24.
+    \item \textbf{High Variance}: Within-prompt SD across CLDs ranged 0.18--0.25, indicating sensitivity to problem characteristics.
+\end{itemize}
+
+\textbf{Technique-Specific Observations:}
+\begin{itemize}[noitemsep]
+    \item \textbf{RAG Trade-off}: Nitai\_E (mandatory citations) showed 25\% lower performance than Nitai\_C, suggesting strict citation requirements limit valid relationship discovery.
+    \item \textbf{Complete Failure}: Cillian\_C's zero performance indicates overly restrictive definition-grounded evaluation can be counterproductive.
+\end{itemize}
+
+\subsection{Interpretation}
+
+The progression Nitai\_A $\rightarrow$ Nitai\_B $\rightarrow$ Nitai\_C demonstrates incremental performance gains with Chain-of-Thought, achieving 14\% improvement over baseline. This supports Wei et al.'s~\cite{wei2022cot} findings that explicit reasoning steps enhance complex task performance.
+
+Rick\_B (F1=0.356), employing systematic decomposition, underperformed Nitai\_C's CoT approach by 23\%, suggesting decomposition strategies may be less effective when tasks require holistic pattern recognition rather than sequential problem solving.
+
+\subsection{Limitations}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Sample Size}: Only three CLDs limits generalizability.
+    \item \textbf{Single Run}: Each variant tested once per CLD, preventing statistical significance testing.
+    \item \textbf{Model Specificity}: Results apply to GPT-4.1; patterns may differ for other LLMs.
+    \item \textbf{Prompt Authorship}: Different variants designed by different researchers, introducing potential confounding.
+\end{itemize}
+
+\section{Node Generation Prompt Ablation}
+\label{sec:ablation_node}
+
+Seven prompt variants were evaluated in a full factorial design: 7 prompts $\times$ 3 CLDs $\times$ 5 runs = 105 total experiments.
+
+\begin{table}[H]
+\centering
+\caption{Node Generation Ablation: Hybrid F1 Scores by Prompt Variant}
+\label{tab:node_ablation}
+\footnotesize
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Prompt} & \textbf{Mean F1} & \textbf{Std} & \textbf{95\% CI} & \textbf{Cohen's d} & \textbf{N} \\
+\midrule
+Node\_V6\_Andrew & 0.677 & 0.079 & [0.638, 0.717] & +0.44 & 15 \\
+Node\_V3\_CoT\_System & 0.657 & 0.123 & [0.595, 0.719] & +0.16 & 15 \\
+Node\_V0\_Minimal (baseline) & 0.639 & 0.094 & [0.592, 0.687] & --- & 15 \\
+Node\_V5\_Nitai\_C & 0.636 & 0.088 & [0.591, 0.680] & -0.04 & 15 \\
+Node\_V1\_Role\_Only & 0.628 & 0.080 & [0.588, 0.669] & -0.13 & 15 \\
+Node\_V4\_CoT\_User & 0.619 & 0.104 & [0.567, 0.672] & -0.20 & 15 \\
+Node\_V2\_Constraints & 0.617 & 0.077 & [0.578, 0.656] & -0.26 & 15 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Statistical Analysis:}
+\begin{itemize}[noitemsep]
+    \item One-way ANOVA: $F = 0.81$, $p = 0.567$ --- \textbf{no significant differences}
+    \item All pairwise comparisons non-significant after Bonferroni correction
+    \item Effect sizes negligible to small (Cohen's $d$ range: $-0.26$ to $+0.44$)
+\end{itemize}
+
+\textbf{Interpretation:} Unlike edge generation, node generation is robust to prompt engineering variations. The minimal baseline performed comparably to sophisticated Chain-of-Thought variants, suggesting that node identification is a simpler task for LLMs that does not benefit substantially from advanced prompting strategies.
+
+\section{Embedding Model Benchmark}
+\label{sec:embedding_benchmark}
+
+To justify the choice of embedding model for cosine similarity computation (Section~2.5), we benchmarked \texttt{all-mpnet-base-v2} against the MTEB-leading Qwen3-Embedding-8B using 30 real causal narratives from our CLD experiments.
+
+\begin{table}[H]
+\centering
+\caption{Embedding Model Benchmark ($n=30$ causal narratives from CLD)}
+\label{tab:embed_benchmark}
+\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Params} & \textbf{Embed dim} & \textbf{ms/doc} & \textbf{docs/s} \\
+\midrule
+all-mpnet-base-v2 & 110M & 768 & 3.0 & 336 \\
+Qwen3-Embedding-8B (Q4) & 8B & 4096 & 67.3 & 14.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Hardware:} NVIDIA RTX 5090 Laptop GPU (24 GB VRAM). Qwen3 run via Ollama with 4-bit quantization (Q4\_K\_M).
+
+\textbf{Test data:} Causal narratives averaged 451 characters ($\sim$100 tokens). In production, fetched citation documents are chunked up to 4,000 characters ($\sim$1,000 tokens) before embedding---longer inputs may increase per-document latency.
+
+\textbf{MTEB Benchmark Comparison:}
+
+\begin{table}[H]
+\centering
+\caption{MTEB Scores: MPNet vs.\ Qwen3-Embedding-8B}
+\label{tab:mteb_comparison}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Task} & \textbf{MPNet (110M)\textsuperscript{a}} & \textbf{Qwen3-8B\textsuperscript{b}} \\
+\midrule
+STS (Spearman $\rho$) & 80.28 & \textbf{88.58} \\
+Reranking (MAP) & \textbf{59.36} & 51.56 \\
+Pair Classification (AP) & 83.04 & \textbf{87.52} \\
+Classification (Acc) & 65.07 & \textbf{90.43} \\
+Clustering (V-measure) & 43.69 & \textbf{58.57} \\
+Retrieval (nDCG@10) & 43.81 & \textbf{69.44} \\
+Summarization & 27.49 & \textbf{34.83} \\
+\midrule
+\textbf{Average} & 57.78 & \textbf{75.22} \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\raggedright\scriptsize
+\textsuperscript{a}Muennighoff et al.~\cite{muennighoff2023mteb}, Table 1 (MTEB v1, 2022). \textsuperscript{b}Zhang et al.~\cite{qwen3embedding2025}, Table 7 (MTEB eng v2, 2025).
+\end{table}
+
+\textbf{Result:} MPNet achieves 22$\times$ faster inference (3.0 vs.\ 67.3~ms/doc). Qwen3-Embedding-8B achieves higher STS (+8.3 points) and overall average (+17.4 points). However, MPNet outperforms on \textit{reranking} (59.36 vs.\ 51.56)---directly relevant to our max-similarity chunk selection task. The 22$\times$ speedup with superior reranking performance justifies MPNet selection.
+
+\textit{Note:} Scores are from different MTEB versions (v1 vs.\ v2) and thus not directly comparable. The comparison illustrates relative strengths rather than absolute rankings.
+
+\textbf{Script:} \texttt{final\_runs/embedding\_model\_benchmark/embedding\_benchmark\_real\_cld.py}
+
+%==============================================================================
+\section{Algorithmic Descriptions}
+\label{sec:algorithms}
+%==============================================================================
+
+This section provides formal algorithmic descriptions of the core system components, traced directly from the implementation. For experimental design rationale, see the corresponding Methods sections.
+
+\subsection{Algorithm 0: CLD Generation}
+\label{alg:cld_generation}
+
+The CLD generator constructs causal loop diagrams through a two-phase process: node generation followed by edge generation. Both phases capture CI metrics via logprobs for downstream hallucination detection.
+
+\begin{table}[H]
+\centering
+\caption{CLD Generation (\texttt{generate\_variables} + \texttt{discover\_relationships})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} target\_variable, temporal\_scale, spatial\_scale, num\_variables, context} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Neo4j session with nodes (variables) and edges (relationships) + CI metrics} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Node Generation (generateNodes prompt)}} \\
+1. & session\_id $\leftarrow$ uuid.generate() \\
+2. & Neo4j.create\_node(target\_variable, is\_target=True, session\_id) \\
+3. & variables $\leftarrow$ [target\_variable] \\
+4. & \textbf{while} len(variables) $<$ num\_variables: \\
+5. & \quad vars $\leftarrow$ \{target, target\_units, target\_definition, temporal, spatial, context\} \\
+6. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``generateNodes'', vars) \\
+7. & \quad usr\_prompt $\leftarrow$ usr\_prompt + ``Exclude: '' + join(variables) \\
+8. & \quad response $\leftarrow$ generator\_llm.send\_message(prompts, logprobs=True, top\_logprobs=5) \\
+9. & \quad (name, definition, units, citations) $\leftarrow$ tree.read\_variable\_response(response) \\
+10. & \quad log\_metrics $\leftarrow$ compute\_ci\_metrics(response.logprobs) \\
+11. & \quad Neo4j.create\_node(name, definition, citations, log\_metrics, session\_id) \\
+12. & \quad variables.append(name) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: Edge Generation (generateEdges prompt)}} \\
+13. & pairs $\leftarrow$ generate\_ordered\_pairs(variables) \hfill\textit{// $N^2$ pairs, excludes self-loops} \\
+14. & \textbf{for each} (source, target) $\in$ pairs: \\
+15. & \quad (source\_def, target\_def) $\leftarrow$ Neo4j.fetch\_definitions(source, target) \\
+16. & \quad vars $\leftarrow$ \{var1: source, var2: target, def1, def2, temporal, spatial, variables\} \\
+17. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``generateEdges'', vars) \\
+18. & \quad response $\leftarrow$ generator\_llm.send\_message(prompts, logprobs=True, top\_logprobs=5) \\
+19. & \quad (rel\_type, motivation, citations) $\leftarrow$ tree.read\_relationships(response) \\
+20. & \quad log\_metrics $\leftarrow$ compute\_ci\_metrics(response.logprobs) \\
+21. & \quad Neo4j.create\_relationship(source, target, rel\_type, motivation, citations, log\_metrics) \\
+22. & \textbf{return} session\_id, variables, relationships \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:640} (\texttt{generate\_variables}), \texttt{:1067} (\texttt{discover\_relationships}), \texttt{:833} (\texttt{process\_variable\_pair})
+
+\subsection{Algorithm 1: Judge-Correctness}
+\label{alg:judge_correctness}
+
+The correctness-based judge evaluates causal reasoning quality without external evidence.
+
+\begin{table}[H]
+\centering
+\caption{Judge-Correctness (\texttt{judge\_all\_edges\_serial}, approach=``correctness'')}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, judge\_models[], prompt\_config} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Per-edge verdicts with scores} \\
+\midrule
+1. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t) WHERE s.session\_id = \$sid'') \\
+2. & judges[] $\leftarrow$ create\_llm\_clients(judge\_models) \\
+3. & \textbf{for each} edge $\in$ edges: \\
+4. & \quad text $\leftarrow$ edge.spurious\_motivation $\lor$ edge.motivation \\
+5. & \quad \textbf{if} text = $\emptyset$: verdict $\leftarrow$ ``NO\_MOTIVATION''; \textbf{continue} \\
+6. & \quad variables $\leftarrow$ \{source, target, relationship, motivation: text\} \\
+7. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``judgeCorrectness'', vars) \\
+8. & \quad scores[], verdicts[] $\leftarrow$ [], [] \\
+9. & \quad \textbf{for each} judge $\in$ judges: \\
+10. & \quad\quad response $\leftarrow$ judge.send\_message(sys\_prompt, usr\_prompt, logprobs=True) \\
+11. & \quad\quad (verdict, score, reason) $\leftarrow$ parse\_regex(response, ``VERDICT: SCORE:'') \\
+12. & \quad\quad verdicts.append(verdict); scores.append(score) \\
+13. & \quad aggregate\_score $\leftarrow$ mean(scores) \\
+14. & \quad aggregate\_verdict $\leftarrow$ majority\_vote(verdicts) \\
+15. & \quad update\_edge(edge, aggregate\_verdict, aggregate\_score) \\
+16. & \textbf{return} judged\_edges \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:4341} $\rightarrow$ \texttt{:4660} (correctness branch)
+
+\subsection{Algorithm 2: Judge-Citation}
+\label{alg:judge_citation}
+
+The citation-based judge validates causal claims against fetched scientific literature.
+
+\begin{table}[H]
+\centering
+\caption{Judge-Citation (\texttt{judge\_all\_edges\_with\_citations\_serial})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, judge\_models[], citation\_fetcher} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Per-edge aggregate verdicts with per-citation scores} \\
+\midrule
+1. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t) WHERE s.session\_id = \$sid'') \\
+2. & judges[] $\leftarrow$ create\_llm\_clients(judge\_models) \\
+3. & \textbf{for each} edge $\in$ edges: \\
+4. & \quad citations $\leftarrow$ edge.citations \\
+5. & \quad \textbf{if} citations = $\emptyset$: verdict $\leftarrow$ ``NO\_CITATION''; \textbf{continue} \\
+6. & \quad citation\_contents $\leftarrow$ ContentScraper.process\_citations(citations) \\
+7. & \quad per\_citation\_results $\leftarrow$ [] \\
+8. & \quad \textbf{for each} (url, content) $\in$ citation\_contents: \\
+9. & \quad\quad prompt $\leftarrow$ build\_citation\_prompt(edge.motivation, content) \\
+10. & \quad\quad judge\_verdicts $\leftarrow$ [] \\
+11. & \quad\quad \textbf{for each} judge $\in$ judges: \\
+12. & \quad\quad\quad response $\leftarrow$ judge.send\_message(prompt) \\
+13. & \quad\quad\quad verdict $\leftarrow$ parse(response) \hfill\textit{// SUPPORTED/PARTIAL/CONTRADICTED} \\
+14. & \quad\quad\quad judge\_verdicts.append(verdict) \\
+15. & \quad\quad citation\_verdict $\leftarrow$ majority\_vote(judge\_verdicts) \\
+16. & \quad\quad citation\_score $\leftarrow$ verdict\_to\_score(citation\_verdict) \hfill\textit{// 1.0, 0.5, 0.0} \\
+17. & \quad\quad per\_citation\_results.append(\{url, citation\_verdict, citation\_score\}) \\
+18. & \quad aggregate\_score $\leftarrow$ mean(per\_citation\_results.scores) \\
+19. & \quad aggregate\_verdict $\leftarrow$ aggregator\_llm(per\_citation\_results) \\
+20. & \quad update\_edge(edge, aggregate\_verdict, aggregate\_score) \\
+21. & \textbf{return} judged\_edges \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:5608} (\texttt{judge\_all\_edges\_with\_citations\_serial}) $\rightarrow$ \texttt{modules.py:4908}
+
+\subsection{Algorithm 3: Corruption}
+\label{alg:corruption}
+
+The corruptor introduces controlled errors using stratified sampling for balanced corruption types.
+
+\begin{table}[H]
+\centering
+\caption{Corruption (\texttt{\_corrupt\_relationships})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, corruption\_rate (default 0.3), seed, corruptor\_llm} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Number of corrupted edges, corruption metadata} \\
+\midrule
+1. & random.seed(seed) \hfill\textit{// Reproducibility} \\
+2. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t)'') \\
+3. & none\_edges $\leftarrow$ \{e $\in$ edges : e.type = ``NONE''\} \\
+4. & causal\_edges $\leftarrow$ \{e $\in$ edges : e.type $\in$ \{``POSITIVE'', ``NEGATIVE''\}\} \\
+5. & n\_corrupt $\leftarrow$ $\lfloor$len(edges) $\times$ corruption\_rate$\rfloor$ \\
+6. & target\_per\_type $\leftarrow$ n\_corrupt $\div$ 3 \hfill\textit{// Balanced: 1/3 each} \\
+7. & spurious\_sample $\leftarrow$ shuffle(none\_edges)[:target\_per\_type] \\
+8. & causal\_sample $\leftarrow$ shuffle(causal\_edges)[:target\_per\_type $\times$ 2] \\
+9. & \textbf{for each} edge $\in$ spurious\_sample $\cup$ causal\_sample: \\
+10. & \quad \textbf{if} edge.type = ``NONE'': corruption\_type $\leftarrow$ ``spurious\_edge'' \\
+11. & \quad \textbf{else}: corruption\_type $\leftarrow$ argmin(assigned[``polarity\_flip''], assigned[``motivation'']) \\
+12. & \quad assigned[corruption\_type] += 1 \\
+13. & \quad \textbf{if} corruption\_type = ``motivation'': \\
+14. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``corruptor'', edge) \\
+15. & \quad\quad edge.spurious\_motivation $\leftarrow$ corruptor\_llm.send(prompt) \\
+16. & \quad \textbf{elif} corruption\_type = ``spurious\_edge'': \\
+17. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``generateSpuriousEdge'', edge) \\
+18. & \quad\quad \{type, expl\} $\leftarrow$ JSON.parse(corruptor\_llm.send(prompt)) \\
+19. & \quad\quad Neo4j: DELETE NONE, CREATE edge.type $\leftarrow$ type, motivation $\leftarrow$ expl \\
+20. & \quad \textbf{elif} corruption\_type = ``polarity\_flip'': \\
+21. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``generateFlippedPolarity'', edge) \\
+22. & \quad\quad \{expl\} $\leftarrow$ JSON.parse(corruptor\_llm.send(prompt)) \\
+23. & \quad\quad Neo4j: DELETE old, CREATE edge.type $\leftarrow$ flip(type), motivation $\leftarrow$ expl \\
+24. & \quad edge.is\_corrupted $\leftarrow$ True \\
+25. & save\_metadata(``corrupted\_relationships\_\{session\_id\}.json'') \\
+26. & \textbf{return} corrupted\_count \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:1668} (\texttt{\_corrupt\_relationships}), \texttt{:1464} (\texttt{\_corrupt\_relationship}), \texttt{:1502} (\texttt{\_convert\_none\_to\_spurious}), \texttt{:1565} (\texttt{\_flip\_edge\_polarity})
+
+\subsection{Algorithm 4: Corrector}
+\label{alg:corrector}
+
+The corrector applies LLM-guided fixes to edges flagged by the judge.
+
+\begin{table}[H]
+\centering
+\caption{Corrector (\texttt{correct\_edges\_serial})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, corrector\_models[], action\_order, rejudge\_after} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Correction outcomes per edge} \\
+\midrule
+1. & candidates $\leftarrow$ Neo4j.query(``WHERE r.verdict IN [`INCORRECT', `PARTIAL', ...]'') \\
+2. & agent $\leftarrow$ create\_corrector\_agent(corrector\_models[0], prompt\_variant) \\
+3. & available\_vars $\leftarrow$ get\_all\_variables(session\_id) \\
+4. & outcomes $\leftarrow$ [] \\
+5. & \textbf{for each} edge $\in$ candidates: \\
+6. & \quad context $\leftarrow$ \{edge, available\_vars, graph\_structure\} \\
+7. & \quad \textbf{for each} action $\in$ action\_order: \hfill\textit{// revise\_motivation, change\_edge\_type} \\
+8. & \quad\quad result $\leftarrow$ agent.call\_tool(action, edge, context) \\
+9. & \quad\quad \textbf{if} result.success: \\
+10. & \quad\quad\quad outcomes.append(\{edge, action, corrected: True\}); \textbf{break} \\
+11. & \textbf{if} rejudge\_after: \\
+12. & \quad judge\_all\_edges\_with\_citations\_serial(approach=rejudge\_approach) \\
+13. & \textbf{return} outcomes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:6834} (\texttt{correct\_edges\_serial})
+
+\subsection{Algorithm 5: CI Metrics Computation}
+\label{alg:ci_metrics}
+
+Confidence Interval metrics computed from LLM logprobs during generation.
+
+\begin{table}[H]
+\centering
+\caption{CI Metrics (\texttt{logit\_metrics.py})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} logprobs = \{tokens[], token\_logprobs[], top\_logprobs[]\}} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} perplexity, min\_prob, max\_window\_entropy, cosine\_sim} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Perplexity (compute\_avg\_nll + exp)}} \\
+1. & nll\_capped $\leftarrow$ [$\min$(-logprob$_i$, 20.0) for logprob$_i$ in token\_logprobs] \\
+2. & avg\_nll $\leftarrow$ mean(nll\_capped) \\
+3. & perplexity $\leftarrow$ $\exp$(avg\_nll) \\
+\multicolumn{2}{@{}l}{\textit{// Minimum Token Probability (compute\_min\_prob)}} \\
+4. & probs $\leftarrow$ [$\exp$(logprob$_i$) for logprob$_i$ in token\_logprobs] \\
+5. & min\_prob $\leftarrow$ $\min$(probs) \\
+\multicolumn{2}{@{}l}{\textit{// Max Window Entropy (compute\_max\_window\_entropy)}} \\
+6. & entropies $\leftarrow$ [] \\
+7. & \textbf{for each} top\_k\_dict $\in$ top\_logprobs: \\
+8. & \quad p\_vals $\leftarrow$ softmax(top\_k\_dict.values()) \\
+9. & \quad H $\leftarrow$ $-\sum_i$ p$_i$ $\log$(p$_i$) \\
+10. & \quad entropies.append(H) \\
+11. & windowed $\leftarrow$ convolve(entropies, window\_size=5) \\
+12. & max\_window\_entropy $\leftarrow$ $\max$(windowed) \\
+\multicolumn{2}{@{}l}{\textit{// Cosine Similarity (get\_embedding\_local)}} \\
+13. & e$_{\text{narr}}$ $\leftarrow$ SentenceTransformer(motivation, model=``all-mpnet-base-v2'') \\
+14. & e$_{\text{cit}}$ $\leftarrow$ SentenceTransformer(citation\_text) \\
+15. & cosine\_sim $\leftarrow$ $\max_c$ $\frac{\mathbf{e}_{\text{narr}} \cdot \mathbf{e}_c}{\|\mathbf{e}_{\text{narr}}\| \|\mathbf{e}_c\|}$ \\
+16. & \textbf{return} \{perplexity, min\_prob, max\_window\_entropy, cosine\_sim\} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{logit\_metrics.py} -- \texttt{:177} (avg\_nll), \texttt{:251} (min\_prob), \texttt{:259} (max\_entropy), \texttt{:98} (embedding)
+
+\subsection{Algorithm 6: Hallucination Classification}
+\label{alg:classification}
+
+Ensemble classifiers trained on CI metrics to predict hallucinations.
+
+\begin{table}[H]
+\centering
+\caption{Hallucination Classification (\texttt{train\_classifiers})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} X = [perplexity, min\_prob, max\_entropy, cosine\_sim], y = hallucination\_labels} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Trained models, metrics (AUC, Precision, Recall, F1)} \\
+\midrule
+1. & X\_scaled $\leftarrow$ StandardScaler.fit\_transform(X) \\
+2. & (X\_train, X\_test, y\_train, y\_test) $\leftarrow$ train\_test\_split(X\_scaled, y, test=0.3) \\
+3. & classifiers $\leftarrow$ \{LogReg, RandomForest(100), GradBoost(100), MLP(32,16)\} \\
+4. & \textbf{for each} (name, clf) $\in$ classifiers: \\
+5. & \quad cv $\leftarrow$ StratifiedKFold(n\_splits=5) \\
+6. & \quad cv\_auc $\leftarrow$ cross\_val\_score(clf, X\_train, y\_train, cv, scoring=``roc\_auc'') \\
+7. & \quad clf.fit(X\_train, y\_train) \\
+8. & \quad y\_pred\_proba $\leftarrow$ clf.predict\_proba(X\_test)[:,1] \\
+9. & \quad metrics[name].auc $\leftarrow$ roc\_auc\_score(y\_test, y\_pred\_proba) \\
+10. & \quad metrics[name].\{precision, recall, f1\} $\leftarrow$ precision\_recall\_fscore(y\_test, y\_pred) \\
+11. & \textbf{return} classifiers, metrics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{rq2\_ensemble\_classifier.py:32} (\texttt{train\_classifiers})
+
+\subsection{Algorithm 7: Citation Fetcher}
+\label{alg:citation_fetcher}
+
+The citation fetcher retrieves scientific literature content from URLs using a two-tier architecture: Jina AI Reader as primary with ContentScraper fallback for PDF extraction.
+
+\begin{table}[H]
+\centering
+\caption{Citation Fetcher (\texttt{fetch\_citations\_with\_jina})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} citations[] (URLs), timeout, max\_retries, api\_key (optional)} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Dict[URL $\rightarrow$ text\_content]} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Jina AI Reader (Primary)}} \\
+1. & max\_workers $\leftarrow$ 5 \textbf{if} api\_key \textbf{else} 2 \hfill\textit{// Rate limit tiers} \\
+2. & citation\_text\_map $\leftarrow$ \{\} \\
+3. & failed\_urls $\leftarrow$ [] \\
+4. & \textbf{parallel for each} url $\in$ citations (ThreadPoolExecutor): \\
+5. & \quad jina\_url $\leftarrow$ ``https://r.jina.ai/'' + url \\
+6. & \quad delay $\leftarrow$ 0.3s \textbf{if} api\_key \textbf{else} 1.0s \hfill\textit{// Respect rate limits} \\
+7. & \quad sleep(delay) \\
+8. & \quad headers $\leftarrow$ \{``Authorization'': ``Bearer '' + api\_key\} \textbf{if} api\_key \\
+9. & \quad \textbf{for} attempt $\in$ [0..max\_retries]: \\
+10. & \quad\quad response $\leftarrow$ GET(jina\_url, headers, timeout) \\
+11. & \quad\quad \textbf{if} response.ok $\land$ len(content) $>$ 200 $\land$ ``[ERROR]'' $\notin$ content[:500]: \\
+12. & \quad\quad\quad citation\_text\_map[url] $\leftarrow$ content; \textbf{break} \\
+13. & \quad\quad \textbf{else}: sleep($2^{\text{attempt}}$) \hfill\textit{// Exponential backoff} \\
+14. & \quad \textbf{if} url $\notin$ citation\_text\_map: failed\_urls.append(url) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: ContentScraper Fallback (PDF-capable)}} \\
+15. & \textbf{if} len(failed\_urls) $>$ 0: \\
+16. & \quad scraper $\leftarrow$ ContentScraper(timeout=15, whitelist=True) \hfill\textit{// PyMuPDF for PDFs} \\
+17. & \quad results $\leftarrow$ scraper.process\_citations(failed\_urls, fetch\_content=True) \\
+18. & \quad \textbf{for each} (url, content) $\in$ results: \\
+19. & \quad\quad \textbf{if} len(content) $>$ 200 $\land$ ``[ERROR]'' $\notin$ content[:100]: \\
+20. & \quad\quad\quad citation\_text\_map[url] $\leftarrow$ content \\
+21. & \textbf{return} citation\_text\_map \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:202} (\texttt{fetch\_citations\_with\_jina}), \texttt{:239} (\texttt{fetch\_single\_citation}), \texttt{:316-349} (ContentScraper fallback)
+

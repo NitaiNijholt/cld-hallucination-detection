@@ -1,0 +1,48 @@
+Theoretical framework:
+- need not start at transformer architectural details
+- needs more detail on hallucination
+- need more concise writing style in propsal benefit
+- needs framing of the problem as Computational science, i.e. model building
+
++ hallucination and TTC part is strong
+- practical implications is less Interesting
+
+
+contains some hallucionation, p. 56 (judge not used for links)
+
+"Multiple Generation Strategies: Test-time compute research suggests gener
+ating multiple candidate causal diagrams and using the judge to select the best,
+ rather than relying on a single generation. The effectiveness of this approach versus
+ iterative refinement is an empirical question we aim to address.
+ 5. Process Reward Models for Causal Reasoning: While our current work uses
+ outcome-based judging (evaluating complete diagrams), future extensions could
+ develop process reward models that evaluate intermediate steps in causal reason
+ing (e.g., “Is this individual causal link plausible?”), enabling more sophisticated
+ search-based approaches"
+ 
+
+ Information theoretic metrics not used p. 64:
+
+  4.1.11 Mathematical Foundations and Algorithmic Complexity
+ 4.1.11.1 Information-Theoretic Framework
+ Token information content: I(ti) = −log2 P(ti). Sequence entropy for rationale T:
+ H(T) = −
+ P(ti)log2 P(ti).
+ i
+ Cross-entropy between citation-derived semantics p and rationale semantics q:
+ H(p,q) = −
+ p(i) log q(i).
+ i
+ Mutual information between CI metrics and judge verdicts:
+ I(CI,Judge) =
+ P(c,j)log2 
+P(c,j)
+ c,j
+ P(c)P(j
+
+
+ -neo4j schema p. 65 not interestring 
+ 
+
+ Deep reserach stopping criteria stuff and indepdent iteration probability not infat in thesis
+

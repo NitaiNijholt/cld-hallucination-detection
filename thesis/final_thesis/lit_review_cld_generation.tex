@@ -1,0 +1,89 @@
+% Literature Review: Causal Loop Diagram (CLD) Generation with Large Language Models
+% Background section on LLM-based approaches to automated CLD construction
+
+\subsection{LLM-Based Causal Loop Diagram Generation}
+\label{sec:lit_cld_generation}
+
+\subsubsection{Hallucination Detection in LLM-Generated Causal Loop Diagrams}
+
+Large language models show promise for automating Causal Loop Diagram construction but exhibit systematic failure modes that demand specialized uncertainty quantification approaches. 
+
+The most directly comparable evaluation is the \textbf{System Dynamics Bot} \citep{hosseinichimeh2024textmapdynamicsbot}, which performs the identical task to CLD generation: \textit{extracting causal variables and directed causal links from natural language text to construct feedback diagrams}. Given textual descriptions of systems, the bot identifies variables, determines causal relationships between them, and outputs structured CLDs. Evaluated against human-coded ground truth from system dynamics literature and participant responses, the bot recovers only \textbf{59\% of causal links} and \textbf{66\% of feedback loops}---establishing a concrete performance ceiling for current LLMs on text-to-CLD extraction.
+
+Other causal reasoning benchmarks evaluate \textit{different tasks} that provide indirect evidence of LLM limitations. CLadder \citep{jin2023cladder} tests \textit{answering causal queries given a known causal graph}---the inverse of CLD generation where the graph is provided and models must reason about interventions and what-if queries. Corr2Cause tests \textit{inferring causal structure from statistical correlation statements}---a formal graph discovery task without natural language grounding. These benchmarks reveal fundamental reasoning limitations (GPT-4 achieves $\sim$62\% on CLadder, near-random on Corr2Cause) but do not directly measure text-to-diagram extraction performance.
+
+This background review synthesizes 2022--2025 literature connecting general hallucination detection metrics to the specific challenge of generating reliable causal structures from text, distinguishing between benchmarks that evaluate (a) causal extraction from text, (b) causal reasoning over given graphs, and (c) causal structure discovery from statistical data.
+
+\subsubsection{LLM Performance Degrades Sharply on Formal Causal Reasoning}
+
+Benchmark studies reveal a stark performance hierarchy across causal task types, though each evaluates a distinct form of causal reasoning:
+
+\textbf{COPA} (Choice of Plausible Alternatives) tests \textit{commonsense causal judgment}: given a premise (e.g., ``The man broke his toe'') and two alternatives, models select which is more plausibly the cause or effect. This multiple-choice format with everyday scenarios yields near-perfect GPT-4 accuracy but requires no graph construction or variable extraction---it tests recognition of familiar causal patterns rather than systematic causal inference.
+
+\textbf{CLadder} \citep{jin2023cladder} tests \textit{causal query answering over provided graphs}: models receive a causal graph with binary variables and must answer queries at three levels of Pearl's ladder---associational (``What is P(Y|X)?''), interventional (``What happens if we set X=1?''), and retrospective what-if (``Would Y have occurred if X had been different?''). GPT-4 achieves only \textbf{$\sim$62\% accuracy}, with performance degrading sharply on interventional and retrospective what-if queries. \textit{Relation to CLD generation}: CLadder evaluates reasoning \textit{with} a given causal structure, whereas CLD generation requires \textit{constructing} the structure from text. However, polarity errors in CLD generation may reflect similar failures in interventional reasoning.
+
+The \textbf{CaLM benchmark}~\citep{chen2024calm} provides the most comprehensive evaluation, testing 28 models across 92 causal targets organized into four modules. Tasks range from \textit{causal attribution} (identifying causes of events) to \textit{effect prediction} and \textit{what-if reasoning}. The key finding---``as complexity of causal reasoning increases, accuracy progressively deteriorates, eventually falling almost to zero''---suggests that CLD generation involving multi-step causal chains will face compounding errors.
+
+\textbf{Corr2Cause}~\citep{jin2023corr2cause} tests \textit{inferring causal graph structure from correlation statements}: given statements like ``A is correlated with B'' and ``B is correlated with C,'' models must determine whether ``A causes B'' or identify the correct DAG structure. Testing 17 models on 200K+ samples, all achieved near-random performance ($\sim$29\% F1). \textit{Relation to CLD generation}: This benchmark isolates pure causal structure inference without natural language complexity. The near-random performance suggests that when text-to-CLD systems succeed, it may be through pattern matching on familiar domains rather than principled causal inference.
+
+For \textbf{causal graph discovery from domain knowledge}, LLMs show complementary strengths and weaknesses. Jiralerspong et al.\ (2024) demonstrate that querying LLMs about pairwise causal relationships using breadth-first search can achieve state-of-the-art results on real-world causal graphs---a task closer to CLD generation since it relies on domain knowledge rather than statistical data. Darvariu et al.\ (2024) show LLM priors particularly help with edge directionality (84\% correctly oriented for LLaMA2-70B) when combined with observational data. \textbf{CausalBench} evaluates three subtasks: \textit{correlation identification}, \textit{causal skeleton identification} (undirected graph structure), and \textit{causality identification} (directed edges). LLMs significantly lag behind traditional algorithms on networks exceeding 50 nodes and struggle with collider structures while excelling at chains.
+
+The ``causal parrots'' hypothesis~\citep{zecevic2023causalparrots} offers a theoretical framework unifying these findings: LLMs encode causal facts within ``meta-SCMs'' (structural causal models describing relationships between causal facts in training data) but cannot perform genuine interventional or what-if reasoning. When LLMs succeed at causal tasks, they retrieve correlations between causal statements seen during training. \textit{Implication for CLD generation}: Models may accurately reproduce causal structures from well-documented domains while fabricating plausible-sounding but incorrect links in novel domains.
+
+\subsubsection{How Hallucinations Manifest in Causal Structure Generation}
+
+Hallucinations in CLD generation take distinct forms compared to free-text generation, requiring specialized detection approaches. Research identifies five primary error categories:
+
+\textbf{Fabricated causal links} represent the most direct hallucination type---generating relationships between variables without textual grounding. The \textbf{ReCAST benchmark} (arXiv 2505.18931) directly evaluates \textit{multi-node causal graph construction from academic text}---a task closely aligned with CLD generation. Unlike synthetic benchmarks, ReCAST uses unstructured, naturally written academic texts of varying length and complexity. Models must identify causal variables and construct directed graphs capturing the causal relationships described. The best-performing model achieves only \textbf{F1 = 0.477}, with common errors including fabricated links (e.g., ``loan usage flexibility $\rightarrow$ cash crop cultivation'' when no such relationship exists), difficulty with implicit causal information, and failure to connect causally relevant information spread across lengthy texts.
+
+\textbf{Polarity errors} involve incorrect $+$/$-$ assignment to causal links. This manifests when LLMs state A increases B when it actually decreases B---a failure to apply ``ceteris paribus'' reasoning correctly. Unlike free-text hallucinations, CLDs require internally consistent sign patterns around feedback loops.
+
+\textbf{Spurious variable introduction} creates variables not grounded in source text through over-generalization. Reinholtz et al.\ \citep{reinholtz2025pipelinealgebra} document examples like ``Macroeconomic and finance conditions'' with unknown polarity, or ``Global technology learning''---concepts too vague to support directional interpretation. Their study uses \textit{Pipeline Algebra} to construct CLDs from text, with expert refinement identifying systematic LLM errors.
+
+\textbf{Missing causal links} represent faithfulness failures where explicit source relationships are omitted. The System Dynamics Bot study found that missing links often occur when ``authors assumed readers would know'' implicit information---highlighting the challenge of implicit versus explicit causal knowledge in text-to-CLD extraction.
+
+\textbf{Direction reversal} and \textbf{DAG violations} constitute structural hallucinations unique to graph outputs. LLMs may reverse cause and effect or create cycles violating directed acyclic graph constraints. Jiralerspong et al.\ (2024), in their \textit{pairwise causal query} approach to graph discovery, document that LLMs sometimes predict bidirectional causation or inconsistent edge directions when queried about the same variable pair in different orderings.
+
+\paragraph{Formal taxonomies.} The \textbf{SD-AI benchmark}~\citep{schoenberg2025aibuildsdmodels} provides a systematic hallucination taxonomy for text-to-CLD tasks, maintaining a public leaderboard comparing model capabilities.\footnote{SD-AI Leaderboard: \url{https://ub-iad.github.io/sd-ai/\#/leaderboard/cld}} The taxonomy distinguishes: (1)~\textit{lack of conformance} (structural/formatting failures), (2)~\textit{variable extraction failures}, (3)~\textit{spurious edges} (false positives), (4)~\textit{missing edges} (false negatives), (5)~\textit{polarity errors}, and (6)~\textit{wrong causal narratives}. This thesis adopts categories 3--6 as the primary focus, with conformance addressed through structured outputs (JSON schema constraints) and variable-level analysis relegated to Appendix~D. The operational definitions and ground truth specifications used in our experiments appear in Section~\ref{sec:hallucination_definition}.
+
+Expert evaluation at MIT (Reinholtz et al., 2025) produced a complementary practical taxonomy with five categories: (A) ambiguous/overly broad variables, (B) duplicate/syntactically odd labels, (C) mis-specified linkage or polarity, (D) redundant elements, and (E) process-level limitations. This taxonomy provides actionable categories for automated detection systems in text-to-CLD pipelines.
+
+\subsubsection{Comparison of LLM-Based CLD Approaches}
+
+Table~\ref{tab:prior_cld_work} summarizes prior work on LLM-based CLD construction, distinguishing approaches by their input requirements, hallucination mitigation strategies, and evaluation methods.
+
+\begin{table}[H]
+\centering
+\caption{Comparison of LLM-based CLD Generation and Validation Approaches}
+\label{tab:prior_cld_work}
+\footnotesize
+\begin{tabular}{p{2.0cm}p{2.4cm}p{1.8cm}p{1.5cm}p{3.0cm}}
+\toprule
+\textbf{Approach} & \textbf{Method} & \textbf{Input} & \textbf{Corpus Req.} & \textbf{Hallucination Mitigation} \\
+\midrule
+SD-Bot~\citep{hosseinichimeh2024textmapdynamicsbot} & Text-to-CLD extraction via LLM & Text documents & Yes & None reported \\
+\midrule
+Theoraizer~\citep{Waaijers2024theoraizer} & Variable-pair querying; multiple candidates & User-defined variables & No & Logit-based UQ; candidate generation \\
+\midrule
+Liu \& Keith~\citep{liu2025leveraging} & Curated prompting techniques & Dynamic hypothesis text & Yes & None reported \\
+\midrule
+Pipeline Algebra~\citep{reinholtz2025pipelinealgebra} & Typed operators; iterative prompting & Abstract + web search & Partial & Expert refinement step \\
+\midrule
+CausalRAG~\citep{wang2025causalrag} & RAG-enhanced causal discovery & Scientific literature & Yes & RAG grounding (99.5\% faithfulness) \\
+\midrule
+Susanti \& Holsm.~\citep{susanti2025prompting} & Validation (not generation); fine-tuning vs prompting & Existing causal graphs & Yes & Fine-tuning (+20.5 F1 over prompting) \\
+\midrule
+Zhang et al.~\citep{zhang2024causal} & RAG-based causal graph discovery & Scientific literature & Yes & RAG grounding \\
+\midrule
+\textbf{This thesis} & Corpus-independent generation + post-hoc validation & Parametric knowledge & \textbf{No} & LLM-as-a-Judge; UQ metrics; Deep Research \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Key observations:}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Corpus dependency:} Most approaches require an external corpus (text-to-CLD extraction or RAG), limiting applicability when relevant corpora are unavailable. Only Theoraizer~\citep{Waaijers2024theoraizer} and this thesis operate corpus-independently.
+    \item \textbf{Hallucination mitigation:} Prior work largely neglects systematic hallucination detection. Theoraizer~\citep{Waaijers2024theoraizer} uses logprobs for uncertainty quantification but does not evaluate detection performance. RAG-based approaches (CausalRAG~\citep{wang2025causalrag}, Zhang et al.~\citep{zhang2024causal}) rely on retrieval grounding but are capped by retrieval quality. This thesis systematically evaluates multiple corpus-independent detection methods.
+    \item \textbf{Evaluation scope:} SD-Bot~\citep{hosseinichimeh2024textmapdynamicsbot} reports 60\% link recall and 66--83\% loop recall on controlled datasets. Liu \& Keith~\citep{liu2025leveraging} demonstrate expert-comparable quality on simple structures. Pipeline Algebra~\citep{reinholtz2025pipelinealgebra} presents qualitative case studies. No prior work evaluates hallucination \emph{detection} performance with precision/recall metrics against expert ground truth.
+\end{itemize}

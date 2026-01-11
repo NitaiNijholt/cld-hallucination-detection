@@ -1,0 +1,1010 @@
+
+% ==============================================================================
+\section{Generator Model Selection}
+% ==============================================================================
+
+Before establishing baseline performance, we compare three frontier LLMs for CLD edge generation: GPT-4.1 (OpenAI), Sonar-Pro (Perplexity), and Claude Sonnet 4 (Anthropic). All models were evaluated on the same three validation CLDs using identical prompts (Nitai\_C, T=0.7).
+
+\begin{table}[H]
+\centering
+\caption{Generator Model Comparison: Edge Recovery Performance. Bold indicates highest F1 per CLD; in aggregate row, bold indicates highest Precision, Recall, and F1 separately. \textbf{Edges processed} refers to the number of ordered (source, target) edge slots evaluated (including \texttt{NONE}).}
+\label{tab:generator_model_comparison}
+\begin{threeparttable}
+\begin{tabular}{llccccccc}
+\toprule
+\textbf{Model} & \textbf{CLD} & \textbf{Edges processed} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+GPT-4.1 & Social Norms & 90 & 6 & 9 & 5 & 0.400 & 0.545 & 0.462 \\
+GPT-4.1 & Depressive & 182 & 26 & 35 & 8 & 0.426 & 0.765 & \textbf{0.547} \\
+GPT-4.1 & Emergency Dept & 1056 & 6 & 120 & 27 & 0.048 & 0.182 & 0.075 \\
+\midrule
+Sonar-Pro & Social Norms & 89 & 7 & 11 & 4 & 0.389 & 0.636 & \textbf{0.483} \\
+Sonar-Pro & Depressive & 178 & 24 & 59 & 10 & 0.289 & 0.706 & 0.410 \\
+Sonar-Pro & Emergency Dept & 1051 & 24 & 421 & 9 & 0.054 & 0.727 & \textbf{0.100} \\
+\midrule
+Claude-Sonnet-4 & Social Norms & 90 & 10 & 24 & 1 & 0.294 & 0.909 & 0.444 \\
+Claude-Sonnet-4 & Depressive & 182 & 32 & 109 & 2 & 0.227 & 0.941 & 0.366 \\
+Claude-Sonnet-4 & Emergency Dept & 1056 & 31 & 655 & 2 & 0.045 & 0.939 & 0.086 \\
+\midrule
+\multicolumn{9}{l}{\textit{Micro-averaged (pooled TP/FP/FN across all CLDs):}} \\
+\textbf{GPT-4.1} & Total & 1328 & 38 & 164 & 40 & \textbf{0.188} & 0.487 & \textbf{0.271} \\
+Sonar-Pro & Total & 1318 & 55 & 491 & 23 & 0.101 & 0.705 & 0.176 \\
+Claude-Sonnet-4 & Total & 1328 & 73 & 788 & 5 & 0.085 & \textbf{0.936} & 0.155 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} All models used identical prompts (Nitai\_C variant) and temperature (T=0.7). 1 run due to API cost constraints. Nodes (variables) were directly retrieved from the \textbf{GT lit CLDs}. \textbf{Edges processed} denotes the number of ordered (source, target) edge slots evaluated (including \texttt{NONE}), i.e., ideally $|V|(|V|-1)$; it can be slightly lower if some rows are missing due to parsing/processing errors.
+
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+Table~\ref{tab:generator_model_comparison} shows the edge recovery performance of the three generator models. GPT-4.1 achieves the best aggregate F1 (0.271) through balanced precision-recall. Sonar-Pro scores well on each CLD, winning in Social Norms, placing second in Depressive, and winning in Emergency Dept, but its micro-average aggregate F1 score is still lower than GPT-4.1. This is mainly due to GPT-4.1 having a lower number of false positives than Sonar-Pro and Claude-Sonnet-4, which, while having higher recall, still results in a lower F1 score overall. Claude-Sonnet-4 shows highest recall (0.936) but lowest precision (0.085), generating many false positives and placing last in Social Norms and Depressive, and second in Emergency Dept. Based on best micro-average F1 score, \textbf{GPT-4.1 was selected} as the generator model for all subsequent experiments. Additionally, GPT-4.1 is the only model that provides token-level log probabilities (logprobs), enabling confidence-based edge filtering which is necessary for RQ2 experiments.
+
+% ==============================================================================
+\section{Generator Performance Baseline}
+% ==============================================================================
+
+Having selected GPT-4.1 based on the model comparison above, we now establish its baseline performance. These results show that the CLD generator recovers substantially more ground-truth edges than a structural random baseline (under our GT Lit operationalization) using the Nitai\_C prompt at \(T=0.7\).
+
+\subsection{Random Baseline Comparison}
+
+To confirm the generator produces meaningful causal structure rather than random edge configurations, we compare LLM-generated edges against a Monte Carlo random baseline.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../../final_runs/random_baseline_generator/random_baseline_comparison.png}
+\caption{LLM generator (GPT-4.1, T=0.7, Nitai\_C prompt) vs.\ random baseline edge F1 across all three validation CLDs. Error bars show min-max range across 3 runs.}
+\label{fig:random_baseline_final}
+\end{figure}
+
+
+\begin{table}[H]
+   \centering
+   \caption{Random Baseline Comparison for Generator Edge Recovery}
+   \label{tab:random_baseline}
+   \begin{tabular}{lcccccc}
+   \toprule
+   \textbf{CLD} & $|V|$ & $|E|$ & \textbf{Density} & \textbf{Random F1 [95\% CI]} & \textbf{LLM F1 mean [min, max]} & \textbf{Improv.} \\
+   \midrule
+   Depressive Symptoms & 14 & 34 & 0.187 & 0.186 [0.182, 0.190] & 0.530 [0.51, 0.55] & 2.8$\times$ \\
+   Social Norms & 10 & 12 & 0.133 & 0.133 [0.127, 0.138] & 0.450 [0.42, 0.50] & 3.4$\times$ \\
+   Emergency Department & 34 & 66 & 0.059 & 0.058 [0.057, 0.060] & 0.131 [0.12, 0.15] & 2.2$\times$ \\
+   \midrule
+   \textit{Average} & -- & -- & -- & 0.126 & 0.370 [0.35, 0.40] & 2.9$\times$ \\
+   \bottomrule
+   \end{tabular}
+   \begin{tablenotes}
+   \small
+   \item \textit{Note.} Random F1 via Monte Carlo (1000 iterations); LLM F1 from 3 generation runs per CLD (seeds 10, 20, 30).
+   \item Density = $|E| / (|V| \times (|V|-1))$. LLM F1 shows mean [min, max] across runs (n=3).
+   \end{tablenotes}
+   \end{table}
+
+Figure~\ref{fig:random_baseline_final} and Table \ref{tab:random_baseline} show the LLM consistently outperforms random chance (2.2--3.4$\times$ improvement), supporting that it captures non-random structure aligned with the published CLDs. Performance varies by domain complexity: Social Norms shows the largest relative improvement (3.4$\times$) while Emergency Department shows the smallest (2.2$\times$) due to lower absolute F1 against a Monte Carlo random baseline which wires edges given the same variables with similar density.
+
+
+
+\subsection{Temperature Sensitivity Analysis}
+
+To validate the generator temperature choice (T=0.7), we tested whether temperature significantly affects edge recovery performance across all three validation CLDs.
+
+\begin{table}[H]
+\centering
+\caption{Generator Temperature Sensitivity: Edge F1 Score by CLD}
+\label{tab:temperature_sensitivity}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Temperature} & \multicolumn{4}{c}{\textbf{Edge F1 Score (Mean $\pm$ Std)}} \\
+\cmidrule(lr){2-5}
+ & \textbf{Social Norms} & \textbf{Depressive} & \textbf{Emergency Dept} & \textbf{Overall} \\
+\midrule
+T=0.0 & $0.342 \pm 0.032$ & $0.455 \pm 0.018$ & $0.110 \pm 0.004$ & $0.302 \pm 0.145$ \\
+T=0.3 & $0.305 \pm 0.040$ & $0.445 \pm 0.004$ & $0.109 \pm 0.003$ & $0.286 \pm 0.140$ \\
+T=0.5 & $0.333 \pm 0.027$ & $0.479 \pm 0.017$ & $0.123 \pm 0.010$ & $0.312 \pm 0.147$ \\
+T=0.7 & $0.329 \pm 0.029$ & $0.445 \pm 0.005$ & $0.109 \pm 0.009$ & $0.294 \pm 0.141$ \\
+T=1.0 & $0.347 \pm 0.039$ & $0.444 \pm 0.009$ & $0.109 \pm 0.003$ & $0.300 \pm 0.142$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Edge F1 = $\frac{2 \cdot \text{TP}}{2 \cdot \text{TP} + \text{FP} + \text{FN}}$ comparing generated edges against literature ground truth.
+\item \textit{Design.} 5 temperatures $\times$ 3 runs $\times$ 3 CLDs = 45 total experiments. Seeds: 10, 20, 30 per temperature.
+\item \textit{Per-CLD columns:} Mean $\pm$ Std across 3 runs per CLD at each temperature.
+\item \textit{Overall column:} Mean $\pm$ Std computed across all 9 individual runs (3 CLDs $\times$ 3 runs) per temperature. The larger Std reflects variability both within and between CLDs.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+
+Temperature (T) = 0.7 was chosen for the generator LLM as initial default to strike a balance between diversity and determinism in sampled outputs. Subsequent sensitivity analysis shown in Table~\ref{tab:temperature_sensitivity} shows that temperature does not significantly affect Edge F1: ANOVA $F(4,40) = 0.035$, $p = 0.998$, $\eta^2 = 0.004$ (negligible effect). Shapiro-Wilk normality and Levene's homogeneity assumptions were satisfied (all $p > .05$); Kruskal-Wallis yields the same conclusion. Temperature does not significantly affect Edge F1 ($p > 0.05$), justifying T=0.7 as a reasonable default.
+
+
+
+% ==============================================================================
+\section{Correctness Judge Verification}
+% ==============================================================================
+
+Before evaluating the LLM-as-a-Judge approach on CLD edges, we verify that our correctness-based judge implementation has genuine hallucination detection capability using TruthfulQA---a common used benchmark in literature to test whether models can distinguish truthful from false but plausible answers, which can be used to verify the judge's implementation in this study.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+\centering
+\begin{threeparttable}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Accuracy & 0.876 \\
+Precision & 0.890 \\
+Recall & 0.859 \\
+F1 Score & 0.874 \\
+Specificity & 0.894 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Judge: GPT-4.1, temp=0.0, seed=42, baseline correctness prompt. Dataset: 1,634 samples (817 hallucinated, 817 truthful; 50\% base rate).
+\end{tablenotes}
+\end{threeparttable}
+\caption{Classification Performance}
+\label{tab:truthqa_performance}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\centering
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{Pred: Halluc.} & \textbf{Pred: Truthful} \\
+\midrule
+\textbf{Actual: Halluc.} & 702 (TP) & 115 (FN) \\
+\textbf{Actual: Truthful} & 87 (FP) & 730 (TN) \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Classification threshold: judge\_score $<$ 0.5 $\Rightarrow$ Hallucinated. TP = correctly caught hallucinations; FN = missed hallucinations; FP = false alarms (truthful flagged as hallucinated); TN = correctly accepted truthful.
+\end{tablenotes}
+\end{threeparttable}
+\caption{Confusion Matrix}
+\label{tab:truthqa_confusion}
+\end{subfigure}
+\caption{TruthfulQA Judge Verification (n=1,634)}
+\label{fig:truthqa_performance}
+\end{figure}
+
+Figure~\ref{fig:truthqa_performance} shows the performance of the correctness judge on the TruthfulQA dataset using the baseline prompt. Classification performance across both Recall (85.9\%) and Precision (89.0\%) are both high, indicating the judge neither over-flags nor under-flags. These results support that our correctness judge implementation works correctly on this benchmark. The subsequent RQ1a experiments will reveal whether this capability transfers to the more challenging domain of CLD edge validation.
+
+% ==============================================================================
+\section{RQ1a: Corruption Detection - Correctness}
+% ==============================================================================
+
+% Path: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness_final/enhanced_analysis_20251225_233458_e5fcc326/
+
+% NOTE: Full 5-panel aggregate figure available but excluded from final PDF
+% File: rq1a_enhanced_visualization.png
+
+\subsection{Performance Metrics Overview}
+
+This section presents hallucination detection performance across all CLDs and prompt variants using the Correctness Judge. Ground truth is established by generating CLDs with an LLM and then introducing controlled corruptions. A True Positive occurs when the judge correctly identifies a corrupted edge, while a False Positive occurs when an uncorrupted edge is incorrectly flagged as corrupted and False negative being a corrupted edge not being detected, with true negative being the judge indicating no corruption correctly. The classification threshold is set at 0.5: edges receiving a judge score $\leq 0.5$ are classified as hallucinations. Figure \ref{fig:rq1a_corr_correct_row1} shows the performance metrics overview for the correctness-based corruption detection task.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_corruption_detection_correctness_final/enhanced_analysis_20251225_233458_e5fcc326/rq1a_row1_performance_metrics.png}
+\caption{Performance metrics overview for corruption detection (Correctness Judge). Shows F1 scores (Left), ROC-AUC with random (AUC=0.5) baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (below each panel) tests prompt effect with (CLD, run) as blocks; per-CLD Wilcoxon tests show which pairs differ within each CLD (e.g., ``DE:M$>$B'' = Depressive: Mechanistic$>$Baseline). W = Kendall's W. DE=Depressive, ED=Emergency, SN=Social Norms; B=Baseline, M=Mechanistic, C=CoT. *** $p<0.001$.}
+\label{fig:rq1a_corr_correct_row1}
+\end{figure}
+
+
+
+The leftmost plot of Figure \ref{fig:rq1a_corr_correct_row1} shows the correctness judge obtaining F1 scores in the range 0.65 to 0.82 across all CLDs and prompt variants, with depressive CLDs' average F1 scores being lower, followed by emergency department and social norms being the highest. CIs overlapping per prompt variants within each CLD suggest the differences per prompt are not statistically significant.
+
+The middle plot of Figure \ref{fig:rq1a_corr_correct_row1} shows the AUC-ROC with a random (AUC = 0.5) baseline, showing that the correctness judge is able to discriminate the corrupted edges from the non-corrupted edges in each CLD and prompt, with AUC being 0.77 at the lowest end (for Mechanistic prompt in depressive CLD) and 0.83 at the highest end (for Baseline prompt in social norms CLD). Again, the highest AUC on average is obtained for social norms, followed by emergency department and depressive achieving the lowest, with CIs overlapping, suggesting no statistically significant differences.
+
+The right plot of Figure \ref{fig:rq1a_corr_correct_row1} shows the precision-recall trade-off per prompt variant and CLD, showing that mechanistic prompt achieves the highest recall, meaning it flags the highest proportion of corrupted edges, with baseline and CoT prompt showing higher precision, with CoT having slightly higher recall and precision for the emergency department CLD than baseline, but performance mostly being the same for the other CLDs and overall not differing significantly.
+
+\subsection{Detailed Analysis}
+
+In-depth analysis of corruption type detection patterns and score discrimination ability.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_corruption_detection_correctness_final/enhanced_analysis_20251225_233458_e5fcc326/rq1a_row2_detailed_analysis.png}
+\caption{Detailed analysis for correctness-based corruption detection.Recall by corruption type with color scale from 0.5 to 1.0 (Left). Score discrimination showing point-biserial correlation between ground truth hallucinations (FP/FN) and judge scores (Middle).  Classification statistics table (Right) mean judge scores ($\mu$), and 95\% confidence inc. sample counts with correct classifications shown in green and incorrect classifications shown in red. }
+\label{fig:rq1a_corr_correct_row2}
+\end{figure}
+
+Figure \ref{fig:rq1a_corr_correct_row2} shows the detailed analysis of the correctness judge's performance.
+The leftmost plot of Figure \ref{fig:rq1a_corr_correct_row2} shows the recall by corruption type aggregated across all CLDs and 3 runs, and shows that the correctness judge with mechanistic prompt operates with higher recall for each corruption type than baseline and CoT prompts, with CoT outperforming baseline on spurious and polarity flip corruption types but outperforming CoT on spurious motivation, while still scoring less than Mechanistic overall.
+
+The middle plot of Figure \ref{fig:rq1a_corr_correct_row2} shows point-biserial correlation between ground truth hallucinations (FP/FN) and judge scores (threshold judge score $\leq 0.5$), showing statistically significant negative correlations (w.r.t. H0 correlation = 0), which is the expected direction, as lower judge scores should be associated with corrupted edges (corruption = 1). Confidence intervals per prompt still overlap for emergency department and social norms, suggesting no statistically significant differences per prompt, although we also find a statistically significant lower relative correlation for mechanistic on depressive w.r.t. the other prompt variants. Overall, this leads us to conclude the obtained prompt correlations are not statistically significantly different. So, for each prompt variant, indicating that the correctness judge is able to discriminate the corrupted edges from the non-corrupted edges. Correlations are quite large, ranging from -0.55 to -0.7 for mechanistic and baseline, going from lowest for depressive and highest to social norms, with CoT showing slightly lower correlations from -0.4 to -0.6.
+
+The rightmost plot of Figure \ref{fig:rq1a_corr_correct_row2} shows the classification statistics table showing sample counts (n), percentages, mean judge scores ($\mu$), and 95\% confidence intervals aggregated across all CLDs, prompts, and runs.
+Correct classifications are shown in green and incorrect classifications shown in red. The main finding here is that both True Negatives and False Negatives have a mean judge score of 1. As True Negatives are the dominant class (68.1\% of samples), in that case it's a positive sign, whereas in case of the False Negatives (3.4\% of samples), which should score 0, it is an error. Both True Positives (mean judge score 0.25) and False Positives (mean judge score 0.14) are a lot lower, with True Positives being higher in line with expectations, but the confidence intervals still overlapping, meaning no statistically significant differences between judge detection of True and False Positives.
+
+
+% ROC curves moved to Appendix A due to discrete score values (0, 0.5, 1)
+
+% ==============================================================================
+\section{RQ1a: Ground Truth - Correctness}
+% ==============================================================================
+
+% Path: /home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fcc326/
+
+% NOTE: Full 6-panel aggregate figure available but excluded from final PDF
+% File: rq1a_ground_truth_enhanced_visualization.png
+
+For this experiment, the variables from ground truth from literature are passed and LLM generated edges are judged. In this scenario, ground truth from literature (GT Lit.) is used, such that a hallucination is defined as an FP/FN with respect to the ground truth.
+
+\subsection{Performance Metrics Overview}
+
+Detailed view of core performance metrics across all CLDs and prompt variants.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fcc326/rq1a_ground_truth_row1_performance_metrics.png}
+\caption{Performance metrics overview for ground truth correctness validation. Shows F1 scores (Left), ROC-AUC with random (AUC=0.5) baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (below each panel) tests prompt effect with (CLD, run) as blocks; per-CLD Wilcoxon tests show which pairs differ within each CLD (e.g., ``DE:M$>$B''). W = Kendall's W. *** $p<0.001$, ** $p<0.01$, * $p<0.05$.}
+\label{fig:rq1a_gt_correctness_row1}
+\end{figure}
+
+The leftmost plot of Figure \ref{fig:rq1a_gt_correctness_row1} shows the correctness judge F1 scores, which are in the range of 0.15 to 0.55 (notably lower than the F1 scores for the corruption detection task), with Mechanistic prompt significantly (CI's non-overlapping) outperforming Baseline and CoT prompts for depressive and emergency department CLDs, but not for the social norms CLD, where differences between prompt type are insignificant and CI's indicate larger variance.
+
+The middle plot of Figure \ref{fig:rq1a_gt_correctness_row1} shows the ROC-AUC with a random (AUC = 0.5) baseline, showing that the correctness judge scores significantly better than the random baseline only for the Mechanistic prompt in depressive and emergency department CLDs, but not for the social norms CLD where CI's of all prompts variants overlap with each other (indicating no statistically significant differences between prompts) and with random baseline (indicating no better performance than a random 50/50 guess of an edge being a hallucination). CoT prompt also scores marginally better than random, although its CI overlaps with the baselines, indicating no statistically significant differences between CoT and baseline variants in the emergency department CLD.
+
+The right plot of Figure \ref{fig:rq1a_gt_correctness_row1} shows the aggregate performance by prompt across all CLD's and all runs showing that while Mechanistic prompt achieves the highest F1 score, and ROC-AUC, the confidence intervals still overlap at this aggregation level, showing no significantly better performance. Without the social norms CLD, the difference would likely be significant. Precision and Recall are also markedly the highest for Mechanistic prompt, with CoT being middle of the pack and the lowest for Baseline, although the differences are small and CI's overlap.	
+
+
+\subsection{Detailed Analysis}
+
+In-depth analysis of precision-recall trade-offs, score distributions, and point-biserial correlations.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_ground_truth_correctness/enhanced_analysis_20251225_233458_e5fcc326/rq1a_ground_truth_row2_detailed_analysis.png}
+\caption{Detailed analysis for ground truth correctness validation. Precision-recall trade-off (Left). Point-biserial correlations showing discrimination ability (Middle). Score distributions by classification type (Right).}
+\label{fig:rq1a_gt_correctness_row2}
+\end{figure}
+
+
+The leftmost plot of Figure \ref{fig:rq1a_gt_correctness_row2} shows the precision-recall trade-off for each prompt variant and CLD, with Mechanistic prompt achieving the highest recall and slightly higher precision than CoT and Baseline, with Baseline and CoT performing mostly similar to each other (with CoT performing slightly better in terms of recall and precision).
+
+The middle plot of Figure \ref{fig:rq1a_gt_correctness_row2} shows the point-biserial correlation between ground truth hallucinations (FP/FN) and judge scores (threshold judge score $\leq 0.5$), showing statistically significant negative correlations (w.r.t. H0 correlation = 0), for Mechanistic prompt in Depressive and Emergency department CLDs, but not in the Social norms CLD. Baseline prompt correlations do not significantly differ from 0. CoT differs significantly from 0 for emergency department CLD, and social norms CLD. Overall correlations are a lot smaller (-0.1 to -0.25) versus the synthetic ground truth setting where higher correlations were obtained (-0.4 to -0.7).
+
+The rightmost plot of Figure \ref{fig:rq1a_gt_correctness_row2} shows the mean (+- 95\% CI) judge score distributions by classification type, aggregating across prompts, CLD's and runs which barely shows significant differences between classification types, with mean judge scores being close to each other around 0.85, with the exception of False Negatives scoring lower around 0.73, with CI's overlapping with TP and FP but not with TN. The fact that differences in Mean judge score between False and True edges are consistent with other results in this section, which showed that most prompt variants have low correlations with ground truth hallucinations and low F1 scores (aside from Mechanistic prompt, which performed relatively well).
+
+
+% NOTE: Score heatmap moved to Appendix (see fig:rq1a_gt_correctness_heatmap)
+
+
+% ==============================================================================
+\section{RQ1a: Corruption Detection - Citation}
+% ==============================================================================
+
+% Path: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/enhanced_analysis_20251225_233458_e5fcc326/
+
+% NOTE: Full 5-panel aggregate figure available but excluded from final PDF
+% File: rq1a_enhanced_visualization.png
+
+\subsection{Performance Metrics Overview}
+
+Detailed view of core performance metrics of Citation Judge on GT synth (corruption detection) across all CLDs and four prompt variants (Baseline, Mechanistic, CoT, Mechanistic-Lit) across 3 runs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_corruption_detection_citation_gpt5mini/enhanced_analysis_20251228_012920/rq1a_row1_performance_metrics.png}
+\caption{Performance metrics overview for citation-based corruption detection. Shows F1 scores (Left), AUC-ROC with chance baseline (Middle), and aggregate performance (Right). Friedman test (below each panel) tests prompt effect; per-CLD Wilcoxon tests show which pairs differ within each CLD. 4 prompts $\times$ 3 CLDs $\times$ 3 runs = 36 experiments. *** $p<0.001$, ** $p<0.01$, * $p<0.05$.}
+\label{fig:rq1a_corr_citation_row1}
+\end{figure}
+
+The leftmost plot of Figure \ref{fig:rq1a_corr_citation_row1} shows the F1 scores for each prompt variant and CLD, with F1 scores around 0.35 for the
+emergency department CLD, and around 0.45 for the depressive and 0.4 social norms CLD's, with overlapping CI's indicating
+no significant differences between prompt types within CLD's.
+
+The middle plot of Figure \ref{fig:rq1a_corr_citation_row1} shows the AUC-ROC with a chance baseline (AUC = 0.5), where we see on depressive, most
+prompt types except baseline perform slightly worse than the random baseline. On emergency department, they score even
+lower on average, but the CI's indicate larger variance and sometimes overlap with the random baseline. On social norms,
+we see better AUC, with all prompts scoring higher than the random baseline, with no CI's overlapping with it. CoT in this
+case scores highest on average followed by baseline, with both mechanistic prompt variants scoring about equal, although it
+should be noted that all CI's of the prompts still overlap, so differences are not significant.
+
+The rightmost plot of Figure \ref{fig:rq1a_corr_citation_row1} shows the precision recall trade-off per prompt and per CLD, showing for Mechanistic Lit, where points for all prompts completely overlap, which is consistent with non-existent differences spotted between prompt variants in the middle and left plot.
+
+\paragraph{Prompt Sensitivity \& Robustness}
+Figure~\ref{fig:rq1a_corr_citation_row1} (Right) illustrates the aggregate impact of prompt engineering. The choice of prompt proved statistically significant (Friedman $p < 0.001$, $W=0.56$), with the Mechanistic prompt consistently outperforming the Baseline. However, the system showed moderate robustness: the drop in performance between the best (Mechanistic) and worst (Baseline) prompt was limited to $\approx 0.15$ F1, and rank-ordering of difficulty across CLDs remained stable regardless of the prompt used. See the sensitivity analysis appendix section for extended prompt robustness results including semantic distance correlations.
+
+
+\subsection{Detailed Analysis}
+
+In-depth analysis of corruption type detection patterns and score discrimination ability.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_corruption_detection_citation_gpt5mini/enhanced_analysis_20251228_012920/rq1a_row2_detailed_analysis.png}
+\caption{Detailed analysis for citation-based corruption detection. Recall by corruption type with color scale from 0.5 to 1.0 (Left). Score discrimination showing point-biserial correlation between ground truth and judge scores (Middle). Classification statistics table showing sample counts (n), percentages, mean judge scores ($\mu$), and 95\% confidence intervals for each prompt type, with correct classifications shown in green and incorrect classifications shown in red (Right).}
+\label{fig:rq1a_corr_citation_row2}
+\end{figure}
+
+
+The leftmost plot of Figure~\ref{fig:rq1a_corr_citation_row2} shows the recall by corruption type with color scale from 0.5 to 1.0, showing near perfect recall regardless of prompt type, with recall ranging 0.98-0.99. 
+
+The middle plot of Figure~\ref{fig:rq1a_corr_citation_row2} shows the point-biserial correlation between hallucinations (Corruption = True in GT Synth) and judge scores, showing correlations of depressive and emergency department that are not statistically significantly different from 0, with CI's for all prompt types overlapping. Only correlations on Social norms show statistically significantly non-zero negative correlations (w.r.t. H0 correlation = 0), which is the expected direction in case of correct judge functioning.
+
+The rightmost plot of Figure~\ref{fig:rq1a_corr_citation_row2} shows True positives and False positives score about similar, at 0.15 and 0.14 respectively, with TN at 0.77 and FN 0.70 with CI's overlapping. This indicates that Negatives get a lot higher scores on average, and while higher judge scores are associated with more Negatives than positives, the judge is unable to discriminate between correct (True) and Incorrect (False) edges.
+
+
+
+% ROC curves moved to Appendix A due to discrete score values (0, 0.5, 1)
+
+% ==============================================================================
+\section{RQ1a: Ground Truth - Citation}
+% ==============================================================================
+
+% Path: /home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233458_e5fcc326/
+
+% NOTE: Full 6-panel aggregate figure available but excluded from final PDF
+% File: rq1a_ground_truth_enhanced_visualization.png
+
+\subsection{Performance Metrics Overview}
+
+Detailed view of core performance metrics of Citation Judge on GT Lit (hallucination is FN/FP in GT lit.) across all CLDs and prompt variants across 3 runs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233458_e5fcc326/rq1a_ground_truth_row1_performance_metrics.png}
+\caption{Performance metrics overview for ground truth citation validation. Shows F1 scores (Left), ROC-AUC with random baseline (Middle), and aggregate performance (Right) by prompt. Friedman test (below each panel) tests prompt effect; per-CLD Wilcoxon tests show which pairs differ within each CLD. W = Kendall's W. *** $p<0.001$, ** $p<0.01$, * $p<0.05$.}
+\label{fig:rq1a_gt_citation_row1}
+\end{figure}
+
+The leftmost plot of Figure \ref{fig:rq1a_gt_citation_row1} shows the F1 scores for each prompt variant and CLD, with F1 scores around 0.2 for social norms, 0.22 emergency department (with prompts about equal with overlapping CI's for each of these). Depressive at 0.48 for CoT and 0.46 for baseline, with both Mechanistic variants being around 0.38. 
+
+The middle plot of Figure \ref{fig:rq1a_gt_citation_row1} shows the AUC-ROC with a chance baseline (AUC = 0.5), where we see on depressive. Here, only baseline and CoT prompts score better than random baseline in Depressive and Social norms CLD, although their CI's overlapping with each other show no statistically significant differences. On emergency department, only baseline prompt scores above the random chance with relatively low variance in its CI, while CoT, with slightly higher score, also has overlapping CI with random baseline, supporting it is not significantly different.
+Mechanistic prompts are worse than random baseline on all CLD's.
+
+
+The rightmost plot of Figure \ref{fig:rq1a_gt_citation_row1} shows aggregate across all CLD's and 3 runs, showing larger variance. While mechanistic variants show higher recall, it doesn't offset their lower precision which results in lower ROC-AUC scores and lower F1 scores overall. Nonetheless, because of large variances CI's overlap between prompt types for each metric.
+
+
+\subsection{Detailed Analysis}
+
+In-depth analysis of precision-recall trade-offs, score distributions, and point-biserial correlations.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ1a_ground_truth_citation/enhanced_analysis_20251225_233458_e5fcc326/rq1a_ground_truth_row2_detailed_analysis.png}
+\caption{Detailed analysis for ground truth citation validation. Showing Precision-recall trade-off (Left). point-biserial correlations showing discrimination ability (Middle). Score distributions by classification type (Right)}
+\label{fig:rq1a_gt_citation_row2}
+\end{figure}
+
+The leftmost plot in Figure \ref{fig:rq1a_gt_citation_row2} shows the precision-recall trade-off per prompt and per CLD, showing highest recall for Mechanistic Lit, followed by mechanistic across CLD's, where baseline and CoT score similarly but worse on recall than the mechanistic variants and slightly better on precision.
+
+The middle plot of Figure \ref{fig:rq1a_gt_citation_row2} shows the point-biserial correlation between hallucination (FN/FP in GT lit.) and Judge scores. Baseline and CoT prompt variants score mostly similar and are negatively correlated with judge scores and statistically significant, with magnitudes ranging from a small 0.06 for emergency department, to 0.14 for social norms to 0.29 for depressive CoT. Correlations for mechanistic prompt variants are in the positive direction for Mechanistic variants in most CLD's (with the exception of mechanistic lit in emergency department), which is against expectations and would indicate that a higher judge score is associated with higher likelihood of hallucination.
+
+The rightmost plot of Figure \ref{fig:rq1a_gt_citation_row2} shows the score distributions by classification type aggregated across all CLD's, prompts, and 3 runs, showing that False Positives and False Negatives score lower than True Positives and True Negatives on average, but CI's overlapping indicate differences are not significant. This is expected given correlations going opposite directions per prompt type in the middle plot, and given we are averaging over prompt types here.
+
+% NOTE: Score heatmap moved to Appendix (see fig:rq1a_gt_citation_heatmap)
+
+
+% ==============================================================================
+\section{RQ1a: External Validation - Ulemans Expert CLD}
+% ==============================================================================
+
+To validate the citation-based judge on an independently expert-validated dataset, we evaluated the judge on the Ulemans Alzheimer's disease CLD---a 150-edge causal model constructed through Group Model Building with 17 domain experts. This external validation tests whether the judge performance generalizes beyond our three primary CLDs and assesses the impact of search provider and citation fetcher choices.
+
+\subsection{Search Provider Comparison}
+
+We compared four academic search providers (OpenAlex, Brave, Perplexity, PubMed) combined with two citation fetching methods (Jina AI Reader, ContentScraper) to assess infrastructure impact on judge scores.
+
+\begin{table}[H]
+\centering
+\caption{Search Provider Comparison on Ulemans Expert CLD (150 edges)}
+\label{tab:ulemans_search_providers}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Provider} & \textbf{Jina AI} & \textbf{ContentScraper} & \textbf{Jina Edges} & \textbf{CS Edges} & \textbf{Jina} & \textbf{CS} \\
+ & \textbf{Avg Score} & \textbf{Avg Score} & \textbf{w/ Citations} & \textbf{w/ Citations} & \textbf{Coverage} & \textbf{Coverage} \\
+\midrule
+OpenAlex & 0.232 & 0.381 & 150/150 & 59/150 & 100.0\% & 39.3\% \\
+Brave (no whitelist) & 0.296 & 0.326 & 150/150 & 134/150 & 100.0\% & 89.3\% \\
+Brave (whitelist) & 0.290 & 0.329 & 150/150 & 134/150 & 100.0\% & 89.3\% \\
+Perplexity & 0.278 & 0.335 & 150/150 & 120/150 & 100.0\% & 80.0\% \\
+PubMed & 0.306 & 0.283 & 127/150 & 120/150 & 84.7\% & 80.0\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Jina AI Reader = paywall-bypassing document fetcher; ContentScraper = standard web scraper.
+\item Coverage = percentage of edges with successfully fetched citation content.
+\item Score Difference = ContentScraper Avg Score $-$ Jina AI Avg Score.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Table~\ref{tab:ulemans_search_providers} reveals four findings: (1) Jina AI achieves 100\% coverage (vs.\ 39--89\% for ContentScraper) by bypassing paywalls; (2) ContentScraper Citation Judge score 10--15\% higher when it succeeds; (3) PubMed achieves highest Jina score (0.306) but lowest coverage (84.7\%); (4) All scores are low ($<$0.4). 
+The Ulemans expert CLD receives uniformly low judge scores (0.23--0.38) across all search provider and fetcher configurations, showing that the ``low-score'' pattern observed in our RQ1a GT Lit citation judging also appears on an independently expert-constructed CLD with bibliographic references.
+This relative infrastructure-invariance suggests that the low citation judge scores are not solely an artifact of a single retrieval backend in our pipeline; however, this does not rule out retrieval limitations more broadly, and Ulemans (Alzheimer's) is a domain where direct causal evidence is often scarce and much of the literature is correlational or hedged.
+
+This experiment was added to test a ``best-effort retrieval'' setting with multiple providers/fetchers; even under this setup, judge scores remain low on expert-provided edges. This is consistent with the interpretation that evidence strength/specificity (not just retrieval coverage) is a binding constraint for citation-based validation in complex biomedical domains.
+
+This argument can of course only be made if Judges were found to correlate with expert judgment, which we did in RQ1a: Human Validation of LLM Citation Judges which will be covered next.
+
+% ==============================================================================
+\section{RQ1a: Human Validation of LLM Citation Judges}
+% ==============================================================================
+
+To validate LLM judge reliability, we measured inter-rater agreement between citation-based LLM judges and a domain expert (Mick) across 72 causal edges from 3 independent datasets.
+
+\subsection{Per-Dataset and Combined Agreement}
+
+\begin{table}[H]
+\centering
+\caption{Human Validation: LLM Judge vs.\ Expert Inter-Rater Agreement}
+\label{tab:human_validation}
+\begin{threeparttable}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Dataset} & \textbf{Generator} & \textbf{n} & \textbf{Cohen's $\kappa$} & \textbf{Agreement} & \textbf{Pearson $r$} \\
+\midrule
+File 1 (Depressive) & GPT-4.1 & 30 & 0.435 & 70.0\% & 0.527** \\
+File 2 (Depressive) & Claude 4 Sonnet & 30 & 0.923 & 96.7\% & 0.926*** \\
+File 3 (Social norms) & GPT-4.1 & 12 & 0.461 & 66.7\% & 0.798** \\
+\midrule
+\textbf{Combined} & \textbf{2 models} & \textbf{72} & \textbf{0.618} & \textbf{80.6\%} & \textbf{0.732***} \\
+\midrule
+Human baseline & N/A (expert) & 13 & $\sim$0.60 & 80.0\% & --- \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Inter-rater reliability between LLM citation judge (GPT-4.1, temp=0.0) and domain expert.
+\item Verdicts: Not supported (0), Partially supported (0.5), Fully supported (1).
+\item $\kappa$ interpretation \cite{landis1977measurement}: $<$0.20 slight, 0.21--0.40 fair, 0.41--0.60 moderate, 0.61--0.80 substantial, $>$0.80 almost perfect.
+\item Human baseline from prior GMB validation studies on comparable expert tasks.
+\item Significance: ** $p<0.01$, *** $p<0.001$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Table~\ref{tab:human_validation} shows agreement ranging from moderate (File 3, $\kappa=0.461$) to almost perfect (File 2, $\kappa=0.923$). The combined agreement ($\kappa=0.618$) indicates substantial reliability, comparable to the human baseline ($\kappa \approx 0.60$). This is a strong indication the citation judge is able to discriminate between supported and unsupported edges, and is able to do so with a degree of reliability comparable to human experts, although it should be noted that agreement differs across CLD's, being lowest on social norms (for which $n=12$ only due to time and budget constraints) and highest on depressive, with Claude-4-sonnet being the best aligned with human preferences, although gpt-4 was used in 3/4 judging experiments and shows lower agreement w.r.t. Claude-4-sonnet.
+
+\subsection{Disagreement Analysis}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix: LLM Judge vs.\ Human Expert (Combined, n=72)}
+\label{tab:human_validation_confusion}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{LLM: Not supported} & \textbf{LLM: Partially} & \textbf{LLM: Fully} \\
+\midrule
+\textbf{Human: Not supported} & 37 (51.4\%) & 11 (15.3\%) & 0 (0\%) \\
+\textbf{Human: Partially} & 0 (0\%) & 21 (29.2\%) & 3 (4.2\%) \\
+\textbf{Human: Fully} & 0 (0\%) & 0 (0\%) & 0 (0\%) \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Rows = human expert verdicts; columns = LLM judge verdicts.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Table~\ref{tab:human_validation_confusion} shows 14 disagreements (19.4\%), all with LLM more lenient than human: 11 cases where LLM said ``Partially'' when human said ``Not supported'', and 3 cases where LLM said ``Fully'' when human said ``Partially''. Notably, there were zero false negatives---the LLM never under-estimated evidence support.
+
+The validation revealed substantial combined agreement ($\kappa=0.618$, 80.6\%) across 72 edges, with strong correlation between LLM and human scores ($r=0.732$, $p<0.001$). This LLM-human agreement ($\kappa=0.618$) is comparable to human-human inter-rater reliability ($\kappa \approx 0.60$). All 14 disagreements showed systematic leniency bias, with the LLM more permissive than the human expert. Agreement varied by domain, ranging from moderate (Social norms, $\kappa=0.461$) to almost perfect (Claude-generated Depressive, $\kappa=0.923$). The citation-based LLM judge thus achieves human-level inter-rater reliability. The consistent leniency bias (zero false negatives) indicates that LLM judges provide permissive screening---appropriate for identifying low-confidence edges requiring human review, but insufficient for strict validation without expert oversight.
+
+% ==============================================================================
+\section{RQ1a: Main Findings (Summary)}
+% ==============================================================================
+
+\textbf{RQ1a asks whether LLM judges can detect incorrect causal edges (hallucinations) in CLDs.} Across synthetic corruption tests, literature-ground-truth validation, external expert CLDs, and human agreement checks, we find:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Correctness judges transfer only partially.} A correctness judge that performs strongly on a general hallucination benchmark (TruthfulQA) also detects \textit{synthetic} CLD corruptions with high discrimination (F1 and AUC well above chance). However, performance drops substantially on \textit{expert literature ground truth} CLDs: scores cluster closer to chance for some domains (notably Social Norms), and meaningful gains appear only in specific domains/prompts (e.g., Mechanistic in Depressive and Emergency Dept).
+    \item \textbf{Citation judges are unreliable as strict validators on expert CLDs.} In both corruption-detection and GT-lit settings, citation-based judging shows weak and domain-dependent discrimination: high recall can coincide with poor separation between correct vs.\ incorrect edges, and some prompt variants exhibit counterintuitive score--hallucination relationships (suggesting topical alignment rather than causal verification).
+    \item \textbf{Low scores on expert CLDs persist under external validation.} On the Ulemans expert CLD, citation-judge scores remain uniformly low across multiple search providers and citation fetching methods, indicating the ``low-score'' phenomenon is not explained by a specific retrieval backend.
+    \item \textbf{Judges can match human raters, but with a systematic bias.} Human validation shows substantial LLM--expert agreement overall ($\kappa=0.618$, 80.6\%; $r=0.732$), comparable to a human baseline. Disagreements are consistently \textit{lenient}: the LLM tends to over-accept evidence support, making it better suited for \textit{screening/triage} than for definitive validation.
+\end{enumerate}
+
+\textbf{Takeaway:} LLM judges can detect obvious or synthetic errors and provide human-aligned \textit{screening} signals, but they are not yet reliable as standalone validators of causal edge correctness against expert ground truth across domains, with a notable exception when using the Mechanistic prompt for the Correctness Judge type in the Depressive and Emergency Dept CLDs on GT Synth mostly, and to a weaker but still significant extent on GT Lit.
+
+% ==============================================================================
+\section{RQ1b: Corrector Experiments}
+% ==============================================================================
+
+In this section, we evaluate if an LLM-as-a-corrector can improve the quality of the CLD, when given input of the LLM-as-a-judge verdicts, using baseline Judge prompt (as this had most consistent performance across CLD's, Ground truths and correlations in expected directionsversus other prompts) in the LLM-as-a-judge experiments for the Correctness Judge type only (because of the better performance of correction judge and prohibitive costs of running the citation judge) and ground truth (GT Synth and GT Lit)).
+
+
+\subsection{Synthetic Corruption Correctness Results}
+
+\input{../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_synthetic.tex}
+
+Table~\ref{tab:rq1b_synthetic_correctness} presents corrector performance on synthetically corrupted CLDs (30\% corruption rate, three runs per CLD). The corrector improves F1 scores for two of three CLDs, with the largest gains observed for Depressive (+0.145) and Emergency Dept (+0.082), while Social Norms shows no improvement. The aggregate improvement (+0.075) suggests modest recovery on average; however, the high variance indicates inconsistent performance across runs. Precision and recall similarly improve for the Depressive and Emergency Dept cases but not for Social Norms. Judge scores improve across all CLDs, with the largest gains for Depressive, followed by Emergency Dept and Social Norms.
+
+The total actions, revise, and change type columns serve as validity checks, confirming that the corrector is functioning as intended. The action type distribution exhibits an approximately 45/55 split between revise and change type operations, deviating slightly from the expected 1/3 to 2/3 ratio. This expected ratio follows from the corruptor's equal probability selection of polarity flip, edge type change, and motivation corruption, where both polarity flip and edge type change are addressed through the change type operation. The observed distribution suggests that revision occurs more frequently than expected, with correspondingly fewer type changes. The discrepancy between total actions (133.4) and the sum of revise and change type reflects an averaging artifact across runs.
+
+Overall, the results indicate that the corrector yields modest F1 improvements on average, with Social Norms as an exception. Under the blocked one-sample Wilcoxon signed-rank test on CLD$\times$run blocks ($n=9$), the median F1 improvement is statistically detectable on Synthetic ($p=0.031$). The improvement in judge scores with respect to uncorrected GT Synth is marginally larger but remains negligible. The following section examines whether alternative prompt variants yield different correction performance.
+
+\subsection{Corrector Prompt Ablation Study (Synthetic Corruption)}
+
+To evaluate whether advanced prompting strategies improve correction performance, we tested three prompt variants on synthetically corrupted CLDs: Baseline (examples only), Chain-of-Thought (examples + step-by-step reasoning), and Mechanistic (examples + CoT + adapted Shimonovich's \cite{shimonovich2020bradford} refinement of Bradford Hill causal criteria).
+
+\input{../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_synthetic.tex}
+
+Table~\ref{tab:rq1b_prompt_ablation_synthetic} indicates that the Baseline prompt (+0.075) and CoT (+0.069) yield larger mean improvements than the Mechanistic variant (+0.026). While Baseline and CoT show small but statistically detectable improvements over doing nothing on synthetic corruptions (one-sample Wilcoxon vs.\ $\Delta$F1$=0$: $p=0.031$), prompt-to-prompt differences under the same CLD$\times$run blocks are weak and do not survive multiple-comparison correction (see corrector sensitivity appendix section). Overall, the corrector remains unreliable for ground-truth correction and its gains on synthetic data do not generalize. Detailed sensitivity analysis (see corrector sensitivity appendix section) quantifies both efficacy and prompt effects under the blocked design.
+
+Post-hoc paired Wilcoxon comparisons between prompts (Bonferroni over 3 pairs, $\alpha_{\text{adj}}=0.0167$) further support this conclusion: on Synthetic, CoT$>$Mechanistic is marginal at the raw level ($p=0.031$) but not significant after correction ($p_{\text{adj}}=0.094$), and Baseline vs.\ CoT shows no difference ($p=0.688$). On Ground Truth, CoT$>$Mechanistic is again marginal raw ($p=0.0195$) but does not survive correction ($p_{\text{adj}}=0.0586$). Thus, any prompt ordering is weak compared to the setting shift (Synthetic vs.\ Ground Truth).
+
+
+
+\subsection{Ground Truth Correctness Baseline prompt Results}
+
+This section evaluates the corrector using the baseline prompt across runs and CLDs, validated against GT Lit. Results are aggregated over three runs per CLD, with mean $\pm$ standard deviation reported across CLDs, including a macro average.
+
+\input{../../final_runs/RQ1b_corrector_ablation_analysis/baseline_table_groundtruth.tex}
+
+Table~\ref{tab:rq1b_groundtruth_correctness} presents mixed results. The corrector improves Emergency Dept F1 (+0.030) but slightly degrades performance for Social Norms ($-$0.044) and Depressive ($-$0.036). Precision decreases for Social Norms and Depressive while increasing marginally for Emergency Dept. Recall improves across all CLDs, although the Social Norms confidence interval overlaps with zero while other CLDs show clear separation.
+
+Judge scores improve slightly in all cases (obtained by re-evaluating after applying the corrector's modifications), with confidence intervals not overlapping zero. This pattern indicates that the corrector can improve judge scores but does not reliably improve F1 scores. The total actions, revise, and change type columns serve as validity checks, confirming that the corrector functions as intended. The action type distribution in the macro average row shows approximately a 2/3 change type to 1/3 revise ratio, consistent with expectations given that the corruptor selects polarity flip, edge type change, and motivation corruption with equal probability, and both polarity flip and edge type change are addressed through type changes.
+
+Overall, the results indicate that the corrector is ineffective at improving F1 scores of generated CLDs relative to GT Lit on average, although it does improve judge scores.
+
+% Table~\ref{tab:rq1b_synthetic_correctness} demonstrates corrector effectiveness improving on aggregate ( $\Delta$F1 = +0.075), however the variance indicate its not very different from 0. Depressive (+0.145) and Emergency Dept (+0.082) show relatively strong recovery, while Social Norms shows no F1 improvement despite corrective actions. Judge F1 scores improve for each prompt type about equally, at ~0.11, showing no big differences there. Average F1 is improved most for baseline, followed by CoT and lastly mechanistic, although no prompts reliably improve the 
+
+
+\subsection{Corrector Prompt Ablation Study (Ground Truth)}
+
+We extend the ablation study to ground truth validation, comparing how different corrector prompts perform when evaluated against literature-derived expert CLDs (GT lit) rather than GT synth.
+
+\input{../../final_runs/RQ1b_corrector_ablation_analysis/ablation_table_groundtruth.tex}
+
+Table~\ref{tab:rq1b_prompt_ablation_groundtruth} reveals three key findings: (1) all prompt variants produce negative or near-zero F1 changes; (2) Emergency Dept is the only CLD showing consistent improvement across prompts; and (3) CoT achieves marginally better overall F1, although standard deviation ranges overlap with other prompts, precluding definitive conclusions.
+
+The total number of corrective actions is similar across prompts, with the Mechanistic variant revising causal narratives least frequently, followed by Baseline, and CoT revising most frequently---at the expense of fewer edge type changes. Judge scores improve most for the Mechanistic variant on average, followed by Baseline, with CoT associated with the smallest increase in judge score difference.
+
+\subsection{RQ1b: Main Findings (Summary)}
+
+RQ1b asks whether an LLM \textit{corrector}, conditioned on LLM-judge feedback, can improve CLD edge quality. Across experiments, we find a clear setting dependence:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Synthetic corruptions: modest, inconsistent gains.} On GT Synth (30\% corruption), the corrector improves F1 on average (macro $\Delta$F1 $=+0.075$; Table~\ref{tab:rq1b_synthetic_correctness}), driven by Depressive and Emergency Dept while Social Norms shows no F1 improvement. Under the blocked one-sample Wilcoxon signed-rank test on CLD$\times$run blocks ($n=9$), the median F1 improvement is statistically detectable but small ($p=0.031$), and variance across runs remains high.
+    \item \textbf{Prompt engineering has weak effects relative to the setting shift.} On synthetic corruptions, Baseline and CoT yield similar mean improvements and both exceed Mechanistic, but prompt-to-prompt differences are weak and do not survive multiple-comparison correction (Table~\ref{tab:rq1b_prompt_ablation_synthetic}). The same conclusion holds on ground truth (Table~\ref{tab:rq1b_prompt_ablation_groundtruth}): any prompt ordering is marginal compared to the much larger drop in effectiveness from Synthetic$\rightarrow$Ground Truth.
+    \item \textbf{Ground truth (GT Lit): no reliable improvement in edge recovery.} When validated against literature-derived expert CLDs, the corrector does \textit{not} improve F1 on average: it slightly helps Emergency Dept but degrades Depressive and Social Norms under the baseline prompt (Table~\ref{tab:rq1b_groundtruth_correctness}), and across prompt variants $\Delta$F1 remains near-zero or negative (Table~\ref{tab:rq1b_prompt_ablation_groundtruth}). Notably, \textbf{judge scores increase consistently} after correction, indicating the corrector learns to satisfy the judge more than it improves agreement with expert ground truth.
+\end{enumerate}
+
+Overall, RQ1b results do not support using an LLM corrector triggered by and fed with Correctness Judge (baseline prompt) feedback as a reliable mechanism for improving CLDs against expert ground truth regardless of prompting strategy used. Its limited success on synthetic corruption appears to reflect the ease and structure of the synthetic hallucinations correction rather than robust correction ability in the literature-grounded setting.
+
+% ==============================================================================
+\section{RQ2: Hallucination Detection Using UQ Metrics}
+% ==============================================================================
+
+\textbf{Overview.} We analyzed 63 experiment files (31,704 causal edges total) from RQ1 ground truth experiments using the six-phase analysis pipeline described in Methods. Four generator-based UQ metrics were computed during LLM generation: perplexity (uncertainty in token predictions), minimum probability (confidence floor), maximum window entropy (local uncertainty peaks)---all of which are derived from generator LLM output logprobs---and cosine similarity (semantic similarity to the context found by the generate-then-search method, available for citation experiments only). Synthetic corruption (GT Synth) experiments were excluded because post-hoc corruption cannot be reflected in generation-time logprobs. Therefore, the only ground truth used was the literature-derived expert CLDs (GT Lit). Edges were labeled as hallucinations (FP/FN) or correct (TP/TN); this hallucination label was compared to the UQ scores to investigate the relationship between the two.
+
+\subsection{Single UQ Metric Performance}
+
+We evaluate each UQ metric's discriminative power for hallucination detection by treating the raw metric value as a classifier score and computing the area under the ROC curve (AUC-ROC). This measures the probability that a randomly chosen hallucination has a higher metric value than a randomly chosen correct prediction. Interpretation: AUC $>$ 0.5 indicates higher metric values correlate with hallucinations; AUC $<$ 0.5 indicates \textit{lower} values correlate with hallucinations (the metric is still informative, but in the opposite direction---e.g., Gen Min Prob AUC = 0.479 means lower minimum probability $\rightarrow$ more likely hallucination, which aligns with the intuition that low-confidence generations are more error-prone). AUC = 0.5 indicates no discriminative power (random).
+
+
+\begin{table}[H]
+\centering
+\caption{Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}
+\label{tab:rq2_single_metrics}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
+ & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
+\midrule
+Gen Cosine            & 16,492 & 0.671*** & +0.153*** & 65.7\% & 35 \\
+Similarity            &        & [0.640, 0.702] & [+0.106, +0.199] & & \\
+\midrule
+Gen Perplexity        & 31,704 & 0.563*** & $+0.005^{ns}$ & 34.9\% & 63 \\
+                      &        & [0.542, 0.583] & [-0.019, +0.030] & & \\
+\midrule
+Gen Max Window        & 31,704 & 0.554*** & +0.069*** & 50.8\% & 63 \\
+Entropy               &        & [0.538, 0.570] & [+0.044, +0.094] & & \\
+\midrule
+Gen Min Prob          & 31,704 & $0.479^{**\downarrow}$ & -0.036** & 36.5\% & 63 \\
+                      &        & [0.463, 0.494] & [-0.059, -0.012] & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Comprehensive meta-analysis across 63 RQ2 experiment files using generator-based UQ metrics. 
+N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
+Gen Cosine Similarity has fewer observations (16,492 edges across 35 files) because it is only defined for citation-judging runs, where supporting citations are retrieved and embedded; correctness-judging runs lack retrieved text, so cosine similarity cannot be computed. One additional file was excluded due to $<$2 hallucinations.
+AUC = area under ROC curve for binary classification (hallucination vs. correct); 
+Correlation r = Pearson correlation between metric and hallucination status (positive = higher metric values for hallucinations; negative = higher metric values for correct predictions); 
+Significant Files = percentage of files where Mann-Whitney U test (hallucinations vs.\ correct edges) is $p < 0.05$. 
+All metrics computed from LLM generation process. 
+Values represent mean performance with 95\% confidence intervals across both citation and correctness experiments (3 CLDs, multiple runs and prompts). 
+Hallucination definition: FP or FN in ground truth validation.
+Significance levels: *** $p<0.001$, ** $p<0.01$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance.
+\item \textit{Assumptions:} UQ metric distributions are non-normal (Figure~\ref{fig:rq2_distributions_by_cld}; Table~\ref{tab:rq2_normality_tests}). Group comparisons therefore use Mann--Whitney U tests (non-parametric). Pearson $r$ is robust for large $n$ ($>$16{,}000 edges) via CLT, and bootstrap CIs (10{,}000 resamples) provide assumption-free uncertainty quantification.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\textbf{Interpretation:} Gen Cosine Similarity achieves the highest AUC (0.671), followed by Gen Perplexity (0.563) and Gen Max Window Entropy (0.554). Gen Min Prob shows AUC below 0.5, indicating lower probability values correlate with hallucinations---consistent with the intuition that low-confidence tokens signal errors. Notably, Gen Cosine Similarity shows a \textit{counterintuitive} direction: higher similarity to retrieved citations correlates with hallucinations (positive $r$), whereas we expected lower similarity to indicate unsupported claims. This may reflect a confound where false positives in citation experiments often involve superficially plausible but incorrect causal relationships that happen to resemble academic text patterns. Despite moderate single-metric performance (all AUCs $<$ 0.7), the ensemble classifiers in Phase 5--6 combine these signals to achieve substantially higher discrimination (Table~\ref{tab:rq2_ensemble_performance}).
+
+
+\subsection{Feature Distributions: Correct vs. Hallucinations}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ2_hallucination_detection/phase6_distributions_with_effect_sizes.png}
+\caption{Generator UQ metric distributions comparing correct edges (green) vs. hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Each subplot displays Mann-Whitney U p-value and effect size $r$ with interpretation.}
+\label{fig:rq2_distributions_by_cld}
+\end{figure}
+
+To contextualize these distributions, we first assess whether the UQ metrics are approximately normal---a key assumption for many common parametric comparisons. Table~\ref{tab:rq2_normality_tests} reports Shapiro--Wilk normality tests (overall, hallucinations only, and correct edges only) for each generator-based metric. All tests reject normality at $\alpha=0.05$, consistent with the pronounced skewness and heavy tails observed in Figure~\ref{fig:rq2_distributions_by_cld}. Consequently, RQ2 group comparisons are conducted using Mann--Whitney U tests (non-parametric), and uncertainty is quantified via bootstrap confidence intervals.
+
+\input{../../final_runs/RQ2_hallucination_detection/normality_tests_table.tex}
+
+\textbf{Interpretation:} The normality diagnostics confirm that the generator-based UQ metrics are strongly non-Gaussian in this setting (both overall and within hallucination/correct strata). This supports our choice to rely on distribution-robust statistics for inference and effect size reporting, and it cautions against over-interpreting visual separation alone: with large $n$, even subtle distributional shifts can become statistically significant while remaining practically small.
+
+Figure~\ref{fig:rq2_distributions_by_cld} compares LLM generator uncertainty metric distributions for correct edges (green) versus hallucinations (red) across the three CLDs (99th percentile clipped; Mann--Whitney U p-values and effect sizes $r$ shown per subplot). Columns show different CLDs; rows show different metrics. The rightmost column summarizes the mean absolute effect size per metric. Overall, the figures show unclear separation between hallucinated and non-hallucinated edges visually, though statistical tests show differences.
+
+Gen perplexity distributions seem to shift slightly to the left for correct edges in depressive, and have less positive kurtosis than hallucinations in emergency department and social norms, although p-values show significance in depressive and emergency department but not in social norms.
+
+Minimum token probability exhibits the most consistent separation (depressive p<0.0001; emergency\_department p=0.0004; social\_norms p=0.0806). Valid edges tend to have a tail of higher minimum probability across all CLDs, although most of the probability mass of the correct distribution is also around the low-probability area.
+
+Maximum window entropy shows significance in emergency department and depressive but not in social norms, with hallucinations skewing toward higher local entropy peaks in the depressive and emergency\_department CLDs (both p<0.0001), while no separation is observed for social\_norms (max window entropy p=0.729), where the distribution appears slightly bimodal. Finally, cosine similarity to the retrieved context (available only for citation judging runs) differs significantly in all three CLDs (depressive and emergency\_department p<0.0001; social\_norms p=0.0365), with hallucinations tending toward higher similarity, suggesting that semantic proximity to retrieved context does not guarantee causal correctness and may reflect topical alignment rather than faithful edge generation.
+
+Overall, evidence suggests that these metrics carry some signal, but this seems to be domain dependent, is uneven and subtle, and does not clearly visually separate the data. Also, because of the relatively large sample size, significant effects are easily observed even if the effect is small, so do not necessarily denote useful effect sizes.
+
+Even if no single metric yields a clear univariate threshold, the metrics may still be jointly informative: multivariate models can capture interactions and non-linear combinations that define a decision boundary not evident in marginal distributions. Therefore, we next train an ensemble classifier using all generator metrics jointly.
+% 
+
+\subsection{Recursive Feature Elimination Analysis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ2_hallucination_detection/phase4_rfe_complete.png}
+\caption{RFE analysis across classifiers with 5-fold cross-validation. \textbf{Left:} Feature selection stability with color-coded thresholds (green $\geq$60\% = stable, orange 40--59\%, red $<$40\% = unstable); labels show selection frequency. \textbf{Right:} Permutation importance (AUC drop when feature is shuffled) for each classifier; error bars show standard deviation across 30 permutations.}
+\label{fig:rq2_rfe}
+\end{figure}
+
+Figure~\ref{fig:rq2_rfe} reveals substantial differences in feature selection and importance across classifiers. Gen Cosine Similarity is the most important feature for all classifiers (permutation importance 0.21--0.29), consistent with its stable selection across all models. For Logistic Regression (AUC = 0.707), Gen Min Prob, Gen Max Window Entropy, and Gen Perplexity show near-zero permutation importance, explaining why RFE never selects them (0/5 folds). In contrast, Random Forest (AUC = 0.987) shows high permutation importance for all 4 features (0.10--0.29), justifying its selection of all features. However, Random Forest's superior in-distribution performance comes at the cost of poor cross-domain generalization (Table~\ref{tab:rq2_ensemble_performance}), suggesting that the additional features capture CLD-specific patterns rather than generalizable hallucination signals.
+
+Having identified which features contribute to classification, we now evaluate ensemble classifiers using a cross-validation framework designed to detect overfitting and assess cross-CLD generalization.
+
+\subsection{Ensemble Classification Results}
+\label{sec:rq2_ensemble}
+
+Ensemble classifiers require a consistent feature vector per edge. Therefore, Phases 4--6 are computed on the subset of edges for which all four UQ metrics are available (i.e., citation-judging runs only), yielding 16,507 edges across 35 experiment files---a reduction from the 31,704 edges across 63 files used in the single-metric analysis.
+
+Table~\ref{tab:rq2_ensemble_performance} presents a cross-phase validation analysis designed to detect overfitting. Each phase uses a progressively stricter validation strategy: Phase 4 tests feature selection on all pooled data; Phase 5 evaluates on held-out samples from the same distribution (all CLDs); Phase 6 tests generalization to entirely unseen CLDs (leave-one-CLD-out cross-validation). Performance drops between phases indicate the degree to which models exploit CLD-specific patterns rather than learning generalizable hallucination signals.
+
+\begin{table}[H]
+\centering
+\caption{Ensemble Classifier Performance Across Validation Phases (Cross-Phase Overfitting Analysis)}
+\label{tab:rq2_ensemble_performance}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \textbf{Phase 6:} & \textbf{Performance} \\
+ & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{Cross-CLD AUC} & \textbf{Drop (5$\rightarrow$6)} \\
+ & \textbf{[min, max]} & \textbf{[min, max]} & & \textbf{[min, max]} & \\
+\midrule
+Neural Network & N/A & 0.724 [0.714, 0.734] & 0.766 & 0.670 [0.601, 0.743] & 0.096 \\
+\midrule
+Logistic Regression & 0.706 [0.693, 0.720] & 0.688 [0.676, 0.701] & 0.707 & 0.664 [0.562, 0.753] & 0.043 \\
+\midrule
+Gradient Boosting & 0.812 [0.796, 0.828] & 0.806 [0.789, 0.822] & 0.815 & 0.644 [0.529, 0.766] & 0.171 \\
+\midrule
+Random Forest & 0.988 [0.985, 0.992] & 0.974 [0.969, 0.980] & 0.987 & 0.630 [0.584, 0.701] & 0.357 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Cross-phase validation analysis using 35 citation-judging experiment files (16,507 total edges, 15.2\% hallucinations); restricted to runs where all 4 UQ metrics are available. 
+\textbf{Phase 4 (RFE CV AUC):} 5-fold stratified CV on \textit{all} pooled edges; measures feature selection performance.
+\textbf{Phase 5 (CV AUC):} 5-fold stratified CV on training portion only (70\% of data); measures in-distribution performance.
+\textbf{Phase 5 (Test AUC):} Single evaluation on held-out test set (30\% of data); validates generalization within same distribution.
+\textbf{Phase 6 (Cross-CLD AUC):} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; measures cross-domain generalization.
+Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
+\textbf{Uncertainty:} All phases show mean [min, max] across CV folds or CLDs, per the uncertainty reporting rule (Methods Table~\ref{tab:uncertainty_rule}). For n=5 (Phases 4--5) or n=3 (Phase 6), min-max ranges are more appropriate than t-distribution CIs as they carry no distributional assumptions and the sample size is small.
+Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
+\item \textit{Caveat on Phases 4--5 CV:} Stratified k-fold splits edges, not files; edges from the same file may appear in both train and test folds. This can inflate in-distribution AUC estimates if edges share run-level artifacts. Phase 6 (leave-one-CLD-out) splits by CLD and is therefore the most conservative generalization estimate. The large performance drop from Phase 5 to Phase 6 (especially for Random Forest) likely reflects this artifact leakage in earlier phases.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Table~\ref{tab:rq2_ensemble_performance} Across validation phases, Random Forest and Gradient Boosting achieve the highest in-distribution AUCs (Phase 5 Test AUC = 0.987 and 0.815) but exhibit the largest degradation under leave-one-CLD-out evaluation (Phase 6 mean AUC = 0.630 and 0.644). In contrast, Logistic Regression and the Neural Network show substantially smaller cross-domain degradation (drops of 0.043 and 0.096) and similar Phase 6 mean AUC (0.664 vs 0.670; overlapping min–max ranges). Overall, these results suggest that simpler models generalize more robustly across CLDs, while higher-capacity tree ensembles are more prone to CLD-specific overfitting in this setting.
+
+\subsection{RQ2: Main Findings (Summary)}
+
+RQ2 asks whether generator-time uncertainty (UQ) metrics can predict hallucinated edges (FP/FN w.r.t. GT Lit) in CLD generation. Across the single-metric and ensemble analyses, we find:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Single metrics carry only weak-to-moderate signal.} The strongest single metric is Gen Cosine Similarity (AUC = 0.671; $r=0.153$; Table~\ref{tab:rq2_single_metrics}), while the remaining generator-time metrics provide weaker discrimination (AUC $\approx 0.55$). Notably, cosine similarity exhibits a counterintuitive direction (higher similarity associated with hallucinations), consistent with topical overlap rather than causal faithfulness.
+    \item \textbf{High-capacity ensembles overfit across domains.} Random Forest achieves near-perfect in-distribution performance (Phase 5 Test AUC = 0.987) but degrades sharply under leave-one-CLD-out evaluation (Phase 6 mean AUC = 0.630), indicating strong CLD-specific overfitting (Table~\ref{tab:rq2_ensemble_performance}).
+    \item \textbf{Simpler models generalize better, but remain limited.} Logistic Regression and the Neural Network show the smallest cross-domain performance drops and comparable Phase 6 mean AUC ($\sim$0.66--0.67; Table~\ref{tab:rq2_ensemble_performance}), implying some generalizable signal, but not strong enough to support reliable cross-domain hallucination detection in isolation.
+\end{enumerate}
+
+\textbf{Takeaway:} Generator UQ metrics provide a weak signal for hallucination detection and exhibit limited cross-CLD generalization; they are better viewed as auxiliary features for triage/monitoring rather than as a standalone, domain-robust hallucination detector.
+
+
+
+
+\noindent\textbf{RQ3 Pivot Rationale.}
+The original RQ3 design---using generator UQ metrics to selectively deploy the corrector---is not supported by our findings: RQ2 shows that UQ metrics do not generalize across CLDs (Phase 6 AUC $\approx 0.63$--$0.67$), and RQ1b shows the corrector does not reliably improve GT Lit quality (macro $\Delta$F1 $\approx -0.02$). We therefore pivot to an alternative form of smart test-time compute: using the Mechanistic Correctness Judge score (which showed more reliable discrimination in RQ1a GT Lit; Table~\ref{tab:rq1b_prompt_ablation_groundtruth}) as the uncertainty signal, and \textbf{Deep Research} (DR)---automated multi-agent literature search---as the form of deploying more (expensive) test-time compute that can measurably validate causal claims.
+
+This preserves the spirit of RQ3: a computationally cheap uncertainty signal triggers selective deployment of more expensive but more effective test-time compute. However, due to time constraints from the late pivot, we did not explore the DR design space as systematically as in RQ1a/RQ1b with a component-wise abalation study. In the spirit of exploration where are therefore forgoing Occam's razor---the principle of choosing the simplest explanation consistent with the data, or its analogy in modeling (the MDL): choosing the model that minimizes summed model and data complexity---and instead adopt a design informed by earlier intuitions: the naive generate-then-search approach (5 sources matched to a causal claim) may not be deep, wide, or dynamic enough to find causal evidence. The DR system therefore uses multiple search queries in parallel, iterative evidence gathering, and a multi-agent pipeline for scoring, selection, and judgment (see Methods, Section~\ref{sec:rq3_dr_system}, for full system architecture).
+
+\textbf{Limitations of the exploratory design.} The DR system has many degrees of freedom (query count, iteration depth, scoring thresholds, agent prompts, and components) that would ideally require a full ablation study with local and global sensitivity analysis. Additionally, searching for evidence \textit{for} a claim introduces confirmation bias risk, and the system inherits publication bias from the underlying literature. These limitations are acknowledged; the following results should be interpreted as an exploratory pilot rather than a definitive evaluation.
+% ==============================================================================
+% ==============================================================================
+% SENSITIVITY ANALYSIS SECTIONS MOVED TO APPENDIX (full thesis only).
+% TO AVOID REDUNDANCY AND IMPROVE NARRATIVE FLOW.
+% ==============================================================================
+% \section{Prompt Sensitivity Analysis} ... (Moved to Appendix)
+% \section{Corrector Prompt Sensitivity Analysis} ... (Moved to Appendix)
+
+% ==============================================================================
+\section{RQ3: Deep Research Validation (Exploratory Pilot)}
+% ==============================================================================
+
+\begin{center}
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Methodological pivot.} The original RQ3 (smart test-time compute using UQ metrics to selectively deploy correctors) was contingent on RQ2 generalization and RQ1b corrector efficacy---conditions not supported by our findings. We therefore repurposed RQ3 as an exploratory pilot of \textbf{Deep Research (DR)}: using automated literature search to \textit{validate} (rather than correct) LLM-generated causal claims. This pilot is single-run and non-ablated; see Discussion (RQ3 pivot section) for rationale and limitations.
+}}
+\end{center}
+
+\vspace{0.5em}
+
+We deployed DR on 285 edges (TP + FP + FN from the RQ1a GT Lit labels across all three CLDs; TN omitted to reduce cost) and asked whether automated literature search can validate the LLM's causal \textit{narrative} for each edge. The key metric is \textbf{detection rate}: the fraction of edges for which DR retrieves \textit{direct causal evidence} (RCTs, experimental manipulations, or meta-analyses; not purely correlational studies). We additionally report DR's self-assessed confidence (1--10).
+
+\input{../../final_runs/RQ3_deep_research/rq3_main_table.tex}
+
+Table~\ref{tab:rq3_results} shows that TP edges have a higher detection rate than FP edges, but the TP--FP gap (8.1 pp) is not statistically significant ($p=.38$; low power, effect-size CI includes zero). In contrast, detection differs substantially between TP and FN (27.6 pp; significant after correction; medium effect) and between FP and FN (19.5 pp; significant after correction; small effect).
+
+Given these aggregate results, we next report per-CLD detection rates to assess whether DR's discriminative behavior is domain-dependent.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/RQ3_deep_research/figures/rq3_combined_figure.png}
+\caption{Deep Research results. \textbf{(A)} Detection rates by CLD and classification (TP/FP/FN) with Wilson 95\% CIs. \textbf{(B)} Confidence scores by CLD and classification (mean $\pm$ SD).}
+\label{fig:rq3_combined}
+\end{figure}
+
+Figure~\ref{fig:rq3_combined}A shows substantial between-CLD variation in detection gaps between edge classes: Depressive exhibits meaningful discrimination (TP--FP gap $=+36$ pp), while Social Norms ($+13$ pp) and Older Persons ($+6$ pp) show weak discrimination; uncertainty is substantial for Social Norms due to small $n$. Figure~\ref{fig:rq3_combined}B shows DR's self-reported confidence provides little discrimination between edge classes: means cluster tightly (range $<1$ point on a 10-point scale) with substantial overlap across TP/FP/FN within each domain.
+
+% Overall, DR's detection behavior is domain-dependent: Depressive shows the clearest separation between TP and FP edges, while Older Persons shows near parity between TP and FP detection (weak discrimination) but clearer separation between FP/TP and FN edges. In Social Norms, estimates are less stable due to small sample sizes (wide confidence intervals).
+
+In aggregate, DR does not significantly discriminate between valid and hallucinated (as defined as FP in GT Lit) causal claims (TP--FP gap = 8.1 pp; $p=.38$; Cohen's $h=0.17$, negligible). Nonetheless, DR retrieves direct causal evidence for 62.4\% of FP edges and 42.9\% of FN edges. This is consistent with multiple explanations: (i) some ``false positives'' may reflect literature-supported relationships that experts excluded for scope/theoretical reasons, and/or (ii) DR may retrieve evidence that is not sufficiently specific or causal for the exact claim---a motivation for the human validation causal evidence applicability analysis below. The FP--FN gap (+19.5 pp, $p=.008$**, $p_{\text{adj}}=.024$*) survives correction: FP edges have higher detection than FN edges.
+
+% These aggregate results mask substantial domain variation (Table~\ref{tab:rq3_per_cld}): the Depressive CLD shows strong discrimination (TP--FP gap = +36 pp), while Older Persons shows negligible discrimination (+6 pp), suggesting DR's utility is domain-dependent.
+
+\subsection{Per-CLD Detection Rate Analysis}
+
+\input{../../final_runs/RQ3_deep_research/rq3_per_cld_table.tex}
+
+Table~\ref{tab:rq3_per_cld} reveals substantial domain variation in DR's TP--FP discriminative ability, relatively smaller variation in TP--FN, and substantial variation in the FP--FN gap. In the Depressive CLD, DR clearly distinguishes valid from hallucinated edges (TP--FP: $+36.3$ pp, $h=0.75$, $p_{\text{adj}}=.01$). The Social Norms CLD shows a smaller, non-significant gap (TP--FP: $+13.3$ pp, $h=0.30$). In contrast, the Older Persons CLD shows negligible TP--FP discrimination ($+5.6$ pp, $h=0.14$), but a significant FP--FN gap ($+33.1$ pp, $h=0.69$, $p_{\text{adj}}<.001$), indicating DR validates most edges---including false positives---while consistently missing edges the LLM failed to generate.
+
+\subsection{Exploratory: Ground Truth Enrichment Analysis}
+\label{sec:gt_enrichment_results}
+
+Given that 62.4\% of FP edges have \texttt{direct\_causal\_found=True} under DR, we explore a counterfactual upper bound: \textit{if} DR-validated FPs were treated as true causal relationships, how would generation performance change? This assumption is intentionally strong and is used only to bound the potential impact; the human-validation analysis below provides a more conservative calibration.
+
+\input{../../final_runs/RQ3_deep_research/rq3_enriched_gt_table.tex}
+
+Of the 63 FN edges (expert-included, LLM-missed), 27 (42.9\%) have DR evidence. Under Scenario 2, a complete LLM+DR pipeline would (counterfactually) recover these edges as positive relationships, reducing FN from 63 to 36. The remaining 36 FN edges (57.1\%) lack searchable evidence under our DR settings, consistent with tacit domain knowledge or evidence types not captured by the retrieved literature. Scenario 1 quantifies the counterfactual impact of promoting FP$\rightarrow$TP (F1: $0.267 \to 0.705$), while Scenario 2 estimates an upper bound when additionally recovering FN edges with DR evidence (F1: $0.267 \to 0.779$). The 36 residual FNs represent expert knowledge that neither LLM generation nor literature search recovers in this setting.
+
+% --------------------------------------------------------------------------
+% Human validation + enrichment conditional on human validation
+% (newer artifacts generated in thesis/final_thesis/generated/ and
+% validation plots under final_runs/RQ3_deep_research/validation/)
+% --------------------------------------------------------------------------
+\vspace{0.5em}
+
+\input{generated/rq3_enrichment_validation_numbers.tex}
+\input{generated/rq3_human_validation_numbers.tex}
+\input{generated/rq3_human_validation_table.tex}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.51\textwidth}
+  \centering
+  \vspace{0pt}
+  \includegraphics[width=0.80\linewidth]{../../final_runs/RQ3_deep_research/validation/all_edges_threshold_tradeoff.png}
+  \par
+  \vspace{0.25em}
+  {\captionsetup{skip=2pt,width=\linewidth,justification=raggedright,singlelinecheck=false,font=small}%
+  \captionof{figure}{Human validation tradeoff curve (pooled; Wilson 95\% CI). Each point corresponds to an applicability threshold $t\in\{0.5,0.6,0.7,0.8,0.9\}$ applied to the validated sample ($n=\rqThreeHVN$). Let $x(t)$ be \textit{coverage} = $\Pr(\texttt{Fully\_applicable}\ge t)$ and $y(t)$ be \textit{correct-causal rate} = $\Pr(\texttt{human\_verdict}\allowbreak=\allowbreak\texttt{causal}\allowbreak\mid\allowbreak \texttt{Fully\_applicable}\ge t)$. Points are annotated by $t$. Selected threshold: $t=\rqThreeValThresh$.}%
+  \label{fig:rq3_human_validation_elbow}}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}
+  \centering
+  \vspace{0pt}
+  \par
+  {\captionsetup{skip=2pt,position=top,width=\linewidth,justification=raggedright,singlelinecheck=false,font=small}%
+  \captionof{table}{Human validation tradeoff curve (pooled): coverage vs.\ correct-causal rate}%
+  \label{tab:rq3_human_validation_tradeoff}}
+  \vspace{0.25em}
+  {\small
+  \setlength{\tabcolsep}{4.0pt}%
+  \renewcommand{\arraystretch}{1.10}%
+  \rqThreeHumanValidationTradeoffTableBody
+  }%
+\end{minipage}
+\end{figure}
+
+
+
+\noindent \textbf{Human validation and applicability thresholding.} We stratified-sampled $\rqThreeHVN$ edges from the Deep Research output restricted to \texttt{direct\_\allowbreak causal\_\allowbreak found\allowbreak=\allowbreak True} and manually labeled each edge with a categorical verdict (\texttt{human\_\allowbreak verdict}\(\in\)\{\texttt{causal}, \texttt{different\_vars, causal}, \texttt{invalid}\}) and a human-assigned evidence applicability score \texttt{Fully applicable}\(\in[0,1]\). The sampling protocol and applicability rubric are defined in Methods (Section~\ref{sec:rq3_human_validation}). In the validated sample, the dominant failure mode was \textit{variable mismatch}: evidence was causal but pertained to slightly or substantially different constructs than the edge's (source, target) variables and/or used different operationalizations (measures); outright non-causal evidence was rare.
+
+To calibrate DR's aggregate ``\texttt{direct\_causal\_found=True}'' signal into thesis-relevant causal claims, we thresholded applicability at $t\in\{0.5,0.6,0.7,0.8,0.9\}$ and computed the pooled tradeoff curve in Figure~\ref{fig:rq3_human_validation_elbow}/Table~\ref{tab:rq3_human_validation_tradeoff}. We then selected $t=\rqThreeValThresh$ via the script's elbow/gradient decision rule and used the human-validated pass rates to extrapolate expected FP promotions and FN discoveries to the full DR dataset (Table~\ref{tab:enriched_gt_validated}).
+
+\input{generated/rq3_enrichment_validation_table.tex}
+
+\begin{center}
+\fbox{\parbox{0.92\textwidth}{
+\textbf{Critical Caveats:} Both scenarios are \textbf{exploratory and preliminary}. Key limitations: (1) DR may validate edges as being directly causal irrespective of other CLD specific context such as mediators. (2) LLM-based DR validating LLM-generated edges risks circularity; (3) The review of promoted/discovered edges was solely done by the author of this thesis and not a domain expert and has no inter rater reliability reporting; (4) \textbf{True Negatives not analyzed}---DR covered only 20.4\% of the edge space (285 of 1,394 possible edges); the 1,109 TN edges were not analyzed due to cost (\$0.87/edge, \$269 for all TNs). These metrics represent \textbf{upper bounds} on achievable performance, pending domain expert validation. Dataset available for community verification (see Data Availability).
+}}
+\end{center}
+
+\subsection{Smart-Trigger DR Deployment Estimate}
+\label{sec:smart_trigger_dr}
+
+\input{generated/rq3_smart_trigger_numbers.tex}
+
+\noindent The enrichment analysis above applies DR to \textit{all} edges. In practice, DR is expensive (\$0.87/edge), motivating a \textbf{smart-trigger} deployment that runs DR selectively. We estimate expected F1 gains if DR is triggered only for edges where the most reliable RQ1a Ground Truth Correctness judge (Mechanistic prompt) assigns a low aggregate score ($\leq \rqThreeTriggerThreshold$), indicating uncertainty about the edge (as opposed to the original RQ3 intention of using RQ2 UQ metrics as the trigger).
+
+\textbf{Procedure.} We parsed per-edge Mechanistic judge scores from the 9 judged workbooks (3 CLDs $\times$ 3 runs) and computed the mean score per edge. We then joined these to the 285 DR edges and marked edges as \textit{triggered} if their mean score $\leq \rqThreeTriggerThreshold$. Of the triggered edges, we counted how many had \texttt{direct\_causal\_found=True} in the DR oracle. Finally, we applied the human-validated calibration rates at $t=\rqThreeApplicabilityThreshold$ (FP: \rqThreePFP, FN: \rqThreePFN) to estimate expected promotions/discoveries.
+
+\textbf{Results.} Of 285 DR edges, 142 triggered (50\%). Among triggered edges with DR evidence: \rqThreeFPTriggeredDR\ FP edges and \rqThreeFNTriggeredDR\ FN edges had \texttt{direct\_causal\_found=True}. Applying calibration:
+
+\input{generated/rq3_smart_trigger_table.tex}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../../final_runs/RQ3_deep_research/validation/dr_cost_efficiency_comparison.png}
+\caption{Cost--accuracy tradeoff and cost-per-unit-accuracy scaling for Deep Research (DR) deployment. Left: observed cost vs.\ expected F1 for always-on DR vs.\ smart-trigger DR (judge-triggered deployment). Right: extrapolated cost per +0.1 F1 improvement as CLD size increases under a sparse-edge growth assumption, highlighting the widening cost gap.}
+\label{fig:rq3_dr_cost_efficiency}
+\end{figure}
+
+\noindent \textit{Note.} Figure~\ref{fig:rq3_dr_cost_efficiency} shows two-sided uncertainty bands (Wilson 95\% bounds) propagated from the human-calibrated promotion/discovery rates (see Methods, Sections~\ref{sec:rq3_human_validation} and~\ref{sec:gt_enrichment_method}). For interpretation, we prefer the conservative estimate obtained by using the Wilson 95\% lower bound, because it reduces the risk of overstating gains due to sampling variability in the human validation rates. While this lower bound addresses sampling uncertainty in the calibration step, it does not account for other sources of uncertainty (e.g., generalization of applicability to non-validated edges, edge dependence, domain shift, and not considering CLD mediators). Further research should assess how the estimated gains change when these assumptions are relaxed.
+
+\noindent We evaluated whether a selective test-time DR deployment policy could improve cost-efficiency relative to always-on DR, using the RQ1a Ground Truth Correctness judge (Mechanistic prompt) as a trigger (mean aggregate score $\leq 0.5$). On the 285-edge RQ3 dataset, 142 edges (50\%) triggered; among these, DR reported \texttt{direct\_causal\_found=True} for \rqThreeFPTriggeredDR\ FP and \rqThreeFNTriggeredDR\ FN edges. Using the human-validated calibration at applicability $\geq 0.7$ (FP: 17/19 causal; FN: 5/6 causal; Wilson 95\% CIs reported above), the smart-trigger policy yields an estimated $\Delta$F1 of \rqThreeSTDeltaFSys\ at $\sim$\$124 total compute (judge on all edges + DR on triggered edges), compared to $\Delta$F1 of +0.468 at $\sim$\$248 for full DR.
+
+Under these assumptions, smart-trigger achieves higher $\Delta$F1 per dollar (0.216 vs.\ 0.189 $\Delta$F1 per \$100; $\sim$15\% relative improvement) while recovering $\sim$57\% of the full-deployment F1 gain at $\sim$50\% of the DR cost. The scaling panel should be interpreted as a cost extrapolation, not a validated performance claim: it assumes the observed trigger rate and per-edge applicability distribution generalize to other edges and other CLDs. Under this stylized model, the absolute dollar gap between full and smart-trigger deployment increases with CLD size due to quadratic scaling of the edge space, while the efficiency ratio remains approximately constant.
+
+% ==============================================================================
+\section{RQ3: Main Findings (Summary)}
+% ==============================================================================
+
+\textbf{RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges and improve end-to-end CLD quality.} As an exploratory pilot (single-run, non-ablated), we find:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{DR detection is not a reliable FP filter in aggregate.} Across 285 TP/FP/FN edges, DR retrieves \texttt{direct\_causal\_found=True} for many FP edges (62.4\%), yielding a small, non-significant TP--FP detection gap (8.1 pp; $p=.38$; Cohen's $h=0.17$; Table~\ref{tab:rq3_results}). DR does, however, distinguish FN from both TP and FP (TP--FN and FP--FN gaps significant after correction; Figure~\ref{fig:rq3_combined}).
+    \item \textbf{Utility is domain-dependent and DR confidence is weakly informative.} Per-CLD results show strong TP--FP discrimination in Depressive but weak discrimination in Social Norms and Older Persons (Table~\ref{tab:rq3_per_cld}; Figure~\ref{fig:rq3_combined}). DR's self-reported confidence shows substantial overlap across TP/FP/FN classes within domains (Figure~\ref{fig:rq3_combined}B), limiting its value as a standalone accept/reject criterion.
+    \item \textbf{Enrichment effects can be large if gains extrapolated from the human validation sample hold.} A naive upper bound (treat all DR-positive edges with \texttt{direct\_causal\_found=True} as correct) yields very large counterfactual gains (Scenario 1/2; Table~\ref{tab:enriched_gt}). However, DR sometimes finds causal evidence for highly related, but not directly equivalent, concepts or using different measures. Human validation shows that the dominant failure mode is \textit{variable mismatch}---causal evidence for different constructs than the edge's stated variables. To form a more realistic estimate based on the human validation sample, an optimal trade-off between evidence quality and coverage can be found by applying a threshold on the pooled tradeoff curve ($t=\rqThreeValThresh$; Figure~\ref{fig:rq3_human_validation_elbow}), which yields more calibrated enrichment estimates than the naive ``any causal evidence found by DR is valid'' assumption: F1 improves from \rqThreeFOne\ (expert GT) to \rqThreeFEnrich\ (Scenario 1) and \rqThreeFSystem\ (Scenario 2), with conservative estimates of \rqThreeFEnrichCons\ and \rqThreeFSystemCons\ (Table~\ref{tab:enriched_gt_validated}). Based on the quality of causal evidence observed in the human validation sample, the human-calibrated enrichment extrapolation seems mostly reasonable, but it relies on strong assumptions: (i) the within-CLD edge-class applicability distribution in the validated sample generalizes to the remaining (out-of-sample) edges for that CLD, and (ii) edges are evaluated largely in isolation rather than in the full CLD causal context (e.g., mediators/confounders) that could disqualify a relationship from being directly causal.
+    \item \textbf{Smart-trigger DR slightly improves cost-efficiency (exploratory).} Triggering DR only on edges flagged as uncertain by the strongest correctness judge (Mechanistic; score $\leq \rqThreeTriggerThreshold$) recovers a notable fraction of the full-deployment DR enrichment gains at roughly half the DR cost, with an estimated $\Delta$F1 of \rqThreeSTDeltaFSys\ after human-calibrated applicability filtering (Figure~\ref{fig:rq3_dr_cost_efficiency}). This provides a proof of concept that DR efficiency can be improved by deploying DR selectively using lower-compute uncertainty estimates.
+\end{enumerate}
+
+\textbf{Takeaway:} In this pilot, DR is best interpreted as a high-cost, domain-dependent \textit{enrichment signal} that requires human-calibrated applicability thresholds; it is not a drop-in validator that cleanly separates expert-true edges from LLM false positives across domains. It can, however, yield direct causal evidence for a majority of edges in our CLD ground truth sample (under strong assumptions) that, if validated, could be used to improve CLD quality, with smart triggering used to partially offset DR's computational cost and achieve higher accuracy per dollar spent.
+
+% ==============================================================================
+\section{Effect Size Summary}
+% ==============================================================================
+
+Table~\ref{tab:effect_size_summary} summarizes the standardized effect sizes observed across all research questions, linking each finding to its stated hypothesis and statistical significance. This provides a unified view of which hypotheses were supported and the magnitude of effects detected. 
+
+\begin{table}[ht]
+\centering
+\caption{Effect Size Summary with Hypotheses, Significance, and Conclusions}
+\label{tab:effect_size_summary}
+\begin{threeparttable}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lllllccl}
+\toprule
+\textbf{RQ} & \textbf{Hypothesis} & \textbf{Comparison} & \textbf{Metric} & \textbf{Effect} & \textbf{Value} & \textbf{$p$} & \textbf{Conclusion} \\
+\midrule
+1a & Judge agrees w/ human & LLM vs Human (n=72) & Support & $\kappa$ & 0.618 & --- & Substantial \\
+\midrule
+1a & Prompt affects F1 & Corr. Citation & F1 & $W$ & 0.29 & .049* & Robust \\
+   &                   & Corr. Correctness & F1 & $W$ & 0.70 & .002** & Sensitive \\
+\midrule
+   &                   & GT Citation & F1 & $W$ & 0.30 & .042* & Robust \\
+   &                   & GT Correctness & F1 & $W$ & 0.48 & .013* & Sensitive \\
+\midrule
+1b & Corrector improves & Synth. Baseline & $\Delta$F1 & $d$ & +1.18 & .031* & Effective \\
+   &                    & GT Baseline & $\Delta$F1 & $d$ & -0.32 & .301 & Ineffective \\
+\midrule
+2 & CI predicts halluc. & Cosine vs Halluc. & CosSim & $r$ & 0.15 & $<$.001*** & Weak signal \\
+  &                     & Phase 5$\to$6 Drop & AUC & $\Delta$ & 0.36 & --- & Poor gen. \\
+\midrule
+3$^{\ast}$ & DR discriminates & TP--FP gap & Prop. & $h$ & 0.17 & 1.000 & No discrim. \\
+  &                 & TP--FN gap & Prop. & $h$ & 0.56 & .018* & TP$>$FN \\
+  &                 & FP--FN gap & Prop. & $h$ & 0.39 & .024* & FP$>$FN \\
+% Auto-generated rows (reproducible): run `python3 final_runs/retrieve_effect_sizes.py`
+\input{generated/effect_size_summary_rq3_enrichment_rows.tex}
+  & Smart compute (expl.) & $\Delta$F1/\$100: Smart vs Full & $\Delta$F1/\$100 & $\Delta$ & +0.027 (0.216 vs 0.189) & --- & Exploratory \\
+\bottomrule
+\end{tabular}}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Effect sizes: $W$ = Kendall's coefficient of concordance (0--1); $d$ = Cohen's $d$ (>0.8 large); $r$ = Pearson correlation; $h$ = Cohen's $h$ (>0.8 large).
+\item Significance: * $p<.05$, ** $p<.01$, *** $p<.001$.
+\item \textit{Multiple comparisons (RQ3):} $p$-values are Bonferroni-adjusted across the three DR detection-rate comparisons (TP--FP, TP--FN, FP--FN), i.e., $\alpha_{\text{adj}}=0.0167$.
+\item \textsuperscript{$\ast$} \textit{Exploratory (RQ3):} Enrichment and smart-trigger compute estimates are exploratory and should be interpreted as upper-bound or extrapolated estimates rather than independently validated ground truth.
+\item RQ1b distinguishes two hypotheses: (i) \textit{efficacy} (is median $\Delta$F1 different from 0?) tested via one-sample Wilcoxon signed-rank tests on $\Delta$F1 across 9 CLD$\times$run blocks; and (ii) \textit{prompt effect} (do prompt variants differ under the same blocks?) tested via Friedman with (CLD, run) blocking. We report efficacy in the main RQ1b summary and place the full prompt-effect analysis in the corrector sensitivity appendix section.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+In summary, Table~\ref{tab:effect_size_summary} shows: RQ1a---citation prompt effects are small-to-medium ($W\approx0.29$--0.30) and do not survive correction across the four omnibus prompt-effect tests, while correctness judges are strongly prompt-sensitive in synthetic corruption detection ($W\approx0.70$); RQ1b---corrector effective on synthetic (+1.18$d$) but not GT; RQ2---weak discrimination ($r$=0.15) with poor cross-CLD generalization; RQ3---no TP--FP discrimination ($h$=0.17), but DR distinguishes TP and FP from FN (TP--FN: $h$=0.56; FP--FN: $h$=0.39; both survive correction), and exploratory enrichment analyses indicate large aggregate improvements over expert GT (Scenario 1: $\Delta$F1=+0.438; Scenario 2: $\Delta$F1=+0.512), with human-validated extrapolations remaining substantial ($\Delta$F1=+0.260 to +0.315).
+
+% ==============================================================================
+\section{Computational Scaling Analysis}
+% ==============================================================================
+
+\subsection{Time and Cost Scaling}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/time_and_cost_scaling/figures/figure3_generation_vs_judging.png}
+\caption{Generation vs. judging scaling comparison (mean $\pm$ SD). \textbf{Left:} Time scaling vs. number of edges. \textbf{Right:} Per-edge time comparison across pipeline stages. Error bars show SD.}
+\label{fig:gen_vs_judge}
+\end{figure}
+
+Figure~\ref{fig:gen_vs_judge} shows that both generation and correctness judging exhibit $O(E)$ linear scaling with similar slopes ($\sim$2 s/edge). Generation ($2.2 \pm 0.5$ s/edge) and correctness judging ($2.8 \pm 0.2$ s/edge) have comparable costs, while citation judging ($30.1 \pm 1.4$ s/edge) dominates the pipeline.
+
+\subsection{Token Cost Analysis}
+
+\input{../../final_runs/latex/table21_scaling_summary.tex}
+
+Table~\ref{tab:scaling_summary} reveals that Deep Research dominates per-edge cost (247K tokens/edge, \$0.87/edge) due to multi-agent orchestration and iterative search.
+
+For a 66-edge CLD (Emergency Dept), generation plus correctness judging costs approximately \$0.29 and takes 6 minutes cumulative API time. Citation validation adds significant overhead (33 minutes, \$3.68 for GPT-4.1 or \$0.13 for GPT-5-mini). Linear $O(E)$ scaling enables predictable cost estimation for arbitrary CLD sizes.
+
+\subsection{Parallelization Speedup}
+
+We benchmarked parallelization using the configuration described in Methods: 34 edges (Depressive symptoms CLD), GPT-4.1 (temperature=0.3), worker counts of 1, 3, 5, and 10, with 3 runs per configuration for both correctness judging (short prompts) and citation judging (long prompts with retrieved citations).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{../../final_runs/parallelization_benchmark/figures/parallelization_thesis_figure.png}
+\caption{Parallelization benchmark (34 edges, GPT-4.1, 3 runs per config, mean $\pm$ SD). \textbf{(A)} Wall-clock time vs. worker count; dashed line shows theoretical perfect scaling ($T_1/W$). \textbf{(B)} Measured speedup with efficiency percentages.}
+\label{fig:parallelization}
+\end{figure}
+
+Figure~\ref{fig:parallelization}A shows citation judging (165s sequential) takes 3.1$\times$ longer than correctness (52.7s) due to longer prompts with retrieved citations. At 10 workers (Figure~\ref{fig:parallelization}B), correctness achieves 7.8$\times$ speedup (78\% efficiency) while citation achieves 8.8$\times$ speedup (88\% efficiency). Citation judging shows slightly better parallel efficiency due to higher per-call latency dominating overhead.
+
+\begin{table}[H]
+\centering
+\caption{Parallelization Benchmark: Wall-Clock Time and Speedup by Judge Type}
+\label{tab:parallelization}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Workers} & \multicolumn{3}{c}{\textbf{Correctness Judge}} & \multicolumn{3}{c}{\textbf{Citation Judge}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+ & Time (s) & Speedup & Eff. & Time (s) & Speedup & Eff. \\
+\midrule
+1 & $52.7 \pm 7.8$ & 1.00$\times$ & 100\% & $165.0 \pm 42.4$ & 1.00$\times$ & 100\% \\
+3 & $17.7 \pm 1.3$ & 2.97$\times$ & 99\% & $51.4 \pm 4.6$ & 3.21$\times$ & 107\% \\
+5 & $11.2 \pm 3.1$ & 4.71$\times$ & 94\% & $34.6 \pm 6.1$ & 4.76$\times$ & 95\% \\
+10 & $6.7 \pm 1.1$ & 7.84$\times$ & 78\% & $18.8 \pm 6.5$ & 8.77$\times$ & 88\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} Model: GPT-4.1, temp=0.3. CLD: Depressive symptoms (34 edges). Time = wall-clock (mean $\pm$ SD, n=3). Speedup = $T_1/T_W$. Efficiency = Speedup/$W$ $\times$ 100\%.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+

@@ -1,0 +1,157 @@
+\section{Context-Insensitive Metrics: Mathematical Definitions}
+\label{sec:ci_metrics_definitions_standalone}
+
+Context-insensitive (CI) metrics are computed from the generator LLM's token-level log-probabilities during edge generation. These metrics capture model uncertainty without requiring external context or reasoning.
+
+\subsection{Generator Perplexity}
+
+Perplexity measures the exponential of average negative log-likelihood over generated tokens, quantifying how ``surprised'' the model is by its own output.
+
+\begin{equation}
+\text{Perplexity} = \exp\left(\frac{1}{n}\sum_{i=1}^{n} -\log P(x_i)\right)
+\label{eq:perplexity_def}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $n$ = number of generated tokens in the causal motivation
+    \item $P(x_i)$ = probability of token $x_i$ (from LLM logprobs: $P(x_i) = \exp(\text{logprob}_i)$)
+\end{itemize}
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_perplexity()}. Average NLL capped at 10.0 to prevent overflow (max perplexity $\approx 22{,}026$).
+
+\textbf{Interpretation:} Higher perplexity $\rightarrow$ greater model uncertainty $\rightarrow$ higher hallucination probability.
+
+\textbf{Typical values:} 1.0--2.0 (confident), 2.0--5.0 (moderate), $>$5.0 (uncertain).
+
+\subsection{Generator Minimum Probability}
+
+Minimum probability identifies the ``weakest link'' in the generated sequence---the token about which the model was least confident.
+
+\begin{equation}
+\text{MinProb} = \min_{i \in \{1,\ldots,n\}} P(x_i)
+\label{eq:minprob_def}
+\end{equation}
+
+where $P(x_i) = \exp(\text{logprob}_i)$ from LLM logprobs.
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_min\_prob()}.
+
+\textbf{Interpretation:} Lower minimum probability $\rightarrow$ presence of highly uncertain token $\rightarrow$ higher hallucination probability.
+
+\subsection{Generator Maximum Window Entropy}
+
+Maximum window entropy detects localized regions of high uncertainty by computing Shannon entropy over sliding windows of top-$k$ token distributions.
+
+\begin{equation}
+\text{MaxWindowEntropy} = \max_{w \in \mathcal{W}} \left( \frac{1}{|w|} \sum_{t \in w} H_k(t) \right)
+\label{eq:maxent_def}
+\end{equation}
+
+where the local entropy at position $t$ over the top-$k$ tokens is:
+
+\begin{equation}
+H_k(t) = -\sum_{j=1}^{k} \tilde{P}_j(t) \cdot \ln \tilde{P}_j(t)
+\label{eq:local_entropy_def}
+\end{equation}
+
+and $\tilde{P}_j(t)$ is the normalized probability over top-$k$ alternatives:
+
+\begin{equation}
+\tilde{P}_j(t) = \frac{P_j(t)}{\sum_{m=1}^{k} P_m(t)}
+\label{eq:normalized_prob_def}
+\end{equation}
+
+\textbf{Parameters:} $k = 5$ (top-$k$ tokens), window size $= 5$ tokens, sliding with stride 1.
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_max\_window\_entropy()}. Uses \texttt{np.convolve} for rolling average.
+
+\textbf{Interpretation:} Higher max entropy $\rightarrow$ region where model was uncertain among alternatives $\rightarrow$ higher hallucination probability.
+
+\subsection{Generator Cosine Similarity}
+
+Cosine similarity measures semantic alignment between the generated causal motivation and fetched citation text chunks.
+
+\begin{equation}
+\text{CosineSim} = \max_{c \in \mathcal{C}} \frac{\mathbf{e}_{\text{narr}} \cdot \mathbf{e}_c}{\|\mathbf{e}_{\text{narr}}\| \cdot \|\mathbf{e}_c\|}
+\label{eq:cosine_def}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\mathbf{e}_{\text{narr}} \in \mathbb{R}^{d}$ = embedding of generated causal narrative (motivation)
+    \item $\mathbf{e}_c \in \mathbb{R}^{d}$ = embedding of citation chunk $c$
+    \item $\mathcal{C}$ = set of all citation chunks (up to 5 articles, chunked with 20\% overlap)
+    \item $d = 1536$ for \texttt{text-embedding-3-small} (OpenAI)
+\end{itemize}
+
+\textbf{Citation fetching:} Up to 5 articles fetched via Brave search API per edge, using the causal narrative as query.
+
+\textbf{Chunking:} Articles chunked into $\sim$2000 character segments with 20\% overlap to capture context boundaries.
+
+\textbf{Aggregation:} Maximum similarity across all chunks (not mean), identifying the single best-matching citation passage.
+
+\textbf{Implementation:} \texttt{logit\_metrics.py:compute\_alignment\_batch()}.
+
+\textbf{Expected interpretation:} Higher cosine similarity $\rightarrow$ better grounding in literature $\rightarrow$ lower hallucination probability.
+
+\textbf{Observed (counterintuitive):} Higher similarity correlates with \textit{more} hallucinations. Possible explanation: ``confident confabulation''---LLM cherry-picks single highly-similar chunks to justify spurious claims.
+
+\subsection{Summary Table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llcc}
+\toprule
+\textbf{Metric} & \textbf{Formula} & \textbf{Expected} & \textbf{Observed} \\
+\midrule
+Perplexity & $\exp\left(\frac{1}{n}\sum -\log P(x_i)\right)$ & $\uparrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc \checkmark \\
+Min Prob & $\min_i P(x_i)$ & $\downarrow \Rightarrow$ halluc & $\downarrow \Rightarrow$ halluc \checkmark \\
+Max Window Entropy & $\max_w \text{mean}(H_k(t))$ & $\uparrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc \checkmark \\
+Cosine Similarity & $\max_c \cos(\mathbf{e}_{\text{narr}}, \mathbf{e}_c)$ & $\downarrow \Rightarrow$ halluc & $\uparrow \Rightarrow$ halluc $\times$ \\
+\bottomrule
+\end{tabular}
+\caption{CI metrics summary. Three logit-based metrics behave as expected; cosine similarity exhibits paradoxical behavior.}
+\label{tab:ci_metrics_summary_standalone}
+\end{table}
+
+\subsection{Implementation References}
+
+All metrics implemented in \texttt{data\_science/logit\_metrics.py}:
+
+\begin{itemize}
+    \item \texttt{compute\_avg\_nll(log\_data)} -- Average negative log-likelihood
+    \item \texttt{compute\_perplexity(log\_data)} -- Perplexity (Eq.~\ref{eq:perplexity_def})
+    \item \texttt{compute\_min\_prob(log\_data)} -- Minimum probability (Eq.~\ref{eq:minprob_def})
+    \item \texttt{compute\_max\_window\_entropy(log\_data, k\_top=5, window\_size=5)} -- Max window entropy (Eq.~\ref{eq:maxent_def})
+    \item \texttt{compute\_alignment\_batch(narrative, chunks, openai\_key)} -- Cosine similarity (Eq.~\ref{eq:cosine_def})
+\end{itemize}
+
+\subsection{Data Source}
+
+CI metrics extracted from OpenAI-compatible \texttt{logprobs} response format:
+
+\begin{verbatim}
+{
+  "token_logprobs": [-0.5, -1.2, -0.3, ...],  # log P(x_i) per token
+  "top_logprobs": [                            # top-k alternatives per position
+    {"the": -0.5, "a": -1.8, "an": -2.1, ...},
+    {"quick": -1.2, "fast": -1.5, ...},
+    ...
+  ]
+}
+\end{verbatim}
+
+Metrics computed during generation phase and stored on each edge in Neo4j graph database.
+
+
+
+
+
+
+
+
+
+
+
+

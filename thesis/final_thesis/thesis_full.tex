@@ -1,0 +1,125 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.5in]{geometry}  % Match final_results.tex margins for consistent table sizing
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{capt-of}   % For \captionof{table} in side-by-side layouts
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{pdflscape}  % For landscape tables
+
+% TikZ for flowcharts and diagrams
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{placeins}
+\usepackage{csquotes}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+
+% docmute: allows \input of standalone documents (strips their preamble)
+\usepackage{docmute}
+
+% Listings package for code/prompt display
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  xleftmargin=2em,
+  framexleftmargin=1.5em,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  literate={→}{$\rightarrow$}1 {←}{$\leftarrow$}1
+}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Enable numbering for paragraphs (needed for Methods/Results section remapping)
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{4}
+
+% Redefine paragraph to be block-style (own line) with proper spacing
+\usepackage{titlesec}
+\titleformat{\paragraph}[hang]{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{3.25ex plus 1ex minus .2ex}{0.5em}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlist{topsep=2pt, partopsep=0pt, parsep=2pt}
+
+% Table formatting defaults (matching final_results.tex style)
+\setlength{\tabcolsep}{4pt}           % Tighter column padding to prevent overflow
+\renewcommand{\arraystretch}{1.10}    % Slightly more row spacing for readability
+
+\title{Causal Loop Diagram Generation with LLMs (Working Draft)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{abstract}
+
+\tableofcontents
+\newpage
+
+\input{introduction}
+
+\input{ch2_background}
+
+\input{ch3_literature_review}
+
+\section{Methods}
+\label{sec:methods}
+\begingroup
+\let\section\subsection
+\let\subsection\subsubsection
+\let\subsubsection\paragraph
+\input{method_experiments_final_body}
+\endgroup
+
+\section{Results}
+\label{sec:results}
+\begingroup
+\let\section\subsection
+\let\subsection\subsubsection
+\let\subsubsection\paragraph
+\input{final_results}
+\endgroup
+
+\input{discussion_merged}
+
+\input{conclusion}
+
+\input{appendix}
+
+\bibliographystyle{plainnat}
+\bibliography{references,software}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
