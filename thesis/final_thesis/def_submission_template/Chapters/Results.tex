@@ -612,7 +612,7 @@ Table~\ref{tab:rq2_ensemble_performance} presents a cross-phase validation analy
 Table~\ref{tab:rq2_ensemble_performance} shows cross-phase validation results using block-level GroupKFold (blocks = CLD$\times$run, $N=9$). Random Forest achieves the highest in-distribution performance (Phase 5 Test AUC = 0.809) but exhibits substantial degradation under leave-one-CLD-out evaluation (Phase 6 mean AUC = 0.629, drop = 0.179). Gradient Boosting shows similar overfitting (Phase 5 = 0.765, Phase 6 = 0.645, drop = 0.120). In contrast, Logistic Regression and the Neural Network show smaller cross-domain degradation (drops of 0.039 and 0.092) and very similar Phase 6 mean AUC (0.664 vs 0.648). The block-level CV prevents pseudo-replication from correlated edges within the same generation scenario, yielding more conservative but trustworthy performance estimates. Overall, these results suggest that simpler models generalise more robustly across CLDs, while higher-capacity tree ensembles are more prone to CLD-specific overfitting.
 
 \paragraph{Practical operating-point comparison (F1 at a fixed threshold).}
-For deployment, a detector must make binary decisions at a fixed operating point. Unlike RQ1a judges (whose scores have intrinsic semantics and are thresholded at 0.5), UQ-based classifiers do not have a natural default threshold under domain shift. To make the comparison principled, we select a fixed threshold $t^*$ for each classifier on \textbf{Phase~5 training blocks only} by maximizing out-of-fold F1, and then freeze $t^*$ for Phase~6 (cross-CLD) evaluation. Under this policy, the Phase~6 cross-CLD ensembles still achieve only modest fixed-threshold performance (mean F1@t* $\approx 0.22$--$0.32$; Table~\ref{tab:rq2_ensemble_performance}). By contrast, the \textbf{Mechanistic Correctness Judge} in RQ1a GT~Lit---using the fixed $\leq 0.5$ decision rule for ``hallucination''---achieves substantially higher F1 (overall F1 $\approx 0.45$, with CLD-level F1 $\approx 0.56$ Depressive, $\approx 0.48$ Emergency Department, and $\approx 0.30$ Social Norms; see Figure~\ref{fig:rq1a_gt_correctness_row1}). This gap indicates that while UQ features carry some ranking signal (AUC $\sim 0.65$), they are not reliable enough at a frozen operating point to serve as the primary hallucination flagger across domains. Practically, UQ metrics are better treated as auxiliary monitoring/triage signals, while context-sensitive judging provides a stronger decision signal for triggering downstream interventions.
+For deployment, a detector must make binary decisions at a fixed operating point. Unlike RQ1a judges (whose scores have intrinsic semantics and are thresholded at 0.5), UQ-based classifiers do not have a natural default threshold under domain shift. To make the comparison principled, we select a fixed threshold $t^*$ for each classifier on \textbf{Phase~5 training blocks only} by maximizing out-of-fold F1, and then freeze $t^*$ for Phase~6 (cross-CLD) evaluation. Under this policy, the Phase~6 cross-CLD ensembles still achieve only modest fixed-threshold performance (mean F1@t* $\approx 0.22$--$0.32$; Table~\ref{tab:rq2_ensemble_performance}). By contrast, the \textbf{Mechanistic Correctness Judge} in RQ1a GT~Lit---using the fixed $\leq 0.5$ decision rule for ``hallucination''---achieves substantially higher F1 (overall F1 $\approx 0.45$, with CLD-level F1 $\approx 0.56$ Depressive, $\approx 0.48$ Emergency Department, and $\approx 0.30$ Social Norms; see Figure~\ref{fig:rq1a_gt_correctness_row1}). This gap indicates that while UQ features carry some ranking signal (AUC $\sim 0.65$), they are not reliable enough at a frozen operating point to serve as the primary hallucination flagger across domains. Practically, UQ metrics are better treated as auxiliary monitoring/triage signals, while context-sensitive judging provides a stronger decision signal for triggering downstream interventions, as optimal thresholds in the training set may prove brittle for CLDs in other domains while the Judge configuration proved robust in validation experiments on CLDs from other domains.
 We do not perform a formal hypothesis test of Phase~6 AUC vs.\ chance because the leave-one-CLD-out procedure reuses the same CLDs across folds; blocks within a held-out CLD share the same trained model; and training sets overlap heavily across folds. These dependencies violate i.i.d.\ assumptions, so p-values would be easy to over-interpret.
 
 \subsection{RQ2: Main Findings (Summary)}
@@ -740,26 +740,7 @@ Of the 63 FN edges (expert-included, LLM-missed), 27 (42.9\%) have DR causal evi
 
 \input{generated/rq3_verdict_distribution_table.tex}
 
-\begin{table}[H]
-\centering
-\caption{Applicability Score Rubric for Human Validation}
-\label{tab:applicability_rubric}
-\begin{tabular}{cl}
-\toprule
-\textbf{Score} & \textbf{Description} \\
-\midrule
-1.0 & Causal evidence for exact variable constructs and measures \\
-0.9 & Causal evidence, measure differing for one variable \\
-0.8 & Causal evidence, measure differing for two variables \\
-0.7 & Causal evidence, one variable differing but believably related \\
-0.6 & Causal evidence, two variables differing but believably related \\
-0.5 & Non-causal evidence for variables in question \\
-$\leq$0.4 & Progressively less related evidence \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\noindent \textbf{Applicability-based calibration (thesis-ready filtering).} Because DR's binary \texttt{direct\_causal\_found=True} flag only indicates that \textit{some} direct causal evidence was retrieved---and often fails via variable/operationalisation mismatch---we calibrated it using the human \texttt{Fully applicable}\(\in[0,1]\) score (see Methods Section~\ref{sec:rq3_threshold_selection} for threshold selection methodology). For thresholds $t\in\{0.5,0.6,0.7,0.8,0.9\}$, we computed the pooled coverage--correctness tradeoff (Figure~\ref{fig:rq3_human_validation_elbow}/Table~\ref{tab:rq3_human_validation_tradeoff}).
+\noindent \textbf{Applicability-based calibration (thesis-ready filtering).} Because DR's binary \texttt{direct\_causal\_found=True} flag only indicates that \textit{some} direct causal evidence was retrieved---and often fails via variable/operationalisation mismatch---we calibrated it using the human \texttt{Fully applicable}\(\in[0,1]\) score (see Methods Section~\ref{sec:rq3_threshold_selection} for threshold selection methodology). For the applicability scoring rubric, see Appendix Table~\ref{tab:human-validation-rubric-rq3}. For thresholds $t\in\{0.5,0.6,0.7,0.8,0.9\}$, we computed the pooled coverage--correctness tradeoff (Figure~\ref{fig:rq3_human_validation_elbow}/Table~\ref{tab:rq3_human_validation_tradeoff}).
 
 \begin{figure}[H]
 \centering
