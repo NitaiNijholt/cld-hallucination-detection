@@ -42,8 +42,15 @@ The RQ3 Deep Research analysis provides direct evidence for this claim: a majori
 
 For definitions of GT~Lit and GT~Synth, see Results Section~\ref{sec:rq1a_definitions}.
 
-\paragraph{Generator performance (preliminary context).}
-Although corpus-independent CLD generation was not a primary research contribution of this thesis---the focus being hallucination \emph{detection} and mitigation---the generator results provide important context. The LLM generator exceeded random baselines by 2--3$\times$ across all three CLDs (Results Section~\ref{sec:results_generator_baseline_validation}), demonstrating that LLMs capture non-trivial causal structure from prompts alone. These results are encouraging but domain-limited: all primary evaluations used health-related CLDs. Future work should validate generator performance on CLDs from other scientific domains (economics, ecology, engineering) to establish whether the observed baseline-exceeding behaviour generalises or is artefactual to health-domain training coverage.
+%------------------------------------------------------------------------------
+\section{CLD Generation Paradigm}
+\label{sec:discussion_generation_paradigm}
+%------------------------------------------------------------------------------
+Although corpus-independent CLD generation was not a primary research contribution of this thesis---the focus being hallucination \emph{detection} and mitigation---the generator results provide important context. The LLM generator exceeded random baselines by 2--3$\times$ across all three CLDs (Results Section~\ref{sec:results_generator_baseline_validation}), demonstrating that LLMs capture non-trivial causal structure from prompts alone.
+
+This thesis evaluates a \emph{generate-then-validate} paradigm: the model proposes candidate causal structure without being anchored to a specific source document, and downstream components (judges, corrector, and Deep Research) attempt to detect and mitigate unsupported edges. This differs from \emph{extraction} paradigms (text-to-CLD) where grounding is provided by the source text, shifting the central challenge from evidence attribution to model faithfulness. As a consequence, ``hallucination'' in corpus-independent generation is tightly coupled to the ground-truth construct (GT~Synth vs.\ GT~Lit) and to expert scope choices (Section~\ref{sec:discussion_framing}); disagreements can reflect genuine errors, but also defensible edges absent from expert CLDs.
+
+These generator results are encouraging but domain-limited: all primary evaluations used health-related CLDs. Future work should validate generator performance on CLDs from other scientific domains (economics, ecology, engineering) to establish whether the observed baseline-exceeding behaviour generalises or is artefactual to health-domain training coverage.
 
 %------------------------------------------------------------------------------
 \section{Mechanisms of Judge Failure}
@@ -167,13 +174,11 @@ Corrector effectiveness varied substantially across CLDs: Emergency Department s
 
 This interpretation is consistent with the RQ1a results: Social Norms is a boundary case where even the Mechanistic correctness judge fails to discriminate on GT~Lit, while Emergency Department retains meaningful discrimination. In such a setting, the corrector is more likely to perform harmful edits (e.g., over-pruning plausible edges or rewriting relationships toward generic-but-judge-pleasing formulations), reducing GT~Lit F1 even as judge scores improve. Depressive Symptoms sits between these extremes: it contains a mixture of more ``biomedical/mechanistic'' relationships (where judge feedback may be useful) and more context-dependent psychosocial relationships (where the judge may be less reliable), making net effects prompt- and edge-mix-dependent.
 
-\subsection{When Correction Helps vs.\ Harms}
-
-Corrector action logs show a plausible action mix (revision, type-change) that broadly matches the expected distribution given the corruption process, but action execution does not reliably translate into quality improvement. The corrector exhibits clear setting dependence: modest GT~Synth improvements do not generalise to GT~Lit, and judge score gains are more consistent than F1 gains---consistent with a Goodhart-like dynamic where the corrector satisfies the judge rather than reliably improving expert-grounded accuracy. Prompt variants showed no significant performance differences, indicating limited leverage from prompt engineering alone. Effectiveness also varied substantially across CLDs (e.g., F1 improvement on Emergency Department, F1 degradation on Social Norms and Depressive Symptoms), which is expected because the corrector is supervised by judge feedback: when judge discrimination is weak (as in Social Norms), correction becomes a noisy-label learning problem and can amplify judge biases rather than repair genuine errors.
+Taken together, these mechanisms suggest that correction success is primarily limited by judge signal quality and by the domain's causal ambiguity; we therefore focus next on how to diagnose and measure judge--corrector coupling in a way that can support more robust policies.
 
 \subsection{Diagnosing Judge--Corrector Coupling}
 
-Two concrete analyses could strengthen this explanation. First, test whether per-CLD $\Delta$F1 correlates with judge quality (e.g., AUC on GT~Lit) and whether the correlation is mediated by which component of F1 moves (precision vs.\ recall). Second, characterise correction edits by outcome class: for each CLD, measure how often edits convert FP$\rightarrow$TN or FN$\rightarrow$TP versus causing regressions (TP$\rightarrow$FN, TN$\rightarrow$FP), and relate these transitions to judge confidence and error type (polarity, spurious edge, motivation/revision). Together, these analyses would directly validate whether correction success is primarily limited by judge signal quality and domain-specific causal ambiguity.
+Two concrete analyses could test this explanation by explicitly probing the \emph{judge$\rightarrow$corrector dependence}: whether correction success is primarily limited by judge signal quality. First, test whether per-CLD $\Delta$F1 correlates with judge quality (e.g., AUC on GT~Lit) and whether the correlation is mediated by which component of F1 moves (precision vs.\ recall). Second, characterise correction edits by outcome class: for each CLD, measure how often edits convert FP$\rightarrow$TN or FN$\rightarrow$TP versus causing regressions (TP$\rightarrow$FN, TN$\rightarrow$FP), and relate these transitions to judge confidence and error type (polarity, spurious edge, motivation/revision). Together, these analyses would directly validate whether correction success is primarily limited by judge signal quality and domain-specific causal ambiguity.
 
 %------------------------------------------------------------------------------
 \section{RQ2: UQ Metrics}
@@ -321,17 +326,17 @@ However, the domain-dependent performance and compounding failure modes reinforc
 Based on our findings, we offer the following recommendations for practitioners using LLMs for CLD generation:
 
 \begin{enumerate}
-    \item \textbf{Avoid relying solely on automated correction.} Current LLM correctors show setting dependence and Goodhart-like effects: judge-score gains do not reliably translate into GT Lit quality improvements. Human review remains important for quality assurance.
+    \item \textbf{Avoid relying solely on automated correction.} In our GT~Lit experiments, LLM correctors showed setting dependence and Goodhart-like effects: judge-score gains did not reliably translate into expert-grounded quality improvements. Human review remains important for quality assurance.
     
-    \item \textbf{Treat UQ metrics as flagging tools, not filters.} Logprob-based and embedding-based metrics can help identify edges for human review but should not be used for automated accept/reject decisions, especially across domains.
+    \item \textbf{Treat UQ metrics as flagging tools, not filters.} Logprob-based and embedding-based metrics can help prioritise edges for human review but should not be used for automated accept/reject decisions without target-domain calibration, especially across domains.
     
-    \item \textbf{Match prompt strategy to judge type.} For correctness judging, use mechanistic prompting (e.g., \PromptMechanistic{}) to elicit explicit causal reasoning; for citation judging, simpler prompts (\PromptBaseline{}, \PromptCoT{}) avoid retrieval bias toward topically related but causally non-specific evidence.
+    \item \textbf{Match prompt strategy to judge type.} In our experiments, mechanistic prompting (e.g., \PromptMechanistic{}) improved correctness judging by eliciting explicit causal reasoning, whereas for citation judging, simpler prompts (\PromptBaseline{}, \PromptCoT{}) tended to avoid retrieval bias toward topically related but causally non-specific evidence. This interaction should be replicated without judge-model confounds before being treated as a general guideline.
     
     \item \textbf{Expect domain-dependent performance.} Judge and metric effectiveness varies substantially by CLD domain. Validate on held-out data from your target domain before deployment.
     
-    \item \textbf{Consider literature retrieval for enrichment, not filtering.} Deep Research can identify potentially valid relationships that experts may have omitted, but evidence often varies in applicability/specificity to the exact edge claim, requiring calibration and expert review.
+    \item \textbf{Consider literature retrieval for enrichment and evidence gathering, not filtering.} Deep Research can surface potentially valid relationships that experts may have omitted and provide evidence for triage, but evidence often varies in applicability/specificity to the exact edge claim, requiring calibration and expert review.
     
-    \item \textbf{Maintain human domain expertise.} The gap between synthetic and literature ground truth performance, combined with the high rate of DR-validated ``hallucinations,'' underscores that human expert judgement remains essential for CLD validation.
+    \item \textbf{Maintain human domain expertise.} The gap between synthetic and literature ground truth performance, combined with the high rate of DR-supported edges among GT~Lit ``hallucinations,'' underscores that human expert judgement remains essential for CLD validation.
 \end{enumerate}
 
 %------------------------------------------------------------------------------
