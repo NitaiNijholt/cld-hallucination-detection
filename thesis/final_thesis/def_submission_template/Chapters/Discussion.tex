@@ -372,6 +372,8 @@ Systematic sensitivity analyses were not conducted due to computational costs: a
 
 Cost limitations affected multiple design decisions: top-5 search results for citation retrieval, single-run Deep Research per edge, use of GPT-5-mini where GPT-4.1 would have maintained consistency, and exclusion of true negative edges from Deep Research evaluation (1,109 of 1,394 possible).
 
+In particular, citation judging was switched from GPT-4.1 to GPT-5-mini to complete the factorial design within budget. This created a model confound: the observed lack of prompt differences in citation judging (compared to correctness judging) cannot be cleanly attributed to the judge type alone, because both the model and the judge type changed simultaneously. We are therefore observing an interaction effect of changing both factors, and cannot isolate whether the weaker prompt sensitivity reflects inherent properties of citation-based judging or model-specific behaviour of GPT-5-mini.
+
 %------------------------------------------------------------------------------
 \section{Future Work}
 \label{sec:discussion_future}
