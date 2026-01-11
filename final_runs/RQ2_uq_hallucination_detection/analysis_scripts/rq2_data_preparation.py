@@ -15,7 +15,7 @@ from pathlib import Path
 import json
 from typing import Optional, List, Tuple
 
-from rq2_paths import rq2_dirs
+from rq2_paths import rq2_dirs, repo_root
 
 # CI metrics available in RQ2 data
 CI_METRICS = [
@@ -116,6 +116,8 @@ def load_rq2_combined_data(verbose: bool = True) -> pd.DataFrame:
     all_data = []
     skipped = 0
     
+    root = repo_root()
+
     for file_info in valid_files:
         filepath = file_info['filepath']
         exp_type = file_info['experiment_type']
@@ -126,18 +128,22 @@ def load_rq2_combined_data(verbose: bool = True) -> pd.DataFrame:
             continue
         
         try:
-            df = pd.read_excel(filepath, sheet_name='All Edges')
+            fp = Path(filepath)
+            if not fp.is_absolute():
+                fp = root / fp
+
+            df = pd.read_excel(fp, sheet_name='All Edges')
             
             # Check for required columns
             if not all(col in df.columns for col in CI_METRICS):
                 if verbose:
-                    print(f"  ⚠️  Skipped {Path(filepath).name}: Missing CI metrics")
+                    print(f"  ⚠️  Skipped {fp.name}: Missing CI metrics")
                 skipped += 1
                 continue
             
             if 'Classification' not in df.columns:
                 if verbose:
-                    print(f"  ⚠️  Skipped {Path(filepath).name}: Missing Classification column")
+                    print(f"  ⚠️  Skipped {fp.name}: Missing Classification column")
                 skipped += 1
                 continue
             
@@ -150,13 +156,14 @@ def load_rq2_combined_data(verbose: bool = True) -> pd.DataFrame:
             df['cld'] = file_info['cld']
             df['run'] = file_info['run']
             df['prompt_type'] = file_info['prompt_type']
-            df['source_file'] = Path(filepath).name
+            df['source_file'] = fp.name
             
             all_data.append(df)
             
         except Exception as e:
             if verbose:
-                print(f"  ⚠️  Skipped {Path(filepath).name}: {e}")
+                fp_name = Path(filepath).name
+                print(f"  ⚠️  Skipped {fp_name}: {e}")
             skipped += 1
             continue
     
