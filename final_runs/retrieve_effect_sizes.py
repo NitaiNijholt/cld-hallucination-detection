@@ -111,6 +111,18 @@ def interpret_kappa(k: float) -> str:
         return "almost perfect"
 
 
+def interpret_icc(icc: float) -> str:
+    """Interpret ICC(2,1) (Koo & Li)."""
+    if icc < 0.50:
+        return "poor"
+    elif icc < 0.75:
+        return "moderate"
+    elif icc < 0.90:
+        return "good"
+    else:
+        return "excellent"
+
+
 # =============================================================================
 # DATA EXTRACTION FUNCTIONS
 # =============================================================================
@@ -306,15 +318,15 @@ def get_rq1b_corrector_efficacy() -> List[EffectRow]:
 
 
 def get_rq2_discrimination() -> List[EffectRow]:
-    """Extract RQ2 UQ discrimination (AUC, p) from single metric results."""
+    """Extract RQ2 UQ discrimination (AUC, p) from single-metric results."""
     rows = []
     
-    # Read single metric results (block-level t-test on AUC vs 0.5)
+    # Read single metric results (block-level Wilcoxon signed-rank on (AUC - 0.5), Bonferroni-adjusted across 4 metrics)
     json_path = REPO_ROOT / "final_runs/RQ2_uq_hallucination_detection/single_metric_results.json"
     
     # Default fallback
     auc_val = 0.672
-    p_val = 0.0005
+    p_val = 0.0156
     
     if json_path.exists():
         try:
@@ -322,7 +334,8 @@ def get_rq2_discrimination() -> List[EffectRow]:
                 data = json.load(f)
             cosine = data.get('metrics', {}).get('Gen Cosine Similarity', {})
             auc_val = cosine.get('mean_auc', auc_val)
-            p_val = cosine.get('auc_ttest_p', p_val)  # One-sample t-test p
+            # Prefer Bonferroni-adjusted Wilcoxon p-value (primary inference for RQ2 single-metric)
+            p_val = cosine.get('auc_wilcoxon_p_adj', cosine.get('auc_wilcoxon_p', p_val))
         except Exception as e:
             print(f"  Error reading RQ2 single metric results: {e}")
     
@@ -337,8 +350,8 @@ def get_rq2_discrimination() -> List[EffectRow]:
     rows.append(EffectRow(
         rq="2",
         hypothesis="UQ discriminates",
-        h0_h1=r"$H_0$: AUC$=$0.5",
-        test=r"One-sample $t$-test",
+        h0_h1=r"$H_0$: median(AUC$-0.5)=0$",
+        test=r"Wilcoxon signed-rank",
         effect="AUC",
         value=f"{auc_val:.3f}",
         p_value=format_p(p_val),
@@ -347,7 +360,7 @@ def get_rq2_discrimination() -> List[EffectRow]:
     rows.append(EffectRow(
         rq="",
         hypothesis="hallucinations",
-        h0_h1=r"$H_1$: AUC$\neq$0.5",
+        h0_h1=r"$H_1$: median(AUC$-0.5)\neq 0$",
         test="(9 blocks)",
         effect="",
         value="",
@@ -382,7 +395,7 @@ def get_rq2_discrimination() -> List[EffectRow]:
         effect=r"$\Delta$AUC",
         value=f"{delta_auc:.2f}",
         p_value="---",
-        conclusion="Poor generalization",
+        conclusion="Generalization gap",
         is_subrow=True
     ))
     rows.append(EffectRow(
@@ -398,6 +411,37 @@ def get_rq2_discrimination() -> List[EffectRow]:
     ))
     
     return rows
+
+
+def get_rq3_inter_rater_reliability() -> List[EffectRow]:
+    """Add RQ3 inter-rater reliability (human validation overlap) as descriptive rows."""
+    # From Results: overlap n=13, kappa=0.26, ICC(2,1)=0.03
+    kappa = 0.26
+    icc = 0.03
+    return [
+        EffectRow(
+            rq="",
+            hypothesis="Inter-rater reliability",
+            h0_h1="---",
+            test=r"Cohen's $\kappa$ (n=13)",
+            effect=r"$\kappa$",
+            value=f"{kappa:.2f}",
+            p_value="---",
+            conclusion=f"Descriptive; {interpret_kappa(kappa)}",
+            is_subrow=True,
+        ),
+        EffectRow(
+            rq="",
+            hypothesis="(Applicability score)",
+            h0_h1="---",
+            test=r"ICC(2,1) (n=13)",
+            effect="ICC",
+            value=f"{icc:.2f}",
+            p_value="---",
+            conclusion=f"Descriptive; {interpret_icc(icc)}",
+            is_subrow=True,
+        ),
+    ]
 
 
 def get_rq3_discrimination() -> List[EffectRow]:
@@ -582,6 +626,10 @@ def generate_effect_size_table() -> str:
     # RQ3 Discrimination
     print("RQ3: DR Discrimination")
     all_rows.extend(get_rq3_discrimination())
+
+    # RQ3 Inter-rater reliability (descriptive; overlap n=13)
+    print("RQ3: Inter-rater reliability")
+    all_rows.extend(get_rq3_inter_rater_reliability())
     
     # RQ3 Enrichment
     print("RQ3: Enrichment")
@@ -657,11 +705,11 @@ def generate_effect_size_table() -> str:
     # Table notes
     lines.append(r"\begin{tablenotes}")
     lines.append(r"\scriptsize")
-    lines.append(r"\item \textit{Effect size interpretation.} $\kappa$: Landis-Koch (0.61--0.80 = substantial). $W$: $<$0.3 weak, 0.3--0.5 moderate, $>$0.5 strong. $d$: $<$0.2 small, 0.2--0.8 medium, $>$0.8 large. $r$: $<$0.2 weak, 0.2--0.5 moderate, $>$0.5 strong. $h$: $<$0.2 negligible, 0.2--0.5 small, 0.5--0.8 medium, $>$0.8 large.")
-    lines.append(r"\item \textit{Significance.} * $p<.05$, ** $p<.01$, *** $p<.001$. RQ3 $p$-values are Bonferroni-adjusted ($\alpha_{\text{adj}}=0.0167$).")
+    lines.append(r"\item \textit{Effect size interpretation.} $\kappa$: Landis-Koch (0.61--0.80 = substantial). ICC: $<$0.5 poor, 0.5--0.75 moderate, 0.75--0.9 good, $>$0.9 excellent. $W$: $<$0.3 weak, 0.3--0.5 moderate, $>$0.5 strong. $d$: $<$0.2 small, 0.2--0.8 medium, $>$0.8 large. $r$: $<$0.2 weak, 0.2--0.5 moderate, $>$0.5 strong. $h$: $<$0.2 negligible, 0.2--0.5 small, 0.5--0.8 medium, $>$0.8 large.")
+    lines.append(r"\item \textit{Significance.} * $p<.05$, ** $p<.01$, *** $p<.001$. RQ3 $p$-values are Bonferroni-adjusted ($\alpha_{\text{adj}}=0.0167$). RQ2 single-metric $p$ uses Bonferroni adjustment across 4 metrics ($\alpha_{\text{adj}}=0.0125$).")
     lines.append(r"\item \textsuperscript{$\ast$} \textit{RQ3 exploratory.} Enrichment estimates are extrapolated; human-validated scenarios use Wilson CI lower bound (conservative). Not independently validated ground truth.")
     lines.append(r"\item \textit{RQ1a prompt tests.} Friedman with (CLD$\times$run) blocking; $W$ = Kendall's concordance. \textit{RQ1b efficacy.} One-sample Wilcoxon signed-rank on 9 blocks.")
-    lines.append(r"\item \textit{RQ2 discrimination.} AUC = Area Under Curve; One-sample t-test on 9 block means (CLD$\times$run) vs 0.5.")
+    lines.append(r"\item \textit{RQ2 discrimination.} AUC = Area Under Curve; one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ over 9 blocks (CLD$\times$run). Cross-CLD generalization is reported descriptively (Phase 5$\to$6).")
     lines.append(r"\end{tablenotes}")
     lines.append(r"\end{threeparttable}")
     lines.append(r"\end{table}")
@@ -675,12 +723,16 @@ def main():
     # Generate the table
     table_tex = generate_effect_size_table()
     
-    # Save to output file
-    out_path = REPO_ROOT / "thesis/final_thesis/generated/effect_size_summary_table.tex"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(table_tex, encoding="utf-8")
+    # Save to output files (both locations are used by different build variants)
+    out_paths = [
+        REPO_ROOT / "thesis/final_thesis/generated/effect_size_summary_table.tex",
+        REPO_ROOT / "thesis/final_thesis/def_submission_template/generated/effect_size_summary_table.tex",
+    ]
+    for p in out_paths:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(table_tex, encoding="utf-8")
     
-    print(f"\nWrote table to: {out_path}")
+    print(f"\nWrote table to: {out_paths[0]}")
     print("\nTo use in thesis, add this line in final_results.tex:")
     print(r"  \input{generated/effect_size_summary_table.tex}")
 
