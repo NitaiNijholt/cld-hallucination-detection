@@ -29,6 +29,7 @@ import shutil
 import matplotlib
 matplotlib.use("Agg")  # headless-safe
 import matplotlib.pyplot as plt
+from scipy import stats
 
 
 # Ground truth CLD paths
@@ -122,7 +123,7 @@ def generate_random_baseline_comparison_figure(
     """
     Thesis-friendly comparison plot:
       - Random baseline: mean ± 95% CI (Monte Carlo)
-      - LLM: mean ± [min, max] across 3 runs
+      - LLM: mean ± 95% CI across 3 runs (t-distribution, df=2)
     """
     cld_order = ["depressive", "social_norms", "emergency_dept"]
     cld_labels = ["Depressive\\nSymptoms", "Social\\nNorms", "Emergency\\nDept"]
@@ -145,15 +146,20 @@ def generate_random_baseline_comparison_figure(
         llm = llm_f1_variability_results["clds"][key]["statistics"]
         llm_mean = float(llm["mean"])
         llm_vals = [float(v) for v in llm.get("values", [])]
-        llm_min = float(np.min(llm_vals)) if llm_vals else llm_mean
-        llm_max = float(np.max(llm_vals)) if llm_vals else llm_mean
+        if len(llm_vals) >= 2:
+            llm_std = float(np.std(llm_vals, ddof=1))
+            llm_se = llm_std / np.sqrt(len(llm_vals))
+            t_crit = float(stats.t.ppf(0.975, len(llm_vals) - 1))
+            llm_ci_hw = t_crit * llm_se
+        else:
+            llm_ci_hw = 0.0
 
         rb_means.append(rb_mean)
         rb_err_low.append(rb_mean - rb_ci[0])
         rb_err_high.append(rb_ci[1] - rb_mean)
         llm_means.append(llm_mean)
-        llm_err_low.append(llm_mean - llm_min)
-        llm_err_high.append(llm_max - llm_mean)
+        llm_err_low.append(llm_ci_hw)
+        llm_err_high.append(llm_ci_hw)
 
         improv.append(llm_mean / rb_mean if rb_mean > 0 else float("nan"))
 
@@ -180,7 +186,7 @@ def generate_random_baseline_comparison_figure(
         color="#2c7fb8",
         edgecolor="black",
         linewidth=1.0,
-        label="LLM generator (mean ± [min, max])",
+        label="LLM generator (mean ± 95% CI)",
         yerr=np.array([llm_err_low, llm_err_high]),
         capsize=5,
     )
