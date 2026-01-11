@@ -28,7 +28,6 @@ For reader convenience, we provide a direct, concise answer to each research que
 \textbf{Answer: Only weakly, and not in a domain-robust way.} Single generator-time UQ metrics provide at most modest discrimination. While ensembles can perform well in-distribution, cross-CLD generalisation remains limited, and fixed-threshold decision quality remains modest even under a principled threshold-freeze policy. In practice, these metrics are better suited to \textit{flagging/triage} than to standalone hallucination detection across domains.
 
 \subsubsection*{RQ3: Can adaptive test-time compute allocation improve CLD accuracy efficiency?}
-Our restated RQ3 asks: RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges.
 \textbf{Answer: The original UQ-triggered judge+corrector design is not supported; a modified judge-triggered Deep Research strategy shows proof-of-concept efficiency gains.} Because (i) UQ metrics do not generalise reliably across CLDs (RQ2) and (ii) the corrector does not reliably improve GT Lit accuracy (RQ1b), the original ``adaptive triggering'' pathway is untenable as specified. However, selectively deploying higher-cost test-time compute for \textit{literature validation} (Deep Research) when a lower-cost signal flags uncertainty (e.g., the Mechanistic correctness judge score) recovers a substantial fraction of the full-deployment gains at roughly half the Deep Research cost in our exploratory analysis, albeit with strong assumptions and clear domain dependence.
 
 %------------------------------------------------------------------------------
@@ -221,7 +220,7 @@ The poor cross-CLD generalisation undermined the original RQ3 design of using UQ
 \label{sec:rq3_pivot}
 %------------------------------------------------------------------------------
 
-Our restated RQ3 asks: RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges.
+Our restated RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges.
 
 \subsection{Methodological Pivot and Scope of This Section}
 
