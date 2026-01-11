@@ -253,24 +253,66 @@ Deep Research focuses on validating generator output (FPs and TPs), but also pro
 
 However, the remaining 57.1\% of FN edges lack searchable evidence under our DR settings. While this could reflect tacit expert knowledge not captured in retrievable literature---domain experts may encode relationships based on clinical intuition, unpublished observations, or context-specific experience that leaves limited searchable trace---alternative explanations include limitations in our query formulation, search depth, or source coverage. These results suggest that literature-based validation may reach diminishing returns for certain edge types, though the precise ceiling and its causes require further investigation with varied retrieval strategies. Targeted elicitation methods (e.g., prompting with related concepts, multi-turn dialogue, or explicit ``what's missing?'' queries) may help surface these implicit relationships, but fully recovering tacit expert knowledge remains an open challenge for automated CLD generation.
 
+Beyond retrieval limitations, several structural features of the scientific literature itself may explain why causal evidence is unavailable for certain relationships:
+\begin{itemize}[noitemsep]
+    \item \textbf{Publication bias:} Null results and confirmatory findings for established relationships are systematically under-published~\citep{dickersin1990existence, rosenthal1979file}; causal relationships that ``failed to replicate'' or showed context-dependent effects may leave sparse traces.
+    \item \textbf{Obviousness and assumed knowledge:} Some causal relationships are considered so self-evident within a domain that they are rarely investigated or explicitly stated---experts may encode relationships based on foundational knowledge that is taught but not empirically tested (e.g., basic physiological mechanisms in medicine, first-principles causal chains in physics).
+    \item \textbf{Ethical and practical constraints:} Certain causal hypotheses cannot be experimentally tested due to ethical restrictions or practical infeasibility (e.g., randomising harmful exposures), limiting the available evidence to observational studies that may not use direct causal language.
+    \item \textbf{Disciplinary fragmentation:} Causal relationships spanning disciplinary boundaries may be documented in specialised literatures that use different terminologies or are indexed in databases not covered by general-purpose search APIs.
+    \item \textbf{Temporal lag and grey literature:} Recent findings may exist only in preprints, conference proceedings, or institutional reports not indexed by standard search engines; conversely, older foundational findings may predate digital indexing.
+\end{itemize}
+These structural limitations suggest that literature-based validation will systematically underperform for certain relationship types regardless of retrieval sophistication, reinforcing the need for expert elicitation to complement automated evidence gathering.
+
 %------------------------------------------------------------------------------
-\section{Synthesis Across Research Questions}
+\section{Synthesis: Compounding Dependencies and the Division of Labour}
 \label{sec:discussion_synthesis}
 %------------------------------------------------------------------------------
 
-Taken together, our findings paint a nuanced picture of automated CLD generation and validation feasibility. Rather than re-stating individual result interpretations, we synthesise the cross-cutting implications.
+The individual RQ findings, when considered together, reveal a \emph{cascading dependency structure} that explains why no single automated component can reliably replace expert judgement in CLD construction.
 
-LLM generators recover non-trivial causal structure, but performance remains modest. The generator exceeds a random baseline by 2--3$\times$, indicating non-random structure capture; however, alignment with expert GT~Lit remains far from perfect, and performance varies substantially across CLD domains.
+\subsection{Compounding Failure Modes Across Components}
 
-Judges are best treated as screening signals, not universal validators. Performance transfers from controlled synthetic settings to expert ground truth only partially and is domain dependent. Citation-based judging is especially constrained by evidence type and retrieval quality; correctness-based judging collapses into coherence checks when corruptions are plausible. Both judge types exhibit systematic leniency relative to human validators. Importantly, prompt engineering interacts with judge type: mechanistic prompting improves correctness-judge discrimination on GT~Lit (the only prompt variant exceeding chance AUC), whereas simpler prompts (\PromptBaseline{}, \PromptCoT{}) perform better for citation judging---suggesting prompt selection should be tailored to the validation strategy rather than applied uniformly.
+Each component in the pipeline depends on upstream signal quality, creating compound failure modes:
 
-Judge-guided correction is unreliable on expert ground truth. Correctors can improve the judge signal without reliably improving GT~Lit alignment---a Goodhart-like dynamic where the corrector learns to satisfy the judge rather than the underlying quality objective. This motivates conservative deployment and human oversight.
+\begin{enumerate}[noitemsep]
+    \item \textbf{Judge $\rightarrow$ Corrector dependency:} The corrector is supervised by judge feedback. When the judge provides weak discrimination (as in Social Norms under GT~Lit), the corrector inherits this weakness and can amplify rather than repair errors---the Goodhart-like dynamic observed in RQ1b.
+    
+    \item \textbf{UQ $\rightarrow$ Triggering dependency:} The original RQ3 design assumed UQ metrics could trigger selective correction. When UQ metrics failed to generalise across CLDs (RQ2), this triggering pathway became untenable.
+    
+    \item \textbf{Judge $\rightarrow$ Deep Research dependency:} The pivoted RQ3 design uses judge scores to trigger Deep Research. This inherits the judge's domain-dependent discrimination: in domains where the judge is weakest, expensive validation is least likely to be deployed precisely where it is most needed.
+\end{enumerate}
 
-UQ metrics provide limited, non-robust signal across domains. Individual logprob-derived and embedding-based metrics achieve weak discrimination, and ensemble classifiers that perform well in-distribution fail to generalise across CLDs. Their practical role is triage or monitoring rather than standalone hallucination detection.
+This dependency chain means that upstream failures propagate downstream. A weak judge produces noisy corrector supervision, unreliable triggering decisions, and ultimately degraded end-to-end quality---even when individual components perform well in isolation under controlled conditions.
 
-Deep Research reframes test-time compute from correction to validation and enrichment. Automated literature search can validate many generated claims---including a majority of edges labelled ``false positive'' under GT~Lit---supporting the central claim (Section~\ref{sec:discussion_framing}) that FP mass conflates true hallucinations with contested edges. However, Deep Research introduces cost and applicability constraints and does not fully resolve the expert-scope vs.\ hallucination ambiguity; expert judgement remains essential.
+\subsection{The GT~Synth to GT~Lit Transfer Gap}
 
-These findings have direct implications for CLD practitioners. Traditional expert-driven CLD construction involves iterative boundary negotiation and literature review---processes that LLM-assisted generation could accelerate but not replace. The high rate of DR-validated ``false positives'' suggests that LLM generators may surface causally defensible relationships that experts excluded for scope or parsimony reasons, making automated generation a potential enrichment tool for Group Model Building (GMB) workshops. However, the domain-dependent judge performance and Goodhart-like corrector behaviour reinforce that LLM components should augment, not substitute, expert facilitation. The practical workflow emerging from this thesis is one of \emph{LLM-assisted candidate generation and evidence gathering, followed by expert-mediated boundary and validity decisions}---a division of labour that leverages LLM scalability while preserving the construct-validity judgements that remain fundamentally human.
+A consistent pattern across RQ1, RQ2, and RQ3 is the \emph{construct shift} between synthetic and literature ground truth. Components that perform well on GT~Synth (where corruptions are known and unambiguous) often fail on GT~Lit (where ``errors'' conflate genuine hallucinations with contested expert scope choices). This gap is not merely a detection-difficulty increase---it reflects a fundamental ambiguity in what constitutes a ``hallucination'' when the ground truth itself encodes subjective boundary decisions.
+
+The Deep Research finding that a majority of GT~Lit ``false positives'' admit retrievable causal evidence provides direct evidence for this interpretation: the FP label does not reliably distinguish factual errors from defensible-but-excluded edges. Any automated system optimised on GT~Lit will therefore be optimising partly for expert scope reproduction rather than purely for causal correctness.
+
+\subsection{Emergent Division of Labour}
+
+These findings point toward a specific division of labour between LLM and human:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{LLMs excel at:} Scalable candidate generation (2--3$\times$ random baseline), literature retrieval and evidence gathering, and triage/flagging of uncertain edges.
+    \item \textbf{Humans remain essential for:} Construct-validity judgements (what \emph{should} be in the CLD), scope and boundary decisions, applicability assessment (does retrieved evidence match the specific claim?), and final validation of LLM-surfaced candidates.
+\end{itemize}
+
+This division is not a limitation to be overcome but a principled allocation: LLMs provide \emph{breadth} (surfacing candidates that experts might overlook) while humans provide \emph{depth} (contextual judgement that LLMs cannot reliably replicate). The practical workflow emerging from this thesis is one of \emph{LLM-assisted candidate generation and evidence gathering, followed by expert-mediated boundary and validity decisions}.
+
+As compute becomes cheaper, finding the optimal allocation of human and LLM effort becomes a dynamic process. Where preference alignment between system output and expert judgement is high and can be reliably indicated, the candidate contributions of the system warrant less human review; in cases where this alignment diverges, more human review is warranted. The contribution this thesis has made is in mapping where these divergences and convergences occur:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Convergence zones (less review needed):} GT~Synth corruption detection achieved F1 of 0.65--0.82; the Emergency Department CLD showed consistent corrector F1 improvement across all prompts; the Mechanistic Correctness Judge was the only prompt variant exceeding chance-level AUC on GT~Lit. Deep Research reduces literature review burden by surfacing evidence meeting causal criteria for contested edges (FPs and FNs vs.\ GT~Lit), shifting expert time from \emph{finding} causal literature to \emph{scope and applicability} decisions---enabling faster edge-inclusion judgements and providing causal-evidence annotations even for true positives.
+    \item \textbf{Divergence zones (more review needed):} Social Norms showed corrector F1 \emph{degradation} ($\Delta$F1 $= -0.072$) and near-chance judge discrimination; UQ metrics failed to generalise across CLDs; the GT~Synth to GT~Lit transition produced substantial performance drops across all components.
+\end{itemize}
+
+\subsection{Implications for Group Model Building}
+
+Traditional expert-driven CLD construction involves iterative boundary negotiation and literature review---processes that LLM-assisted generation could accelerate but not replace. The high rate of DR-validated ``false positives'' suggests that LLM generators may surface causally defensible relationships that experts excluded for scope or parsimony reasons, making automated generation a potential \emph{enrichment} tool for Group Model Building (GMB) workshops rather than a replacement for facilitated expert deliberation.
+
+However, the domain-dependent performance and compounding failure modes reinforce that LLM components should augment, not substitute, expert facilitation. In domains where causal mechanisms are well-established and literature is abundant (e.g., physics), LLM-assisted workflows may approach semi-autonomous operation with periodic expert review---although it should be noted that when causality is clearly established, the need for exploratory CLD modelling itself is reduced. In domains where mechanisms are contested, context-dependent, or poorly documented (e.g., behavioural social science), LLMs can still generate initial CLD drafts, but heavier human oversight of the generated candidates remains necessary.
 
 %------------------------------------------------------------------------------
 \section{Practical Recommendations}
@@ -300,9 +342,11 @@ Based on our findings, we offer the following recommendations for practitioners 
 
 This section consolidates threats to internal, construct, external, and conclusion validity. Several issues were anticipated and mitigated in Methods (Section~\ref{sec:threats_to_validity}); here we discuss their implications for interpreting results.
 
-\subsection{Model and Domain Dependence}
+\subsection{Model Dependence}
 
 All experiments used GPT-4.1 for generation and GPT-4.1/GPT-5-mini for judging. Performance may differ for other foundation models (Claude, Gemini, open-source alternatives), and conclusions may not transfer across LLM families with different training data, architectures, or alignment procedures.
+
+\subsection{Domain Dependence}
 
 All three primary CLDs focus on health-related domains. Generalisation to other scientific domains (physics, economics, ecology) cannot be assumed without validation on domain-diverse CLD corpora. Auxiliary validation on physics CLDs showed positive results, partially mitigating this concern, but systematic cross-domain evaluation remains future work.
 
