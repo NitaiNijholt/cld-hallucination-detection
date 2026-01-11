@@ -101,8 +101,8 @@ Each Excel file contains: edge definitions (source/target), relationship polarit
 TruthfulQA~\cite{lin2022truthfulqa} & RQ1 Verification & 1,634 Q\&A pairs & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/} \\
 Physics CLDs (see below) & RQ1a Validation & 31 edges, 4 CLDs & \texttt{final\_runs/validation\_RQ1a\_physics\_clds/cld\_data\_files/} \\
 Uleman's Alzheimer CLD & RQ1a Validation & 150 edges & \texttt{final\_runs/validation\_RQ1a\_ulemans\_external/} \\
-Human Validation Set & RQ1a Validation & 72 edges & \texttt{final\_runs/RQ1\_human\_validation\_citation\_judge/} \\
-RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/human\_validation/} \\
+Human Validation Set & RQ1a Validation & 72 edges & \texttt{final\_runs/validation\_RQ1a\_human\_agreement/} \\
+RQ3 DR Validation & RQ3 Human Val. & 50 edges & \texttt{final\_runs/RQ3\_deep\_research\_validation/validation/} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -261,7 +261,7 @@ Uleman's Provider Comparison & \texttt{final\_runs/validation\_RQ1a\_ulemans\_ex
 TruthfulQA Verification & \texttt{final\_runs/RQ1\_verification\_Truth\_QA/runner/truthqa\_judge\_baseline\_correctness.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ1b: Corrector}} \\
-RQ1b Results Analysis & \texttt{final\_runs/RQ1b\_corrector\_ablation\_analysis/scripts/analyze\_corrector\_ablation.py} \\
+RQ1b Results Analysis & \texttt{final\_runs/RQ1b\_corrector\_ablation/analysis\_scripts/analyze\_corrector\_ablation.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{RQ2: UQ Metrics}} \\
 RQ2 Master Report & \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/rq2\_master\_report\_v2\_enhanced.py} \\
@@ -842,13 +842,12 @@ Prompt & Baseline citation prompt \\
 
 This study measures inter-rater reliability between LLM citation judge outputs and human expert annotations.
 
-\textbf{Inputs Location:} \texttt{final\_runs/RQ1\_human\_validation\_citation\_judge/} (validation spreadsheets).
+\textbf{Inputs Location:} \texttt{final\_runs/validation\_RQ1a\_human\_agreement/} (validation spreadsheets).
 
 \textbf{Analysis Script (provenance):} The one-off analysis used to compute agreement metrics is preserved in the repository snapshot:
 {\small
 \begin{verbatim}
-python RQ1_excel_snapshot_20251215/final_runs/
-       RQ1_human_validation_citation_judge/combined_human_validation_analysis.py
+python final_runs/validation_RQ1a_human_agreement/combined_human_validation_analysis.py
 \end{verbatim}
 }
 
