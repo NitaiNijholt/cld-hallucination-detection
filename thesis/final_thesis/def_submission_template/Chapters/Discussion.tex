@@ -34,13 +34,33 @@ For reader convenience, we provide a direct, concise answer to each research que
 \section{Roadmap for the Detailed Discussion}
 \label{sec:discussion_positioning_preliminaries}
 %------------------------------------------------------------------------------
-The previous subsection gave direct answers to each research question. The remainder of this chapter focuses on \textit{why} the results look the way they do and what they imply. We concentrate on: (i) cross-cutting \textbf{mechanisms of judge failure} (Section~\ref{sec:discussion_failure_mechanisms}), (ii) \textbf{synthesis across research questions} (Section~\ref{sec:discussion_synthesis}), (iii) \textbf{practical recommendations} (Section~\ref{sec:discussion_recommendations}), and (iv) \textbf{limitations and future work} (Sections~\ref{sec:discussion_limitations} and~\ref{sec:discussion_future}).
+The previous subsection gave direct answers to each research question. The remainder of this chapter focuses on the \textbf{recurring failure modes} that explain the observed patterns. We concentrate on: (i) \textbf{mechanisms of judge and corrector failure}---the structural blind spots that cause validation to fail (Section~\ref{sec:discussion_failure_mechanisms}), (ii) \textbf{synthesis across research questions}---cross-cutting implications (Section~\ref{sec:discussion_synthesis}), (iii) \textbf{practical recommendations} (Section~\ref{sec:discussion_recommendations}), and (iv) \textbf{limitations and future work} (Sections~\ref{sec:discussion_limitations} and~\ref{sec:discussion_future}).
 
 %------------------------------------------------------------------------------
 \section{Preliminary Results: Generator Selection and Baseline Performance}
 \label{sec:discussion_preliminaries}
 %------------------------------------------------------------------------------
-These preliminaries establish the baseline context for interpreting downstream validation and correction: which generator was selected, how far generation exceeds random structure, and whether key hyperparameters materially affect quality.
+These preliminaries establish the baseline context for interpreting downstream validation and correction.
+
+\subsection{Model Selection Rationale}
+
+GPT-4.1 was selected as the primary generator over Sonar-Pro (F1=0.170) and Claude-Sonnet-4 (F1=0.154) for two principal reasons. First, GPT-4.1 achieved the best micro-average F1 (0.278) across all CLDs through balanced precision-recall trade-offs. While Claude-Sonnet-4 demonstrated extreme recall (0.932), its poor precision (0.084) indicated a tendency to generate many spurious edges. Second, GPT-4.1 was unique among the models in providing logprob access through its API, which was essential for the RQ2 experiments on uncertainty quantification.
+
+\subsection{Random Baseline Comparison}
+
+The generator's 2.2--3.4$\times$ F1 improvement over a Monte Carlo random baseline provides evidence that LLM-based CLD generation is not purely random and is partially aligned with our ground truth dataset of published CLDs. This improvement over random wiring is consistent with the interpretation that the generator leverages patterns captured in its learned representations. Whether the LLM can reproduce this performance across domains remains an open question; the health-domain focus of these CLDs limits the current evidence.
+
+\subsection{Definitions of Ground Truth, Hallucination, and Transfer Validity}
+
+Before discussing judge performance, we clarify the operational definitions used throughout this thesis.
+
+\textbf{Ground Truth from Literature (GT Lit):} Published expert CLDs define the reference edge set over a fixed variable set. Under this operationalisation, an edge \textit{present} in the expert CLD is treated as a reference-positive relationship; an edge \textit{absent} is treated as reference-negative. For evaluation we define ``hallucination'' as disagreement with this reference: \textbf{FP} = generated edge absent from the expert CLD, and \textbf{FN} = expert edge the generator missed.
+
+\textbf{Ground Truth from Synthetic Corruption (GT Synth):} Controlled corruptions (polarity flips, spurious edges, motivation changes) applied to LLM-generated CLDs provide known error labels (\texttt{corrupted=True}) with high internal validity.
+
+\textbf{Hallucination:} We operationalise hallucination as disagreement with the chosen ground truth. In GT Lit this includes both false positives and false negatives. This differs from the broader literature, which typically restricts ``hallucination'' to false positives (confabulations) rather than omissions.
+
+While necessary for quantitative evaluation, treating expert CLDs as absolute ground truth is an acknowledged oversimplification. Expert models inevitably encode biases, knowledge gaps, and scope decisions. An edge absent from an expert CLD may reflect genuine expert knowledge that the relationship does not exist, but it could also reflect scope limitations or construct/variable-mapping choices. RQ3 directly explores this issue, finding that 62.4\% of false positives have retrievable causal evidence---suggesting that the ground truth itself may be incomplete.
 
 %------------------------------------------------------------------------------
 \section{RQ1a (Correctness Judge): Judge Performance}
@@ -102,11 +122,24 @@ In the Emergency Department evaluation, we found high-scoring corrupted edges.\f
 
 These cases demonstrate that citation judging is sensitive to retrieval artefacts (including non-scientific sources) and partial-credit aggregation on plausible intermediate mechanisms.
 
+\subsection{Domain-Dependent Failure: The Social Norms Anomaly}
+
+In the Social Norms CLD, all prompts failed to reliably discriminate hallucinations from valid edges, with high variance and confidence intervals barely exceeding chance level in AUC. This could reflect the complexity of the Social Norms domain, where causal mechanisms are behavioural and context-dependent rather than physiological, or it could indicate limitations in the literature ground truth quality for this domain. This limitation may stem from the Bradford Hill Criteria themselves, which were originally designed to assess causality in epidemiology and health sciences. Future research should investigate whether domain-adapted prompts or alternative causal frameworks would improve performance in behavioural domains.
+
 %------------------------------------------------------------------------------
 \section{Empirical Validation: LLM--Human Agreement in CLD Evaluation}
 \label{sec:discussion_judge_human_agreement}
 %------------------------------------------------------------------------------
-Human validation suggests that citation-judge scores can track a human rater on retrieved evidence, but with a systematic leniency bias. Practically, this makes citation judges more appropriate as \textit{screening/triage signals} (prioritizing edges for expert review) than as strict accept/reject validators.
+To validate the applicability of LLM-as-a-Judge to CLD evaluation, we conducted human validation experiments measuring inter-rater agreement between LLM citation judges and a human validator across 72 causal edges from three independent datasets spanning two CLDs and two judge models (GPT-4.1 and Claude Sonnet 4).
+
+\subsection{Results}
+The combined analysis yielded substantial agreement: Cohen's $\kappa = 0.618$ with 80.6\% exact agreement rate, and Pearson correlation $r = 0.732$ ($p < 0.001$) between LLM and human scores. This level of agreement meets the human inter-rater baseline ($\kappa \approx 0.60$) established in prior GMB validation studies~\citep{landis1977measurement}.
+
+\subsection{Systematic Leniency Bias}
+Analysis of disagreements revealed a consistent pattern: 100\% of disagreements (14/14 cases) showed the LLM judge being more permissive than the human validator. The LLM never under-estimated evidence support (zero false negatives), but did over-estimate support where the human assigned lower scores. This asymmetric error profile suggests LLM citation judges provide useful but permissive screening---appropriate for identifying low-confidence edges requiring human review, but insufficient for strict validation without expert oversight.
+
+\subsection{Domain and Model Variability}
+Agreement varied substantially across datasets: from moderate ($\kappa = 0.461$, 66.7\% agreement) on Social Norms edges to almost perfect ($\kappa = 0.923$, 96.7\% agreement) on Depressive Symptoms edges judged by Claude. Notably, judge model had a larger effect than domain: on the same Depressive Symptoms CLD, the Claude judge achieved almost perfect agreement ($\kappa = 0.923$) while the GPT-4.1 judge showed only moderate agreement ($\kappa = 0.435$). This suggests that certain judge models may assess causal evidence in ways that align more closely with human judgement.
 
 %------------------------------------------------------------------------------
 \section{RQ1b: Corrector Experiments}
@@ -143,9 +176,36 @@ This instability helps explain why prompt variants do not yield reliable differe
 
 The key implication from RQ2 is that generator-side UQ metrics provide limited, domain-dependent signal and do not robustly generalise across CLDs, undermining threshold-based triggering as a universal policy. In practice, these metrics are better treated as \textit{triage/monitoring signals} than as standalone hallucination detectors.
 
+\subsection{Single Metric Performance}
+
+Individual uncertainty quantification metrics achieved only modest discrimination:
+\begin{itemize}[noitemsep]
+    \item \textbf{Cosine Similarity:} AUC=0.671 (highest, but counterintuitive direction)
+    \item \textbf{Perplexity:} AUC=0.563
+    \item \textbf{Max Window Entropy:} AUC=0.554
+    \item \textbf{Min Probability:} AUC=0.479 (below chance)
+\end{itemize}
+Logprob-derived metrics perform near chance level, indicating weak discriminative power in isolation. Token-level logprobs conflate different uncertainty types---lexical, syntactic, and ontological---that are not necessarily indicative of hallucinations.
+
 \subsection{Counterintuitive Cosine Similarity Direction}
 \label{sec:cosine_paradox}
-One cautionary example is cosine similarity between retrieved citations and causal narratives: higher similarity can coincide with a higher hallucination rate. This illustrates that \emph{topical alignment is not equivalent to causal verification}.
+
+Cosine similarity was intended as a baseline metric, with the hypothesis that higher similarity would correlate with lower hallucination probability. However, the observed correlation was positive (r=+0.153, p$<$0.001)---higher similarity associated with \textit{higher} hallucination probability. Several explanations are plausible: (i) semantic similarity captures topical alignment without establishing causal evidence; (ii) true positives may use different terminology than searchable literature; (iii) false positives may actually have literature support---62.4\% of FPs had retrievable causal evidence (RQ3).
+
+\subsection{Cross-Domain Generalisation Failure}
+
+Leave-one-CLD-out cross-validation revealed clear performance drops:
+\begin{itemize}[noitemsep]
+    \item \textbf{RF:} 0.809 $\rightarrow$ 0.629 ($\Delta$=0.179)
+    \item \textbf{GB:} 0.765 $\rightarrow$ 0.645 ($\Delta$=0.120)
+    \item \textbf{NN:} 0.739 $\rightarrow$ 0.648 ($\Delta$=0.092)
+    \item \textbf{LR:} 0.702 $\rightarrow$ 0.664 ($\Delta$=0.039)
+\end{itemize}
+The stronger in-distribution RF performance is misleading as a proxy for cross-domain usefulness: these models exploit CLD-specific patterns that do not generalise. Even the best out-of-CLD AUC ($\approx$0.66) is insufficient for reliable hallucination detection.
+
+\subsection{Implications for Original RQ3 Design}
+
+The poor cross-CLD generalisation undermined the original RQ3 design of using UQ metrics as early hallucination indicators. Optimal thresholds varied substantially across domains, making universal threshold-based triggering unreliable. Per-domain calibration would require enough labelled edges to estimate stable metric distributions---data unavailable early in CLD construction. This finding motivated the pivot to Deep Research.
 
 %------------------------------------------------------------------------------
 \section{RQ3: Deep Research Validation}
@@ -153,9 +213,46 @@ One cautionary example is cosine similarity between retrieved citations and caus
 \label{sec:rq3_pivot}
 %------------------------------------------------------------------------------
 
-\noindent\textbf{Pivot rationale.} The original ``adaptive test-time compute'' design proposed using UQ metrics to selectively trigger correction. This relied on (i) UQ metrics generalising across CLDs (RQ2) and (ii) correctors reliably improving GT~Lit alignment (RQ1b). Since neither prerequisite is supported, we repurposed RQ3 as an exploratory pilot of \textbf{Deep Research}: using automated literature search to validate causal claims, and exploring judge-triggered deployment as an alternative smart-trigger policy.
+\subsection{Methodological Pivot and Rationale}
 
-\noindent\textbf{Discussion-level implication.} Deep Research reframes test-time compute from attempting to \emph{repair} edges to attempting to \emph{validate} (and potentially enrich) edges with literature evidence. This is valuable regardless of UQ generalisation, but introduces cost and evidence-applicability constraints that shape when and how it should be deployed.
+The original RQ3 design proposed \textit{adaptive test-time compute allocation}: using UQ metrics as early hallucination indicators to selectively deploy the LLM-as-a-corrector. This was predicated on two assumptions:
+\begin{enumerate}[noitemsep]
+    \item \textbf{RQ2 Prerequisite:} UQ metrics would generalise across CLDs, enabling threshold-based triggering.
+    \item \textbf{RQ1b Prerequisite:} The LLM-as-a-corrector would effectively repair detected hallucinations.
+\end{enumerate}
+Our findings undermined both prerequisites. We therefore pivoted RQ3 to address: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature.''
+
+\subsection{Detection Rate Findings}
+
+Deep Research found direct causal evidence for 70.5\% of true positives versus 62.4\% of false positives---a moderate TP--FP discrimination gap of 8.1 percentage points (Cohen's $h=0.17$). The high FP validation rate indicates that many ``false positives'' have retrievable causal evidence, and that automated literature search alone does not cleanly separate expert-included from expert-excluded edges.
+
+Detection rates varied substantially by domain:
+\begin{itemize}[noitemsep]
+    \item \textbf{Depressive Symptoms:} TP--FP gap = +36~pp ($h=0.75$, significant)
+    \item \textbf{Social Norms:} TP--FP gap = +13~pp ($h=0.30$)
+    \item \textbf{Emergency Department:} TP--FP gap = +6~pp ($h=0.14$)
+\end{itemize}
+
+\subsection{Human Validation and Applicability Analysis}
+
+We conducted human validation on a stratified sample of 50 edges where Deep Research reported direct causal evidence. The dominant failure mode was variable mismatch: Deep Research often found causal evidence for related but different constructs (10/50 edges). Using an elbow-selected threshold of applicability $\geq$0.7, 33/50 edges (66\%) passed; among passing edges, 30/33 (90.9\%) were judged correct-causal.
+
+\subsection{Ground Truth Enrichment Analysis}
+
+Under the strong assumption that DR-validated edges represent genuine causal relationships that experts omitted:
+\begin{itemize}[noitemsep]
+    \item \textbf{Scenario 1 (FP$\rightarrow$TP promotion):} F1 increases from 0.267 to 0.705
+    \item \textbf{Scenario 2 (+ FN recovery):} F1 increases from 0.267 to 0.779
+\end{itemize}
+Human-calibrated estimates yield more conservative but still substantial improvements.
+
+\subsection{Adaptive-Trigger Deployment Analysis}
+
+To evaluate selective deployment efficiency, we triggered Deep Research only on edges flagged by the Mechanistic Correctness Judge (score $\leq$0.5). This triggered 50\% of edges while achieving 57\% of the full-deployment F1 gain---a 15\% relative efficiency improvement. This proof-of-concept demonstrates that judge-triggered Deep Research can improve cost-efficiency while retaining most validation benefit.
+
+\subsection{Limitations of the Pivot}
+
+The RQ3 pivot occurred late in the research timeline, constraining investigation depth: single-run design prevents uncertainty quantification, search parameters were not systematically ablated, and Deep Research uses GPT-5 while generation used GPT-4.1 (model confound). Despite these constraints, the moderate TP--FP gap and high FP validation rate point to important limitations of literature-based validation for CLD hallucination detection.
 
 %------------------------------------------------------------------------------
 \section{Synthesis Across Research Questions}

@@ -130,10 +130,12 @@ def generate_ensemble_table():
             else:
                 row['p5_cv_ci'] = (p5['cv_auc_max'] - p5['cv_auc_min']) / 2
             row['p5_test'] = p5['test_auc']
+            row['p5_f1_opt_threshold'] = p5.get('f1_opt_threshold')
         else:
             row['p5_cv_mean'] = None
             row['p5_cv_ci'] = None
             row['p5_test'] = None
+            row['p5_f1_opt_threshold'] = None
         
         # Phase 6 data (from leave_one_out_all_classifiers or summary_stats)
         if clf in phase6_data:
@@ -141,11 +143,23 @@ def generate_ensemble_table():
             p6_results = phase6_data[clf]
             aucs = [r['auc'] for r in p6_results]
             f1s = [r.get('f1') for r in p6_results if r.get('f1') is not None]
+            aps = [r.get('ap') for r in p6_results if r.get('ap') is not None]
+            
             row['p6_mean'] = np.mean(aucs)
             p6_std = np.std(aucs, ddof=1)
             n_clds = len(aucs)
             row['p6_ci'] = calc_ci_hw(p6_std, n_clds) if n_clds > 1 else None
-            # Deployment-aligned metric: F1 at fixed threshold (p >= 0.5)
+            
+            # PR AUC
+            if len(aps) == len(aucs) and len(aps) > 0:
+                row['p6_ap_mean'] = float(np.mean(aps))
+                p6_ap_std = float(np.std(aps, ddof=1)) if len(aps) > 1 else 0.0
+                row['p6_ap_ci'] = calc_ci_hw(p6_ap_std, len(aps)) if len(aps) > 1 else None
+            else:
+                row['p6_ap_mean'] = None
+                row['p6_ap_ci'] = None
+            
+            # Deployment-aligned metric: F1 at fixed threshold t* (selected on Phase 5 training only)
             if len(f1s) == len(aucs) and len(f1s) > 0:
                 row['p6_f1_mean'] = float(np.mean(f1s))
                 p6_f1_std = float(np.std(f1s, ddof=1)) if len(f1s) > 1 else 0.0
@@ -156,6 +170,8 @@ def generate_ensemble_table():
         else:
             row['p6_mean'] = None
             row['p6_ci'] = None
+            row['p6_ap_mean'] = None
+            row['p6_ap_ci'] = None
             row['p6_f1_mean'] = None
             row['p6_f1_ci'] = None
         
@@ -229,13 +245,13 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \caption{Ensemble Classifier Performance Across Validation Phases (Block-Level Cross-Validation)}
 \label{tab:rq2_ensemble_performance}
 \begin{threeparttable}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{2pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lccccc}
+\begin{tabular}{lccccccc}
 \toprule
-\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \textbf{Phase 6:} & \textbf{Performance} \\
- & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{Cross-CLD AUC} & \textbf{Drop (5$\rightarrow$6)} \\
- & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \textbf{($\pm$ 95\% CI)} & \\
+\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \multicolumn{3}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} \\
+ & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{F1@t*} & \textbf{(5$\rightarrow$6)} \\
+ & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \multicolumn{3}{c}{\textbf{($\pm$ 95\% CI)}} & \\
 \midrule
 """
     
@@ -245,6 +261,8 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
         latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
         latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
+        latex += f"{fmt_auc(row['p6_ap_mean'], row['p6_ap_ci'])} & "
+        latex += f"{fmt_f1(row['p6_f1_mean'], row['p6_f1_ci'])} & "
         latex += f"{fmt_drop(row['drop'])} \\\\\n"
         if i < len(rows) - 1:
             latex += r"\midrule" + "\n"
@@ -259,11 +277,20 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \textbf{{Phase 4 (RFE CV AUC):}} {n_folds}-fold block-level CV on all pooled edges; measures feature selection performance.
 \textbf{{Phase 5 (CV AUC):}} {n_folds}-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
 \textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
-\textbf{{Phase 6 (Cross-CLD AUC):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs; measures cross-domain generalization.
+\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Includes AUC, PR AUC, and F1 at a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1.
 Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
 \textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """
+
+    # Add explicit t* values (selected on Phase 5 training blocks)
+    t_parts = []
+    for row in rows:
+        t = row.get("p5_f1_opt_threshold")
+        if isinstance(t, (int, float)):
+            t_parts.append(f"{row['classifier']}: $t^*={float(t):.3f}$")
+    if t_parts:
+        latex += "\\textbf{Selected thresholds:} " + "; ".join(t_parts) + ".\n"
 
     # Optional: add a hypothesis test vs chance for Phase 6 using block-level AUCs (N=9 blocks)
     if phase6_summary:

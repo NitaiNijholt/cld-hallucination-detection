@@ -70,6 +70,18 @@ def load_phase5_results():
     return phase5_results
 
 
+def load_phase5_thresholds(phase5_results: dict | None) -> dict:
+    """Extract per-classifier F1-optimal thresholds (t*) from Phase 5 results JSON."""
+    if not phase5_results:
+        return {}
+    thresholds = {}
+    for clf_name, payload in (phase5_results.get("classifiers", {}) or {}).items():
+        t = payload.get("f1_opt_threshold")
+        if isinstance(t, (int, float)):
+            thresholds[clf_name] = float(t)
+    return thresholds
+
+
 def analyze_feature_distributions_by_cld(df, features, output_dir):
     """Test if CI metric distributions differ by CLD and by hallucination status."""
     print(f"\n{'='*80}")
@@ -173,7 +185,7 @@ def analyze_feature_distributions_by_cld(df, features, output_dir):
     return results
 
 
-def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
+def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir, thresholds_by_classifier: dict | None = None):
     """Train on N-1 CLDs, test on held-out CLD for ALL classifiers."""
     print(f"\n{'='*80}")
     print("2. LEAVE-ONE-CLD-OUT CROSS-VALIDATION (ALL CLASSIFIERS)")
@@ -192,12 +204,16 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
         'Neural Network': MLPClassifier(hidden_layer_sizes=(32, 16), max_iter=2000, random_state=42)
     }
     
+    thresholds_by_classifier = thresholds_by_classifier or {}
+
     for clf_name, clf_template in classifiers.items():
         print(f"\n{'─'*80}")
         print(f"TESTING: {clf_name}")
         print(f"{'─'*80}")
         
         results = []
+        t_star = float(thresholds_by_classifier.get(clf_name, 0.5))
+        print(f"Using fixed threshold t*: {t_star:.3f} (selected on Phase 5 training; fallback=0.5)")
     
         for test_cld in clds:
             # Split data
@@ -226,18 +242,19 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
             
             # Evaluate
             y_prob = clf.predict_proba(X_test_scaled)[:, 1]
-            # Deployment-aligned thresholding (fixed policy): predict hallucination if p >= 0.5
+            # Fixed-threshold policy: predict hallucination if p >= t*
             # NOTE: We make this explicit (instead of clf.predict) to guarantee consistency across estimators.
-            threshold = 0.5
-            y_pred = (y_prob >= threshold).astype(int)
+            y_pred = (y_prob >= t_star).astype(int)
+            y_pred_05 = (y_prob >= 0.5).astype(int)
             
             auc = roc_auc_score(y_test, y_prob)
             ap = average_precision_score(y_test, y_prob)
             precision = precision_score(y_test, y_pred, zero_division=0)
             recall = recall_score(y_test, y_pred, zero_division=0)
             f1 = f1_score(y_test, y_pred, zero_division=0)
+            f1_05 = f1_score(y_test, y_pred_05, zero_division=0)
             
-            print(f"  {test_cld:25s}: AUC={auc:.3f}, PR-AUC={ap:.3f}, F1@0.5={f1:.3f}")
+            print(f"  {test_cld:25s}: AUC={auc:.3f}, PR-AUC={ap:.3f}, F1@t*={f1:.3f} (F1@0.5={f1_05:.3f})")
             
             results.append({
                 'test_cld': test_cld,
@@ -247,8 +264,9 @@ def leave_one_cld_out_evaluation_all_classifiers(df, features, output_dir):
                 'precision': float(precision),
                 'recall': float(recall),
                 'f1': float(f1),
-                'threshold': float(threshold),
-                'threshold_rule': 'p(hallucination) >= 0.5',
+                'f1_0_5': float(f1_05),
+                'threshold': float(t_star),
+                'threshold_rule': 'p(hallucination) >= t* (t* selected on Phase 5 training only)',
                 'n_test': int(len(test_df)),
                 # Block-level breakdown (CLD × run)
                 'block_aucs': {
@@ -848,6 +866,7 @@ def main():
         features = CI_METRICS  # Use module-level CI_METRICS
     else:
         features = phase5_results['features_used']
+    thresholds_by_classifier = load_phase5_thresholds(phase5_results)
     
     # Load data
     df = load_rq2_combined_data(verbose=True)
@@ -886,7 +905,9 @@ def main():
     # Run analyses - TEST ALL CLASSIFIERS
     # Use ALL generator metrics for distribution analysis (not just RFE-selected features)
     feat_dist_results = analyze_feature_distributions_by_cld(df_clean, CI_METRICS, output_dir)
-    all_clf_results = leave_one_cld_out_evaluation_all_classifiers(df_clean, features, output_dir)
+    all_clf_results = leave_one_cld_out_evaluation_all_classifiers(
+        df_clean, features, output_dir, thresholds_by_classifier=thresholds_by_classifier
+    )
     
     # Generate combined visualizations for all classifiers
     print(f"\n{'='*80}")

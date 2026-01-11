@@ -21,6 +21,7 @@ from sklearn.metrics import (
     roc_auc_score, roc_curve, classification_report, 
     confusion_matrix, precision_recall_fscore_support
 )
+from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.preprocessing import StandardScaler
 import json
 import sys
@@ -121,9 +122,11 @@ def train_and_evaluate_classifiers(X, y, feature_names, groups):
         print(f"Training: {clf_name}")
         print(f"{'='*80}")
         
-        # Block-level cross-validation on training set
+        # Block-level cross-validation on training set (AUC) + out-of-fold predictions (threshold selection)
         cv = GroupKFold(n_splits=n_cv_folds)
         cv_scores = []
+        oof_probs = []
+        oof_true = []
         for train_cv_idx, val_cv_idx in cv.split(X_train, y_train, groups_train):
             clf_cv = get_classifiers()[clf_name]  # Fresh instance
             # Fit scaler inside CV fold to avoid leakage between CV-train and CV-val
@@ -133,25 +136,58 @@ def train_and_evaluate_classifiers(X, y, feature_names, groups):
             clf_cv.fit(X_tr, y_train[train_cv_idx])
             y_prob_cv = clf_cv.predict_proba(X_val)[:, 1]
             cv_scores.append(roc_auc_score(y_train[val_cv_idx], y_prob_cv))
+            oof_probs.append(y_prob_cv)
+            oof_true.append(y_train[val_cv_idx])
         
         cv_scores = np.array(cv_scores)
         cv_auc_mean = cv_scores.mean()
         cv_auc_std = cv_scores.std()
         
         print(f"{n_cv_folds}-Fold Block-Level CV AUC: {cv_auc_mean:.4f} (±{cv_auc_std:.4f})")
+
+        # ------------------------------------------------------------------
+        # Threshold selection for comparability (Option B):
+        # Choose t* that maximizes F1 on Phase 5 training blocks only, using
+        # out-of-fold predictions (no peeking at held-out test blocks).
+        # ------------------------------------------------------------------
+        oof_prob = np.concatenate(oof_probs) if oof_probs else np.array([], dtype=float)
+        oof_y = np.concatenate(oof_true) if oof_true else np.array([], dtype=int)
+        t_star = 0.5
+        f1_star = None
+        if len(oof_prob) and len(np.unique(oof_y)) > 1:
+            # Evaluate a dense grid of thresholds; robust under imbalance and avoids overfitting to duplicates
+            thr_grid = np.linspace(0.0, 1.0, 1001)
+            best = (-1.0, -1.0, -1.0, 0.5)  # (f1, recall, precision, threshold)
+            for t in thr_grid:
+                y_hat = (oof_prob >= t).astype(int)
+                f1v = f1_score(oof_y, y_hat, zero_division=0)
+                rv = recall_score(oof_y, y_hat, zero_division=0)
+                pv = precision_score(oof_y, y_hat, zero_division=0)
+                cand = (f1v, rv, pv, float(t))
+                # Tie-breakers: higher recall, then higher precision (hallucination triage preference)
+                if cand[:3] > best[:3]:
+                    best = cand
+            f1_star, r_star, p_star, t_star = best
+            print(f"Selected threshold t* (Phase 5 training, OOF max-F1): {t_star:.3f} (F1={f1_star:.4f}, P={p_star:.4f}, R={r_star:.4f})")
+        else:
+            print("⚠️  Could not select t* (insufficient OOF data); defaulting to 0.5")
         
         # Train on full training blocks (scaled with train-fitted scaler)
         clf.fit(X_train, y_train)
         
         # Evaluate on held-out test blocks
-        y_pred = clf.predict(X_test)
         y_prob = clf.predict_proba(X_test)[:, 1]
+        # Fixed-threshold predictions: default 0.5 and learned t*
+        y_pred_05 = (y_prob >= 0.5).astype(int)
+        y_pred_star = (y_prob >= t_star).astype(int)
         
         test_auc = roc_auc_score(y_test, y_prob)
-        precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_pred, average='binary', zero_division=0)
+        precision_05, recall_05, f1_05, _ = precision_recall_fscore_support(y_test, y_pred_05, average='binary', zero_division=0)
+        precision_star, recall_star, f1_star_test, _ = precision_recall_fscore_support(y_test, y_pred_star, average='binary', zero_division=0)
         
         print(f"Test AUC (held-out blocks): {test_auc:.4f}")
-        print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}\n")
+        print(f"F1@0.5: Precision={precision_05:.4f}, Recall={recall_05:.4f}, F1={f1_05:.4f}")
+        print(f"F1@t*:  Precision={precision_star:.4f}, Recall={recall_star:.4f}, F1={f1_star_test:.4f}\n")
         
         results[clf_name] = {
             'cv_auc_mean': cv_auc_mean,
@@ -163,9 +199,16 @@ def train_and_evaluate_classifiers(X, y, feature_names, groups):
             'n_train_blocks': n_train_blocks,
             'n_test_blocks': len(test_blocks),
             'test_auc': test_auc,
-            'test_precision': precision,
-            'test_recall': recall,
-            'test_f1': f1,
+            # Threshold-selected policy (t*) picked on Phase 5 training only
+            'f1_opt_threshold': float(t_star),
+            # Held-out block metrics at threshold 0.5 (for diagnostics)
+            'test_precision_0_5': precision_05,
+            'test_recall_0_5': recall_05,
+            'test_f1_0_5': f1_05,
+            # Held-out block metrics at threshold t*
+            'test_precision': precision_star,
+            'test_recall': recall_star,
+            'test_f1': f1_star_test,
             'y_prob': y_prob,
             'y_true': y_test,
             'train_blocks': list(train_blocks),
@@ -356,9 +399,15 @@ def save_json_results(results, feature_names, phase4_results, n_samples, n_hallu
                 'cv_auc_min': float(r['cv_auc_min']),
                 'cv_auc_max': float(r['cv_auc_max']),
                 'test_auc': float(r['test_auc']),
+                # F1-optimal threshold selected on Phase 5 training blocks only (OOF max-F1)
+                'f1_opt_threshold': float(r.get('f1_opt_threshold', 0.5)),
                 'test_precision': float(r['test_precision']),
                 'test_recall': float(r['test_recall']),
                 'test_f1': float(r['test_f1']),
+                # Diagnostics: what happens if you naively threshold at 0.5
+                'test_precision_0_5': float(r.get('test_precision_0_5', r['test_precision'])),
+                'test_recall_0_5': float(r.get('test_recall_0_5', r['test_recall'])),
+                'test_f1_0_5': float(r.get('test_f1_0_5', r['test_f1'])),
                 'train_blocks': r.get('train_blocks', []),
                 'test_blocks': r.get('test_blocks', [])
             }
