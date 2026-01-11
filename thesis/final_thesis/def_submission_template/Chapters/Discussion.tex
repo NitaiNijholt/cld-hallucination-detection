@@ -216,7 +216,7 @@ To evaluate selective deployment efficiency, we triggered Deep Research only on 
 
 \subsection{Limitations of the Pivot}
 
-The RQ3 pivot occurred late in the research timeline, constraining investigation depth: single-run design prevents uncertainty quantification, search parameters were not systematically ablated, and Deep Research uses GPT-5 while generation used GPT-4.1 (model confound). Despite these constraints, the moderate TP--FP gap and high FP validation rate point to important limitations of literature-based validation for CLD hallucination detection.
+The RQ3 pivot occurred late in the research timeline, constraining investigation depth: single-run design prevents uncertainty quantification, search parameters were not systematically ablated, and Deep Research uses GPT-5 while generation used GPT-4.1 (model confound). Additionally, in the spirit of exploration and to maximise chances of causal evidence retrieval, the DR system forgoes Occam's razor---the principle of choosing the simplest explanation consistent with the data---and its modelling analogue, the Minimum Description Length (MDL) principle (choosing the model that minimises summed model and data complexity); DR instead searches broadly for \emph{any} supporting evidence, which may inflate validation rates for edges that would be excluded under parsimony constraints. Despite these constraints, the moderate TP--FP gap and high FP validation rate point to important limitations of literature-based validation for CLD hallucination detection.
 
 %------------------------------------------------------------------------------
 \section{Synthesis Across Research Questions}
