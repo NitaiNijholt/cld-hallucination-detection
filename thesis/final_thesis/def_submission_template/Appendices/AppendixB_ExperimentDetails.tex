@@ -634,7 +634,7 @@ Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
 Tables~\ref{tab:rq1b_groundtruth_correctness},~\ref{tab:rq1b_prompt_ablation_groundtruth} (Chapter~\ref{ch:results}).
 
 %------------------------------------------------------------------------------
-\section{RQ2: Context-Insensitive Hallucination Detection}
+\section{RQ2: Corpus-Independent Hallucination Detection}
 \label{sec:rq2_experiments}
 %------------------------------------------------------------------------------
 
@@ -654,7 +654,7 @@ AUC-ROC, point-biserial correlation $r$, and classifier CV/test AUC. Because hal
 \textbf{Unit of Analysis:}\\
 Block-level (CLD$\times$run, $N=9$) for statistical inference; edge-level ($N=31{,}704$) for descriptive analysis.\\
 \textbf{Stats:}\\
-Block-level aggregation (CLD$\times$run, $N{=}9$) as the unit of inference; single-metric one-sample $t$-tests on block-mean AUC vs.\ 0.5 with Bonferroni correction; edge-level Mann--Whitney U reported descriptively. Block means are approximately normal (Shapiro--Wilk $p{=}0.67$); 95\% CI via $t$ ($df{=}8$). Correlations aggregated via Fisher $z$ (Appendix~\ref{app:statistical_procedures_reference}).\\
+Block-level aggregation (CLD$\times$run, $N{=}9$) as the unit of inference; single-metric one-sample \textbf{Wilcoxon signed-rank} tests on $(\mathrm{AUC}-0.5)$ with Bonferroni correction; edge-level Mann--Whitney U reported descriptively. For uncertainty reporting, we use 95\% CIs via the $t$-distribution over blocks ($df{=}8$). Correlations aggregated via Fisher $z$ (Appendix~\ref{app:statistical_procedures_reference}).\\
 \textbf{Results:}\\
 Figures~\ref{fig:rq2_distributions_by_cld},~\ref{fig:rq2_rfe} (Chapter~\ref{ch:results}).
 
@@ -678,7 +678,7 @@ Directory: \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/}. Schemas: App
 \textbf{Unit of Analysis:}\\
 Block-level (CLD$\times$run, $N=9$); see shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
 \textbf{Metrics / Stats:}\\
-Block-level AUC; one-sample $t$-test vs.\ 0.5.\\
+Block-level AUC; one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$.\\
 \textbf{Reproducibility:}\\
 Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
 \textbf{Results:}\\
@@ -700,7 +700,7 @@ Directory: \texttt{final\_runs/RQ2\_uq\_hallucination\_detection/}. Schemas: App
 \textbf{Unit of Analysis:}\\
 Block-level (CLD$\times$run, $N=9$); see shared RQ2 setup (Section~\ref{sec:rq2_experiments}).\\
 \textbf{Metrics / Stats:}\\
-Block-level AUC; one-sample $t$-test vs.\ 0.5.\\
+Block-level AUC; one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$.\\
 \textbf{Reproducibility:}\\
 Scripts: Appendix Tables~\ref{tab:exec_scripts},~\ref{tab:analysis_scripts}.\\
 \textbf{Results:}\\
@@ -712,7 +712,7 @@ Figure~\ref{fig:rq2_distributions_by_cld} (Chapter~\ref{ch:results}).
 %------------------------------------------------------------------------------
 
 \noindent\textbf{Simulation Procedure (6 phases):}\\
-\textbf{Phases 1--3 (single-metric):} compute per-file AUC-ROC, aggregate to blocks ($N{=}9$), and test above-chance discrimination via one-sample $t$-test.\\
+\textbf{Phases 1--3 (single-metric):} compute per-file AUC-ROC, aggregate to blocks ($N{=}9$), and test above-chance discrimination via one-sample \textbf{Wilcoxon signed-rank} test on $(\mathrm{AUC}-0.5)$.\\
 \textbf{Phase 4 (RFE):} Recursive Feature Elimination~\cite{pedregosa2011sklearn} with \texttt{GroupKFold(n\_splits=3)} over blocks; classifiers: LogReg, RF, GradBoost.\\
 \textbf{Phase 5 (ensemble):} block-level train/test split (67\%/33\%) via \texttt{GroupShuffleSplit} and model selection on training blocks via \texttt{GroupKFold}; four classifiers including a neural network.\\
 \textbf{Classifier families:} brief algorithm notes for LR/RF/GB/MLP appear in Appendix~\ref{sec:rq2_classifier_notes}.\\
