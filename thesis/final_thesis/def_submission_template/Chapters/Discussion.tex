@@ -38,7 +38,7 @@ The core interpretive challenge in this thesis is distinguishing \emph{genuine m
 
 This ambiguity is not merely methodological: it shapes the interpretation of every downstream metric. Under GT~Lit, ``false positive'' labels include both true hallucinations and contested edges; under GT~Synth, corruptions are known but may not reflect the distribution of naturally occurring errors. The performance gap between GT~Synth and GT~Lit observed throughout this thesis is therefore partly a \emph{construct shift}, not only a detection-difficulty increase.
 
-The RQ3 Deep Research analysis provides direct evidence for this claim: 62.4\% of edges labelled ``false positive'' under GT~Lit admit retrievable causal evidence from the scientific literature, suggesting that a substantial fraction of FP mass represents contested edges rather than straightforward confabulations. This reframes the practical objective from ``detecting hallucinations'' to ``triaging contested edges for expert review.''
+The RQ3 Deep Research analysis provides direct evidence for this claim: a majority of edges labelled ``false positive'' under GT~Lit admit retrievable causal evidence from the scientific literature (see Section~\ref{sec:discussion_rq3} for the full analysis), suggesting that a substantial fraction of FP mass represents contested edges rather than straightforward confabulations. This reframes the practical objective from ``detecting hallucinations'' to ``triaging contested edges for expert review.''
 
 For definitions of GT~Lit and GT~Synth, see Results Section~\ref{sec:rq1a_definitions}.
 
@@ -95,7 +95,7 @@ These cases demonstrate that citation judging is sensitive to retrieval artefact
 
 \subsection{Domain-Dependent Failure: The Social Norms Anomaly}
 
-In the Social Norms CLD, all prompts failed to reliably discriminate hallucinations from valid edges, with high variance and confidence intervals barely exceeding chance level in AUC. This could reflect the complexity of the Social Norms domain, where causal mechanisms are behavioural and context-dependent rather than physiological, or it could indicate limitations in the literature ground truth quality for this domain. This limitation may stem from the Bradford Hill Criteria themselves, which were originally designed to assess causality in epidemiology and health sciences. Future research should investigate whether domain-adapted prompts or alternative causal frameworks would improve performance in behavioural domains.
+In the Social Norms CLD, all prompts failed to reliably discriminate hallucinations from valid edges. This could reflect the complexity of the Social Norms domain, where causal mechanisms are behavioural and context-dependent rather than physiological, or it could indicate limitations in the literature ground truth quality for this domain. Future research should investigate whether domain-adapted prompts or alternative causal frameworks would improve performance in behavioural domains.
 
 %------------------------------------------------------------------------------
 \section{RQ1 Interpretation: Judges as Screening Signals}
@@ -165,7 +165,7 @@ The key implication from RQ2 is that generator-side UQ metrics provide limited, 
 \subsection{Counterintuitive Cosine Similarity Direction}
 \label{sec:cosine_paradox}
 
-Cosine similarity was intended as a baseline metric, with the hypothesis that higher similarity would correlate with lower hallucination probability. However, the observed correlation was positive (r=+0.153, p$<$0.001)---higher similarity associated with \textit{higher} hallucination probability. Several explanations are plausible: (i) semantic similarity captures topical alignment without establishing causal evidence; (ii) true positives may use different terminology than searchable literature; (iii) false positives may actually have literature support---62.4\% of FPs had retrievable causal evidence (RQ3).
+Cosine similarity was intended as a baseline metric, with the hypothesis that higher similarity would correlate with lower hallucination probability. However, the observed correlation was positive (r=+0.153, p$<$0.001)---higher similarity associated with \textit{higher} hallucination probability. Several explanations are plausible: (i) semantic similarity captures topical alignment without establishing causal evidence; (ii) true positives may use different terminology than searchable literature; (iii) false positives may actually have literature support---as the RQ3 Deep Research analysis confirms, a majority of FPs had retrievable causal evidence (Section~\ref{sec:discussion_rq3}).
 
 \subsection{Cross-Domain Generalisation Failure}
 
