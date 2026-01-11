@@ -272,11 +272,11 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \small
 """
     
-    latex += rf"""\item \textit{{Note.}} Block-level validation uses {n_folds}-fold GroupKFold with blocks = (CLD$\times$run, $N={n_blocks}$). Entire blocks stay together in train OR test to prevent pseudo-replication.
-\textbf{{Phase 5 (CV AUC):}} {n_folds}-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
-\textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within the same distribution.
-\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Reports AUC/PR-AUC plus F1 at a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1.
-\textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
+    latex += rf"""\item \textit{{Note.}} Block-level evaluation uses blocks = (CLD$\times$run, $N={n_blocks}$); entire blocks stay together in train/test splits to reduce pseudo-replication.
+\textbf{{Phase 5 (CV AUC):}} {n_folds}-fold GroupKFold over blocks ($\sim$67\% train / $\sim$33\% validation per fold); CI shown over folds ($n={n_folds}$).
+\textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); point estimate only (no CI shown in the table).
+\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out evaluation: for each held-out CLD, train on the other 2 CLDs and evaluate on that CLD's blocks; AUC/PR-AUC/F1 are reported as mean $\pm$ 95\% CI over the 3 held-out-CLD folds ($n=3$). F1 uses a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1, then frozen for Phase~6.
+\textbf{{Uncertainty:}} Columns with $\pm$95\% CI use the $t$-distribution with $df=n-1$ over folds, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """
 
