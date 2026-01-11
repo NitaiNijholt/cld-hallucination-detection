@@ -21,7 +21,7 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 from scipy import stats
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score
 import sys
 import warnings
 warnings.filterwarnings('ignore')
@@ -186,13 +186,6 @@ def analyze_file_for_metric(filepath: str, metric: str):
         except:
             result['auc'] = None
 
-        # PR-AUC (Average Precision) — baseline equals positive prevalence under random ranking
-        # Useful under class imbalance: focuses on precision/recall trade-off for the positive class.
-        try:
-            result['ap'] = float(average_precision_score(df_clean['is_hallucination'], df_clean[metric]))
-        except:
-            result['ap'] = None
-        
         # Point-biserial correlation (Pearson with binary)
         try:
             r, p = stats.pearsonr(df_clean[metric], df_clean['is_hallucination'].astype(int))
@@ -231,13 +224,12 @@ def compute_meta_analysis(file_results: list):
     df = pd.DataFrame(file_results)
     
     # 1. Aggregate to Block Level (CLD, Run)
-    # We take the mean AUC/AP/Corr for each block, and sum edges to compute prevalence baselines.
+    # We take the mean AUC/Corr for each block.
     if 'cld' in df.columns and 'run' in df.columns:
         block_df = (
             df.groupby(['cld', 'run'])
             .agg(
                 auc=('auc', 'mean'),
-                ap=('ap', 'mean'),
                 correlation_r=('correlation_r', 'mean'),
                 n_edges=('n_edges', 'sum'),
                 n_halluc=('n_halluc', 'sum'),
@@ -249,7 +241,6 @@ def compute_meta_analysis(file_results: list):
         block_df = df.copy()
     
     block_aucs = block_df['auc'].dropna()
-    block_aps = block_df['ap'].dropna()
     block_corrs = block_df['correlation_r'].dropna()
     
     n_blocks = len(block_aucs)
@@ -289,34 +280,6 @@ def compute_meta_analysis(file_results: list):
             result['auc_wilcoxon_p'] = 1.0
         result['auc_above_chance'] = (result['auc_wilcoxon_p'] < 0.05) and (mean_auc > 0.5)
         result['auc_below_chance'] = (result['auc_wilcoxon_p'] < 0.05) and (mean_auc < 0.5)
-
-    # --- PR-AUC (Average Precision) Meta-Analysis (Block-Level) ---
-    # Baseline under random ranking equals positive prevalence; we test AP - prevalence vs 0 on blocks.
-    if len(block_aps) >= 2:
-        mean_ap = float(block_aps.mean())
-        std_ap = float(block_aps.std())
-        n = len(block_aps)
-        se = std_ap / np.sqrt(n)
-
-        t_crit = stats.t.ppf(0.975, n - 1)
-        ci_lower_ap = float(mean_ap - t_crit * se)
-        ci_upper_ap = float(mean_ap + t_crit * se)
-
-        result['mean_ap'] = mean_ap
-        result['std_ap'] = std_ap
-        result['ci_lower_ap'] = ci_lower_ap
-        result['ci_upper_ap'] = ci_upper_ap
-
-        # Prevalence baseline per block (may vary across CLD×run)
-        block_prev = (block_df.loc[block_aps.index, 'n_halluc'] / block_df.loc[block_aps.index, 'n_edges']).astype(float)
-        result['mean_prevalence'] = float(block_prev.mean())
-
-        # One-sample t-test vs prevalence baseline (on blocks): AP - prevalence
-        deltas = block_aps.values - block_prev.values
-        t_stat, p_val = stats.ttest_1samp(deltas, 0.0)
-        result['ap_delta_ttest_t'] = float(t_stat)
-        result['ap_delta_ttest_p'] = float(p_val)
-        result['ap_above_baseline'] = (p_val < 0.05) and (float(np.mean(deltas)) > 0.0)
 
     # --- Correlation Meta-Analysis (Fisher Z on Blocks) ---
     if len(block_corrs) >= 2:
@@ -377,10 +340,10 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
 \small
 \setlength{\tabcolsep}{4pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Mean PR-AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
- & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
+\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
+ & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
 \midrule
 """
     
@@ -420,17 +383,6 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
             auc_str = "N/A"
             auc_ci = ""
 
-        # Format PR-AUC (Average Precision) (descriptive + baseline-aware test stored in JSON/Excel)
-        if 'mean_ap' in meta:
-            ap_val = meta['mean_ap']
-            ci_l, ci_u = meta['ci_lower_ap'], meta['ci_upper_ap']
-            ci_hw = (ci_u - ci_l) / 2
-            ap_str = f"{ap_val:.3f}"
-            ap_ci = f"$\\pm$ {ci_hw:.3f}"
-        else:
-            ap_str = "N/A"
-            ap_ci = ""
-        
         # Format correlation (Bonferroni-adjusted across 4 single-metric correlation tests)
         if 'mean_corr' in meta:
             corr_val = meta['mean_corr']
@@ -462,11 +414,11 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
         
         # First row
         if len(parts) == 1:
-            latex += f"{parts[0]} & {n_edges} & {auc_str} & {ap_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
-            latex += f" & & {auc_ci} & {ap_ci} & {corr_ci} & & \\\\\n"
+            latex += f"{parts[0]} & {n_edges} & {auc_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
+            latex += f" & & {auc_ci} & {corr_ci} & & \\\\\n"
         else:
-            latex += f"{parts[0]} & {n_edges} & {auc_str} & {ap_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
-            latex += f"{parts[1]} & & {auc_ci} & {ap_ci} & {corr_ci} & & \\\\\n"
+            latex += f"{parts[0]} & {n_edges} & {auc_str} & {corr_str} & {sig_pct:.1f}\\% & {n_files} \\\\\n"
+            latex += f"{parts[1]} & & {auc_ci} & {corr_ci} & & \\\\\n"
         
         latex += r"\midrule" + "\n"
     
@@ -485,7 +437,6 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
 Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to insufficient class counts ($<$2 hallucinations or $<$2 correct edges).
 \textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks. Significance markers on Mean AUC are based on one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ over blocks (with Bonferroni correction across the 4 metrics).
-\textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
 \textbf{Correlation r} computed via Fisher z-transform aggregation across blocks; correlation significance markers are based on one-sample Wilcoxon signed-rank tests on block-level correlations (with Bonferroni correction across the 4 metrics).
 \textbf{Significant Files (\%)} = percentage of files where an edge-level Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure and is not used for confirmatory inference.
 """
