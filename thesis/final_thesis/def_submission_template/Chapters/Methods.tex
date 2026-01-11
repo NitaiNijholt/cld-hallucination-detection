@@ -340,13 +340,13 @@ This section documents the CLD domains, context parameters, and validation datas
 
 Across experiments we distinguish between (i) \textbf{ground-truth datasets} that define evaluation labels and (ii) \textbf{prediction artefacts} produced by the model that are scored against those labels.
 
-\noindent\textbf{Ground truth datasets.}
+\noindent\textbf{Ground truth datasets}
 \begin{itemize}[noitemsep]
     \item \textbf{GT Lit (literature ground truth):} The published CLDs (nodes and edges) extracted from peer-reviewed sources (Appendix~\ref{sec:data_availability}, Table~\ref{tab:gt_files}). For each domain, GT Lit defines the validation node set \(V\) and the validation edge labels used for scoring (see edge definition below). In GT Lit experiments, hallucinations are operationalised as FP/FN relative to this literature CLD.
     \item \textbf{GT Synth (synthetic corruption ground truth):} A controlled dataset constructed by taking an LLM Prediction edge table produced by Phase 1: Generation (Section~\ref{sec:generator}; Figure~\ref{fig:cld_pipeline}) and applying the Corruptor (Section~\ref{sec:corruptor}) to introduce known errors at a fixed corruption rate. As in all edge-level experiments, the node set is fixed to the validation node set \(V\), so corruption is defined over the same ordered-edge universe. Ground truth is the per-edge \texttt{corrupted} flag (rather than agreement with GT Lit). GT Synth is used to validate judge detection under fully known, injected error labels.
 \end{itemize}
 
-\noindent\textbf{Model predictions.}
+\noindent\textbf{Model predictions}
 \begin{itemize}[noitemsep]
     \item \textbf{LLM Predictions (generated edges over GT Lit nodes):} For each domain and run seed, we generate a CLD by fixing the node set to the GT Lit validation variables \(V\) and generating edges only. These generated edge tables are produced by the Phase 1: Generation pipeline (Section~\ref{sec:generator}; Figure~\ref{fig:cld_pipeline}) and are the primary predictions evaluated in RQ1--RQ3 (Figure~\ref{fig:experimental_pipeline_overview}). We compute accuracy/FP/FN metrics by comparing these predictions against either (i) GT Lit labels (deviation from literature) or (ii) GT Synth corruption labels when synthetic corruption is applied. Per-RQ output directories for these run artefacts (under \texttt{final\_runs/}) are listed in Appendix~\ref{sec:data_availability} (Table~\ref{tab:experiment_datasets}); file types and naming conventions are in Appendix~\ref{sec:output_artefacts} (Table~\ref{tab:output_files}).
 \end{itemize}
@@ -986,7 +986,8 @@ For readability, the complete, reproducible specifications for every experiment 
     \item \textbf{RQ \& Goal / Hypotheses:} What the experiment tests and the expected direction of effects.
     \item \textbf{Source Data:} Datasets used and ground truth label definitions (GT Lit vs.\ GT Synth).
     \item \textbf{Simulation Parameters:} What varies vs.\ what is fixed (models, prompts, seeds, temperatures).
-    \item \textbf{Simulation Procedure:} Operational steps (generation $\rightarrow$ judging $\rightarrow$ correction).
+    \item \textbf{Simulation/Analysis Procedure:} Operational steps (generation $\rightarrow$ judging $\rightarrow$ correction).
+    \item \textbf{Outputs:} The artefacts produced and where they enter downstream analyses.
     \item \textbf{Metrics / Statistical Analysis:} Reported metrics, unit of analysis, and inference procedure.
     \item \textbf{Reproducibility:} Exact scripts and entry points to rerun the experiment.
 \end{itemize}
