@@ -465,9 +465,9 @@ def print_latex_table(results: Dict[str, Any]) -> str:
         r"\centering",
         r"\caption{Random Baseline Comparison for Generator Edge Recovery}",
         r"\label{tab:random_baseline}",
-        r"\begin{tabular}{lccccc}",
+        r"\begin{tabular}{lcccc}",
         r"\toprule",
-        r"\textbf{CLD} & $|V|$ & $|E|$ & \textbf{Density} & \textbf{Random F1} & \textbf{Analytical} \\",
+        r"\textbf{CLD} & $|V|$ & $|E|$ & \textbf{Density} & \textbf{Random F1 (mean $\pm$ 95\% CI)} \\",
         r"\midrule"
     ]
     
@@ -476,12 +476,18 @@ def print_latex_table(results: Dict[str, Any]) -> str:
             data = results["clds"][cld_key]
             baseline = data["baseline"]
             name = data["name"]
+
+            # Monte Carlo mean ± 95% CI for the mean (normal approximation; n=1000)
+            n_sim = int(baseline.get("n_simulations", results.get("n_simulations", 0)) or 0)
+            f1_mean = float(baseline["f1"]["mean"])
+            f1_std = float(baseline["f1"]["std"])
+            ci_l, ci_u = _mean_ci_95(f1_mean, f1_std, n_sim)
+            ci_hw = f1_mean - ci_l  # symmetric under normal approximation
             
             lines.append(
                 f"{name} & {baseline['n_nodes']} & {baseline['n_edges']} & "
                 f"{baseline['density']:.3f} & "
-                f"{baseline['f1']['mean']:.3f}$\\pm${baseline['f1']['std']:.3f} & "
-                f"{baseline['f1']['analytical_expected']:.3f} \\\\"
+                f"{f1_mean:.3f}$\\pm${ci_hw:.3f} \\\\"
             )
     
     lines.extend([
@@ -489,8 +495,8 @@ def print_latex_table(results: Dict[str, Any]) -> str:
         r"\end{tabular}",
         r"\begin{tablenotes}",
         r"\small",
-        r"\item \textit{Note.} Random F1 computed via Monte Carlo simulation (1000 iterations).",
-        r"\item Density = $|E| / (|V| \times (|V|-1))$; Analytical = expected F1 based on graph density.",
+        r"\item \textit{Note.} Random F1 computed via Monte Carlo simulation (1000 iterations) and reported as mean $\pm$ 95\% CI for the Monte Carlo mean.",
+        r"\item Density = $|E| / (|V| \times (|V|-1))$.",
         r"\item LLM generator must significantly exceed these baselines to demonstrate causal reasoning.",
         r"\end{tablenotes}",
         r"\end{table}"
@@ -525,6 +531,10 @@ def main():
     
     # Run baseline computation
     results = run_all_baselines(n_simulations=args.n_simulations)
+
+    # Always write thesis-facing outputs under final_runs/prelim_random_baseline_generator/Output/
+    output_dir = REPO_ROOT / "final_runs" / "prelim_random_baseline_generator" / "Output"
+    output_dir.mkdir(parents=True, exist_ok=True)
     
     # Summary
     print("\n" + "=" * 60)
@@ -552,6 +562,12 @@ def main():
             json.dump(results, f, indent=2)
         print(f"\nResults saved to: {output_path}")
 
+    # Write canonical outputs for thesis/repro
+    with open(output_dir / "random_baseline_results.json", "w") as f:
+        json.dump(results, f, indent=2)
+    with open(output_dir / "random_baseline_table.tex", "w") as f:
+        f.write(print_latex_table(results))
+
     # Generate the random-baseline comparison figure as a PNG (thesis uses PNGs).
     llm_path = HERE / "llm_f1_variability_results.json"
     llm = _try_load_json(llm_path)
@@ -565,6 +581,7 @@ def main():
             out_png=out_png,
         )
         print(f"Saved figure: {out_png}")
+        shutil.copy2(out_png, output_dir / "random_baseline_comparison.png")
     
     if args.latex:
         print("\n" + "=" * 60)
