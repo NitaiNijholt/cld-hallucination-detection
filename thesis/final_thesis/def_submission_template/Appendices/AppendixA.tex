@@ -1951,20 +1951,20 @@ For transparency and reproducibility, we summarise the statistical hypotheses an
 \label{sec:appendix_prompts}
 % ==============================================================================
 
-This section documents the prompts used in the final experiments. To minimize thesis PDF clutter, prompts are not reproduced verbatim here; instead, they are archived as copies in \texttt{final\_runs/prompts/} (see \texttt{final\_runs/prompts/README.md}) and referenced by stable IDs aligned to the thesis RQ structure (RQ1a/RQ1b/Prelim/RQ3).
+This section documents the prompts used in the final experiments. Full prompt YAML files are archived in \texttt{final\_runs/prompts/} (see \texttt{final\_runs/prompts/README.md}). Below we reproduce the key prompt texts verbatim.
 
 % ------------------------------------------------------------------------------
-\section{Prompt text archive (where to find the full prompts)}
-\label{sec:correctness_prompts}
+\section{Prompt File Locations}
+\label{sec:prompt_file_locations}
 % ------------------------------------------------------------------------------
-\noindent\textbf{Correctness Judge prompts.} Full correctness-judge prompt texts used in RQ1a are archived under:
+\noindent\textbf{Correctness Judge prompts:}
 \begin{itemize}[noitemsep]
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_baseline.yaml}
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_cot.yaml}
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_correctness/prompts\_correctness\_mechanistic.yaml}
 \end{itemize}
 
-\noindent\textbf{Citation Judge prompts.} Full citation-judge prompt texts used in RQ1a are archived under:
+\noindent\textbf{Citation Judge prompts:}
 \begin{itemize}[noitemsep]
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_baseline.yaml}
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_cot.yaml}
@@ -1972,12 +1972,428 @@ This section documents the prompts used in the final experiments. To minimize th
     \item \texttt{final\_runs/prompts/RQ1a\_judge/judge\_citation/prompts\_citation\_mechanistic\_lit.yaml}
 \end{itemize}
 
-\noindent\textbf{Corrector prompts.} Full corrector prompt variants used in RQ1b are archived under:
+\noindent\textbf{Corrector prompts:}
 \begin{itemize}[noitemsep]
     \item \texttt{final\_runs/prompts/RQ1b\_corrector/corrector/corrector\_prompts.yaml}
 \end{itemize}
+
+\noindent\textbf{Generator prompt:}
+\begin{itemize}[noitemsep]
+    \item \texttt{final\_runs/prompts/PRELIM\_generator/final\_generator/prompts\_Nitai\_C.yaml}
+\end{itemize}
+\label{sec:correctness_prompts}
 \label{sec:citation_prompts}
 \label{sec:corrector_prompts}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Generator (Nitai\_C)}
+\label{sec:generator_prompt_text}
+% ------------------------------------------------------------------------------
+
+The generator uses two prompts: \texttt{generateNodes} (node discovery) and \texttt{generateEdges} (edge discovery). Both employ chain-of-thought reasoning and few-shot examples.
+
+\subsection{generateNodes Prompt}
+\label{sec:prompt_generateNodes}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a systems dynamics modeling expert. Your role is to identify a single,
+clearly defined, variable that causally influences a target variable within a
+specific context, time, and space. The variable must be measurable, not
+composite, and must not overlap with the target or any excluded variables.
+
+Let's think step-by-step:
+1. First, understand the target variable, its definition, and the context
+2. Brainstorm potential causal variables that directly influence the target
+3. Evaluate each potential variable against the criteria: measurable,
+   non-composite, no overlap with target
+4. Select the most appropriate variable with the clearest causal link
+5. Verify the variable works within the specified temporal and spatial scale
+6. Define the variable concisely and specify appropriate units
+
+Once you've completed this reasoning process, respond only with a JSON including
+the variable name and its concise definition, formatted as:
+{"Variable":"Concise name", "Definition":"Definition", "Units":"Units"}
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Given the following constraints:
+Target Variable: {{ target.title() }} (measured in {{ target_units }})
+Temporal Scale: {{ temporal.title() }}
+Spatial Scale: {{ spatial.title() }}
+Context: {{ context | join(', ') }}
+
+I need you to think carefully through this problem:
+
+1. First, understand what {{ target.lower() }} means: "{{ target_definition }}"
+2. Consider what directly causes changes in {{ target.lower() }} within the
+   {{ temporal.lower() }} timeframe and {{ spatial.lower() }} spatial scale
+3. Evaluate potential variables against these criteria:
+   - Must be directly measurable (not abstract)
+   - Must not be composite (not combining multiple factors)
+   - Must have a clear causal effect on {{ target.lower() }}
+   - Must work within the specified temporal and spatial scales
+
+After this analysis, name a variable (2-3 words) with a direct causal effect.
+Output format: {"Variable":"Name", "Definition":"Definition", "Units":"Units"}
+\end{verbatim}
+\end{small}
+
+\subsection{generateEdges Prompt}
+\label{sec:prompt_generateEdges}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a scientific system dynamics model expert specializing in causal loop
+diagrams. Given two variables and their definitions, your task is to determine
+the precise causal relationship between them.
+
+Approach this systematically:
+1. First, clearly understand what each variable means and how it's measured
+2. Consider the mechanisms by which the first variable might directly affect
+   the second
+3. Evaluate whether this mechanism works within the given spatial and temporal
+   scales
+4. Check for potential mediating variables that might explain the relationship
+5. Distinguish between correlation and causation - focus only on true causal
+   relationships
+6. Determine if the relationship is positive, negative, or non-existent
+7. Verify your reasoning by considering hypothetical increases and decreases
+8. Provide a concise explanation that justifies your conclusion
+
+Select the most appropriate relationship type based on causal logic, not mere
+correlation. Respond with: {"Relationship":"TYPE","Explanation":"Brief text."}
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+I need to determine if there is a causal relationship between "{{ var1 }}" and
+"{{ var2 }}" for a Causal Loop Diagram (CLD). Let me think step by step:
+
+Step 1: Understand the variables
+- Variable 1: "{{ var1 }}" defined as "{{ def1 }}"
+- Variable 2: "{{ var2 }}" defined as "{{ def2 }}"
+- Scale: Spatial = "{{ spatial }}", Temporal = "{{ temporal }}"
+
+Step 2: Consider potential causal mechanisms
+- Does a change in "{{ var1 }}" directly cause a change in "{{ var2 }}"?
+- Does this mechanism operate within the given spatial and temporal scales?
+
+Step 3: Check for mediating variables
+- Are there variables in the CLD that mediate this relationship?
+- If a mediator exists, the direct relationship should not be included
+
+Step 4: Determine relationship type
+1. POSITIVE - increase in var1 causes increase in var2 (or decrease->decrease)
+2. NEGATIVE - increase in var1 causes decrease in var2 (or decrease->increase)
+3. NONE - No causal relationship exists
+
+Example Responses:
+1. {"Relationship":"POSITIVE","Explanation":"Force causes acceleration..."}
+2. {"Relationship":"NEGATIVE","Explanation":"Resistance causes current to..."}
+3. {"Relationship":"NONE","Explanation":"No direct causal link exists..."}
+
+IMPORTANT: In case you don't know, respond with
+{"Relationship":"NONE","Explanation":"I don't know"}
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Correctness Judge}
+\label{sec:correctness_judge_prompt_text}
+% ------------------------------------------------------------------------------
+
+The correctness judge evaluates causal explanations for logical soundness. Three variants were tested.
+
+\subsection{Baseline Variant}
+\label{sec:prompt_judge_correctness_baseline}
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating the quality of causal reasoning.
+Your job is to carefully read the causal explanation and determine if it is
+logically sound and scientifically coherent. Base your judgment only on the
+internal logic of the explanation, not on external knowledge or citations.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate the quality of this causal explanation:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+EXPLANATION: {{ motivation }}
+
+Based on the explanation, assess whether the causal reasoning is sound.
+
+Respond in this format:
+REASON: [brief explanation of your judgment]
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+\end{verbatim}
+\end{small}
+
+\subsection{Chain-of-Thought (CoT) Variant}
+\label{sec:prompt_judge_correctness_cot}
+
+Based on Kojima et al.\ (2022)~\cite{kojima2022large}. Same system prompt as Baseline. User prompt adds the trigger phrase:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step to assess whether the causal reasoning is sound.
+
+Respond in this format:
+REASON: [Start with your step-by-step chain of thought, then provide your
+        final judgment. Make your reasoning process explicit.]
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill Criteria)}
+\label{sec:prompt_judge_correctness_mechanistic}
+
+Based on Shimonovich et al.\ (2020)~\cite{shimonovich2020bradford}, adapting four Bradford Hill criteria for qualitative CLDs: (1) Plausibility, (2) Temporality, (3) Strength, (4) Coherence.
+
+\noindent\textbf{System Prompt:}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating causal explanations using core
+principles from the Bradford Hill causal criteria framework.
+
+You will assess explanations on FOUR key dimensions adapted for qualitative
+causal models:
+
+1. PLAUSIBILITY - Does it describe a plausible causal mechanism?
+2. TEMPORALITY - Is the causal direction justified and temporally coherent?
+3. STRENGTH - Does it convey that this is an important (not trivial) causal
+   relationship?
+4. COHERENCE - Is the reasoning internally consistent and non-circular?
+
+These criteria align with Bradford Hill's framework (Shimonovich et al., 2020)
+while being practical for conceptual models. Base your judgment only on the
+internal logic of the explanation, not on external knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Evaluate this causal explanation using four core Bradford Hill criteria:
+
+CLAIMED CAUSAL PATHWAY:
+{{ source }} -> [{{ relationship }}] -> {{ target }}
+
+PROPOSED EXPLANATION:
+{{ motivation }}
+
+Assess the explanation on these four dimensions:
+
+1. PLAUSIBILITY (Causal Mechanism):
+  - Does the explanation describe HOW {{ source }} affects {{ target }}?
+  - Is a specific mechanism or pathway described (not just assertion)?
+  - Is the mechanism scientifically plausible and non-circular?
+
+2. TEMPORALITY (Causal Direction):
+  - Does the explanation support the direction {{ source }} -> {{ target }}?
+  - Is temporal ordering appropriate (cause precedes effect)?
+  - Does it avoid reverse causation?
+
+3. STRENGTH (Relative Importance):
+  - Does the explanation convey that {{ source }} is an IMPORTANT influence?
+  - Does it suggest this is more than trivial or merely correlational?
+  - Is the causal claim stated with appropriate confidence?
+
+4. COHERENCE (Internal Consistency):
+  - Is the reasoning logically consistent and non-contradictory?
+  - Does it avoid tautological or circular arguments?
+  - Are the claims coherent with each other?
+
+Respond in this format:
+VERDICT: [CORRECT|PARTIALLY_CORRECT|INCORRECT]
+SCORE: [1.0 for CORRECT, 0.5 for PARTIALLY_CORRECT, 0.0 for INCORRECT]
+REASON: [2-3 sentence explanation referencing which criteria were met/failed]
+
+Guidelines:
+- CORRECT: Addresses all four criteria reasonably well
+- PARTIALLY_CORRECT: Addresses 2-3 criteria well but has notable gaps
+- INCORRECT: Fails most criteria (vague, circular, wrong direction, etc.)
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Citation Judge}
+\label{sec:citation_judge_prompt_text}
+% ------------------------------------------------------------------------------
+
+The citation judge evaluates whether causal claims are supported by their cited sources. The baseline variant is shown; CoT and Mechanistic variants follow the same pattern as correctness judge variants.
+
+\noindent\textbf{System Prompt (Baseline):}
+\begin{small}
+\begin{verbatim}
+You are a precise and fair judge evaluating whether scientific claims are
+supported by their cited sources. Your job is to carefully read the
+relationship motivation and the cited sources, and determine if the motivation
+is supported. Base your judgment only on the content of the citations provided,
+not on general knowledge.
+\end{verbatim}
+\end{small}
+
+\noindent\textbf{User Prompt Template:}
+\begin{small}
+\begin{verbatim}
+Verify if this relationship is supported by its citations:
+
+SOURCE VARIABLE: {{ source }}
+TARGET VARIABLE: {{ target }}
+RELATIONSHIP TYPE: {{ relationship }}
+MOTIVATION: {{ motivation }}
+
+Here are the contents of the cited sources:
+{{ citations }}
+
+Based on the cited sources, evaluate if the relationship motivation is
+supported by the citations.
+
+Respond in this format:
+VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|UNADDRESSED]
+REASON: [brief explanation of your judgment]
+\end{verbatim}
+\end{small}
+
+% ------------------------------------------------------------------------------
+\section{Full Prompt Text: Corrector}
+\label{sec:corrector_prompt_text}
+% ------------------------------------------------------------------------------
+
+The corrector uses two tools: \texttt{revise\_motivation} (fix explanation, keep edge type) and \texttt{change\_edge\_type} (change polarity or remove edge). Three variants were tested.
+
+\subsection{Baseline Variant}
+\label{sec:prompt_corrector_baseline}
+
+\begin{small}
+\begin{verbatim}
+You are an expert causal reasoning corrector. You have 2 tools:
+
+1. revise_motivation: Fix incorrect motivation text (keeps same edge type)
+2. change_edge_type: Change edge type (POSITIVE/NEGATIVE/NONE) with new
+   motivation
+
+IMPORTANT: NONE represents "no causal relationship" - it's a valid type, not
+deletion.
+
+TOOL SELECTION EXAMPLES:
+
+EXAMPLE 1: Bad motivation, correct type -> revise_motivation
+Edge: "Exercise" -> "Mental Health" (POSITIVE)
+Motivation: "Exercise makes people happy"
+Judge: "Overly simplistic; doesn't explain mechanism"
+ACTION: revise_motivation(new_motivation="Exercise increases endorphin
+production and reduces cortisol, improving mental health outcomes")
+
+EXAMPLE 2: Wrong polarity -> change_edge_type
+Edge: "Vaccination Rate" -> "Disease Spread" (POSITIVE)
+Motivation: "More vaccinations lead to more disease spread"
+Judge: "Wrong polarity - vaccinations reduce disease spread"
+ACTION: change_edge_type(old_type='POSITIVE', new_type='NEGATIVE',
+new_motivation="Higher vaccination rates create herd immunity, reducing
+disease transmission")
+
+EXAMPLE 3: Should be NONE -> change_edge_type
+Edge: "Shoe Size" -> "Reading Ability" (POSITIVE)
+Motivation: "Larger shoe size indicates better reading ability"
+Judge: "No causal relationship - confounded by age"
+ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE',
+new_motivation="No direct causal link between shoe size and reading. The
+correlation is due to age as a confounding variable")
+
+DECISION RULES:
+revise_motivation: Edge type is correct, but explanation is flawed
+change_edge_type: Edge type itself is wrong (polarity, existence)
+
+Analyze the judge feedback and call the appropriate tool.
+\end{verbatim}
+\end{small}
+
+\subsection{CoT Variant}
+\label{sec:prompt_corrector_cot}
+
+Adds a 5-step reasoning framework after the examples:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step to determine the best correction action.
+
+STEP 1: Analyze the Judge Feedback
+- What specific problem did the judge identify?
+- Is it about: (a) polarity/sign, (b) mechanism/reasoning, (c) type, or
+  (d) existence?
+
+STEP 2: Assess the True Causal Relationship
+- What is the CORRECT causal relationship between these variables?
+- Should it be: POSITIVE, NEGATIVE, or NONE (no causal relationship)?
+
+STEP 3: Identify the Minimal Correction
+- If motivation is flawed but type is correct -> Use revise_motivation
+- If edge type itself is wrong -> Use change_edge_type
+
+STEP 4: Verify Your Decision
+- Does this action address the specific judge feedback?
+- Could revise_motivation work instead of change_edge_type?
+- If changing to NONE, can you explain WHY no causal relationship exists?
+
+STEP 5: Execute the Tool Call
+Call the appropriate tool with your validated reasoning.
+\end{verbatim}
+\end{small}
+
+\subsection{Mechanistic Variant (Bradford Hill)}
+\label{sec:prompt_corrector_mechanistic}
+
+Extends CoT with Bradford Hill criteria:
+
+\begin{small}
+\begin{verbatim}
+Let's think step by step, applying Bradford Hill criteria for causal assessment.
+
+STEP 1: Analyze Judge Feedback + Assess PLAUSIBILITY (Causal Mechanism)
+- What specific problem did the judge identify?
+- Does a plausible causal MECHANISM exist between source and target?
+- Is the current motivation describing the wrong mechanism, or is there NO
+  mechanism?
+
+STEP 2: Evaluate TEMPORALITY (Causal Direction)
+- What is the CORRECT causal relationship: POSITIVE, NEGATIVE, or NONE?
+- Does the causal direction make sense (source must precede target)?
+
+STEP 3: Assess STRENGTH (Relative Importance)
+- Is there a SUBSTANTIAL causal relationship, or is it trivial/negligible?
+- If motivation is flawed but strong causal relationship exists
+  -> revise_motivation
+
+STEP 4: Evaluate COHERENCE (Internal Consistency) + Verify Decision
+- Is the reasoning logically consistent and non-contradictory?
+- Does judge feedback suggest type is wrong, or just explanation needs fixing?
+
+STEP 5: Execute Tool Call
+Based on Bradford Hill assessment:
+- IF Plausibility+Temporality+Strength satisfied, but Coherence fails
+  -> revise_motivation
+- IF Temporality shows wrong direction -> change_edge_type (flip polarity)
+- IF Plausibility or Strength fail -> change_edge_type (to NONE)
+\end{verbatim}
+\end{small}
 
 % ------------------------------------------------------------------------------
 \section{Prompt Engineering Ablation Study}
