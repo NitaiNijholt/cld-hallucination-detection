@@ -482,16 +482,16 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
 \item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
 Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
-\textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks.
+\textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks. Significance markers on Mean AUC are based on one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ over blocks (with Bonferroni correction across the 4 metrics).
 \textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
-\textbf{Correlation r} computed via Fisher z-transform aggregation across blocks.
-\textbf{Significant Files (\%)} = percentage of files where Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure.
+\textbf{Correlation r} computed via Fisher z-transform aggregation across blocks; correlation significance markers are based on one-sample Wilcoxon signed-rank tests on block-level correlations (with Bonferroni correction across the 4 metrics).
+\textbf{Significant Files (\%)} = percentage of files where an edge-level Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure and is not used for confirmatory inference.
 """
     
     latex += f"\\item \\textit{{Multiple comparisons:}} Bonferroni correction applied across {n_tests} single-metric AUC tests and {n_tests} single-metric correlation tests ($\\alpha_{{\\text{{adj}}}} = {alpha_adj:.4f}$ per family). Significance markers (*, **, ***) reflect Bonferroni-adjusted $p$-values ($p_{{\\text{{adj}}}} = p \\times {n_tests}$).\n"
     
     latex += r"""\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ over blocks).
-\item \textit{Assumptions:} Edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}). For block-level inference, we report mean $\pm$ 95\% CI using the $t$-distribution over blocks ($N=9$), and use one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ for above-chance hypothesis tests; interpret $N=9$ p-values as approximate. Block-level aggregation handles dependence within each CLD$\times$run generation scenario.
+\item \textit{Assumptions:} Edge-level metric distributions are non-normal (see Table~\ref{tab:rq2_normality_tests}); any edge-level Mann-Whitney U results are treated as descriptive diagnostics (via Significant Files \%). For block-level inference, we report mean $\pm$ 95\% CI using the $t$-distribution over blocks ($N=9$), and use one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ for above-chance hypothesis tests; interpret $N=9$ p-values as approximate. Block-level aggregation handles dependence within each CLD$\times$run generation scenario.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
