@@ -247,23 +247,22 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \begin{threeparttable}
 \setlength{\tabcolsep}{2pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \multicolumn{3}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} \\
- & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{F1@t*} & \textbf{(5$\rightarrow$6)} \\
- & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \multicolumn{3}{c}{\textbf{($\pm$ 95\% CI)}} & \\
+\textbf{Classifier} & \multicolumn{2}{c}{\textbf{Phase 5}} & \multicolumn{2}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} & \textbf{F1@t*} \\
+ & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{(5$\rightarrow$6)} & \textbf{($\pm$ 95\% CI)} \\
+ & \textbf{($\pm$ 95\% CI)} &  & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} &  &  \\
 \midrule
 """
     
     for i, row in enumerate(rows):
         latex += f"{row['classifier']} & "
-        latex += f"{fmt_auc(row['p4_mean'], row['p4_ci'])} & "
         latex += f"{fmt_auc(row['p5_cv_mean'], row['p5_cv_ci'])} & "
         latex += f"{fmt_test(row['p5_test'])} & "
         latex += f"{fmt_auc(row['p6_mean'], row['p6_ci'])} & "
         latex += f"{fmt_auc(row['p6_ap_mean'], row['p6_ap_ci'])} & "
-        latex += f"{fmt_f1(row['p6_f1_mean'], row['p6_f1_ci'])} & "
-        latex += f"{fmt_drop(row['drop'])} \\\\\n"
+        latex += f"{fmt_drop(row['drop'])} & "
+        latex += f"{fmt_f1(row['p6_f1_mean'], row['p6_f1_ci'])} \\\\\n"
         if i < len(rows) - 1:
             latex += r"\midrule" + "\n"
     
@@ -273,12 +272,10 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
 \small
 """
     
-    latex += rf"""\item \textit{{Note.}} Block-level cross-validation using {n_folds}-fold GroupKFold with blocks = (CLD$\times$run, $N={n_blocks}$). Entire blocks stay together in train OR test to prevent pseudo-replication.
-\textbf{{Phase 4 (RFE CV AUC):}} {n_folds}-fold block-level CV on all pooled edges; measures feature selection performance.
+    latex += rf"""\item \textit{{Note.}} Block-level validation uses {n_folds}-fold GroupKFold with blocks = (CLD$\times$run, $N={n_blocks}$). Entire blocks stay together in train OR test to prevent pseudo-replication.
 \textbf{{Phase 5 (CV AUC):}} {n_folds}-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
-\textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
-\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Includes AUC, PR AUC, and F1 at a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1.
-Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
+\textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within the same distribution.
+\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Reports AUC/PR-AUC plus F1 at a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1.
 \textbf{{Uncertainty:}} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 """
@@ -292,30 +289,7 @@ Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
     if t_parts:
         latex += "\\textbf{Selected thresholds:} " + "; ".join(t_parts) + ".\n"
 
-    # Optional: add a hypothesis test vs chance for Phase 6 using block-level AUCs (N=9 blocks)
-    if phase6_summary:
-        def fmt_p(p):
-            if p is None:
-                return "N/A"
-            try:
-                p = float(p)
-            except Exception:
-                return "N/A"
-            if p < 0.001:
-                return "<0.001"
-            return f"{p:.3f}"
-
-        p_parts = []
-        for row in rows:
-            clf = row["classifier"]
-            blk = (phase6_summary.get(clf, {}) or {}).get("block_level", None)
-            # Prefer Wilcoxon (robust) p-values if available; fall back to t-test
-            pval = None
-            if isinstance(blk, dict):
-                pval = blk.get("wilcoxon_p_adj", blk.get("wilcoxon_p", blk.get("ttest_p")))
-            p_parts.append(f"{clf}: $p{('=' + fmt_p(pval)) if fmt_p(pval) != '<0.001' else '<0.001'}$")
-
-        latex += "\\textbf{Exploratory chance test (Phase 6):} one-sample Wilcoxon signed-rank tests vs.\\ AUC$=0.5$ on block-level AUCs (CLD$\\times$run, $N=9$; Bonferroni-adjusted across classifiers) yield " + "; ".join(p_parts) + ".\n"
+    latex += "\\textbf{No hypothesis test in Phase 6:} We do not test AUC vs.\\ 0.5 in Phase~6 because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.\n"
     
     latex += r"""\end{tablenotes}
 \end{threeparttable}

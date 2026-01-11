@@ -24,7 +24,7 @@ import sys
 import warnings
 warnings.filterwarnings('ignore')
 
-from rq2_paths import rq2_dirs
+from rq2_paths import rq2_dirs, repo_root
 
 # Number of single-metric tests for Bonferroni correction (per Methods Section 4.5)
 N_METRIC_TESTS = 4  # Perplexity, Min Prob, Max Window Entropy, Cosine Similarity
@@ -266,7 +266,7 @@ def compute_meta_analysis(file_results: list):
         n = len(block_aucs)
         se = std_auc / np.sqrt(n)
         
-        # t-interval (valid as block means are normal, p=0.67)
+        # 95% CI on the mean using t-distribution (small-N uncertainty rule)
         t_crit = stats.t.ppf(0.975, n - 1)
         ci_lower_auc = float(mean_auc - t_crit * se)
         ci_upper_auc = float(mean_auc + t_crit * se)
@@ -276,12 +276,17 @@ def compute_meta_analysis(file_results: list):
         result['ci_lower_auc'] = ci_lower_auc
         result['ci_upper_auc'] = ci_upper_auc
         
-        # One-sample t-test vs 0.5 (on blocks)
-        t_stat, p_val = stats.ttest_1samp(block_aucs, 0.5)
-        result['auc_ttest_t'] = float(t_stat)
-        result['auc_ttest_p'] = float(p_val)
-        result['auc_above_chance'] = (p_val < 0.05) and (mean_auc > 0.5)
-        result['auc_below_chance'] = (p_val < 0.05) and (mean_auc < 0.5)
+        # One-sample Wilcoxon signed-rank test vs 0.5 (on blocks): test (AUC - 0.5) vs 0
+        deltas_auc = (block_aucs.values - 0.5).astype(float)
+        if np.any(np.abs(deltas_auc) > 1e-12):
+            w_stat, p_val = stats.wilcoxon(deltas_auc, zero_method="wilcox", alternative="two-sided")
+            result['auc_wilcoxon_w'] = float(w_stat)
+            result['auc_wilcoxon_p'] = float(p_val)
+        else:
+            result['auc_wilcoxon_w'] = None
+            result['auc_wilcoxon_p'] = 1.0
+        result['auc_above_chance'] = (result['auc_wilcoxon_p'] < 0.05) and (mean_auc > 0.5)
+        result['auc_below_chance'] = (result['auc_wilcoxon_p'] < 0.05) and (mean_auc < 0.5)
 
     # --- PR-AUC (Average Precision) Meta-Analysis (Block-Level) ---
     # Baseline under random ranking equals positive prevalence; we test AP - prevalence vs 0 on blocks.
@@ -332,12 +337,16 @@ def compute_meta_analysis(file_results: list):
         result['ci_lower_corr'] = ci_lower_corr
         result['ci_upper_corr'] = ci_upper_corr
         
-        # Test vs 0 (using z-score)
-        z_score = z_mean / z_se if z_se > 0 else 0
-        p_val_corr = 2 * (1 - stats.norm.cdf(abs(z_score))) # z-test
-        
-        result['corr_ttest_p'] = float(p_val_corr)
-        result['corr_significant'] = p_val_corr < 0.05
+        # Test vs 0 using one-sample Wilcoxon signed-rank on block-level correlations
+        deltas_corr = block_corrs.values.astype(float)  # null r=0
+        if np.any(np.abs(deltas_corr) > 1e-12):
+            w_stat, p_val_corr = stats.wilcoxon(deltas_corr, zero_method="wilcox", alternative="two-sided")
+            result['corr_wilcoxon_w'] = float(w_stat)
+            result['corr_wilcoxon_p'] = float(p_val_corr)
+        else:
+            result['corr_wilcoxon_w'] = None
+            result['corr_wilcoxon_p'] = 1.0
+        result['corr_significant'] = result['corr_wilcoxon_p'] < 0.05
     
     # Significant files percentage (Descriptive)
     significant = [r['mwu_significant'] for r in file_results if r.get('mwu_significant') is not None]
@@ -386,7 +395,7 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
             
             # Use Bonferroni-adjusted p-value for significance markers
             bonf_result = bonferroni_results.get('results', {}).get(metric, {})
-            p_adj = bonf_result.get('p_adjusted', meta.get('auc_ttest_p', 1.0))
+            p_adj = bonf_result.get('p_adjusted', meta.get('auc_wilcoxon_p', 1.0))
             
             # Significance markers based on adjusted p-value
             if p_adj < 0.001:
@@ -426,7 +435,7 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
             ci_l, ci_u = meta['ci_lower_corr'], meta['ci_upper_corr']
             ci_hw = (ci_u - ci_l) / 2
             
-            p_val = meta.get('corr_ttest_p_adj', meta.get('corr_ttest_p', 1.0))
+            p_val = meta.get('corr_wilcoxon_p_adj', meta.get('corr_wilcoxon_p', 1.0))
             if p_val < 0.001:
                 sig = '***'
             elif p_val < 0.01:
@@ -481,8 +490,8 @@ Gen Cosine Similarity has fewer observations because it requires retrieved citat
     
     latex += f"\\item \\textit{{Multiple comparisons:}} Bonferroni correction applied across {n_tests} single-metric AUC tests and {n_tests} single-metric correlation tests ($\\alpha_{{\\text{{adj}}}} = {alpha_adj:.4f}$ per family). Significance markers (*, **, ***) reflect Bonferroni-adjusted $p$-values ($p_{{\\text{{adj}}}} = p \\times {n_tests}$).\n"
     
-    latex += r"""\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample t-test of block means vs.\ 0.5).
-\item \textit{Assumptions:} While edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}), block-level mean AUCs follow a normal distribution (Shapiro-Wilk $p > 0.05$), validating the use of t-tests for meta-analysis. Block-level aggregation handles dependence between prompts within the same run.
+    latex += r"""\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ over blocks).
+\item \textit{Assumptions:} Edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}). For block-level inference, we report mean $\pm$ 95\% CI using the $t$-distribution over blocks ($N=9$), and use one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ for above-chance hypothesis tests; interpret $N=9$ p-values as approximate. Block-level aggregation handles dependence within each CLD$\times$run generation scenario.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -509,8 +518,8 @@ def generate_excel(metrics_results: dict, bonferroni_results: dict, file_level_r
                 'AUC_CI_Lower': meta.get('ci_lower_auc'),
                 'AUC_CI_Upper': meta.get('ci_upper_auc'),
                 'AUC_Std': meta.get('std_auc'),
-                'AUC_ttest_p': meta.get('auc_ttest_p'),
-                'AUC_ttest_p_adj': meta.get('auc_ttest_p_adj'),  # Bonferroni-adjusted
+                'AUC_wilcoxon_p': meta.get('auc_wilcoxon_p'),
+                'AUC_wilcoxon_p_adj': meta.get('auc_wilcoxon_p_adj'),  # Bonferroni-adjusted
                 'AUC_Above_Chance': meta.get('auc_above_chance'),
                 'AUC_Above_Chance_Adj': meta.get('auc_above_chance_adj'),  # Bonferroni-adjusted
                 'AUC_Below_Chance': meta.get('auc_below_chance'),
@@ -526,7 +535,7 @@ def generate_excel(metrics_results: dict, bonferroni_results: dict, file_level_r
                 'Corr_CI_Lower': meta.get('ci_lower_corr'),
                 'Corr_CI_Upper': meta.get('ci_upper_corr'),
                 'Corr_Std': meta.get('std_corr'),
-                'Corr_ttest_p': meta.get('corr_ttest_p'),
+                'Corr_wilcoxon_p': meta.get('corr_wilcoxon_p'),
                 'Significant_Files_Pct': meta.get('significant_files_pct'),
                 'N_Significant_Files': meta.get('n_significant_files')
             })
@@ -545,7 +554,7 @@ def generate_excel(metrics_results: dict, bonferroni_results: dict, file_level_r
             'Generated': datetime.now().isoformat(),
             'Script': 'rq2_single_metric_table.py',
             'Statistical_Test': 'Mann-Whitney U (non-parametric)',
-            'AUC_Test': 'One-sample t-test vs 0.5 on block means',
+            'AUC_Test': 'One-sample Wilcoxon signed-rank test vs 0.5 on block AUCs',
             'Significance_Alpha': ALPHA,
             'Bonferroni_N_Tests': bonferroni_results.get('n_tests', N_METRIC_TESTS),
             'Bonferroni_Alpha_Adj': bonferroni_results.get('alpha_adjusted', ALPHA_ADJ),
@@ -587,12 +596,16 @@ def main():
         
         metric_file_results = []
         
+        root = repo_root()
         for file_info in valid_files:
             filepath = file_info['filepath']
-            result = analyze_file_for_metric(filepath, metric)
+            fp = Path(filepath)
+            if not fp.is_absolute():
+                fp = root / fp
+            result = analyze_file_for_metric(str(fp), metric)
             
             if result is not None:
-                result['filepath'] = filepath
+                result['filepath'] = str(fp)
                 result['cld'] = file_info.get('cld', 'unknown')
                 result['run'] = file_info.get('run', 'unknown')
                 result['experiment_type'] = file_info.get('experiment_type', 'unknown')
@@ -623,10 +636,7 @@ def main():
     print("\n" + "-"*40)
     print("Applying Bonferroni correction...")
     
-    auc_p_values = {
-        metric: meta.get('auc_ttest_p', 1.0)
-        for metric, meta in metrics_results.items()
-    }
+    auc_p_values = {metric: meta.get('auc_wilcoxon_p', 1.0) for metric, meta in metrics_results.items()}
     bonferroni_results = bonferroni_correction(auc_p_values, alpha=ALPHA)
     
     print(f"  Bonferroni family: {bonferroni_results['n_tests']} tests")
@@ -639,7 +649,7 @@ def main():
     for metric in metrics_results:
         if metric in bonferroni_results['results']:
             bonf = bonferroni_results['results'][metric]
-            metrics_results[metric]['auc_ttest_p_adj'] = bonf['p_adjusted']
+            metrics_results[metric]['auc_wilcoxon_p_adj'] = bonf['p_adjusted']
             metrics_results[metric]['auc_significant_adj'] = bonf['significant_adjusted']
             metrics_results[metric]['auc_above_chance_adj'] = (
                 bonf['significant_adjusted'] and metrics_results[metric].get('mean_auc', 0) > 0.5
@@ -649,17 +659,14 @@ def main():
             )
 
     # Apply Bonferroni correction across the 4 single-metric correlation tests (separate family)
-    corr_p_values = {
-        metric: meta.get('corr_ttest_p', 1.0)
-        for metric, meta in metrics_results.items()
-    }
+    corr_p_values = {metric: meta.get('corr_wilcoxon_p', 1.0) for metric, meta in metrics_results.items()}
     bonferroni_corr_results = bonferroni_correction(corr_p_values, alpha=ALPHA)
 
     # Add adjusted correlation values back to metrics_results
     for metric in metrics_results:
         if metric in bonferroni_corr_results.get('results', {}):
             bonf = bonferroni_corr_results['results'][metric]
-            metrics_results[metric]['corr_ttest_p_adj'] = bonf['p_adjusted']
+            metrics_results[metric]['corr_wilcoxon_p_adj'] = bonf['p_adjusted']
             metrics_results[metric]['corr_significant_adj'] = bonf['significant_adjusted']
     
     # Generate outputs

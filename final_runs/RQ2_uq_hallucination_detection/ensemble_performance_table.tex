@@ -6,33 +6,31 @@
 \begin{threeparttable}
 \setlength{\tabcolsep}{2pt}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Classifier} & \textbf{Phase 4:} & \textbf{Phase 5:} & \textbf{Phase 5:} & \multicolumn{3}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} \\
- & \textbf{RFE CV AUC} & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{F1@t*} & \textbf{(5$\rightarrow$6)} \\
- & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} & & \multicolumn{3}{c}{\textbf{($\pm$ 95\% CI)}} & \\
+\textbf{Classifier} & \multicolumn{2}{c}{\textbf{Phase 5}} & \multicolumn{2}{c}{\textbf{Phase 6: Cross-CLD}} & \textbf{Drop} & \textbf{F1@t*} \\
+ & \textbf{CV AUC} & \textbf{Test AUC} & \textbf{AUC} & \textbf{PR AUC} & \textbf{(5$\rightarrow$6)} & \textbf{($\pm$ 95\% CI)} \\
+ & \textbf{($\pm$ 95\% CI)} &  & \textbf{($\pm$ 95\% CI)} & \textbf{($\pm$ 95\% CI)} &  &  \\
 \midrule
-Logistic Regression & 0.704 $\pm$ 0.061 & 0.695 $\pm$ 0.067 & 0.702 & 0.664 $\pm$ 0.239 & 0.284 $\pm$ 0.322 & 0.310 $\pm$ 0.289 & 0.039 \\
+Logistic Regression & 0.695 $\pm$ 0.067 & 0.702 & 0.664 $\pm$ 0.239 & 0.284 $\pm$ 0.322 & 0.039 & 0.310 $\pm$ 0.289 \\
 \midrule
-Random Forest & 0.862 $\pm$ 0.216 & 0.832 $\pm$ 0.304 & 0.809 & 0.629 $\pm$ 0.179 & 0.256 $\pm$ 0.251 & 0.215 $\pm$ 0.387 & 0.179 \\
+Random Forest & 0.832 $\pm$ 0.304 & 0.809 & 0.629 $\pm$ 0.179 & 0.256 $\pm$ 0.251 & 0.179 & 0.215 $\pm$ 0.387 \\
 \midrule
-Gradient Boosting & 0.766 $\pm$ 0.019 & 0.743 $\pm$ 0.059 & 0.765 & 0.645 $\pm$ 0.296 & 0.277 $\pm$ 0.452 & 0.317 $\pm$ 0.358 & 0.120 \\
+Gradient Boosting & 0.743 $\pm$ 0.059 & 0.765 & 0.645 $\pm$ 0.296 & 0.277 $\pm$ 0.452 & 0.120 & 0.317 $\pm$ 0.358 \\
 \midrule
-Neural Network & N/A & 0.709 $\pm$ 0.032 & 0.739 & 0.648 $\pm$ 0.211 & 0.299 $\pm$ 0.275 & 0.317 $\pm$ 0.347 & 0.092 \\
+Neural Network & 0.709 $\pm$ 0.032 & 0.739 & 0.648 $\pm$ 0.211 & 0.299 $\pm$ 0.275 & 0.092 & 0.317 $\pm$ 0.347 \\
 \bottomrule
 \end{tabular}}
 \begin{tablenotes}
 \small
-\item \textit{Note.} Block-level cross-validation using 3-fold GroupKFold with blocks = (CLD$\times$run, $N=9$). Entire blocks stay together in train OR test to prevent pseudo-replication.
-\textbf{Phase 4 (RFE CV AUC):} 3-fold block-level CV on all pooled edges; measures feature selection performance.
+\item \textit{Note.} Block-level validation uses 3-fold GroupKFold with blocks = (CLD$\times$run, $N=9$). Entire blocks stay together in train OR test to prevent pseudo-replication.
 \textbf{Phase 5 (CV AUC):} 3-fold block-level CV on training blocks ($\sim$67\% of blocks); measures in-distribution performance.
-\textbf{Phase 5 (Test AUC):} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within same distribution.
-\textbf{Phase 6 (Cross-CLD):} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Includes AUC, PR AUC, and F1 at a \textbf{fixed} threshold $t^*$ selected on \textbf{Phase 5 training blocks only} by maximizing out-of-fold F1.
-Phase 4 evaluates all 4 UQ metrics via RFE for each classifier; the best-performing classifier (Random Forest) selected all 4 features, which are then used in Phases 5--6. 
+\textbf{Phase 5 (Test AUC):} Single evaluation on held-out test blocks ($\sim$33\% of blocks); validates generalization within the same distribution.
+\textbf{Phase 6 (Cross-CLD):} Leave-one-CLD-out CV---train on 2 CLDs, test on held-out 3rd CLD, averaged across all 3 CLDs. Reports AUC/PR-AUC plus F1 at a \textbf{fixed} threshold $t^*$ selected on \textbf{Phase 5 training blocks only} by maximizing out-of-fold F1.
 \textbf{Uncertainty:} All phases show mean $\pm$ 95\% CI using the $t$-distribution with $df = n-1$, per the uncertainty reporting rule (Methods Section~\ref{sec:uncertainty_rule}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 \textbf{Selected thresholds:} Logistic Regression: $t^*=0.470$; Random Forest: $t^*=0.467$; Gradient Boosting: $t^*=0.162$; Neural Network: $t^*=0.141$.
-\textbf{Exploratory chance test (Phase 6):} one-sample Wilcoxon signed-rank tests vs.\ AUC$=0.5$ on block-level AUCs (CLD$\times$run, $N=9$; Bonferroni-adjusted across classifiers) yield Logistic Regression: $p=0.016$; Random Forest: $p=0.031$; Gradient Boosting: $p=0.031$; Neural Network: $p=0.016$.
+\textbf{No hypothesis test in Phase 6:} We do not test AUC vs.\ 0.5 in Phase~6 because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

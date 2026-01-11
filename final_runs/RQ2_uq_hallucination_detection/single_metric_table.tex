@@ -3,34 +3,39 @@
 \caption{Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}
 \label{tab:rq2_single_metrics}
 \begin{threeparttable}
-\begin{tabular}{lccccc}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
- & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
+\textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Mean PR-AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
+ & & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{(95\% CI)} & \textbf{Files (\%)} & \\
 \midrule
-Gen Cosine & 16,492 & 0.672$***$ & +0.157$***$ & 65.7\% & 35 \\
-Similarity & & [0.602, 0.743] & [+0.048, +0.263] & & \\
+Gen Cosine & 16,492 & 0.672$*$ & 0.328 & +0.157$^{ns}$ & 65.7\% & 35 \\
+Similarity & & $\pm$ 0.071 & $\pm$ 0.101 & $\pm$ 0.107 & & \\
 \midrule
-Gen Perplexity & 31,704 & 0.563$^{ns}$ & +0.006$^{ns}$ & 44.4\% & 63 \\
- & & [0.497, 0.628] & [-0.075, +0.088] & & \\
+Gen Perplexity & 31,704 & 0.563$^{ns}$ & 0.206 & +0.006$^{ns}$ & 44.4\% & 63 \\
+ & & $\pm$ 0.065 & $\pm$ 0.078 & $\pm$ 0.082 & & \\
 \midrule
-Gen Max Window & 31,704 & 0.554$*$ & +0.070$*$ & 49.2\% & 63 \\
-Entropy & & [0.502, 0.606] & [-0.012, +0.150] & & \\
+Gen Max Window & 31,704 & 0.554$^{ns}$ & 0.216 & +0.070$^{ns}$ & 49.2\% & 63 \\
+Entropy & & $\pm$ 0.052 & $\pm$ 0.071 & $\pm$ 0.081 & & \\
 \midrule
-Gen Min Prob & 31,704 & 0.479$^{ns}$ & -0.036$^{ns}$ & 14.3\% & 63 \\
- & & [0.430, 0.527] & [-0.110, +0.039] & & \\
+Gen Min Prob & 31,704 & 0.479$^{ns}$ & 0.181 & -0.036$^{ns}$ & 14.3\% & 63 \\
+ & & $\pm$ 0.049 & $\pm$ 0.029 & $\pm$ 0.075 & & \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{tablenotes}
 \small
 \item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
 N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
 Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to $<$2 hallucinations.
 \textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks.
+\textbf{Mean PR-AUC} is the block-level mean of Average Precision (area under the precision--recall curve). Under class imbalance, a random ranking baseline yields PR-AUC equal to the positive prevalence; PR-AUC is therefore reported descriptively alongside AUC.
 \textbf{Correlation r} computed via Fisher z-transform aggregation across blocks.
 \textbf{Significant Files (\%)} = percentage of files where Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure.
-Significance levels: *** $p<0.001$, ** $p<0.01$, * $p<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample t-test of block means vs.\ 0.5).
-\item \textit{Assumptions:} While edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}), block-level mean AUCs follow a normal distribution (Shapiro-Wilk $p > 0.05$), validating the use of t-tests for meta-analysis. Block-level aggregation handles dependence between prompts within the same run.
+\item \textit{Multiple comparisons:} Bonferroni correction applied across 4 single-metric AUC tests and 4 single-metric correlation tests ($\alpha_{\text{adj}} = 0.0125$ per family). Significance markers (*, **, ***) reflect Bonferroni-adjusted $p$-values ($p_{\text{adj}} = p \times 4$).
+\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ over blocks).
+\item \textit{Assumptions:} Edge-level metric distributions are non-normal (requiring Mann-Whitney U for direct comparison, see Table~\ref{tab:rq2_normality_tests}). For block-level inference, we report mean $\pm$ 95\% CI using the $t$-distribution over blocks ($N=9$), and use one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ for above-chance hypothesis tests; interpret $N=9$ p-values as approximate. Block-level aggregation handles dependence within each CLD$\times$run generation scenario.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
