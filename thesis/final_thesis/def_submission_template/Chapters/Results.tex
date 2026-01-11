@@ -564,7 +564,7 @@ Gen Cosine Similarity achieves the highest AUC (0.671), followed by Gen Perplexi
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.0\textwidth]{figures/phase6_distributions_with_effect_sizes.png}
-\caption[UQ metric distributions by CLD]{Generator UQ metric distributions comparing correct edges (green) vs.\ hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Subplot annotations report block-level rank-biserial effect sizes $r$ aggregated across runs within each CLD (mean [95\% CI] over the 3 CLD$\times$run blocks) and the corresponding Mann--Whitney U $p$-value (edge-level; descriptive).}
+\caption[UQ metric distributions by CLD]{Generator UQ metric distributions comparing correct edges (green) vs.\ hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Subplot annotations report block-level rank-biserial effect sizes $r$ aggregated across runs within each CLD (mean [95\% CI] over the 3 (CLD$\times$run) blocks; $t$-distribution, $df=2$), rather than edge-level $p$-values.}
 \label{fig:rq2_distributions_by_cld}
 \end{figure}
 
@@ -572,9 +572,9 @@ To contextualize these distributions, we first assess whether the UQ metrics are
 
 \input{../../final_runs/RQ2_uq_hallucination_detection/normality_tests_table.tex}
 
-The normality diagnostics confirm that the generator-based UQ metrics are strongly non-Gaussian at the edge level (both overall and within hallucination/correct strata). This cautions against over-interpreting visual separation alone and motivates non-parametric, distribution-robust summaries for within-CLD diagnostics. For inferential claims about RQ2 (above-chance discrimination across independent generation scenarios), we rely on block-level aggregation (CLD$\times$run); edge-level $p$-values are treated as descriptive because edges within the same generation scenario are not independent.
+The normality diagnostics confirm that the generator-based UQ metrics are strongly non-Gaussian at the edge level (both overall and within hallucination/correct strata). This cautions against over-interpreting visual separation alone and motivates non-parametric, distribution-robust summaries for within-CLD diagnostics. For inferential claims about RQ2 (above-chance discrimination across independent generation scenarios), we rely on block-level aggregation (CLD$\times$run) rather than edge-level p-values to avoid pseudo-replication.
 
-Figure~\ref{fig:rq2_distributions_by_cld} compares LLM generator uncertainty metric distributions for correct edges (green) versus hallucinations (red) across the three CLDs (99th percentile clipped). Each subplot reports a block-level Mann--Whitney effect size ($r$, mean [95\% CI] over the 3 CLD$\times$run blocks) and the corresponding edge-level Mann--Whitney U $p$-value (descriptive; see Appendix~\ref{app:statistical_procedures_reference}). Columns show different CLDs; rows show different metrics. Overall, the figures show unclear separation between hallucinated and non-hallucinated edges visually, though statistical tests show differences.
+Figure~\ref{fig:rq2_distributions_by_cld} compares LLM generator uncertainty metric distributions for correct edges (green) versus hallucinations (red) across the three CLDs (99th percentile clipped; Mann--Whitney U effect sizes $r$ shown per subplot; see Appendix~\ref{app:statistical_procedures_reference}). Columns show different CLDs; rows show different metrics. Overall, the figures show unclear separation between hallucinated and non-hallucinated edges visually, though statistical tests show differences.
 
 Perplexity distributions shift slightly left for correct edges in Depressive Symptoms and show less positive kurtosis than hallucinations in Emergency Department and Social Norms, although p-values show significance in Depressive Symptoms and Emergency Department but not in Social Norms.
 

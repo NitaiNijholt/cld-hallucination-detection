@@ -20,7 +20,6 @@ from scipy import stats
 sys.path.insert(0, str(Path(__file__).parent))
 
 from rq2_data_preparation import load_rq2_combined_data
-from rq2_paths import repo_root
 
 # Define metrics
 CI_METRICS = [
@@ -118,7 +117,7 @@ def generate_distribution_figure(df, output_path):
                 ax.hist(halluc_clipped, bins=bins, alpha=0.6, label=f'Halluc (n={len(halluc_data)})',
                        color=halluc_color, density=True, edgecolor='white', linewidth=0.3)
                 
-                # Block-level effect summary (unit = CLD×run blocks, n≈3 runs per CLD)
+                # Block-level effect summary (unit = CLD×run blocks, n=3 runs per CLD)
                 block_rs = []
                 for run in sorted(cld_df['run'].dropna().unique()):
                     run_df = cld_df[cld_df['run'] == run]
@@ -138,13 +137,11 @@ def generate_distribution_figure(df, output_path):
                     if n_blocks > 1:
                         r_std = float(np.std(block_rs, ddof=1))
                         sem = r_std / np.sqrt(n_blocks)
-                        t_crit = stats.t.ppf(0.975, n_blocks - 1)
-                        r_ci_hw = sem * t_crit
-                        r_ci_lo = r_mean - r_ci_hw
-                        r_ci_hi = r_mean + r_ci_hw
+                        r_ci_hw = sem * stats.t.ppf(0.975, n_blocks - 1)
                     else:
-                        r_ci_lo = r_mean
-                        r_ci_hi = r_mean
+                        r_ci_hw = 0.0
+                    r_ci_low = float(max(-1.0, r_mean - r_ci_hw))
+                    r_ci_high = float(min(1.0, r_mean + r_ci_hw))
                     abs_r = abs(r_mean)
                     if abs_r < 0.10:
                         effect_label = 'negl.'
@@ -154,26 +151,9 @@ def generate_distribution_figure(df, output_path):
                         effect_label = 'med.'
                     else:
                         effect_label = 'large'
-
-                    # Edge-level Mann–Whitney U p-value (descriptive; very large N makes p small)
-                    try:
-                        _, p_mwu = stats.mannwhitneyu(correct_data.values, halluc_data.values, alternative='two-sided')
-                    except Exception:
-                        p_mwu = None
-
-                    def fmt_p(p):
-                        if p is None or (isinstance(p, float) and np.isnan(p)):
-                            return "n/a"
-                        p = float(p)
-                        if p == 0.0:
-                            return "<1e-300"
-                        if p < 1e-4:
-                            return f"{p:.0e}"
-                        return f"{p:.3f}"
-
                     ax.text(
                         0.98, 0.98,
-                        f"blocks r={r_mean:.2f} [{r_ci_lo:.2f},{r_ci_hi:.2f}] ({effect_label}); p={fmt_p(p_mwu)}",
+                        f"blocks r={r_mean:.2f} [{r_ci_low:.2f},{r_ci_high:.2f}] ({effect_label})",
                         transform=ax.transAxes, fontsize=8, ha='right', va='top',
                         bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.85)
                     )
@@ -218,7 +198,7 @@ def generate_distribution_figure(df, output_path):
 
 def generate_caption_tex(output_path):
     """Generate LaTeX caption file for the distribution figure."""
-    caption_text = r"""\caption[UQ metric distributions by CLD]{Generator UQ metric distributions comparing correct edges (green) vs.\ hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Subplot annotations report block-level rank-biserial effect sizes $r$ aggregated across runs within each CLD (mean [95\% CI] over the 3 CLD$\times$run blocks) and the corresponding Mann--Whitney U $p$-value (edge-level; descriptive).}
+    caption_text = r"""\caption[UQ metric distributions by CLD]{Generator UQ metric distributions comparing correct edges (green) vs.\ hallucinations (red) for each CLD (99th percentile). Rows show generator metrics; columns show CLDs. Subplot annotations report block-level rank-biserial effect sizes $r$ aggregated across runs within each CLD (mean $\pm$ 95\% CI, $t$-distribution, $df=2$), rather than edge-level $p$-values.}
 \label{fig:rq2_distributions_by_cld}"""
     
     with open(output_path, 'w') as f:
@@ -243,15 +223,16 @@ def main():
     print(f"Loaded {len(df)} edges from {df['cld'].nunique()} CLDs")
     print(f"Hallucinations: {df['is_hallucination'].sum()} ({df['is_hallucination'].mean():.1%})")
     
-    # Output paths
-    # - analysis: repo_root/final_runs/RQ2_uq_hallucination_detection/
-    # - thesis:   thesis/final_thesis/def_submission_template/{figures,Figures}/
-    analysis_output_dir = Path(__file__).resolve().parents[1]
-    repo = repo_root()
-    thesis_lower = repo / 'thesis' / 'final_thesis' / 'def_submission_template' / 'figures'
-    thesis_upper = repo / 'thesis' / 'final_thesis' / 'def_submission_template' / 'Figures'
-    thesis_lower.mkdir(parents=True, exist_ok=True)
-    thesis_upper.mkdir(parents=True, exist_ok=True)
+    # Output paths - save to both analysis output and thesis figure folder
+    analysis_output_dir = Path(__file__).parent.parent
+    analysis_output_dir.mkdir(parents=True, exist_ok=True)
+    
+    thesis_template_dir = Path(__file__).parent.parent.parent.parent / 'thesis' / 'final_thesis' / 'def_submission_template'
+    thesis_figures_dir = thesis_template_dir / 'Figures'
+    thesis_figures_dir.mkdir(parents=True, exist_ok=True)
+
+    thesis_figure_dir = thesis_figures_dir / 'final_runs' / 'RQ2_uq_hallucination_detection'
+    thesis_figure_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate figure
     print(f"\nGenerating distribution figure...")
@@ -260,14 +241,16 @@ def main():
     output_path_analysis = analysis_output_dir / 'phase6_distributions_with_effect_sizes.png'
     generate_distribution_figure(df, output_path_analysis)
     
-    # Save to thesis figure folders with the filename used in Results.tex
-    output_path_thesis_lower = thesis_lower / 'phase6_distributions_with_effect_sizes.png'
-    output_path_thesis_upper = thesis_upper / 'phase6_distributions_with_effect_sizes.png'
-    generate_distribution_figure(df, output_path_thesis_lower)
-    generate_distribution_figure(df, output_path_thesis_upper)
+    # Save to thesis folder with expected name
+    output_path_thesis = thesis_figure_dir / 'feature_distributions_by_cld_4x3.png'
+    generate_distribution_figure(df, output_path_thesis)
+
+    # Also save to thesis Figures root where Results.tex includes it (via figures -> Figures symlink)
+    output_path_thesis_main = thesis_figures_dir / 'phase6_distributions_with_effect_sizes.png'
+    generate_distribution_figure(df, output_path_thesis_main)
     
     # Generate caption tex file
-    caption_path = analysis_output_dir / 'phase6_distributions_with_effect_sizes_caption.tex'
+    caption_path = thesis_figure_dir / 'feature_distributions_caption.tex'
     generate_caption_tex(caption_path)
     
     print("\n" + "="*80)
@@ -275,8 +258,8 @@ def main():
     print("="*80)
     print(f"\nOutputs:")
     print(f"  - {output_path_analysis}")
-    print(f"  - {output_path_thesis_lower}")
-    print(f"  - {output_path_thesis_upper}")
+    print(f"  - {output_path_thesis}")
+    print(f"  - {output_path_thesis_main}")
     print(f"  - {caption_path}")
     
     return 0

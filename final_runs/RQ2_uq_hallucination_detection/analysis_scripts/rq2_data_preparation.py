@@ -115,9 +115,8 @@ def load_rq2_combined_data(verbose: bool = True) -> pd.DataFrame:
     
     all_data = []
     skipped = 0
-    
     root = repo_root()
-
+    
     for file_info in valid_files:
         filepath = file_info['filepath']
         exp_type = file_info['experiment_type']
@@ -162,8 +161,7 @@ def load_rq2_combined_data(verbose: bool = True) -> pd.DataFrame:
             
         except Exception as e:
             if verbose:
-                fp_name = Path(filepath).name
-                print(f"  ⚠️  Skipped {fp_name}: {e}")
+                print(f"  ⚠️  Skipped {Path(filepath).name}: {e}")
             skipped += 1
             continue
     
