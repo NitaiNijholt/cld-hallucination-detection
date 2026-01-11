@@ -31,21 +31,16 @@ For reader convenience, we provide a direct, concise answer to each research que
 \textbf{Answer: The original UQ-triggered judge+corrector design is not supported; a modified judge-triggered Deep Research strategy shows proof-of-concept efficiency gains.} Because (i) UQ metrics do not generalise reliably across CLDs (RQ2) and (ii) the corrector does not reliably improve GT Lit accuracy (RQ1b), the original ``adaptive triggering'' pathway is untenable as specified. However, selectively deploying higher-cost test-time compute for \textit{literature validation} (Deep Research) when a lower-cost signal flags uncertainty (e.g., the Mechanistic correctness judge score) recovers a substantial fraction of the full-deployment gains at roughly half the Deep Research cost in our exploratory analysis, albeit with strong assumptions and clear domain dependence.
 
 %------------------------------------------------------------------------------
-\section{Framing: What Counts as a ``Hallucination'' in CLD Generation?}
+\section{Central Interpretive Claim: Error vs.\ Scope Disagreement}
 \label{sec:discussion_framing}
 %------------------------------------------------------------------------------
-The Results chapter establishes generator baseline performance and the empirical behaviour of judges, correctors, uncertainty signals, and Deep Research. This chapter focuses on interpretation: \emph{why} performance shifts across evaluation settings and what those shifts imply for the construct validity of ``hallucination'' in CLD generation.
+The core interpretive challenge in this thesis is distinguishing \emph{genuine model error} from \emph{expert scope choices}. Treating expert CLDs as absolute ground truth is a practical operationalisation, but it conflates at least two sources of disagreement: (i) the generator produces a factually incorrect or unsupported causal claim (a true hallucination), and (ii) the generator produces a defensible causal claim that experts omitted due to scope, construct-mapping, or literature-coverage decisions (a contested edge). An edge absent from an expert CLD may reflect genuine non-causality, but it may also be excluded for representation reasons unrelated to factual correctness.
 
-\subsection{Ground Truth Constructs: GT Lit vs.\ GT Synth}
-Two ground-truth choices in this thesis correspond to two different constructs.
-\textbf{Ground Truth from Literature (GT Lit)} treats published expert CLDs as the reference edge set over a fixed variable set: an edge \textit{present} in the expert CLD is treated as reference-positive; an edge \textit{absent} is treated as reference-negative. Under this operationalisation, ``hallucination'' is disagreement with the expert CLD: \textbf{FP} = generated edge absent from the expert CLD, and \textbf{FN} = expert edge the generator missed.
-\textbf{Ground Truth from Synthetic Corruption (GT Synth)} uses controlled corruptions (polarity flips, spurious edges, motivation changes) applied to LLM-generated CLDs, yielding known error labels (\texttt{corrupted=True}) with high internal validity.
+This ambiguity is not merely methodological: it shapes the interpretation of every downstream metric. Under GT~Lit, ``false positive'' labels include both true hallucinations and contested edges; under GT~Synth, corruptions are known but may not reflect the distribution of naturally occurring errors. The performance gap between GT~Synth and GT~Lit observed throughout this thesis is therefore partly a \emph{construct shift}, not only a detection-difficulty increase.
 
-\subsection{Interpretation Caveat: Error vs.\ Scope Disagreement}
-Treating expert CLDs as absolute ground truth is a practical operationalisation, but it conflates at least two sources of disagreement: (i) genuine model error and (ii) expert scope choices, construct mappings, or literature incompleteness. An edge absent from an expert CLD may reflect genuine non-causality, but it may also be omitted for scope or representation reasons. This ambiguity becomes central in the RQ3 Deep Research analysis, where many ``false positives'' admit retrievable causal evidence, suggesting that some FP mass may represent \emph{contested edges} rather than straightforward hallucinations.
+The RQ3 Deep Research analysis provides direct evidence for this claim: 62.4\% of edges labelled ``false positive'' under GT~Lit admit retrievable causal evidence from the scientific literature, suggesting that a substantial fraction of FP mass represents contested edges rather than straightforward confabulations. This reframes the practical objective from ``detecting hallucinations'' to ``triaging contested edges for expert review.''
 
-\subsection{Where the Baselines Live}
-To avoid duplicating results, generator model selection and random-baseline comparisons are reported in the Results chapter (Sections~\ref{sec:results_generator_model_comparison} and~\ref{sec:results_generator_baseline_validation}). The discussion below assumes those baselines and focuses on mechanism-level interpretation.
+For definitions of GT~Lit and GT~Synth, see Results Section~\ref{sec:rq1a_definitions}.
 
 %------------------------------------------------------------------------------
 \section{Mechanisms of Judge Failure}
@@ -100,38 +95,22 @@ These cases demonstrate that citation judging is sensitive to retrieval artefact
 In the Social Norms CLD, all prompts failed to reliably discriminate hallucinations from valid edges, with high variance and confidence intervals barely exceeding chance level in AUC. This could reflect the complexity of the Social Norms domain, where causal mechanisms are behavioural and context-dependent rather than physiological, or it could indicate limitations in the literature ground truth quality for this domain. This limitation may stem from the Bradford Hill Criteria themselves, which were originally designed to assess causality in epidemiology and health sciences. Future research should investigate whether domain-adapted prompts or alternative causal frameworks would improve performance in behavioural domains.
 
 %------------------------------------------------------------------------------
-\section{RQ1a (Correctness Judge): Judge Performance}
+\section{RQ1 Interpretation: Judges as Screening Signals}
 \label{sec:discussion_rq1a_correctness}
-%------------------------------------------------------------------------------
-The key discussion-level implication is that correctness judging is informative as a \textit{screening signal}, but its reliability depends on the ground-truth construct (GT~Synth vs.\ GT~Lit) and the domain. The mechanisms in Section~\ref{sec:discussion_failure_mechanisms} explain why correctness-only judging can collapse into a coherence check under plausible corruptions and why this failure can intensify in behavioural domains.
-
-%------------------------------------------------------------------------------
-\section{RQ1a (Citation Judge): Judge Performance}
 \label{sec:discussion_rq1a_citation}
-%------------------------------------------------------------------------------
-Citation judging reframes edge validation as an \textit{evidence assessment} problem. Its practical limitations are therefore shaped by retrieval bias, evidence specificity, and aggregation choices---all of which are reflected in the failure mechanisms in Section~\ref{sec:discussion_failure_mechanisms}.
-
-\subsection{Implementation considerations and aggregation limitations}
-\label{sec:discussion_citation_aggregation}
-
-The citation-judge pipeline in this thesis uses a shallow, cost-constrained \emph{generate-then-search} approach: the model first generates a causal narrative and then retrieves and evaluates supporting snippets post hoc. This design increases recall (generation is not retrieval-bounded) but introduces several interpretation-relevant limitations. First, because queries are derived from the model's own narrative, retrieval is susceptible to confirmation bias and can preferentially surface topically aligned but non-causal evidence. Second, \texttt{NONE} (negative) claims are intrinsically hard to validate: absence of retrieved evidence can be misinterpreted as support (an ``evidence of absence'' asymmetry). Third, aggregation matters: in this thesis, per-citation verdicts are mapped to scores and aggregated by a simple mean, which is sensitive to citation count, search ranking, fetch failures (missing-at-random is not guaranteed), and redundant sources.
-
-Future work should therefore treat aggregation and selection as first-class design choices (not just implementation details), e.g., using median or top-$k$/max rules, or adding an explicit evidence-selection step (reranker/verifier) that chooses the single most informative citation for a more expensive causal judgement rather than averaging over mixed-quality evidence.
-
-%------------------------------------------------------------------------------
-\section{Empirical Validation: LLM--Human Agreement in CLD Evaluation}
 \label{sec:discussion_judge_human_agreement}
 %------------------------------------------------------------------------------
-To validate the applicability of LLM-as-a-Judge to CLD evaluation, we conducted human validation experiments measuring inter-rater agreement between LLM citation judges and a human validator across 72 causal edges from three independent datasets spanning two CLDs and two judge models (GPT-4.1 and Claude Sonnet 4).
+The failure mechanisms in Section~\ref{sec:discussion_failure_mechanisms} explain why LLM-based judges should be interpreted as \emph{screening signals} rather than definitive validators. This section synthesises the practical implications.
 
-\subsection{Results}
-The combined analysis yielded substantial agreement: Cohen's $\kappa = 0.618$ with 80.6\% exact agreement rate, and Pearson correlation $r = 0.732$ ($p < 0.001$) between LLM and human scores. This level of agreement meets the human inter-rater baseline ($\kappa \approx 0.60$) established in prior GMB validation studies~\citep{landis1977measurement}.
+\subsection{Correctness Judge}
+Correctness judging is informative but unreliable as a standalone validator. Its performance depends heavily on the ground-truth construct (GT~Synth vs.\ GT~Lit) and the domain. Under plausible corruptions, correctness-only judging collapses into a coherence check---validating the \emph{logic} of a claim rather than its factuality. This failure intensifies in behavioural domains (e.g., Social Norms) where causal mechanisms are context-dependent and harder to falsify through internal consistency alone.
 
-\subsection{Systematic Leniency Bias}
-Analysis of disagreements revealed a consistent pattern: 100\% of disagreements (14/14 cases) showed the LLM judge being more permissive than the human validator. The LLM never under-estimated evidence support (zero false negatives), but did over-estimate support where the human assigned lower scores. This asymmetric error profile suggests LLM citation judges provide useful but permissive screening---appropriate for identifying low-confidence edges requiring human review, but insufficient for strict validation without expert oversight.
+\subsection{Citation Judge}
+\label{sec:discussion_citation_aggregation}
+Citation judging reframes edge validation as an \emph{evidence assessment} problem, but its practical utility is constrained by retrieval bias, evidence specificity, and aggregation choices. The generate-then-search design introduces confirmation bias (queries derived from the model's own narrative) and an ``evidence of absence'' asymmetry for negative claims. Aggregation by simple mean is sensitive to citation count, search ranking, and fetch failures. These limitations are reflected in the failure mechanisms and motivate treating citation-based scores as soft signals requiring expert review rather than automated accept/reject thresholds.
 
-\subsection{Domain and Model Variability}
-Agreement varied substantially across datasets: from moderate ($\kappa = 0.461$, 66.7\% agreement) on Social Norms edges to almost perfect ($\kappa = 0.923$, 96.7\% agreement) on Depressive Symptoms edges judged by Claude. Notably, judge model had a larger effect than domain: on the same Depressive Symptoms CLD, the Claude judge achieved almost perfect agreement ($\kappa = 0.923$) while the GPT-4.1 judge showed only moderate agreement ($\kappa = 0.435$). This suggests that certain judge models may assess causal evidence in ways that align more closely with human judgement.
+\subsection{Human Validation: Systematic Leniency}
+Human validation (72 edges, two judge models) yielded substantial LLM--human agreement ($\kappa = 0.618$, 80.6\% exact match), meeting prior GMB inter-rater baselines~\citep{landis1977measurement}. However, 100\% of disagreements showed the LLM judge being \emph{more permissive} than the human validator---an asymmetric error profile suggesting LLM judges are useful for flagging low-confidence edges but insufficient for strict validation without expert oversight. Agreement also varied by model: Claude achieved almost perfect agreement ($\kappa = 0.923$) on the same CLD where GPT-4.1 showed only moderate agreement ($\kappa = 0.435$), suggesting model choice matters for alignment with human judgement.
 
 %------------------------------------------------------------------------------
 \section{RQ1b: Corrector Experiments}
@@ -168,17 +147,6 @@ This instability helps explain why prompt variants do not yield reliable differe
 
 The key implication from RQ2 is that generator-side UQ metrics provide limited, domain-dependent signal and do not robustly generalise across CLDs, undermining threshold-based triggering as a universal policy. In practice, these metrics are better treated as \textit{triage/monitoring signals} than as standalone hallucination detectors.
 
-\subsection{Single Metric Performance}
-
-Individual uncertainty quantification metrics achieved only modest discrimination:
-\begin{itemize}[noitemsep]
-    \item \textbf{Cosine Similarity:} AUC=0.671 (highest, but counterintuitive direction)
-    \item \textbf{Perplexity:} AUC=0.563
-    \item \textbf{Max Window Entropy:} AUC=0.554
-    \item \textbf{Min Probability:} AUC=0.479 (below chance)
-\end{itemize}
-Logprob-derived metrics perform near chance level, indicating weak discriminative power in isolation. Token-level logprobs conflate different uncertainty types---lexical, syntactic, and ontological---that are not necessarily indicative of hallucinations.
-
 \subsection{Counterintuitive Cosine Similarity Direction}
 \label{sec:cosine_paradox}
 
@@ -186,14 +154,7 @@ Cosine similarity was intended as a baseline metric, with the hypothesis that hi
 
 \subsection{Cross-Domain Generalisation Failure}
 
-Leave-one-CLD-out cross-validation revealed clear performance drops:
-\begin{itemize}[noitemsep]
-    \item \textbf{RF:} 0.809 $\rightarrow$ 0.629 ($\Delta$=0.179)
-    \item \textbf{GB:} 0.765 $\rightarrow$ 0.645 ($\Delta$=0.120)
-    \item \textbf{NN:} 0.739 $\rightarrow$ 0.648 ($\Delta$=0.092)
-    \item \textbf{LR:} 0.702 $\rightarrow$ 0.664 ($\Delta$=0.039)
-\end{itemize}
-The stronger in-distribution RF performance is misleading as a proxy for cross-domain usefulness: these models exploit CLD-specific patterns that do not generalise. Even the best out-of-CLD AUC ($\approx$0.66) is insufficient for reliable hallucination detection.
+Leave-one-CLD-out cross-validation revealed substantial performance drops across all ensemble classifiers (e.g., Random Forest AUC dropped from 0.81 in-distribution to 0.63 out-of-CLD). The strong in-distribution performance is misleading as a proxy for cross-domain usefulness: these models exploit CLD-specific patterns that do not generalise. Even the best out-of-CLD AUC ($\approx$0.66) is insufficient for reliable hallucination detection. Full performance breakdowns are reported in Results Section~\ref{sec:rq2_results}.
 
 \subsection{Implications for Original RQ3 Design}
 
@@ -214,20 +175,11 @@ The original RQ3 design proposed \textit{adaptive test-time compute allocation}:
 \end{enumerate}
 Our findings undermined both prerequisites. We therefore pivoted RQ3 to address: \textit{Can automated literature search validate causal claims?} This reframes the problem from ``correcting hallucinations'' to ``externally validating claims against scientific literature.''
 
-\subsection{Detection Rate Findings}
+\subsection{Detection Rate Findings and Human Validation}
 
-Deep Research found direct causal evidence for 70.5\% of true positives versus 62.4\% of false positives---a moderate TP--FP discrimination gap of 8.1 percentage points (Cohen's $h=0.17$). The high FP validation rate indicates that many ``false positives'' have retrievable causal evidence, and that automated literature search alone does not cleanly separate expert-included from expert-excluded edges.
+Deep Research found direct causal evidence for 70.5\% of true positives versus 62.4\% of false positives---a moderate aggregate TP--FP discrimination gap of 8.1 percentage points (Cohen's $h=0.17$). The high FP validation rate reinforces the central interpretive claim (Section~\ref{sec:discussion_framing}): many ``false positives'' have retrievable causal evidence and may represent contested edges rather than straightforward hallucinations. Detection rates varied substantially by domain, with the largest gap in Depressive Symptoms (+36~pp) and the smallest in Emergency Department (+6~pp); full breakdowns are in Results Section~\ref{sec:rq3_results}.
 
-Detection rates varied substantially by domain:
-\begin{itemize}[noitemsep]
-    \item \textbf{Depressive Symptoms:} TP--FP gap = +36~pp ($h=0.75$, significant)
-    \item \textbf{Social Norms:} TP--FP gap = +13~pp ($h=0.30$)
-    \item \textbf{Emergency Department:} TP--FP gap = +6~pp ($h=0.14$)
-\end{itemize}
-
-\subsection{Human Validation and Applicability Analysis}
-
-We conducted human validation on a stratified sample of 50 edges where Deep Research reported direct causal evidence. The dominant failure mode was variable mismatch: Deep Research often found causal evidence for related but different constructs (10/50 edges). Using an elbow-selected threshold of applicability $\geq$0.7, 33/50 edges (66\%) passed; among passing edges, 30/33 (90.9\%) were judged correct-causal.
+Human validation on 50 edges revealed that the dominant failure mode was variable mismatch: Deep Research often found causal evidence for related but different constructs (10/50 edges). Applying an applicability threshold ($\geq$0.7), 66\% of edges passed; among passing edges, 90.9\% were judged correct-causal. This suggests that with appropriate calibration, Deep Research can provide high-precision evidence support for a substantial fraction of generated edges.
 
 \subsection{Ground Truth Enrichment Analysis}
 
@@ -251,15 +203,17 @@ The RQ3 pivot occurred late in the research timeline, constraining investigation
 \label{sec:discussion_synthesis}
 %------------------------------------------------------------------------------
 
-Taken together, our findings paint a nuanced picture of automated CLD generation and validation feasibility. Rather than re-stating individual result interpretations, we synthesize the cross-cutting implications and point to the Results chapter for the supporting evidence:
+Taken together, our findings paint a nuanced picture of automated CLD generation and validation feasibility. Rather than re-stating individual result interpretations, we synthesise the cross-cutting implications.
 
-\begin{itemize}[noitemsep]
-    \item \textbf{LLM generators recover non-trivial causal structure, but performance remains modest.} The generator exceeds a random baseline, indicating non-random structure capture; however, alignment with expert GT~Lit remains far from perfect (see Results Sections~\ref{sec:results_generator_model_comparison} and~\ref{sec:results_generator_baseline_validation}).
-    \item \textbf{Judges are best treated as screening signals, not universal validators.} Performance transfers strongly from controlled synthetic settings to expert ground truth only partially and is domain dependent; citation-based judging is especially constrained by evidence type and retrieval quality (Results Section~\ref{sec:rq1a_results}).
-    \item \textbf{Judge-guided correction is unreliable on expert ground truth.} Correctors can improve the judge signal without reliably improving GT~Lit alignment, motivating conservative deployment and human oversight (Results Section~\ref{sec:rq1b_results}).
-    \item \textbf{UQ metrics provide limited, non-robust signal across domains.} Their practical role is triage/monitoring rather than a standalone, cross-domain hallucination detector (Results Section~\ref{sec:rq2_results}; see also Section~\ref{sec:cosine_paradox} for an illustrative counterexample).
-    \item \textbf{Deep Research reframes test-time compute from correction to validation/enrichment.} Automated literature search can validate many generated claims and supports exploratory enrichment analyses, but introduces cost and applicability constraints and does not fully resolve the expert-scope vs.\ hallucination ambiguity (Results Section~\ref{sec:rq3_results}).
-\end{itemize}
+LLM generators recover non-trivial causal structure, but performance remains modest. The generator exceeds a random baseline by 2--3$\times$, indicating non-random structure capture; however, alignment with expert GT~Lit remains far from perfect, and performance varies substantially across CLD domains.
+
+Judges are best treated as screening signals, not universal validators. Performance transfers from controlled synthetic settings to expert ground truth only partially and is domain dependent. Citation-based judging is especially constrained by evidence type and retrieval quality; correctness-based judging collapses into coherence checks when corruptions are plausible. Both judge types exhibit systematic leniency relative to human validators.
+
+Judge-guided correction is unreliable on expert ground truth. Correctors can improve the judge signal without reliably improving GT~Lit alignment---a Goodhart-like dynamic where the corrector learns to satisfy the judge rather than the underlying quality objective. This motivates conservative deployment and human oversight.
+
+UQ metrics provide limited, non-robust signal across domains. Individual logprob-derived and embedding-based metrics achieve weak discrimination, and ensemble classifiers that perform well in-distribution fail to generalise across CLDs. Their practical role is triage or monitoring rather than standalone hallucination detection.
+
+Deep Research reframes test-time compute from correction to validation and enrichment. Automated literature search can validate many generated claims---including a majority of edges labelled ``false positive'' under GT~Lit---supporting the central claim (Section~\ref{sec:discussion_framing}) that FP mass conflates true hallucinations with contested edges. However, Deep Research introduces cost and applicability constraints and does not fully resolve the expert-scope vs.\ hallucination ambiguity; expert judgement remains essential.
 
 %------------------------------------------------------------------------------
 \section{Practical Recommendations}
@@ -285,107 +239,29 @@ Based on our findings, we offer the following recommendations for practitioners 
 \label{sec:discussion_limitations}
 %------------------------------------------------------------------------------
 
-This section consolidates threats to internal, construct, external, and conclusion validity, as well as practical limitations of the experimental design. Several of these issues were anticipated and mitigated in the Methods (Section~\ref{sec:threats_to_validity}); here we discuss their implications for interpreting results.
+This section consolidates threats to internal, construct, external, and conclusion validity. Several issues were anticipated and mitigated in Methods (Section~\ref{sec:threats_to_validity}); here we discuss their implications for interpreting results.
 
-\subsection{External Validity: Model and Domain Dependence}
+\subsection{Model and Domain Dependence}
 
-All experiments used GPT-4.1 as the primary LLM for generation and GPT-4.1/GPT-5-mini for judging. Performance characteristics may differ substantially for other foundation models (Claude, Gemini, open-source alternatives), and our conclusions may not transfer to other LLM families with different training data, architectures, or alignment procedures.
+All experiments used GPT-4.1 for generation and GPT-4.1/GPT-5-mini for judging. Performance may differ for other foundation models (Claude, Gemini, open-source alternatives), and conclusions may not transfer across LLM families with different training data, architectures, or alignment procedures.
 
-All three primary CLDs focus on health-related domains (Depressive Symptoms, Emergency Department visits, Social Norms). Generalisation to other scientific domains (physics, economics, ecology) cannot be assumed without validation on domain-diverse CLD corpora. Auxiliary validation on physics CLDs showed positive results for citation and correctness judges, partially mitigating this concern, but systematic cross-domain evaluation remains future work.
+All three primary CLDs focus on health-related domains. Generalisation to other scientific domains (physics, economics, ecology) cannot be assumed without validation on domain-diverse CLD corpora. Auxiliary validation on physics CLDs showed positive results, partially mitigating this concern, but systematic cross-domain evaluation remains future work.
 
-\subsection{Construct Validity: Ground Truth Definitions}
+\subsection{Construct Validity}
 
-Our GT Synth (synthetic corruption) and GT Lit (literature ground truth) represent different constructs. GT Synth provides high internal validity (we know exactly what was corrupted) but may not capture the full spectrum of natural hallucination types. GT Lit provides ecological validity (expert CLDs represent real-world targets) but conflates genuine errors with scope decisions. The performance gap between these conditions reflects this construct difference as much as detection difficulty.
+GT Synth and GT Lit represent different constructs. GT Synth provides high internal validity but may not capture the full spectrum of natural hallucination types. GT Lit provides ecological validity but conflates genuine errors with scope decisions---the central interpretive issue discussed in Section~\ref{sec:discussion_framing}. Measurement choices also influence construct validity: the fixed threshold (judge score $\le 0.5$) trades precision vs.\ recall, and citation judging evaluates \emph{retrieved evidence support} rather than the causal relationship in the abstract. The fixed synthetic corruption rate (30\%) limits interpretability; future work should ablate across rates to calibrate transfer to natural error distributions.
 
-Additionally, measurement choices influence construct validity: (i) the fixed threshold (judge score $\le 0.5$) is an operational decision that trades precision vs.\ recall; (ii) citation judging evaluates \textit{retrieved evidence support} for the generated narrative rather than the causal relationship in the abstract, so failures in evidence specificity or variable-term mapping can appear as ``unsupported'' edges even when the relationship is plausible.
+\subsection{Retrieval and Temporal Dependence}
 
-\subsection{External Validity: Retrieval and Temporal Dependence}
+Citation-based judging depends on the retrieval stack (search index, query formulation, paywalls, HTML structure). Search results and website content can drift over time, limiting strict reproducibility. Both Citation Judge and Deep Research inherently search for \emph{supporting} rather than disconfirming evidence, introducing confirmation bias that may inflate validation rates for both true and false positives. Different search providers (PubMed, Semantic Scholar, Google Scholar) may return different result sets; our Uleman's validation partially addresses this, but systematic provider comparison was not conducted. The fetcher used to convert URLs to judge-readable text affects both cost and coverage: our custom fetcher achieved 89--100\% coverage on health CLDs but only 54.8\% on physics CLDs, indicating limited cross-domain transfer.
 
-Citation-based judging depends on the retrieval and fetching stack (search index, query formulation, paywalls/HTML structure). Even with fixed code, search results and website content can drift over time, limiting strict reproducibility and external validity of citation-based scores. CLD variable naming and narrative phrasing can also mismatch the terminology used in the literature, potentially depressing retrieval quality and creating domain-specific failure modes.
+\subsection{Statistical Power and Sample Size}
 
-\subsection{Sensitivity Analysis Constraints}
+The nested data structure creates a power asymmetry: edge-level analyses ($n = 31{,}704$ edges) achieve power $\approx 1.0$, enabling detection of trivially small effects, while CLD-level analyses ($n = 3$ domains) are substantially underpowered. Edge-level statistics are dominated by larger CLDs (Emergency Department contributes 1,122 of 1,394 possible edges) while representing only single independent observations at the domain level. Statistically significant edge-level findings may not generalise across domains, as confirmed by leave-one-CLD-out validation. Human validation samples (72 and 50 edges) were sufficient for effect-size estimation but would benefit from larger samples for subgroup analyses.
 
-Due to computational costs, systematic local and global sensitivity analyses were not conducted. A defensible global sensitivity analysis would require varying not only inference hyperparameters (e.g., temperature and top-$p$), but also \textit{problem instances} (CLD domains/variants), because optimal settings may be domain-dependent. Even a modest 5-level grid over temperature and top-$p$ yields $5^2 = 25$ configurations; replicated across three seeds and three CLDs this becomes $25 \times 3 \times 3 = 225$ full CLD generations, before accounting for additional prompt variants or more CLD datasets. Because each CLD run evaluates a dense edge space ($|V|(|V|-1)$ ordered pairs) and can trigger downstream judging and correction, total API calls and cost scale multiplicatively, rendering comprehensive sensitivity mapping infeasible within our budget constraints.
+\subsection{Budget and Design Constraints}
 
-We did not explore interactions between temperature and top-$p$, prompt variants, and CLD domain (i.e., whether the same settings generalise across domains), or their joint effects on generation quality. While our generator temperature ANOVA (Results Section~\ref{sec:results_generator_temp_robustness}; see Appendix~\ref{app:statistical_procedures_reference}) showed no significant effect within the tested range, this represents a limited probe rather than comprehensive sensitivity mapping.
-
-\textbf{LLM parameter choice justifications.} Key LLM parameters---generator model (GPT-4.1), judge temperature ($T=0.0$), corrector temperature ($T=0.7$), and corruptor configuration---were selected through theoretical arguments and limited empirical validation rather than exhaustive search (see Chapter~\ref{sec:experimental_design}). Generator model selection was based on a single-run comparison across three candidates; judge/corrector temperatures followed established recommendations from the LLM-as-a-Judge literature~\citep{liu2023gevalnlgevaluationusing, zheng2024judging, madaan2023selfrefineiterativerefinementselffeedback}; corruptor settings matched generator parameters to minimise stylistic confounds. These choices are defensible but not optimised.
-
-\textbf{Classifier hyperparameters.} The ensemble classifiers (Random Forest, Gradient Boosting, Logistic Regression, Neural Network) used fixed hyperparameters without systematic tuning: RF and GB used 100 estimators; MLP used hidden layers (32, 16); Logistic Regression used sklearn defaults. For performance estimation and feature selection we used \textbf{block-level} cross-validation (3-fold GroupKFold over CLD$\times$run blocks) and a single held-out block split for Phase 5; no hyperparameter search (e.g., GridSearchCV, RandomizedSearchCV) was conducted. Classifier performance could potentially improve with tuned hyperparameters, though the leave-one-CLD-out generalisation gap (Phase 5 $\rightarrow$ Phase 6) suggests that overfitting to CLD-specific patterns---rather than suboptimal hyperparameters---is the primary limitation.
-
-\textbf{Temperature relevance for future work.} Temperature sensitivity analysis may become less relevant as frontier models evolve. Several recent models (e.g., OpenAI's o1/o3 reasoning models, some Claude configurations) do not expose temperature controls or use alternative sampling strategies (e.g., best-of-$n$ with internal verifiers). Future replication studies should assess whether temperature remains a meaningful hyperparameter for the specific models employed.
-
-\subsection{Human Validation Sample Size}
-
-Human validation was conducted on 72 edges (LLM-human agreement) and 50 edges (DR applicability). While sufficient for estimating effect sizes and identifying patterns, larger samples would provide tighter confidence intervals and enable subgroup analyses.
-
-\subsection{Conclusion Validity: Statistical Power and Multiple Comparisons}
-
-The nested data structure creates a power asymmetry: edge-level analyses ($n = 31{,}704$ edges) achieve power $\approx 1.0$, enabling detection of even trivially small effects that may lack practical significance. Conversely, CLD-level analyses ($n = 3$ domains) are substantially underpowered. Under our edge representation, CLDs contribute different numbers of ordered (source, target) pairs ($|V|(|V|-1)$): Social Norms has $10\times 9=90$, Depressive Symptoms has $14\times 13=182$, and Emergency Department has $34\times 33=1{,}122$. As a result, edge-level statistics are dominated by larger CLDs while still representing only single independent observations at the domain level. This structure means that statistically significant edge-level findings may not generalise across domains, as confirmed by leave-one-CLD-out validation showing substantial AUC degradation. Interpreting edge-level p-values requires attention to effect sizes and cross-CLD consistency rather than significance alone.
-
-While our multi-CLD validation spans diverse domains, the total number of CLDs (n=3) limits statistical power for meta-analytic conclusions. At the same time, edge-only evaluation induces a large number of edge-level test cases per CLD ($|V|(|V|-1)$ ordered pairs): across our three CLDs this totals 1,394 possible directed edges, enabling fine-grained within-domain analyses. This dense edge space does not substitute for more independent domains, but it partially mitigates data scarcity at the edge level. Larger-scale validation across additional CLDs and scientific domains would strengthen generalizability claims.
-
-
-
-\subsection{Reliability: LLM Stochasticity and Judge Biases}
-
-We mitigate LLM randomness by fixing seeds where supported and using $T{=}0$ for judges, but model/provider updates can still change outputs over time. While we ran 3 replicates per experimental condition, some analyses (particularly Deep Research) were single-run due to cost constraints. Additionally, the Deep Research system has many degrees of freedom (query count, iteration depth, scoring thresholds, agent prompts) that were not systematically ablated, limiting the ability to attribute performance to specific design choices.
-
-LLM judges can be systematically lenient or sceptical depending on prompt framing. For citation judging, Section~\ref{sec:discussion_citation_aggregation} details how generate-then-search query formation and simple score aggregation can create confirmation bias and an ``evidence of absence'' failure mode for \texttt{NONE} edges.
-
-\subsection{Confirmation Bias in Retrieval}
-
-Both Citation Judge retrieval and Deep Research 
-inherently search for \textit{supporting} 
-evidence rather than disconfirming evidence. This 
-confirmation bias may inflate validation rates 
-for both true positives and false positives, as 
-the systems are not designed to find evidence 
-that a relationship does \textit{not} exist.
-
-\subsection{Budget Constraints}
-
-Cost limitations affected multiple design decisions: (1) using only the top 5 search results for citation retrieval; (2) limiting Deep Research to single runs per edge; (3) using GPT-5-mini for some experiments where GPT-4.1 would have maintained consistency. These constraints may have underestimated the potential of more thoroughly resourced pipelines.
-In particular, Deep Research evaluation did not include true negative edges (1,109 of 1,394 possible) due to cost (estimated at \$269), leaving TN analysis incomplete and potentially biasing enrichment estimates.
-
-
-
-
-
-
-\subsection{Synthetic Corruption Rate Fixed at 30\%}
-Synthetic corruption experiments in this thesis use a fixed corruption rate of 30\% for all runs. This rate was chosen as a pragmatic default aligned with HaluEval-inspired corruption strategies and to ensure a substantial fraction of positive labels (\texttt{corrupted=True}) for stable discrimination estimates under our fixed run budget. However, a fixed rate limits interpretability: detection performance may vary nonlinearly with corruption prevalence and corruption severity. Future work should include a small corruption-rate ablation (e.g., 10\% / 30\% / 50\%) to test sensitivity of judge performance to the corruption base rate and to better calibrate how synthetic-benchmark results translate to naturally occurring CLD errors.
-
-\subsection{Local Embedding Model Limitations}
-
-We used \texttt{all-mpnet-base-v2} for cosine similarity computation based on computational efficiency and general MTEB performance. However, domain-specific embedding models trained on scientific literature may yield improved performance:
-\begin{itemize}[noitemsep]
-    \item \textbf{SPECTER}~\citep{cohan2020specter}: Trained on citation graphs, modelling document relationships in academic text
-    \item \textbf{SciBERT embeddings}: Pre-trained on Semantic Scholar corpus
-    \item \textbf{PubMedBERT}: Specialized for biomedical text, relevant for health-related CLDs
-\end{itemize}
-
-The trade-off between general-purpose models (broader coverage, faster inference) and domain-specific models (higher semantic fidelity for scientific text) remains unexplored.
-
-\subsection{Search Provider Heterogeneity}
-
-We primarily used Brave Search API for citation retrieval. Different search providers (PubMed API, Semantic Scholar, Google Scholar) may return different result sets, affecting judge scores and detection rates. Our Uleman's validation partially addresses this by comparing multiple providers, but systematic provider comparison across all experiments was not conducted. More broadly, a better calibration approach for distinguishing \textit{evidence of absence} from \textit{absence of evidence} would be valuable, so that the judge becomes appropriately more critical when evaluating negative edges.
-
-\subsection{Fetching Efficiency and Cost--Performance Tradeoffs}
-
-Beyond the choice of search provider, the \textit{fetcher} used to convert URLs into judge-readable text is a major determinant of both cost and effective coverage. Paywall-bypassing fetchers such as Jina AI Reader can achieve near-complete coverage (100\% on Uleman's), but at materially higher cost. We therefore used our custom citation fetcher (Brave Search + lightweight ContentScraper) as a pragmatic cost--performance tradeoff: it achieved 89\% coverage on Uleman's with comparable mean judge scores to alternatives, and near-saturated retrieval on our GT Lit citation experiments (Depressive Symptoms 100.0\%, Social Norms 99.7\%, Emergency Department 97.9\%). However, the physics CLD validation highlights limited transfer: even with expert-curated references, the same web-only fetching regime achieved only 54.8\% retrieval, indicating that ``high coverage in-domain'' does not guarantee high coverage in other scientific domains when sources are concentrated in paywalled textbooks or restricted publisher sites.
-
-\subsection{Token-Level Uncertainty Quantification}
-
-Our experiments with LUQ yielded limited success. While computationally efficient, token-level entropy and probability-based confidence measures failed to reliably distinguish correct from hallucinated causal relationships.
-
-This finding aligns with theoretical critiques of probability-based uncertainty estimation~\citep{ma2025estimatingllmuncertainty}. Softmax normalization discards information about evidence strength: low probability could indicate genuine uncertainty or the presence of multiple valid continuations. Standard entropy measures conflate these scenarios.
-
-This limitation is particularly pronounced in causal extraction. When generating relationship types or variable names, multiple tokens may be contextually appropriate (different but semantically equivalent phrasings). Probability-based methods flag these as unreliable even when the model has robust knowledge of the underlying causal structure. Approaches like LogU~\citep{ma2025estimatingllmuncertainty} attempt to recover evidence strength through Dirichlet distribution modelling, but require internal model states unavailable through commercial APIs.
-
-\subsection{Sample Size Considerations}
-
-While our multi-CLD validation spans diverse domains, the total number of CLDs (n=3) limits statistical power for meta-analytic conclusions. At the same time, edge-only evaluation induces a large number of edge-level test cases per CLD ($|V|(|V|-1)$ ordered pairs): across our three CLDs this totals 1,394 possible directed edges, enabling fine-grained within-domain analyses. This dense edge space does not substitute for more independent domains, but it partially mitigates data scarcity at the edge level. Larger-scale validation across additional CLDs and scientific domains would strengthen generalizability claims.
+Cost limitations affected multiple design decisions: top-5 search results for citation retrieval, single-run Deep Research per edge, use of GPT-5-mini where GPT-4.1 would have maintained consistency, and exclusion of true negative edges from Deep Research evaluation (1,109 of 1,394 possible). Systematic sensitivity analysis was not conducted due to multiplicative cost scaling. Key LLM parameters (generator model, judge/corrector temperatures) were selected through theoretical arguments and limited empirical validation rather than exhaustive search~\citep{liu2023gevalnlgevaluationusing, zheng2024judging, madaan2023selfrefineiterativerefinementselffeedback}. Ensemble classifier hyperparameters used fixed defaults without tuning; the leave-one-CLD-out generalisation gap suggests overfitting to CLD-specific patterns is the primary limitation. Token-level uncertainty quantification (logprob-derived metrics) yielded limited success, consistent with theoretical critiques that softmax normalisation discards evidence strength~\citep{ma2025estimatingllmuncertainty}. Domain-specific embedding models (SPECTER, SciBERT, PubMedBERT) were not evaluated but may yield improved cosine-similarity discrimination.
 
 %------------------------------------------------------------------------------
 \section{Future Work}
