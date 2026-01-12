@@ -11,7 +11,7 @@ Computational reproducibility package for the MSc thesis:
 
 ```bash
 git clone https://github.com/NitaiNijholt/cld-hallucination-detection.git
-cd cld-hallucination-detection/thesis/reproducible_version
+cd cld-hallucination-detection/thesis/final_thesis/def_submission_template
 pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
@@ -22,7 +22,7 @@ pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ### Step 2: Run Reproduction (~10 minutes)
 
 ```bash
-cd ../..
+cd ../../..
 uv sync
 uv run python final_runs/reproduce_all_thesis_assets.py
 ```
@@ -31,11 +31,10 @@ uv run python final_runs/reproduce_all_thesis_assets.py
 
 ---
 
-### Step 3: Remove Draft Mode and Recompile
+### Step 3: Recompile
 
 ```bash
-cd thesis/reproducible_version
-sed -i 's/oneside, draft/oneside/' main.tex
+cd thesis/final_thesis/def_submission_template
 pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
