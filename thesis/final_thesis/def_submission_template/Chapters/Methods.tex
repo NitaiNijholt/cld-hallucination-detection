@@ -888,7 +888,7 @@ where $t_{0.975,\,N-1}$ is the critical value from the $t$-distribution with $N-
 \end{equation}
 where $z = 1.96$ for 95\% confidence. Unlike the normal approximation (Wald interval), the Wilson interval avoids overshoot beyond $[0,1]$ and provides better coverage for proportions near 0 or 1, making it suitable for detection rates and accuracy metrics.
 
-\textbf{Interpretation:} Readers should interpret small-$N$ intervals ($N < 10$) as approximate rather than precise; confirmatory conclusions rely on block-based non-parametric tests (Friedman/Wilcoxon) rather than visual CI overlap. CV fold scores are not independent draws (folds share training data), so fold-based intervals should not be interpreted as strict confidence intervals.
+\textbf{Interpretation of confidence intervals:} Readers should interpret small-$N$ intervals ($N < 10$) as approximate rather than precise; confirmatory conclusions rely on block-based non-parametric tests (Friedman/Wilcoxon) rather than visual CI overlap. CV fold scores are not independent draws (folds share training data), so fold-based intervals should not be interpreted as strict confidence intervals.
 
 \textbf{Statistical Power.} Given the small number of independent blocks ($N=9$), our main repeated-measures analyses have limited sensitivity to small effects; null results should therefore not be over-interpreted as evidence of no effect. We emphasise standardised effect sizes alongside $p$-values (Table~\ref{tab:effect_size_summary}, Results).
 
