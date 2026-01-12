@@ -1018,4 +1018,6 @@ All analysis scripts and experimental result data required to reproduce the thes
 
 Our data are highly structured: many edges come from the same generation scenario, and multiple prompt variants are evaluated within the same (CLD$\times$run) block. To mitigate pseudo-replication and leakage, we adopt block-aware design choices: (i) treating (CLD$\times$run) as the independent unit for prompt comparisons ($N=9$ blocks; Section~\ref{sec:block_design}); (ii) using group-aware cross-validation splits that keep entire blocks together (GroupKFold / GroupShuffleSplit; Section~\ref{sec:rq2_analysis}); and (iii) treating edge-level results as descriptive diagnostics rather than inferential claims.
 
+\textbf{Statistical power.} With $N=9$ blocks, statistical power is limited; non-significant results should not be interpreted as evidence of no effect. We prioritise effect sizes and confidence intervals over $p$-values alone, and interpret null findings conservatively.
+
 A comprehensive discussion of validity threats---including construct validity (what ``hallucination'' measures in GT Lit vs.\ GT Synth), external validity (domain, model, and retrieval dependence), conclusion validity (statistical power and multiple comparisons), and reliability concerns (LLM stochasticity and judge biases)---is provided in Section~\ref{sec:discussion_limitations}.
