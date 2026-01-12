@@ -37,7 +37,7 @@ Figure~\ref{fig:cld_pipeline} presents the complete CLD generation, judging, cor
 \label{sec:generator}
 %------------------------------------------------------------------------------
 
-\textbf{Design rationale:} The generator decomposes CLD construction into edge-level decisions with mediation checks and UQ metric capture. For full motivation of the pairwise generation approach, relationship constraints, and connection to prior CLD-to-SDM pipelines, see Appendix~\ref{app:generator_design_rationale}.
+\textbf{Design rationale:} The generator decomposes CLD construction into edge-level decisions with mediation checks and UQ metric capture. For full motivation of the pairwise generation approach, relationship constraints, and connection to prior CLD-to-SDM pipelines, see Appendix~\ref{app:generator_design_rationale}. \textbf{Scope note:} The generator algorithm design choices (aside from UQ metrics capture) are out of scope for this thesis, as they represent the intellectual contribution of collaborators acknowledged in the Acknowledgements section.
 
 \subsection{Generator implementation}
 \textbf{Input:} Domain specification (target phenomenon, spatial/temporal scale, scope), optional seed node set.
@@ -497,18 +497,18 @@ Language barriers & Health literacy & \ldots & 1.242 & 0.041 & 0.630 & 0.840 \\
 This chapter defines the experimental task, operationalises hallucination for evaluation, and presents the experimental design for each research question.
 
 %------------------------------------------------------------------------------
-\section{Input and Scope}
+\section{Task, Scope and Input}
 \label{sec:task_definition}
 \label{sec:problem_setup} % Legacy label for backwards compatibility
 \label{sec:task_cld_hallucination_detection}
 \label{sec:task_cld_generation}
 %------------------------------------------------------------------------------
 
+\paragraph{Task \& Scope}
+The primary task evaluated is detecting and mitigating hallucinations in CLD edge predictions. Hallucination detection assigns each edge a binary label (hallucinated vs.\ non-hallucinated) under a specified ground-truth construct (GT Lit vs.\ GT Synth). Mitigation mechanisms (corrector / Deep Research) attempt to improve alignment. Generation itself is treated as a given input process and is outside (detailed) evaluation scope. By fixing the node set \(V\) to the GT Lit variables and evaluating downstream methods on the resulting edge tables, we isolate detection/mitigation performance from confounds due to differing node sets or generation variance.
+
 \paragraph{Input}
 Experiments operate on ordered edges \((A,B)\) over a fixed node set \(V\) obtained from ground-truth literature CLDs. For each edge, an LLM generator outputs a relationship label in \{\texttt{POSITIVE}, \texttt{NEGATIVE}, \texttt{NONE}\} plus a short mechanistic narrative (and, where applicable, citations). These edge tables constitute the input to all RQ1--RQ3 experiments. Full generation details are in Appendix~\ref{sec:algorithms} (Algorithm~\ref{alg:cld_generation}); data specifications are in Appendix~\ref{sec:data_availability}.
-
-\paragraph{Scope}
-The primary task evaluated is detecting and mitigating hallucinations in CLD edge predictions. Hallucination detection assigns each edge a binary label (hallucinated vs.\ non-hallucinated) under a specified ground-truth construct (GT Lit vs.\ GT Synth). Mitigation mechanisms (corrector / Deep Research) attempt to improve alignment. Generation itself is treated as a given input process and is outside evaluation scope. By fixing the node set \(V\) to the GT Lit variables and evaluating downstream methods on the resulting edge tables, we isolate detection/mitigation performance from confounds due to differing node sets or generation variance.
 
 %------------------------------------------------------------------------------
 \section{Hallucination Operationalisation}
@@ -547,12 +547,14 @@ GT Synth: \(y{=}1\) iff \texttt{corrupted=True}. GT Lit: \(y{=}1\) iff the gener
 \end{tabular}
 \end{table}
 
+\noindent This clarification is necessary because the same TP/FP/FN terminology is used in two distinct evaluation contexts throughout this thesis: generator performance (edge recovery against expert CLDs) and judge performance (hallucination detection against ground-truth labels). For example, when the generator predicts an edge that does not exist in the literature CLD, this is a generator FP (w.r.t.\ GT Lit). If the judge correctly flags this edge as hallucinated, this constitutes a judge TP (w.r.t.\ hallucination labels)---the judge correctly detected the generator's false positive.
+
 %------------------------------------------------------------------------------
 \section{Chapter Overview}
 \label{sec:exp_chapter_overview}
 %------------------------------------------------------------------------------
 
-This chapter follows a top-down structure: we first present a helicopter view of the end-to-end pipeline (Figure~\ref{fig:experimental_pipeline_overview}), then provide a master experimental overview table summarising the cross-RQ design space (Table~\ref{tab:master}), and finally drill down into per-RQ specifications (Sections~\ref{sec:rq1a_experiments}--\ref{sec:rq3_experiments}). Dataset locations are in Appendix~\ref{sec:data_availability}.
+This chapter follows a top-down structure: we first present a helicopter view of the end-to-end pipeline (Figure~\ref{fig:experimental_pipeline_overview}), then describe the experimental design framework (Section~\ref{sec:per_rq_design}), evaluation metrics (Section~\ref{sec:metrics_definitions}), and statistical analysis procedures (Section~\ref{sec:nonparam_framework}). We provide a master experimental overview table summarising the main components of each experiment (Table~\ref{tab:master}, Section~\ref{sec:master_experimental_overview}), followed by reproducibility details (Section~\ref{sec:reproduction}) and validity considerations (Section~\ref{sec:threats_to_validity}). Per-RQ experimental specifications are in Appendix~\ref{sec:rq1a_experiments}--\ref{sec:rq3_experiments}, placed there to aid readability given the large volume of experiments. Dataset locations are in Appendix~\ref{sec:data_availability}.
 
 \begin{figure}[H]
 \centering
@@ -998,17 +1000,17 @@ Each experiment in the Results chapter (Chapter~\ref{ch:results}) references its
 \label{sec:reproduction}
 %==============================================================================
 
-All analysis scripts, raw data, and execution commands required to reproduce the experimental results are available in the project repository:\footnote{\url{https://github.com/causalix/causalix.ai}}
+All analysis scripts and experimental result data required to reproduce the thesis outputs (figures and tables) are available in a public reproduction repository:\footnote{\url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction})}
 
 \begin{itemize}[noitemsep]
-    \item \textbf{Code and data:} Appendix~\ref{sec:code_availability}; raw results in \texttt{final\_runs/}
-    \item \textbf{Environment setup:} Appendix~\ref{sec:software_env} (Tables~\ref{tab:system_env},~\ref{tab:software_citations})
+    \item \textbf{Quick start:} Clone repository, install dependencies with \texttt{uv sync}, run \texttt{uv run python final\_runs/reproduce\_all\_thesis\_assets.py}
     \item \textbf{Unified entry points:} Appendix~\ref{sec:unified_entry_points} (Table~\ref{tab:final_runs_script_inventory})
-    \item \textbf{Execution commands:} Appendix~\ref{sec:execution_commands}
     \item \textbf{Data availability:} Appendix~\ref{sec:data_availability} (Tables~\ref{tab:gt_files},~\ref{tab:validation_datasets},~\ref{tab:experiment_datasets})
+    \item \textbf{Environment setup:} Appendix~\ref{sec:software_env} (Tables~\ref{tab:system_env},~\ref{tab:software_citations})
+    \item \textbf{Execution commands:} Appendix~\ref{sec:execution_commands} (simulation scripts; requires private platform access)
 \end{itemize}
 
-\noindent Analysis scripts run on provided raw data without API keys. Re-running generation/judging experiments requires OpenAI and Brave Search API keys.
+\noindent Analysis scripts regenerate all Results-chapter figures and tables from included experimental data without API keys. Re-running the original generation/judging experiments requires access to the private platform repository and OpenAI/Brave Search API keys.
 
 %==============================================================================
 \section{Validity Considerations}
