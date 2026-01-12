@@ -105,13 +105,7 @@ def generate_verification_report(output_dir: Path, project_root: Path) -> dict:
         "PRELIM": {
             "description": "Preliminary Analysis Figures & Tables",
             "patterns": ["*.png", "*.tex"],
-            "expected_count": 4,
-            "subdirs": ["."],
-        },
-        "VALIDATION": {
-            "description": "Validation Tables (TruthfulQA, Human, Uleman's, Physics)",
-            "patterns": ["*.tex"],
-            "expected_count": 6,
+            "expected_count": 2,
             "subdirs": ["."],
         },
     }
@@ -305,35 +299,6 @@ def main():
             env
         )
         
-        # =====================================================================
-        # VALIDATION: Validation Studies (TruthfulQA, Human, Uleman's, Physics)
-        # =====================================================================
-        validation_script = FINAL_RUNS / "VALIDATION_unified_analysis.py"
-        validation_output = output_dir / "VALIDATION"
-        results["VALIDATION"] = run_script(
-            validation_script,
-            f"--run-dir {validation_output}",
-            "VALIDATION: Validation Studies",
-            env
-        )
-        
-        # =====================================================================
-        # Effect Size Summary Table (generated/)
-        # =====================================================================
-        effect_size_script = FINAL_RUNS / "retrieve_effect_sizes.py"
-        if effect_size_script.exists():
-            print("\n" + "#"*80)
-            print("Running: Effect Size Summary Table")
-            print("#"*80)
-            try:
-                import subprocess
-                subprocess.run(f"python3 {effect_size_script}", shell=True, check=True, env=env)
-                results["EFFECT_SIZES"] = True
-                print("✅ Completed: Effect Size Summary Table")
-            except:
-                results["EFFECT_SIZES"] = False
-                print("❌ Failed: Effect Size Summary Table")
-        
         # Print run summary
         print("\n" + "="*80)
         print("ANALYSIS RUNS SUMMARY")
@@ -341,6 +306,57 @@ def main():
         for rq, success in results.items():
             if success is None:
                 status = "⏭️ Skipped"
+            elif success:
+                status = "✅ Success"
+            else:
+                status = "❌ Failed"
+            print(f"  {rq}: {status}")
+
+    # =========================================================================
+    # Generate Verification Report
+    # =========================================================================
+    report = generate_verification_report(output_dir, PROJECT_ROOT)
+    print_verification_report(report)
+    
+    # Save report to JSON
+    report_path = output_dir / "reproducibility_report.json"
+    with open(report_path, "w") as f:
+        json.dump(report, f, indent=2)
+    print(f"\n📄 Report saved to: {report_path}")
+    
+    # Create master 'latest' symlink
+    latest_link = output_dir.parent / "thesis_latest"
+    if latest_link.exists() or latest_link.is_symlink():
+        try:
+            latest_link.unlink()
+        except PermissionError:
+            pass
+    try:
+        latest_link.symlink_to(output_dir, target_is_directory=True)
+        print(f"🔗 Created symlink: {latest_link} → {output_dir.name}")
+    except (PermissionError, OSError):
+        pass
+
+    print("\n" + "="*80)
+    print("✅ REPRODUCIBILITY RUN COMPLETE")
+    print("="*80)
+    print(f"\nTo use reproduced assets in thesis:")
+    print(f"  1. Copy assets from {output_dir} to thesis/Figures/")
+    print(f"  2. Or update \\graphicspath in main.tex to include {output_dir}")
+    print(f"\nTo re-verify:")
+    print(f"  uv run python {Path(__file__).name} --verify-only --output-dir {output_dir}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+  status = "⏭️ Skipped"
             elif success:
                 status = "✅ Success"
             else:

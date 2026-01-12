@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\caption{RQ1a: Ground Truth Validation Performance (by CLD and Prompt)}
+\label{tab:rq1a_gt_main}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{CLD} & \textbf{Prompt} & \textbf{N} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{AUC} & \textbf{r$_{pb}$} \\
+\midrule
+Social Norms & Baseline & 329 & 0.148 & 0.487 & 0.226 & 0.627 & -0.162 \\
+ & Cot & 329 & 0.153 & 0.513 & 0.235 & 0.637 & -0.147 \\
+ & Mechanistic_lit & 330 & 0.119 & 1.000 & 0.212 & 0.417 & 0.095 \\
+ & Mechanistic_original & 329 & 0.116 & 0.976 & 0.207 & 0.385 & 0.224 \\
+\midrule
+Depressive & Baseline & 630 & 0.304 & 0.898 & 0.454 & 0.684 & -0.272 \\
+ & Cot & 630 & 0.320 & 0.899 & 0.471 & 0.701 & -0.297 \\
+ & Mechanistic_lit & 628 & 0.234 & 0.986 & 0.379 & 0.395 & 0.160 \\
+ & Mechanistic_original & 630 & 0.237 & 1.000 & 0.382 & 0.415 & 0.116 \\
+\midrule
+Emergency Dept & Baseline & 3479 & 0.176 & 0.557 & 0.267 & 0.550 & -0.053 \\
+ & Cot & 3506 & 0.171 & 0.592 & 0.264 & 0.565 & -0.067 \\
+ & Mechanistic_lit & 4664 & 0.152 & 0.844 & 0.256 & 0.471 & -0.032 \\
+ & Mechanistic_original & 3504 & 0.143 & 1.000 & 0.251 & 0.406 & 0.206 \\
+\midrule
+\bottomrule
+\end{tabular}
+\end{table}
