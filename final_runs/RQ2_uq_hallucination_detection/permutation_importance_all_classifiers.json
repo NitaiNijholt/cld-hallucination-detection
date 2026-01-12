@@ -1,0 +1,86 @@
+{
+  "Logistic Regression": {
+    "importances_mean": [
+      0.004562551317203211,
+      0.014383688266496227,
+      0.010495234645527818,
+      0.21360491619083877
+    ],
+    "importances_std": [
+      0.001745198387133059,
+      0.004534679838601219,
+      0.0036369329736753234,
+      0.010759391975098804
+    ],
+    "test_auc": 0.7024867103231913,
+    "features": [
+      "Gen Perplexity",
+      "Gen Min Prob",
+      "Gen Max Window Entropy",
+      "Gen Cosine Similarity"
+    ],
+    "n_permutations": 30,
+    "split": {
+      "method": "GroupShuffleSplit",
+      "test_size": 0.33,
+      "random_state": 42,
+      "group_definition": "block_id = CLD \u00d7 run"
+    }
+  },
+  "Random Forest": {
+    "importances_mean": [
+      0.11537976444228906,
+      0.06940440421846482,
+      0.09153815390528196,
+      0.22074979119302254
+    ],
+    "importances_std": [
+      0.006904189321410698,
+      0.008113298204163594,
+      0.006949806977363502,
+      0.011440612160589343
+    ],
+    "test_auc": 0.8148457614671352,
+    "features": [
+      "Gen Perplexity",
+      "Gen Min Prob",
+      "Gen Max Window Entropy",
+      "Gen Cosine Similarity"
+    ],
+    "n_permutations": 30,
+    "split": {
+      "method": "GroupShuffleSplit",
+      "test_size": 0.33,
+      "random_state": 42,
+      "group_definition": "block_id = CLD \u00d7 run"
+    }
+  },
+  "Gradient Boosting": {
+    "importances_mean": [
+      0.04829896670123009,
+      0.015778145157170773,
+      0.0209534236051727,
+      0.20382125614120283
+    ],
+    "importances_std": [
+      0.003538453818342037,
+      0.002532975149142441,
+      0.00361136217861027,
+      0.007231315951633694
+    ],
+    "test_auc": 0.764798261611426,
+    "features": [
+      "Gen Perplexity",
+      "Gen Min Prob",
+      "Gen Max Window Entropy",
+      "Gen Cosine Similarity"
+    ],
+    "n_permutations": 30,
+    "split": {
+      "method": "GroupShuffleSplit",
+      "test_size": 0.33,
+      "random_state": 42,
+      "group_definition": "block_id = CLD \u00d7 run"
+    }
+  }
+}

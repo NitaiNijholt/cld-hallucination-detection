@@ -1,0 +1,69 @@
+[
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Edge: Norm BMI -[NONE]-> Individual Ideal BMI\n\nAction: revise_motivation\n\nNew motivation: There is no direct causal relationship between the population's normative BMI and an individual's ideal BMI value. An individual's ideal BMI is determined by physiological, medical, and personal factors rather than the statistical norm of a population."
+  },
+  {
+    "source": "Group-level BMI",
+    "target": "Norm BMI",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (POSITIVE) is appropriate because higher group-level BMI can shift perceptions of what is considered 'normal' BMI upward; this is a well-established social phenomenon (norm recalibration). However, the original motivation inappropriately invoked a physiological/metabolic adaptation mechanism at the population level, which lacks strong empirical support. The more plausible and evidence-based mechanism is psychological and cultural: greater group-level BMI exposure leads to norm changes via perception and societal standards, not direct metabolic adaptation. Thus, I revised the motivation to reflect this.\n\nAction taken: \n- Updated the motivation to clarify the correct social/psychological pathway for the POSITIVE effect. The relationship type remains POSITIVE."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type \"NONE\" is correct for the relationship between \"Norm BMI\" and \"Healthy BMI,\" as there is no causal mechanism between these overlapping or synonymous terms. I have updated the motivation to explain that there is no causal relationship, since being in the normal BMI range already defines a healthy BMI and one does not cause the other."
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Total Daily Energy Intake (TDEI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: The edge was corrected from NONE to POSITIVE.\n\nCorrected Motivation:\n\"Increased physical activity raises energy expenditure, which stimulates appetite and prompts greater food intake as the body seeks to restore energy balance through hormonal and metabolic feedback mechanisms.\"\n\nJustification:\nPhysical activity causally increases the body's energy needs, leading to higher daily energy intake through well-established physiological feedback loops. The original NONE relationship was incorrect; a positive causal connection is supported by biological plausibility and empirical evidence.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Group-level BMI",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Revision complete.\n\n- The motivation was clarified to explain how increased physical activity leads to lower group-level BMI via increased energy expenditure, fat loss, and improved metabolic health. The NEGATIVE edge direction was already correct, as higher physical activity reduces (i.e., negatively affects) group-level BMI.\n\nNo edge type changes were needed\u2014just clearer causal explanation."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action taken: \nChanged edge type from NONE to POSITIVE.\n\nNew motivation:\n\"Socio-cultural ideals of body size are often influenced by prevalent body types in a population. When the average (norm) BMI increases or decreases, societal perceptions of the 'ideal' body often shift in the same direction, as people adjust their standards based on what is commonly seen around them.\"\n\nReasoning:\nThere is substantial evidence and plausible social mechanisms showing that the population's average body type (norm BMI) influences what is considered the socio-cultural ideal BMI. The previous NONE relationship was incorrect, so the edge was updated to POSITIVE with a clear causal motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "error",
+    "corrected": false,
+    "note": "Connection error."
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Socio-cultural ideals about BMI influence population norms and behaviors related to diet, physical activity, and body image, thereby affecting the average BMI at the group level. For example, if the ideal BMI promoted by society is lower, group-level BMI tends to decrease due to increased pressure to conform to that ideal.\")",
+    "new_type": "POSITIVE"
+  }
+]

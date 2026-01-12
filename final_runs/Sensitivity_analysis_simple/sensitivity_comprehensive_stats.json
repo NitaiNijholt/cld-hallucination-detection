@@ -1,0 +1,813 @@
+{
+  "timestamp": "2026-01-05 12:23:44",
+  "experiments": {
+    "Corr. Citation": {
+      "prompts": {
+        "Baseline": {
+          "n": 9,
+          "values": [
+            0.4528301886792453,
+            0.45627376425855515,
+            0.45454545454545453,
+            0.36430678466076694,
+            0.36565507031828276,
+            0.36363636363636365,
+            0.4094488188976378,
+            0.416,
+            0.416
+          ],
+          "mean": 0.4109662716662562,
+          "std": 0.036859815528569005,
+          "min": 0.36363636363636365,
+          "max": 0.45627376425855515,
+          "distance": 0.0,
+          "delta_f1": 0.0,
+          "latex_primary": "0.411 [0.364, 0.456]"
+        },
+        "CoT": {
+          "n": 9,
+          "values": [
+            0.45454545454545453,
+            0.4528301886792453,
+            0.45454545454545453,
+            0.3630952380952381,
+            0.3707533234859675,
+            0.37037037037037035,
+            0.4094488188976378,
+            0.4094488188976378,
+            0.4126984126984127
+          ],
+          "mean": 0.41085956446837985,
+          "std": 0.03514276490667372,
+          "min": 0.3630952380952381,
+          "max": 0.45454545454545453,
+          "distance": 0.018525242805480957,
+          "delta_f1": -0.00010670719787636562,
+          "latex_primary": "0.411 [0.363, 0.455]"
+        },
+        "Mechanistic": {
+          "n": 9,
+          "values": [
+            0.4528301886792453,
+            0.45627376425855515,
+            0.4528301886792453,
+            0.36445108289768485,
+            0.3694362017804154,
+            0.3724756918474196,
+            0.42276422764227645,
+            0.41935483870967744,
+            0.4094488188976378
+          ],
+          "mean": 0.4133183337102397,
+          "std": 0.035102945315586206,
+          "min": 0.36445108289768485,
+          "max": 0.45627376425855515,
+          "distance": 0.31601351499557495,
+          "delta_f1": 0.0023520620439834716,
+          "latex_primary": "0.413 [0.364, 0.456]"
+        },
+        "Mechanistic-Lit": {
+          "n": 9,
+          "values": [
+            0.4528301886792453,
+            0.45627376425855515,
+            0.4580152671755725,
+            0.36459114778694673,
+            0.3741648106904232,
+            0.37351190476190477,
+            0.41935483870967744,
+            0.4262295081967213,
+            0.4132231404958678
+          ],
+          "mean": 0.41535495230610153,
+          "std": 0.03505848589556244,
+          "min": 0.36459114778694673,
+          "max": 0.4580152671755725,
+          "distance": 0.3095563054084778,
+          "delta_f1": 0.0043886806398453215,
+          "latex_primary": "0.415 [0.365, 0.458]"
+        }
+      },
+      "prompt_effect": {
+        "prompts": [
+          "Baseline",
+          "CoT",
+          "Mechanistic",
+          "Mechanistic-Lit"
+        ],
+        "blocks": [
+          [
+            "depressive",
+            1
+          ],
+          [
+            "depressive",
+            2
+          ],
+          [
+            "depressive",
+            3
+          ],
+          [
+            "emergency_department",
+            1
+          ],
+          [
+            "emergency_department",
+            2
+          ],
+          [
+            "emergency_department",
+            3
+          ],
+          [
+            "social_norms",
+            1
+          ],
+          [
+            "social_norms",
+            2
+          ],
+          [
+            "social_norms",
+            3
+          ]
+        ],
+        "friedman": {
+          "p_value": 0.048666968265671205,
+          "chi2": 7.875,
+          "kendalls_w": 0.2916666666666667,
+          "n_blocks": 9,
+          "k": 4
+        },
+        "posthoc_wilcoxon": {
+          "m_pairs": 6,
+          "alpha_adj": 0.008333333333333333,
+          "pairs": {
+            "Baseline vs CoT": {
+              "p_value": 1.0,
+              "p_adj": 1.0,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic": {
+              "p_value": 0.296875,
+              "p_adj": 1.0,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic-Lit": {
+              "p_value": 0.046875,
+              "p_adj": 0.28125,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic": {
+              "p_value": 0.34765625,
+              "p_adj": 1.0,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic-Lit": {
+              "p_value": 0.01953125,
+              "p_adj": 0.1171875,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Mechanistic vs Mechanistic-Lit": {
+              "p_value": 0.078125,
+              "p_adj": 0.46875,
+              "significant_adj": false,
+              "n_blocks": 9
+            }
+          }
+        },
+        "friedman_p_adj": 0.19466787306268482,
+        "friedman_sig_adj": false,
+        "bonferroni_family": {
+          "n_tests": 4,
+          "alpha_original": 0.05,
+          "alpha_adjusted": 0.0125,
+          "tests": {
+            "Corr. Citation": {
+              "p_original": 0.048666968265671205,
+              "p_adjusted": 0.19466787306268482,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "Corr. Correctness": {
+              "p_original": 0.0017761035457343876,
+              "p_adjusted": 0.00710441418293755,
+              "significant_original": true,
+              "significant_adjusted": true,
+              "changed": false
+            },
+            "GT Citation": {
+              "p_original": 0.04205418289496644,
+              "p_adjusted": 0.16821673157986575,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "GT Correctness": {
+              "p_original": 0.013123728736941023,
+              "p_adjusted": 0.05249491494776409,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            }
+          },
+          "n_significant_original": 4,
+          "n_significant_adjusted": 1
+        }
+      }
+    },
+    "Corr. Correctness": {
+      "prompts": {
+        "Baseline": {
+          "n": 9,
+          "values": [
+            0.7874015748031497,
+            0.7377049180327869,
+            0.6610169491525424,
+            0.7588785046728972,
+            0.7431906614785992,
+            0.752851711026616,
+            0.8148148148148148,
+            0.8275862068965517,
+            0.8214285714285714
+          ],
+          "mean": 0.7672082124785032,
+          "std": 0.04973136134898992,
+          "min": 0.6610169491525424,
+          "max": 0.8275862068965517,
+          "distance": 0.0,
+          "delta_f1": 0.0,
+          "latex_primary": "0.767 [0.661, 0.828]"
+        },
+        "CoT": {
+          "n": 9,
+          "values": [
+            0.7131782945736435,
+            0.752,
+            0.6929133858267716,
+            0.7970749542961609,
+            0.7692307692307693,
+            0.7883211678832117,
+            0.8363636363636363,
+            0.8070175438596491,
+            0.8363636363636363
+          ],
+          "mean": 0.7769403764886087,
+          "std": 0.047503691008583065,
+          "min": 0.6929133858267716,
+          "max": 0.8363636363636363,
+          "distance": 0.012127816677093506,
+          "delta_f1": 0.00973216401010546,
+          "latex_primary": "0.777 [0.693, 0.836]"
+        },
+        "Mechanistic": {
+          "n": 9,
+          "values": [
+            0.6222222222222222,
+            0.6551724137931034,
+            0.6549707602339181,
+            0.7576687116564417,
+            0.7654320987654321,
+            0.7376543209876543,
+            0.7246376811594203,
+            0.7352941176470589,
+            0.7536231884057971
+          ],
+          "mean": 0.7118528349856719,
+          "std": 0.050083424304437574,
+          "min": 0.6222222222222222,
+          "max": 0.7654320987654321,
+          "distance": 0.18387138843536377,
+          "delta_f1": -0.05535537749283137,
+          "latex_primary": "0.712 [0.622, 0.765]"
+        }
+      },
+      "prompt_effect": {
+        "prompts": [
+          "Baseline",
+          "CoT",
+          "Mechanistic"
+        ],
+        "blocks": [
+          [
+            "depressive",
+            1
+          ],
+          [
+            "depressive",
+            2
+          ],
+          [
+            "depressive",
+            3
+          ],
+          [
+            "emergency_department",
+            1
+          ],
+          [
+            "emergency_department",
+            2
+          ],
+          [
+            "emergency_department",
+            3
+          ],
+          [
+            "social_norms",
+            1
+          ],
+          [
+            "social_norms",
+            2
+          ],
+          [
+            "social_norms",
+            3
+          ]
+        ],
+        "friedman": {
+          "p_value": 0.0017761035457343876,
+          "chi2": 12.666666666666657,
+          "kendalls_w": 0.7037037037037032,
+          "n_blocks": 9,
+          "k": 3
+        },
+        "posthoc_wilcoxon": {
+          "m_pairs": 3,
+          "alpha_adj": 0.016666666666666666,
+          "pairs": {
+            "Baseline vs CoT": {
+              "p_value": 0.25,
+              "p_adj": 0.75,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic": {
+              "p_value": 0.02734375,
+              "p_adj": 0.08203125,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic": {
+              "p_value": 0.00390625,
+              "p_adj": 0.01171875,
+              "significant_adj": true,
+              "n_blocks": 9
+            }
+          }
+        },
+        "friedman_p_adj": 0.00710441418293755,
+        "friedman_sig_adj": true,
+        "bonferroni_family": {
+          "n_tests": 4,
+          "alpha_original": 0.05,
+          "alpha_adjusted": 0.0125,
+          "tests": {
+            "Corr. Citation": {
+              "p_original": 0.048666968265671205,
+              "p_adjusted": 0.19466787306268482,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "Corr. Correctness": {
+              "p_original": 0.0017761035457343876,
+              "p_adjusted": 0.00710441418293755,
+              "significant_original": true,
+              "significant_adjusted": true,
+              "changed": false
+            },
+            "GT Citation": {
+              "p_original": 0.04205418289496644,
+              "p_adjusted": 0.16821673157986575,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "GT Correctness": {
+              "p_original": 0.013123728736941023,
+              "p_adjusted": 0.05249491494776409,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            }
+          },
+          "n_significant_original": 4,
+          "n_significant_adjusted": 1
+        }
+      }
+    },
+    "GT Citation": {
+      "prompts": {
+        "Baseline": {
+          "n": 9,
+          "values": [
+            0.4791666666666667,
+            0.40816326530612246,
+            0.4752475247524752,
+            0.27311522048364156,
+            0.2627118644067797,
+            0.2664714494875549,
+            0.2,
+            0.21428571428571427,
+            0.2641509433962264
+          ],
+          "mean": 0.3159236276427979,
+          "std": 0.10225190997523721,
+          "min": 0.2,
+          "max": 0.4791666666666667,
+          "distance": 0.0,
+          "delta_f1": 0.0,
+          "latex_primary": "0.316 [0.200, 0.479]"
+        },
+        "CoT": {
+          "n": 9,
+          "values": [
+            0.4919786096256685,
+            0.4270833333333333,
+            0.49473684210526314,
+            0.29190751445086704,
+            0.25178826895565093,
+            0.24495677233429394,
+            0.19230769230769232,
+            0.23728813559322035,
+            0.27586206896551724
+          ],
+          "mean": 0.32310102640794525,
+          "std": 0.10937100371404034,
+          "min": 0.19230769230769232,
+          "max": 0.49473684210526314,
+          "distance": 0.018525242805480957,
+          "delta_f1": 0.007177398765147336,
+          "latex_primary": "0.323 [0.192, 0.495]"
+        },
+        "Mechanistic": {
+          "n": 9,
+          "values": [
+            0.3783783783783784,
+            0.37209302325581395,
+            0.3969465648854962,
+            0.25316455696202533,
+            0.24868913857677902,
+            0.25018839487565936,
+            0.21311475409836064,
+            0.19672131147540983,
+            0.21138211382113822
+          ],
+          "mean": 0.2800753595921179,
+          "std": 0.07493887244000315,
+          "min": 0.19672131147540983,
+          "max": 0.3969465648854962,
+          "distance": 0.31601351499557495,
+          "delta_f1": -0.03584826805068003,
+          "latex_primary": "0.280 [0.197, 0.397]"
+        },
+        "Mechanistic-Lit": {
+          "n": 9,
+          "values": [
+            0.3735408560311284,
+            0.34782608695652173,
+            0.39846743295019155,
+            0.24962630792227206,
+            0.2646239554317549,
+            0.24393939393939393,
+            0.21138211382113822,
+            0.2,
+            0.22580645161290322
+          ],
+          "mean": 0.2794680665183671,
+          "std": 0.06983071763320324,
+          "min": 0.2,
+          "max": 0.39846743295019155,
+          "distance": 0.3095563054084778,
+          "delta_f1": -0.036455561124430824,
+          "latex_primary": "0.279 [0.200, 0.398]"
+        }
+      },
+      "prompt_effect": {
+        "prompts": [
+          "Baseline",
+          "CoT",
+          "Mechanistic",
+          "Mechanistic-Lit"
+        ],
+        "blocks": [
+          [
+            "depressive",
+            1
+          ],
+          [
+            "depressive",
+            2
+          ],
+          [
+            "depressive",
+            3
+          ],
+          [
+            "emergency_department",
+            1
+          ],
+          [
+            "emergency_department",
+            2
+          ],
+          [
+            "emergency_department",
+            3
+          ],
+          [
+            "social_norms",
+            1
+          ],
+          [
+            "social_norms",
+            2
+          ],
+          [
+            "social_norms",
+            3
+          ]
+        ],
+        "friedman": {
+          "p_value": 0.04205418289496644,
+          "chi2": 8.199999999999989,
+          "kendalls_w": 0.3037037037037033,
+          "n_blocks": 9,
+          "k": 4
+        },
+        "posthoc_wilcoxon": {
+          "m_pairs": 6,
+          "alpha_adj": 0.008333333333333333,
+          "pairs": {
+            "Baseline vs CoT": {
+              "p_value": 0.203125,
+              "p_adj": 1.0,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic": {
+              "p_value": 0.0078125,
+              "p_adj": 0.046875,
+              "significant_adj": true,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic-Lit": {
+              "p_value": 0.01953125,
+              "p_adj": 0.1171875,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic": {
+              "p_value": 0.0390625,
+              "p_adj": 0.234375,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic-Lit": {
+              "p_value": 0.0390625,
+              "p_adj": 0.234375,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Mechanistic vs Mechanistic-Lit": {
+              "p_value": 0.734375,
+              "p_adj": 1.0,
+              "significant_adj": false,
+              "n_blocks": 9
+            }
+          }
+        },
+        "friedman_p_adj": 0.16821673157986575,
+        "friedman_sig_adj": false,
+        "bonferroni_family": {
+          "n_tests": 4,
+          "alpha_original": 0.05,
+          "alpha_adjusted": 0.0125,
+          "tests": {
+            "Corr. Citation": {
+              "p_original": 0.048666968265671205,
+              "p_adjusted": 0.19466787306268482,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "Corr. Correctness": {
+              "p_original": 0.0017761035457343876,
+              "p_adjusted": 0.00710441418293755,
+              "significant_original": true,
+              "significant_adjusted": true,
+              "changed": false
+            },
+            "GT Citation": {
+              "p_original": 0.04205418289496644,
+              "p_adjusted": 0.16821673157986575,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "GT Correctness": {
+              "p_original": 0.013123728736941023,
+              "p_adjusted": 0.05249491494776409,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            }
+          },
+          "n_significant_original": 4,
+          "n_significant_adjusted": 1
+        }
+      }
+    },
+    "GT Correctness": {
+      "prompts": {
+        "Baseline": {
+          "n": 9,
+          "values": [
+            0.13513513513513514,
+            0.23684210526315788,
+            0.275,
+            0.14074074074074075,
+            0.15053763440860216,
+            0.13333333333333333,
+            0.18181818181818182,
+            0.37037037037037035,
+            0.23076923076923078
+          ],
+          "mean": 0.2060607479820836,
+          "std": 0.07569325117149517,
+          "min": 0.13333333333333333,
+          "max": 0.37037037037037035,
+          "distance": 0.0,
+          "delta_f1": 0.0,
+          "latex_primary": "0.206 [0.133, 0.370]"
+        },
+        "CoT": {
+          "n": 9,
+          "values": [
+            0.25316455696202533,
+            0.23376623376623376,
+            0.3132530120481928,
+            0.15384615384615385,
+            0.14545454545454545,
+            0.16,
+            0.25,
+            0.3076923076923077,
+            0.2962962962962963
+          ],
+          "mean": 0.23483034511841724,
+          "std": 0.06320204890397316,
+          "min": 0.14545454545454545,
+          "max": 0.3132530120481928,
+          "distance": 0.012127816677093506,
+          "delta_f1": 0.028769597136333647,
+          "latex_primary": "0.235 [0.145, 0.313]"
+        },
+        "Mechanistic": {
+          "n": 9,
+          "values": [
+            0.589041095890411,
+            0.5394736842105263,
+            0.5616438356164384,
+            0.5240384615384616,
+            0.4439140811455847,
+            0.47393364928909953,
+            0.20512820512820512,
+            0.32653061224489793,
+            0.358974358974359
+          ],
+          "mean": 0.4469642204486648,
+          "std": 0.11986264066768001,
+          "min": 0.20512820512820512,
+          "max": 0.589041095890411,
+          "distance": 0.18387138843536377,
+          "delta_f1": 0.2409034724665812,
+          "latex_primary": "0.447 [0.205, 0.589]"
+        }
+      },
+      "prompt_effect": {
+        "prompts": [
+          "Baseline",
+          "CoT",
+          "Mechanistic"
+        ],
+        "blocks": [
+          [
+            "depressive",
+            1
+          ],
+          [
+            "depressive",
+            2
+          ],
+          [
+            "depressive",
+            3
+          ],
+          [
+            "emergency_department",
+            1
+          ],
+          [
+            "emergency_department",
+            2
+          ],
+          [
+            "emergency_department",
+            3
+          ],
+          [
+            "social_norms",
+            1
+          ],
+          [
+            "social_norms",
+            2
+          ],
+          [
+            "social_norms",
+            3
+          ]
+        ],
+        "friedman": {
+          "p_value": 0.013123728736941023,
+          "chi2": 8.666666666666657,
+          "kendalls_w": 0.48148148148148096,
+          "n_blocks": 9,
+          "k": 3
+        },
+        "posthoc_wilcoxon": {
+          "m_pairs": 3,
+          "alpha_adj": 0.016666666666666666,
+          "pairs": {
+            "Baseline vs CoT": {
+              "p_value": 0.12890625,
+              "p_adj": 0.38671875,
+              "significant_adj": false,
+              "n_blocks": 9
+            },
+            "Baseline vs Mechanistic": {
+              "p_value": 0.01171875,
+              "p_adj": 0.03515625,
+              "significant_adj": true,
+              "n_blocks": 9
+            },
+            "CoT vs Mechanistic": {
+              "p_value": 0.01171875,
+              "p_adj": 0.03515625,
+              "significant_adj": true,
+              "n_blocks": 9
+            }
+          }
+        },
+        "friedman_p_adj": 0.05249491494776409,
+        "friedman_sig_adj": false,
+        "bonferroni_family": {
+          "n_tests": 4,
+          "alpha_original": 0.05,
+          "alpha_adjusted": 0.0125,
+          "tests": {
+            "Corr. Citation": {
+              "p_original": 0.048666968265671205,
+              "p_adjusted": 0.19466787306268482,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "Corr. Correctness": {
+              "p_original": 0.0017761035457343876,
+              "p_adjusted": 0.00710441418293755,
+              "significant_original": true,
+              "significant_adjusted": true,
+              "changed": false
+            },
+            "GT Citation": {
+              "p_original": 0.04205418289496644,
+              "p_adjusted": 0.16821673157986575,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            },
+            "GT Correctness": {
+              "p_original": 0.013123728736941023,
+              "p_adjusted": 0.05249491494776409,
+              "significant_original": true,
+              "significant_adjusted": false,
+              "changed": true
+            }
+          },
+          "n_significant_original": 4,
+          "n_significant_adjusted": 1
+        }
+      }
+    }
+  }
+}

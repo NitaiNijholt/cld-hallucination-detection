@@ -1,0 +1,26 @@
+{
+  "method": "Bonferroni",
+  "description": "Cross-experiment correction for 2 omnibus Friedman tests per Methods Section 4.5",
+  "experiments": [
+    "synthetic",
+    "groundtruth"
+  ],
+  "alpha_original": 0.05,
+  "alpha_adjusted": 0.025,
+  "results": {
+    "synthetic": {
+      "p_original": 0.04214384350927668,
+      "p_adjusted": 0.08428768701855335,
+      "significant_original": true,
+      "significant_adjusted": false,
+      "changed": true
+    },
+    "groundtruth": {
+      "p_original": 0.02847230184359264,
+      "p_adjusted": 0.05694460368718528,
+      "significant_original": true,
+      "significant_adjusted": false,
+      "changed": true
+    }
+  }
+}

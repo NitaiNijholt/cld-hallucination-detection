@@ -1,0 +1,57 @@
+======================================================================
+SIMPLIFIED PROMPT SENSITIVITY ANALYSIS
+======================================================================
+Timestamp: 2026-01-05 11:41:38
+
+Base directory: /home/nitai/code/causalix.ai/final_runs
+Output directory: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple
+
+Collecting data from all experiments...
+Processing: Corr. Citation...
+Processing: Corr. Correctness...
+Processing: GT Citation...
+Processing: GT Correctness...
+
+Data collected: 14 rows
+       Experiment          Prompt  Distance       F1   F1 Std  F1 CI Low  F1 CI High       ΔF1  N
+   Corr. Citation        Baseline  0.000000 0.397077 0.037899   0.366178    0.427976  0.000000  9
+   Corr. Citation             CoT  0.018525 0.397940 0.037951   0.366998    0.428881  0.000863  9
+   Corr. Citation     Mechanistic  0.316014 0.400021 0.036938   0.369905    0.430136  0.002944  9
+   Corr. Citation Mechanistic_Lit  0.309556 0.400653 0.037795   0.369839    0.431467  0.003576  9
+Corr. Correctness        Baseline  0.000000 0.763871 0.049274   0.723698    0.804044  0.000000  9
+Corr. Correctness             CoT  0.012128 0.777101 0.047480   0.738391    0.815811  0.013230  9
+Corr. Correctness     Mechanistic  0.183871 0.711772 0.050036   0.670978    0.752566 -0.052099  9
+      GT Citation        Baseline  0.000000 0.298768 0.082554   0.231462    0.366074  0.000000  9
+      GT Citation             CoT  0.018525 0.300190 0.086272   0.229853    0.370527  0.001422  9
+      GT Citation     Mechanistic  0.316014 0.279798 0.075750   0.218040    0.341556 -0.018970  9
+      GT Citation Mechanistic_Lit  0.309556 0.269949 0.078297   0.206114    0.333785 -0.028819  9
+   GT Correctness        Baseline  0.000000 0.206061 0.075693   0.144348    0.267773  0.000000  9
+   GT Correctness             CoT  0.012128 0.234830 0.063202   0.183302    0.286359  0.028770  9
+   GT Correctness     Mechanistic  0.183871 0.447105 0.119953   0.349307    0.544902  0.241044  9
+
+Computing repeated-measures ANOVA (partial η²)...
+  Corr. Citation: partial η²=0.305 (large), F(3,24)=3.52, p=0.0304 (*), n_subj=9, k=4
+  Corr. Correctness: partial η²=0.621 (large), F(2,16)=13.09, p=0.0004 (***), n_subj=9, k=3
+  GT Citation: partial η²=0.471 (large), F(3,24)=7.12, p=0.0014 (**), n_subj=9, k=4
+  GT Correctness: partial η²=0.679 (large), F(2,16)=16.95, p=0.0001 (***), n_subj=9, k=3
+
+Applying Bonferroni correction (4 tests within RQ1a family)...
+  α_adjusted = 0.0125
+  Corr. Citation: p=0.0304 → p_adj=0.1215 (ns)
+  Corr. Correctness: p=0.0004 → p_adj=0.0017 (SIG†)
+  GT Citation: p=0.0014 → p_adj=0.0055 (SIG†)
+  GT Correctness: p=0.0001 → p_adj=0.0004 (SIG†)
+
+Creating visualization...
+✓ Figure saved to: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple/prompt_sensitivity_figure.png
+Creating sensitivity index visualization...
+✓ Sensitivity index figure saved to: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple/sensitivity_index_figure.png
+Generating LaTeX table...
+✓ LaTeX table saved to: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple/prompt_sensitivity_table.tex
+Generating RM-ANOVA assumption checks table...
+✓ LaTeX assumptions table saved to: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple/prompt_sensitivity_assumptions_table.tex
+✓ Data saved to: /home/nitai/code/causalix.ai/final_runs/Sensitivity_analysis_simple/sensitivity_data.xlsx
+
+======================================================================
+ANALYSIS COMPLETE
+======================================================================

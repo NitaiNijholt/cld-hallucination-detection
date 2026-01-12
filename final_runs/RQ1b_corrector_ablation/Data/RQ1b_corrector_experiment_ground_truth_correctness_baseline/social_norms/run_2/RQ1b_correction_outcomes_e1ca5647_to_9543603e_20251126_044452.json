@@ -1,0 +1,134 @@
+[
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Norm BMI represents societal or cultural standards for what is considered a normal BMI, which can influence an individual's perception of their own ideal BMI. People often internalize social norms when forming personal body image goals.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"There is no direct causal relationship where having a healthy BMI causes someone to have a different individual ideal BMI. Individual ideal BMI is determined by personal factors such as genetics, age, sex, and health conditions, not by the current BMI category a person inhabits.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Individual Ideal BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Individuals often form their ideal BMI based on societal norms and cultural standards of what is considered a healthy or attractive body weight, which are reflected in the normative BMI values within their community.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Maintaining a healthy BMI leads to a BMI within the normal range, as 'healthy BMI' directly refers to values that fall within standard norms.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Basal Metabolic Rate",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew motivation: Physical activity level influences basal metabolic rate (BMR) indirectly by affecting muscle mass. Regular physical activity, especially resistance or strength training, increases muscle mass, and since muscle tissue requires more energy to maintain than fat tissue, this elevates the BMR. Thus, increased physical activity leads to higher BMR through the intermediary of increased muscle mass."
+  },
+  {
+    "source": "Body Mass Index (BMI)",
+    "target": "Basal Metabolic Rate",
+    "type": "POSITIVE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='POSITIVE', new_type='NONE', \nnew_motivation=\"There is no direct causal relationship between BMI and Basal Metabolic Rate (BMR). Both BMI and BMR are correlated due to underlying factors such as body mass and composition, but BMI itself, as a mathematical index of weight and height, does not directly affect BMR. The correlation is due to shared dependence on body mass, not a causal influence of BMI on BMR.\")",
+    "new_type": "NONE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased physical activity helps burn more calories and build muscle mass, which contributes to maintaining or achieving a healthy BMI by reducing body fat and improving metabolism.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Norm BMI refers to a BMI value within the normal range, which is associated with being considered at a healthy BMI. Therefore, being in the normal BMI range positively results in having a healthy BMI.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"The average or norm BMI in a population can shape perceptions of what is considered an ideal BMI within that culture. As the normative body size changes over time, societal standards and expectations regarding ideal body image may shift accordingly, reflecting the prevailing norms.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Basal Metabolic Rate",
+    "target": "Total Daily Energy Intake (TDEI)",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action: revise_motivation\n\nNew Motivation:\nIndividuals with a higher Basal Metabolic Rate (BMR) have greater energy requirements, which can contribute to increased Total Daily Energy Intake (TDEI) as they may need to consume more calories to maintain physiological functions. However, this relationship is influenced by additional factors such as appetite regulation, cultural and behavioral patterns, and food availability. Thus, while higher BMR can lead to higher TDEI, the relationship is not strictly direct and may be moderated by other variables."
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Body Mass Index (BMI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Socio-cultural ideals about body size and weight can influence individual behavior and attitudes toward weight management, leading people to modify their diet and physical activity to match the ideal. This can result in changes to their actual Body Mass Index (BMI).\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Socio-cultural ideal BMI can causally influence group-level BMI through societal pressures and norms that shape individual perceptions and behaviors regarding body weight. When a society promotes a lower or higher ideal BMI, individuals may adjust their eating and exercise habits to conform, which collectively shifts the average BMI of the group.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"An increase in the proportion of individuals with a healthy BMI in a population will positively impact the group-level average BMI, lowering the risk of group-level obesity. Individual BMI improvements aggregate to affect group measures.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Total Daily Energy Expenditure (TDEE)",
+    "target": "Group-level BMI",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "revise_motivation: The polarity of the edge is correct (NEGATIVE), but the motivation needed revision because it oversimplified the causal pathway by omitting the necessary consideration of energy intake. The improved motivation now acknowledges that changes in TDEE affect BMI primarily when energy intake remains constant, providing a more accurate causal explanation."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Norm BMI reflects societal perceptions or standards of what is considered a normal BMI. These norms can influence behaviors, policies, and attitudes that collectively affect actual group-level BMI through mechanisms such as social conformity and public health interventions.\")",
+    "new_type": "POSITIVE"
+  }
+]

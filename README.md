@@ -5,7 +5,7 @@ Computational reproducibility package for the MSc thesis:
 
 ---
 
-## Quick Start (3 Steps)
+## Quick Start (4 Steps)
 
 ### Step 1: Clone and Setup
 
@@ -17,17 +17,30 @@ uv sync
 
 ---
 
-### Step 2: Run Reproduction (~10 minutes)
+### Step 2: Compile BEFORE Reproduction (verify empty)
 
 ```bash
-uv run python final_runs/reproduce_all_thesis_assets.py
+cd thesis/reproducible_thesis
+pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
-**Result**: All 30 figures and tables generated from experimental data into `final_runs/`.
+**Result**: PDF compiles but figures show placeholder boxes or missing file warnings.  
+This proves figures are not pre-baked into the package.
 
 ---
 
-### Step 3: Compile Thesis
+### Step 3: Run Reproduction (~10 minutes)
+
+```bash
+cd ../..
+uv run python final_runs/reproduce_all_thesis_assets.py
+```
+
+**Result**: All 30 figures and tables generated from experimental data.
+
+---
+
+### Step 4: Compile AFTER Reproduction (verify complete)
 
 ```bash
 cd thesis/reproducible_thesis
@@ -86,7 +99,7 @@ cld-hallucination-detection/
 
 ## Verification
 
-After Step 2, check the reproduction report:
+After Step 3, check the reproduction report:
 
 ```bash
 cat /tmp/thesis_reproducibility_*/reproducibility_report.json | grep total_coverage

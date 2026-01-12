@@ -1,0 +1,311 @@
+{
+  "timestamp": "2026-01-06T11:36:09.486228",
+  "n_edges_total": 31704,
+  "subsample_size": 5000,
+  "results": {
+    "Gen Perplexity": {
+      "overall": {
+        "shapiro": {
+          "W": 0.03667995295590398,
+          "p": 5.7153983538170374e-95,
+          "n_original": 31704,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 83.3092860948895,
+          "std": 1341.1976724898875,
+          "median": 1.331797645802776,
+          "skewness": 16.299745202071836,
+          "kurtosis": 263.68169643368606,
+          "min": 1.000384289651032,
+          "max": 22026.46579480672
+        }
+      },
+      "hallucinations": {
+        "shapiro": {
+          "W": 0.9727249539669794,
+          "p": 1.583806002667694e-29,
+          "n_original": 4876,
+          "n_tested": 4876,
+          "subsampled": false,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 1.3534968807608276,
+          "std": 0.1239982442705938,
+          "median": 1.353939634347548,
+          "skewness": -0.0656625450416222,
+          "kurtosis": 1.4617511941335994,
+          "min": 1.002860786160606,
+          "max": 1.90852600952957
+        }
+      },
+      "correct": {
+        "shapiro": {
+          "W": 0.03529183085346077,
+          "p": 5.285585907879865e-95,
+          "n_original": 26828,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 98.20478438801949,
+          "std": 1457.4989599503335,
+          "median": 1.327124209411153,
+          "skewness": 14.978662955612053,
+          "kurtosis": 222.36034598469786,
+          "min": 1.000384289651032,
+          "max": 22026.46579480672
+        }
+      },
+      "mwu_by_cld": {
+        "depressive": {
+          "p": 1.9627936278856906e-56,
+          "n_correct": 3367,
+          "n_halluc": 1043
+        },
+        "emergency_department": {
+          "p": 5.193014392839237e-18,
+          "n_correct": 21424,
+          "n_halluc": 3560
+        },
+        "social_norms": {
+          "p": 0.11999579487139515,
+          "n_correct": 2037,
+          "n_halluc": 273
+        }
+      }
+    },
+    "Gen Min Prob": {
+      "overall": {
+        "shapiro": {
+          "W": 0.6077233919355427,
+          "p": 5.443783735123673e-75,
+          "n_original": 31704,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.11974417050663558,
+          "std": 0.1675468652695544,
+          "median": 0.07001200080169094,
+          "skewness": 3.1669448795693964,
+          "kurtosis": 10.534640011086841,
+          "min": 0.0,
+          "max": 0.9980681138443307
+        }
+      },
+      "hallucinations": {
+        "shapiro": {
+          "W": 0.5423008792930051,
+          "p": 1.1809242338400678e-77,
+          "n_original": 4876,
+          "n_tested": 4876,
+          "subsampled": false,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.10384341893853997,
+          "std": 0.14921557162914353,
+          "median": 0.06531962388343668,
+          "skewness": 3.7084808831072684,
+          "kurtosis": 14.761953550085341,
+          "min": 0.0007170393694223342,
+          "max": 0.9731974984288629
+        }
+      },
+      "correct": {
+        "shapiro": {
+          "W": 0.5982898818443649,
+          "p": 1.7315766836633415e-75,
+          "n_original": 26828,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.12263413862375327,
+          "std": 0.17050809737369646,
+          "median": 0.07058943065445807,
+          "skewness": 3.0874202454211774,
+          "kurtosis": 9.968846873257894,
+          "min": 0.0,
+          "max": 0.9980681138443307
+        }
+      },
+      "mwu_by_cld": {
+        "depressive": {
+          "p": 3.394944032575997e-16,
+          "n_correct": 3367,
+          "n_halluc": 1043
+        },
+        "emergency_department": {
+          "p": 0.00030118804149509797,
+          "n_correct": 21424,
+          "n_halluc": 3560
+        },
+        "social_norms": {
+          "p": 0.9641516074314045,
+          "n_correct": 2037,
+          "n_halluc": 273
+        }
+      }
+    },
+    "Gen Max Window Entropy": {
+      "overall": {
+        "shapiro": {
+          "W": 0.8528479603504401,
+          "p": 6.224822360081033e-56,
+          "n_original": 31704,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.9211843325733822,
+          "std": 0.25103790967060263,
+          "median": 0.9629442436839464,
+          "skewness": -1.6049038128577495,
+          "kurtosis": 2.8935315766960734,
+          "min": 0.005549247527167396,
+          "max": 1.49327341431919
+        }
+      },
+      "hallucinations": {
+        "shapiro": {
+          "W": 0.8306894938878607,
+          "p": 5.514813863107662e-58,
+          "n_original": 4876,
+          "n_tested": 4876,
+          "subsampled": false,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.9588837278449833,
+          "std": 0.2231818864384018,
+          "median": 0.9840856890366123,
+          "skewness": -1.8796605314428234,
+          "kurtosis": 4.9413218102615595,
+          "min": 0.03275450820624839,
+          "max": 1.482329238919649
+        }
+      },
+      "correct": {
+        "shapiro": {
+          "W": 0.8499085781054714,
+          "p": 2.7415608347353862e-56,
+          "n_original": 26828,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.9143324520252859,
+          "std": 0.25517772777453596,
+          "median": 0.9594082694826755,
+          "skewness": -1.5588488850269335,
+          "kurtosis": 2.6240581588402527,
+          "min": 0.005549247527167396,
+          "max": 1.49327341431919
+        }
+      },
+      "mwu_by_cld": {
+        "depressive": {
+          "p": 1.5886882525662973e-30,
+          "n_correct": 3367,
+          "n_halluc": 1043
+        },
+        "emergency_department": {
+          "p": 1.4136221450846706e-13,
+          "n_correct": 21424,
+          "n_halluc": 3560
+        },
+        "social_norms": {
+          "p": 0.051205783387567955,
+          "n_correct": 2037,
+          "n_halluc": 273
+        }
+      }
+    },
+    "Gen Cosine Similarity": {
+      "overall": {
+        "shapiro": {
+          "W": 0.8417182733045414,
+          "p": 2.9890315715449267e-57,
+          "n_original": 16507,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.6219824345817605,
+          "std": 0.16830595789289415,
+          "median": 0.6532998085021973,
+          "skewness": -1.5399265016360808,
+          "kurtosis": 2.4464435936054407,
+          "min": -0.054830152541399,
+          "max": 1.00000011920929
+        }
+      },
+      "hallucinations": {
+        "shapiro": {
+          "W": 0.8271117853634935,
+          "p": 5.632212529245731e-46,
+          "n_original": 2514,
+          "n_tested": 2514,
+          "subsampled": false,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.6975167585653901,
+          "std": 0.15195771326392987,
+          "median": 0.7142796516418457,
+          "skewness": -1.8693408274829646,
+          "kurtosis": 4.472577074761813,
+          "min": 0.02904937043786049,
+          "max": 1.00000011920929
+        }
+      },
+      "correct": {
+        "shapiro": {
+          "W": 0.8364956107507201,
+          "p": 7.644170937600017e-58,
+          "n_original": 13993,
+          "n_tested": 5000,
+          "subsampled": true,
+          "is_normal": false
+        },
+        "stats": {
+          "mean": 0.6084118428219631,
+          "std": 0.16750626930561474,
+          "median": 0.64228355884552,
+          "skewness": -1.5649122685728472,
+          "kurtosis": 2.357156792940538,
+          "min": -0.054830152541399,
+          "max": 0.9560589790344238
+        }
+      },
+      "mwu_by_cld": {
+        "depressive": {
+          "p": 7.280262896175557e-72,
+          "n_correct": 1743,
+          "n_halluc": 543
+        },
+        "emergency_department": {
+          "p": 8.259225511244146e-133,
+          "n_correct": 11089,
+          "n_halluc": 1815
+        },
+        "social_norms": {
+          "p": 0.03569086262758867,
+          "n_correct": 1161,
+          "n_halluc": 156
+        }
+      }
+    }
+  }
+}

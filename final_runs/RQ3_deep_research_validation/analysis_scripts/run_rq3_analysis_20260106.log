@@ -1,0 +1,27 @@
+================================================================================
+RQ3 DEEP RESEARCH UNIFIED ANALYSIS
+================================================================================
+
+1. Loading data...
+Warning: /home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/Data/deep_research_results_depressive_symptoms_20251013_032002_84edges.json not found
+Warning: /home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/Data/deep_research_results_social_norms_20251012_213641_17edges.json not found
+Warning: /home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/Data/deep_research_results_older_persons_ALL_EDGES_184edges.json not found
+   Total edges: 0
+   TP: n=0, rate=0.0%
+   FP: n=0, rate=0.0%
+   FN: n=0, rate=0.0%
+
+2. Computing statistical tests...
+Traceback (most recent call last):
+  File "/home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/analysis_scripts/run_rq3_analysis.py", line 900, in <module>
+    main()
+  File "/home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/analysis_scripts/run_rq3_analysis.py", line 823, in main
+    stats_results = compute_statistical_tests(data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/analysis_scripts/run_rq3_analysis.py", line 419, in compute_statistical_tests
+    h, h_lower, h_upper = cohens_h_ci(p_a, n_a, p_b, n_b)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nitai/code/causalix.ai/final_runs/RQ3_deep_research_validation/analysis_scripts/run_rq3_analysis.py", line 258, in cohens_h_ci
+    se_h = np.sqrt(1/n1 + 1/n2)
+                   ~^~~
+ZeroDivisionError: division by zero

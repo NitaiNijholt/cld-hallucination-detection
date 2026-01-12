@@ -93,56 +93,17 @@ def main():
         cmd = f"python3 {time_cost_script} --base_dir {FINAL_RUNS} --output_dir {time_cost_output}"
         success = run_command(cmd, "Time/Cost Scaling Aggregation", env=env)
         
-        # Find and copy the main thesis figure.
-        # IMPORTANT: be specific here; otherwise we can accidentally copy figure1_scaling_analysis.png
-        # and overwrite the intended combined scaling plot.
+        # Find and copy the main thesis figure
         if success:
-            dst = run_dir / "figure3_generation_vs_judging.png"
-
-            # Preferred exact path (this is where aggregate_time_cost_scaling.py writes it)
-            preferred = time_cost_output / "figures" / "figure3_generation_vs_judging.png"
-            if preferred.exists():
-                shutil.copy(preferred, dst)
-                generated_figures.append(dst)
-                print(f"  ✓ Copied: {preferred.name} → figure3_generation_vs_judging.png")
-            else:
-                # Fallback: exact filename anywhere under the output directory
-                candidates = list(time_cost_output.rglob("figure3_generation_vs_judging.png"))
-                if candidates:
-                    src = candidates[0]
-                    shutil.copy(src, dst)
+            for fig_pattern in ["*generation*judging*.png", "*figure3*.png", "*scaling*.png"]:
+                for fig in time_cost_output.glob(fig_pattern):
+                    dst = run_dir / "figure3_generation_vs_judging.png"
+                    shutil.copy(fig, dst)
                     generated_figures.append(dst)
-                    print(f"  ✓ Copied: {src.name} → figure3_generation_vs_judging.png")
-                else:
-                    # Final fallback: try pattern match, but avoid copying figure1/scaling_analysis
-                    pattern_candidates = [
-                        p for p in time_cost_output.rglob("*generation*judging*.png")
-                        if "figure1" not in p.name.lower() and "scaling_analysis" not in p.name.lower()
-                    ]
-                    if pattern_candidates:
-                        src = pattern_candidates[0]
-                        shutil.copy(src, dst)
-                        generated_figures.append(dst)
-                        print(f"  ✓ Copied: {src.name} → figure3_generation_vs_judging.png")
-                    else:
-                        print("  ⚠️ Could not find figure3_generation_vs_judging.png in time/cost scaling outputs.")
+                    print(f"  ✓ Copied: {fig.name} → figure3_generation_vs_judging.png")
+                    break
     else:
         print(f"  ⚠️ Script not found: {time_cost_script}")
-
-    # Generate Table 21: Scaling Summary (for thesis)
-    table21_script = FINAL_RUNS / "supp_cost_analysis/analysis_scripts/generate_table21_scaling_summary.py"
-    if table21_script.exists():
-        cmd = f"python3 {table21_script}"
-        success = run_command(cmd, "Table 21: Scaling Summary", env=env)
-        if success:
-            # Copy the generated table to output
-            src_table = FINAL_RUNS / "latex/table21_scaling_summary.tex"
-            if src_table.exists():
-                latex_dir = run_dir / "latex"
-                latex_dir.mkdir(parents=True, exist_ok=True)
-                dst = latex_dir / "table21_scaling_summary.tex"
-                shutil.copy(src_table, dst)
-                print(f"  ✓ Copied: table21_scaling_summary.tex")
 
     # =========================================================================
     # 2. PARALLELIZATION BENCHMARK ANALYSIS
@@ -167,24 +128,13 @@ def main():
             success = run_command(cmd, "Parallelization Analysis", env=env, cwd=str(parallel_output))
             
             if success:
-                # Find generated figures - check both output dir and source dir
-                found = False
-                search_dirs = [
-                    parallel_output,
-                    FINAL_RUNS / "supp_parallelization_benchmark/figures",
-                    FINAL_RUNS / "supp_parallelization_benchmark",
-                ]
-                for search_dir in search_dirs:
-                    if not search_dir.exists():
-                        continue
-                    for fig in search_dir.glob("*thesis*.png"):
+                # Find generated figures
+                for fig in parallel_output.glob("*.png"):
+                    if "thesis" in fig.name.lower() or "parallel" in fig.name.lower():
                         dst = run_dir / "parallelization_thesis_figure.png"
                         shutil.copy(fig, dst)
                         generated_figures.append(dst)
                         print(f"  ✓ Copied: {fig.name} → parallelization_thesis_figure.png")
-                        found = True
-                        break
-                    if found:
                         break
         else:
             print(f"  ⚠️ No results files found in {parallel_data}")
@@ -219,21 +169,13 @@ def main():
         success = run_command(cmd, "Judge Sensitivity Analysis", env=env_sens, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            # Script outputs to hardcoded path - check there first
-            hardcoded_fig = FINAL_RUNS / "Sensitivity_analysis_simple/prompt_sensitivity_figure.png"
-            if hardcoded_fig.exists():
-                dst = run_dir / "prompt_sensitivity_figure.png"
-                shutil.copy(hardcoded_fig, dst)
-                generated_figures.append(dst)
-                print(f"  ✓ Copied: prompt_sensitivity_figure.png")
-            else:
-                for fig in sensitivity_output.glob("*sensitivity*.png"):
-                    if "corrector" not in fig.name.lower():
-                        dst = run_dir / "prompt_sensitivity_figure.png"
-                        shutil.copy(fig, dst)
-                        generated_figures.append(dst)
-                        print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
-                        break
+            for fig in sensitivity_output.glob("*sensitivity*.png"):
+                if "corrector" not in fig.name.lower():
+                    dst = run_dir / "prompt_sensitivity_figure.png"
+                    shutil.copy(fig, dst)
+                    generated_figures.append(dst)
+                    print(f"  ✓ Copied: {fig.name} → prompt_sensitivity_figure.png")
+                    break
 
     # =========================================================================
     # 4. CORRECTOR SENSITIVITY ANALYSIS
@@ -256,20 +198,12 @@ def main():
         success = run_command(cmd, "Corrector Sensitivity Analysis", env=env_corr, cwd=str(FINAL_RUNS / "supp_prompt_sensitivity"))
         
         if success:
-            # Script outputs to hardcoded path - check there first
-            hardcoded_fig = FINAL_RUNS / "Sensitivity_analysis_simple/corrector_sensitivity_figure.png"
-            if hardcoded_fig.exists():
+            for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
                 dst = run_dir / "corrector_sensitivity_figure.png"
-                shutil.copy(hardcoded_fig, dst)
+                shutil.copy(fig, dst)
                 generated_figures.append(dst)
-                print(f"  ✓ Copied: corrector_sensitivity_figure.png")
-            else:
-                for fig in sensitivity_output.glob("*corrector*sensitivity*.png"):
-                    dst = run_dir / "corrector_sensitivity_figure.png"
-                    shutil.copy(fig, dst)
-                    generated_figures.append(dst)
-                    print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
-                    break
+                print(f"  ✓ Copied: {fig.name} → corrector_sensitivity_figure.png")
+                break
 
     # =========================================================================
     # 5. COPY STATIC ASSETS (edge ablation figure - not generated, just copied)
@@ -338,5 +272,66 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+t: edge_ablation_f1_ordered.png")
+    else:
+        # Try alternative location
+        alt_src = PROJECT_ROOT / "thesis/Figures/edge_ablation_f1_ordered.png"
+        if alt_src.exists():
+            dst = run_dir / "edge_ablation_f1_ordered.png"
+            shutil.copy(alt_src, dst)
+            generated_figures.append(dst)
+            print(f"  ✓ Copied static asset: edge_ablation_f1_ordered.png")
+        else:
+            print(f"  ⚠️ Static asset not found: edge_ablation_f1_ordered.png")
+
+    # =========================================================================
+    # Create 'latest' symlink
+    # =========================================================================
+    latest_link = run_dir.parent / "SUPP_latest"
+    if latest_link.exists() or latest_link.is_symlink():
+        latest_link.unlink()
+    latest_link.symlink_to(run_dir, target_is_directory=True)
+    print(f"\n✓ Created symlink: SUPP_latest → {run_dir.name}")
+
+    # =========================================================================
+    # SUMMARY
+    # =========================================================================
+    print("\n" + "="*80)
+    print("SUPPLEMENTARY ANALYSES SUMMARY")
+    print("="*80)
+    print(f"\nOutput directory: {run_dir}")
+    print(f"\nGenerated figures ({len(generated_figures)}):")
+    for fig in generated_figures:
+        print(f"  • {fig.name}")
+    
+    expected_figures = [
+        "figure3_generation_vs_judging.png",
+        "parallelization_thesis_figure.png",
+        "prompt_sensitivity_figure.png",
+        "corrector_sensitivity_figure.png",
+        "edge_ablation_f1_ordered.png",
+    ]
+    
+    missing = [f for f in expected_figures if not (run_dir / f).exists()]
+    if missing:
+        print(f"\n⚠️ Missing figures ({len(missing)}):")
+        for f in missing:
+            print(f"  • {f}")
+    else:
+        print(f"\n✅ All expected supplementary figures generated!")
+
+    print("\n" + "="*80)
+    print("✅ Supplementary analyses completed!")
+    print("="*80)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
 
 
