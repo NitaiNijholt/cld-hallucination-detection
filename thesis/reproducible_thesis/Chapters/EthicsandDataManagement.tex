@@ -1,0 +1,55 @@
+\chapter{Ethics and Data Management}
+\label{ch:ethics}
+
+This thesis adheres to the ethical code (\url{https://student.uva.nl/en/topics/ethics-in-research}) and research data management policies (\url{https://rdm.uva.nl/en}) of UvA and IvI.
+
+\section{Ethical Considerations}
+
+This research involves the use of large language models (LLMs) for automated generation and validation of causal loop diagrams in health domains. Several ethical considerations are relevant:
+
+\begin{itemize}
+    \item \textbf{No human subjects:} This research does not involve human participants except in human validation of LLM outputs. All experiments use publicly available datasets and published causal loop diagrams from peer-reviewed literature.
+    
+    \item \textbf{AI transparency:} LLM-generated outputs are clearly labelled as such. We emphasise that LLM-generated CLDs should serve as starting points for expert review rather than definitive scientific conclusions.
+    
+    \item \textbf{Potential for misuse:} While this research aims to assist domain experts, there is potential for misuse if LLM-generated causal structures are treated as ground truth without expert validation. We explicitly recommend human oversight for any practical applications.
+    
+    \item \textbf{Environmental impact:} The computational experiments involve substantial API calls to commercial LLM providers. We have optimised experimental designs to minimise unnecessary compute while maintaining scientific rigor, for example by capturing generator UQ metrics during generation in RQ1 runs such that these needn't be recomputed for RQ2.
+\end{itemize}
+
+\section{Data Management}
+
+The full software environment used to generate experimental artefacts for this thesis is contained within a private GitHub repository (\url{https://github.com/CausalixAI/platform}, branch: \texttt{thesis-nitai}). The repository is private because the code pertains to a startup (Causalix) that Professor Quax and the author are launching. As detailed in the Declaration of Authorship, this thesis was conducted within a shared software environment, with clear delineation of individual contributions. Access to the full platform repository can be granted to examiners upon request.
+
+For computational reproducibility of the analyses and the Results chapter figures/tables, a public reproduction snapshot is provided at \url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction}). This public repository includes the analysis scripts and result datasets required to regenerate the thesis outputs; it does not include the full simulation/data-generation pipeline or proprietary platform infrastructure.
+
+\begin{table}[ht]
+\centering
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3cm}|}
+\hline
+\textbf{Description} & \textbf{Availability} & \textbf{License} \\
+\hline
+Full platform source code and simulation/data-generation pipeline & Private GitHub repository (access on request) & Proprietary (Causalix) \\
+\hline
+Ground truth CLDs: Depressive Symptoms, Social Norms, Emergency Department, Alzheimer's, Physics & Extracted from cited publications & Fair use for research \\
+\hline
+Result datasets for analysis reproduction (RQ1--RQ3, SUPP, PRELIM) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & Mixed (see repository) \\
+\hline
+RQ1 human validation data (n=72) & Private GitHub repository & Proprietary (Causalix) \\
+\hline
+RQ3 human validation data (n=50) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & CC-BY \\
+\hline
+Analysis scripts (reproduction snapshot) & Public GitHub reproduction snapshot (\url{https://github.com/NitaiNijholt/cld-hallucination-detection}) & MIT (code) \\
+\hline
+\end{tabularx}
+\caption{Data and code availability for thesis reproducibility.}
+\label{tab:data_availability}
+\end{table}
+
+\paragraph{Human Validation Raters.} Human validation labels for the datasets listed in Table~\ref{tab:data_availability} were provided by the following individuals:
+\begin{itemize}[noitemsep]
+    \item \textbf{RQ1a human validation data ($n=72$ edges):} Primary rater: Mick Scheide (Data Manager, Antoni van Leeuwenhoek Hospital) validated File~1 (Depressive Symptoms, GPT-4.1, $n=30$) and File~2 (Depressive Symptoms, Claude 4 Sonnet, $n=30$). For File~3 (Social Norms, GPT-4.1, $n=12$), both Mick Scheide and Nitai Nijholt (MSc Student, UvA FNWI) provided ratings to establish inter-rater reliability.
+    \item \textbf{RQ3 human validation data ($n=50$ edges):} Primary rater: Nitai Nijholt validated all 50 sampled Deep Research edges from the Depressive Symptoms CLD (\texttt{final\_runs/RQ3\_deep\_research\_validation/validation/}). Secondary rater: Cillian Hourican (PhD Candidate, UvA FNWI) validated a 13-edge overlap subset for inter-rater reliability assessment.
+\end{itemize}
+
+All experimental artefacts, including generated CLDs, judge outputs, corrector outputs, and Deep Research evidence, are preserved in structured formats (JSON, CSV) with full provenance tracking (run IDs, timestamps, model versions, prompts). Reproducibility procedures are described in Section~\ref{sec:execution_commands}.

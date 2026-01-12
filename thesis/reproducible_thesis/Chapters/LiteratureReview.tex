@@ -1,0 +1,86 @@
+\chapter{Literature Review}
+\label{sec:literature_review}
+
+Most CLD work in system dynamics remains grounded in manual and participatory practice. Practitioners construct CLDs through interviews, literature synthesis, and facilitated workshops because diagram quality depends on careful construct definition, loop reasoning, and---critically---judgments about directness, mediation, and evidentiary support~\citep{richardson1986problemscld,sterman2002system,vennix1996gmb,crielaard2024refining}. The effectiveness of such participatory approaches has been systematically reviewed: \citet{rouwette2002gmb_effectiveness} synthesise assessment studies and conclude that GMB can be valuable for involvement, communication, and shared understanding, but remains resource-intensive and context-dependent.
+
+\medskip
+\section{Standard CLD construction paradigms}
+\label{sec:lit_standard_cld_paradigms}
+
+In practice, CLDs are most commonly constructed through expert- and stakeholder-driven workflows rather than fully automated pipelines. These paradigms vary in the balance between participatory elicitation (capturing tacit knowledge, scope assumptions, and stakeholder mental models) and literature synthesis (capturing published evidence and consensus), but share a broadly iterative structure: variable elicitation and refinement, causal link elicitation (direction and polarity), feedback loop identification, and repeated revision to improve construct clarity and model usefulness for the stated purpose~\citep{sterman2002system,vennix1996gmb,richardson1986problemscld}.
+
+\subsection{Participatory group model building (GMB)}
+GMB workshops combine facilitated sessions with domain experts and stakeholders to elicit variables, propose and negotiate causal links, and converge on a shared causal narrative that is ``good enough'' for downstream use (e.g., communication, policy discussion, or subsequent formalisation into a simulation model)~\citep{vennix1996gmb,sterman2002system}. Empirical reviews indicate that GMB can improve involvement, communication, and shared understanding, but outcomes are context-dependent and the process remains resource-intensive and difficult to scale to large variable sets~\citep{rouwette2002gmb_effectiveness}.
+
+\subsection{Literature-driven expert synthesis}
+An alternative (or complement) to workshops is expert-led construction grounded in literature review: practitioners define constructs and link rationales based on prior studies, then iteratively refine the diagram as new evidence and scope constraints are incorporated~\citep{richardson1986problemscld,crielaard2024refining}. While this can strengthen evidentiary support, it still requires substantial manual effort to assess directness vs.\ mediation, reconcile conflicting findings, and document assumptions consistently across many candidate links.
+
+\subsection{Hybrid workflows and progression to quantitative models}
+Many applied projects combine these approaches: a literature-informed draft is used to structure workshop discussion, or workshop outputs are subsequently validated and extended through targeted evidence gathering. In system dynamics practice, CLDs are often treated as intermediate artefacts that can be translated into more formal representations (e.g., stock--flow structures and parameterised simulation models) once scope, feedback structure, and key mechanisms are sufficiently specified~\citep{sterman2002system}.
+
+\medskip
+\noindent\textbf{Scaling of manual synthesis work.} A core reason the workflow is costly is combinatorial: for a CLD with \(|V|\) variables there are \(O(|V|^2)\) ordered candidate links to consider, even before accounting for polarity, delays, and scope decisions. If the modelling goal requires assessing \emph{directness}---i.e., for each candidate \(X \rightarrow Y\), asking whether the influence is plausibly direct or better represented via one (or more) mediators among the remaining \(|V|-2\) concepts---the deliberative workload can increase substantially. In the worst case, considering mediation pathways for each ordered pair introduces an additional factor that scales with \(|V|\), pushing the upper bound of the review task toward \(O(|V|^3)\) checks, though in practice modellers use heuristics and domain knowledge to prune the search space~\citep{richardson1986problemscld,crielaard2024refining}.
+
+This cost motivates automating part of CLD construction, for which large language models are natural candidates given their demonstrated capabilities in causal reasoning and structured knowledge synthesis (Chapter~\ref{ch:introduction}). The following sections review prior work on employing LLMs in a causal discovery role and summarise their reported results to assess suitability for this purpose.
+
+\section{Automated CLD construction paradigms (text-to-CLD vs.\ generation)}
+\label{sec:lit_landscape}
+
+Current literature on LLM-based CLD construction can be organised into two paradigms. First, \emph{text-to-CLD} approaches (also described as \emph{causal translation}) extract variables and causal links from provided documents, and can reduce hallucination risk through retrieval grounding, but assume availability of a relevant corpus and are capped by retrieval quality. Second, \emph{corpus-independent CLD generation} synthesizes candidate causal structures from the model's parametric knowledge without requiring an external corpus (i.e., we directly prompt the LLM to create a CLD or set of causal relationships and take its output to be the CLD); this is inexpensive and broadly applicable, but lacks a grounding corpus to reduce risk of hallucinations.
+
+Large language models show promise for automating Causal Loop Diagram construction but exhibit systematic failure modes that demand specialized uncertainty quantification approaches. This review synthesizes 2022--2025 literature connecting general hallucination detection metrics to the specific challenge of generating reliable causal structures from text, distinguishing between benchmarks that evaluate (a) causal extraction from text, (b) causal reasoning over given graphs, and (c) causal structure discovery from statistical data.
+
+The remainder of this chapter reviews related work and evidence for each paradigm, then synthesizes a CLD-specific taxonomy of failure modes and verification signals, motivating the hybrid approach evaluated in this thesis (RQ1--RQ3).
+
+\input{Chapters/lit_review_cld_generation}
+
+\section{Prompting strategies for LLM-based causal reasoning}
+\label{sec:lit_prompting}
+\input{Chapters/background_prompts}
+
+\input{Chapters/lit_review_llm_as_judge}
+
+\input{Chapters/lit_review_ci_metrics_background}
+
+\section{Test-time compute and multi-agent validation}
+\label{sec:lit_test_time_compute}
+
+RQ3 investigates whether adaptive test-time compute allocation---triggered by uncertainty signals---can improve CLD accuracy and efficiency. Prior work demonstrates that test-time strategies can reduce hallucinations in reasoning and knowledge-intensive tasks, and that compute-optimal allocation per-prompt yields up to $\sim$4$\times$ efficiency gains over uniform sampling~\citep{snell2024scalingllmtesttimecompute}. This section synthesizes the main paradigms---serial refinement and parallel sampling---and examines their potential application to CLD generation.
+
+\subsection{Serial Compute: Iterative Refinement}
+
+Serial test-time compute arranges LLM calls sequentially, enabling ``divide and conquer'' reasoning where each step can reflect on and correct errors from preceding stages. Several serial strategies have demonstrated hallucination reduction in reasoning tasks.
+
+\subsubsection{ReAct: Reasoning and Acting.} \citet{yao2023react} introduced a paradigm that interleaves chain-of-thought reasoning with actions querying external tools (e.g., search APIs, knowledge bases). Unlike pure chain-of-thought prompting---which relies solely on parametric knowledge and is prone to hallucination---ReAct grounds reasoning in retrieved evidence, allowing models to verify claims against external sources. The framework demonstrates that reasoning and action are mutually beneficial: reasoning traces guide action selection, while action observations refine subsequent reasoning, enabling iterative error correction. Empirically, ReAct reduced hallucination rates on knowledge-intensive tasks compared to reasoning-only baselines. The Deep Research pipeline developed in this thesis (Section~\ref{sec:deep_research_system}) instantiates a ReAct-style approach adapted specifically for causal claim validation.
+
+\subsubsection{Multi-Agent Debate.} \citet{du2023multiagentdebate} introduced a method where multiple LLM instances engage in multi-round debates to enhance response accuracy. Each model proposes and critiques responses over several rounds, leading to a consensus. The authors report that this approach significantly enhances mathematical and strategic reasoning across a number of tasks and improves the factual validity of generated content by reducing fallacious answers and hallucinations. The approach applies directly to existing black-box models using uniform procedures and prompts across different tasks.
+
+\subsubsection{Chain-of-Verification (CoVe).} CoVe~\citep{dhuliawala2024chain}, detailed in Section~\ref{sec:lit_llm_as_judge}, exemplifies the generate-verify-correct pattern central to serial test-time compute. While CoVe reduces hallucinations through iterative self-verification, it has not been adapted to verify causal claims---for instance, generating verification questions about whether a proposed relationship $X \rightarrow Y$ is supported by evidence or whether the assigned polarity is correct. This thesis explores whether analogous Judge--Corrector primitives can reduce hallucinations in CLD generation (RQ1).
+
+\subsubsection{Misconception Refutation (MR).} \citet{estornell2024multillmdebate} propose editing responses rather than only selecting among them: (1) prompt an LLM to identify errors, misconceptions, and inconsistencies, then (2) prompt it again to minimally correct the response. This approach draws on the insight that LLMs are often more skilled at evaluating answers than at directly providing them. The authors prove theoretically that misconception refutation increases the probability of debate converging to the correct answer. MR is particularly valuable when combined with quality and diversity pruning in multi-agent debate settings.
+
+\subsection{Parallel Compute: Sampling and Selection}
+
+Parallel test-time compute generates multiple candidate outputs simultaneously, then selects or aggregates results.
+
+\subsubsection{Self-Consistency.} \citet{wang2023selfconsistency} introduced self-consistency, a decoding strategy that samples diverse reasoning paths and selects the most consistent answer by marginalizing over sampled paths. The key insight is that complex reasoning problems typically admit multiple different ways of thinking that lead to the correct answer. Unlike greedy decoding which commits to a single path, self-consistency generates multiple candidates in parallel and aggregates via majority voting. This achieved significant improvements on arithmetic and commonsense reasoning benchmarks: GSM8K (+17.9\%), SVAMP (+11.0\%), AQuA (+12.2\%), StrategyQA (+6.4\%), and ARC-challenge (+3.9\%).
+
+\subsubsection{Best-of-N Sampling.} This general strategy generates $N$ candidate responses in parallel and selects the best according to a reward model or verifier. Efficiency gains are possible through compute-optimal allocation strategies that adapt $N$ based on problem difficulty~\citep{snell2024scalingllmtesttimecompute}. Extensions include uncertainty-weighted aggregation, where candidate selection incorporates confidence signals such as logprobs. Whether such parallel sampling strategies can improve hallucination detection in CLD generation remains unexplored.
+
+\subsection{Adaptive Compute Allocation}
+
+A key efficiency question is whether expensive verification can be deployed \emph{selectively} based on signals that predict when it is needed. \citet{snell2024scalingllmtesttimecompute} demonstrate that compute-optimal strategies---adapting verification effort per-prompt---yield up to 4$\times$ efficiency gains over uniform allocation. RouteLLM~\citep{ong2024routellm} routes queries between smaller and larger models based on predicted difficulty, achieving significant cost savings while maintaining quality. More recently, BEST-Route~\citep{ding2025bestroute} extends this to test-time optimal compute allocation across model cascades. These approaches predict query difficulty to route compute, but do not use generator-side uncertainty metrics (e.g., logprobs, perplexity) as routing signals. This thesis investigates whether such UQ metrics from CLD generation can serve as triggers for selective deployment of expensive verification---whether Judge, Corrector, or Deep Research---addressing RQ3.
+
+\medskip
+\noindent Collectively, this literature motivates adaptive test-time compute for hallucination mitigation but reveals that the core primitives (Judge, Corrector) have not been validated for CLD generation, and UQ-triggered selective verification remains unexplored in this domain. This thesis first validates these primitives (RQ1--RQ2) before exploring adaptive allocation strategies (RQ3).
+
+\section{Synthesis and bridge to methods}
+\label{sec:lit_bridge_to_methods}
+
+Prior work provides many ingredients (LLM-based extraction/generation, judge-style evaluation, uncertainty proxies, retrieval grounding), which have been developed and tested to some level of sophistication and success in hallucination reduction in other contexts. However, the literature lacks a systematic evaluation for the specific task of hallucination detection in CLD generation.
+
+Rather than choosing breadth, we choose an approach that first thoroughly validates the core agent primitives of LLM-as-a-Judge and LLM-as-a-Corrector in a single-agent setting. If validated individually and together, these primitives form a natural building block for multi-agent systems, supporting an observe-act-react cycle that allows for iterative error correction. While established in the literature, these have not yet been validated in the CLD context; knowledge of how these building blocks function can then inform the design of more complex multi-agent systems, chaining together generation, evaluation, and retrieval as the CLD generation task demands.
+
+Conditional on LLM-as-a-Judge and LLM-as-a-Corrector being effective, and hallucination detection using (L)UQ showing discriminative signal, we can explore allocating expensive verification (judges, correctors, literature search) \emph{selectively}---using these computationally cheap LUQ + cosine signals---rather than applying it uniformly across all candidate edges. The original RQ3 design proposed using UQ metrics as triggers for corrector deployment; the pivot to Deep Research explores an alternative: allocating test-time compute to external evidence validation rather than internal correction.
+
+The relative contribution of LLM-as-a-Judge, LLM-as-a-Corrector, and each metric class---LUQ metrics, embedding-based grounding, and retrieval-augmented validation---to hallucination detection in a CLD generation context remains an empirical question. This thesis addresses this question through systematic evaluation across multiple experimental conditions.

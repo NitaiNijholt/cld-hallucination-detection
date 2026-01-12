@@ -1,0 +1,99 @@
+% Literature Review: LLM-as-a-Judge for Hallucination Detection
+% Subsection covering the paradigm, biases, and empirical validation
+
+\section{LLM-as-a-Judge: Automated Evaluation of LLM Outputs}
+\label{sec:lit_llm_as_judge}
+
+The \textbf{LLM-as-a-Judge} paradigm employs large language models to evaluate the outputs of other LLMs, providing scalable automated assessment where human evaluation is prohibitively expensive or time-constrained~\citep{zheng2024judging}. This approach has emerged as a primary evaluation methodology for open-ended generation tasks where traditional metrics (BLEU, ROUGE) fail to capture semantic quality.
+
+\subsection{Foundations and Empirical Validation}
+
+The paradigm was systematically established by \citet{zheng2024judging}, who introduced MT-Bench---a multi-turn benchmark of 80 challenging questions---and Chatbot Arena, a crowdsourced platform for pairwise model comparison. Their key finding was that strong LLM judges (GPT-4) achieve over 80\% agreement with human preferences on pairwise comparisons, approaching the level of inter-annotator agreement among humans themselves. This high concordance established LLM-as-a-Judge as a viable proxy for human evaluation at scale.
+
+Subsequent studies have confirmed and extended these findings. Recent comprehensive surveys indicate that LLM-as-a-Judge-derived accuracy metrics align more closely with human evaluations than traditional UQ metrics, achieving up to 80\% agreement with human evaluators across diverse tasks~\citep{li2024llmsjudges}. This makes LLM judges strong candidates for evaluating context-aware outputs---such as causal loop diagram edges---especially when expert human evaluation time is scarce.
+
+\textbf{Reference-free vs.\ reference-based evaluation.} LLM-as-a-judge work has converged on a useful distinction between reference-free and reference-based evaluation \citep{li2024generation, zheng2023judging}. A \emph{correctness judge} is intentionally context-independent: it evaluates whether an edge narrative is internally coherent and mechanistically plausible even when no external evidence is available or when evidence is incomplete/ambiguous. This aligns with intrinsic verification approaches that assess logical consistency and step validity without retrieval---such as critique-and-correction setups \citep{lin2024criticbench} and deductive verification of chain-of-thought reasoning \citep{ling2023deductive}. In a causal discovery setting, this judge targets reasoning quality---directionality, polarity, conditionality, and alternative explanations---because semantic topical match alone can miss these causal specifics, and because some plausibility criteria (e.g., Bradford Hill--style coherence/plausibility) are not reducible to ``is there a matching quote.''
+
+\textbf{Citation judge as evidence-based verifier.} Complementarily, the literature supports a citation judge as a retrieval-augmented, evidence-based verifier that makes judgements about support, not just about relevance. Evidence-grounded paradigms like decompose-then-verify \citep{min2023factscore} and search-augmented verification \citep{wei2024longform} operationalise this by checking atomic claims against retrieved passages, while citation-focused work uses natural language inference to evaluate whether cited text actually entails the stated proposition \citep{gao2023enabling}. This maps cleanly onto a judge that operates on retrieved quotes rather than model priors.
+
+\subsection{Systematic Biases in LLM Judges}
+
+However, using one LLM to evaluate another introduces structural biases inherent to the transformer architecture and training process. Research has identified several systematic biases that affect judge reliability:
+
+\textbf{Position Bias.} LLM judges exhibit systematic preferences based on the \textit{order} in which candidate responses are presented. In pairwise comparison settings, judges may favour responses presented first (primacy bias) or last (recency bias), independent of actual quality~\citep{zheng2024judging}. This positional preference can flip evaluation outcomes when response order is reversed, introducing noise unrelated to content quality.
+
+\textbf{Verbosity Bias.} LLM judges tend to prefer longer, more detailed responses even when concise answers are equally or more accurate~\citep{zheng2024judging, li2024llmsjudges}. This bias is particularly problematic for scientific evaluation, where precision and accuracy may be better served by focused claims rather than elaborate explanations. In CLD evaluation, this could manifest as preference for edges with verbose justifications over those with succinct but accurate mechanistic explanations.
+
+\textbf{Self-Enhancement Bias.} LLM judges exhibit a tendency to rate outputs from their own model family more favourably than outputs from other models~\citep{li2024llmsjudges}. This self-preference introduces systematic bias when the same model (or model family) is used for both generation and evaluation, creating a form of circular validation.
+
+\textbf{Susceptibility to Adversarial Manipulation.} LLM-as-a-Judge has been shown to be susceptible to adversarial attacks that exploit these biases~\citep{shi2024optimization, li2024llmsjudges}. Adversarial prompts can be crafted to inflate judge scores without improving actual output quality, raising concerns about robustness in high-stakes evaluation settings.
+
+\subsection{Evaluation Modes: Pointwise vs. Pairwise}
+
+LLM judges can operate in two primary modes, each with distinct trade-offs:
+
+\textbf{Pointwise Evaluation.} The judge assesses a single response against defined criteria, producing an absolute score (e.g., 0--1 scale) or categorical verdict (correct/incorrect/partially correct). This mode is computationally efficient and enables direct comparison across different evaluation sessions, but requires well-calibrated scoring criteria.
+
+\textbf{Pairwise Evaluation.} The judge compares two candidate responses and selects the better one, often with explanation. This relative comparison is more robust to calibration issues---the judge need only rank, not score---but requires $O(n^2)$ comparisons for $n$ candidates and cannot produce absolute quality estimates.
+
+For CLD hallucination detection, pointwise evaluation is more practical: each edge requires an independent assessment of validity rather than comparison against alternatives. The challenge lies in establishing reliable scoring criteria and thresholds that distinguish hallucinations from valid relationships.
+
+\noindent Taken together, this literature supports judge-style verification (and judge-then-correct patterns) as scalable hallucination mitigation primitives. The specific judge and corrector designs evaluated in this thesis are detailed in Methods (Sections~\ref{sec:correctness_judge}, \ref{sec:citation_judge}, and \ref{sec:corrector}).
+
+\paragraph{Connection to test-time compute.}
+Conceptually, LLM-as-a-Judge can be viewed as a \emph{test-time compute} primitive: it allocates additional inference-time computation to validate (and potentially reject) a candidate output that was produced by a cheaper first-pass generation step. In this thesis, judges are therefore not only evaluation instruments but also building blocks for compute-scaled validation pipelines. We discuss the broader test-time compute perspective---including serial ``generate--verify--revise'' patterns and parallel sampling/selection strategies that subsume judge-style verification---in more detail in Section~\ref{sec:lit_test_time_compute}.
+
+\subsection{LLM-as-a-Corrector: Beyond Detection to Remediation}
+
+Extending the judge paradigm, \textbf{LLM-as-a-Corrector} uses language models to not only identify errors but actively remediate them~\citep{shinn2024reflexion, dhuliawala2024chain}. In this setup, a judge first identifies problematic outputs, then a corrector LLM receives the original output along with the judge's critique and generates an improved version.
+
+This judge-then-correct pipeline has shown promise in iterative refinement settings. Chain-of-Verification (CoVe)~\citep{dhuliawala2024chain} applies this pattern by: (1) generating a baseline response, (2) planning verification questions, (3) answering questions independently to avoid bias, and (4) generating a corrected response incorporating verification findings. Similar approaches include Reflexion~\citep{shinn2024reflexion}, which maintains a memory of past errors to guide future corrections. Similarly, Self-Refine~\citep{madaan2023selfrefineiterativerefinementselffeedback} enables LLMs to improve their own outputs through an iterative feedback-refinement loop using a single model for both generation, feedback, and refinement, reporting average performance gains of $\sim$20\% across diverse tasks without requiring supervised training data.
+
+However, correction introduces its own failure modes. Correctors may introduce new errors while fixing detected ones, particularly when the underlying knowledge is genuinely uncertain. In CLD contexts, a corrector might ``fix'' a valid but uncommon causal relationship by replacing it with a more stereotypical one, trading one form of error for another. Also, since the corrector receives the Judge's feedback as input, if the Judge makes an error, this will likely propagate to the corrector, which is instructed to adhere to the Judge's instructions.
+
+% (Design rationale moved to Methods; see Sections~\ref{sec:corrector}.)
+
+\paragraph{Connection to test-time compute.}
+LLM-as-a-Corrector instantiates \emph{serial} test-time compute: additional inference-time steps are used to iteratively revise an initial output, conditioned on critique signals (here: judge verdicts/messages). This places the judge--corrector loop within a larger family of compute-scaled refinement methods (e.g., generate--verify--edit and debate-style revision), and clarifies why correction cost should be treated as a resource to allocate selectively rather than uniformly. The broader design space of serial vs.\ parallel test-time compute strategies---and how these motivate our later Deep Research validation design---is reviewed in Section~\ref{sec:lit_test_time_compute}.
+
+\subsection{Implications for CLD Hallucination Detection}
+
+The LLM-as-a-Judge and LLM-as-a-Corrector paradigms offer scalable approaches to CLD validation. In the CLD setting, prior work suggests several practical considerations and potential mitigations:
+
+\begin{enumerate}
+    \item \textbf{Bias mitigation:} Position and verbosity biases can be partially addressed through prompt engineering (randomizing presentation order, penalizing excessive length) or ensemble methods (aggregating multiple judge calls with varied conditions)~\citep{zheng2024judging, li2024llmsjudges}.
+    
+    \item \textbf{Complementary validation:} Given systematic judge biases and susceptibility to adversarial manipulation, LLM judges are best treated as one signal among others and combined with complementary checks (e.g., intrinsic uncertainty signals and retrieval/embedding-based grounding) rather than used in isolation~\citep{shi2024optimization, li2024llmsjudges}.
+    
+    \item \textbf{Conservative thresholding:} Because high scores can reflect superficial plausibility rather than correctness, edges flagged as low-confidence warrant serious scrutiny, while edges receiving high scores may still benefit from additional validation in high-stakes settings~\citep{li2024llmsjudges}.
+    
+    \item \textbf{Domain-specific calibration:} Judge reliability and score calibration can vary with task framing and domain; thresholds and interpretation may therefore require domain-specific tuning and periodic revalidation~\citep{li2024llmsjudges}.
+    
+    \item \textbf{Error propagation in correction:} When correctors receive judge feedback as input, judge errors can propagate downstream---an incorrect verdict may lead the corrector to ``fix'' a valid edge or preserve an invalid one. This coupling implies that corrector effectiveness is bounded by judge accuracy and that correction benefits are context-dependent~\citep{dhuliawala2024chain, shinn2024reflexion, madaan2023selfrefineiterativerefinementselffeedback}.
+    
+    \item \textbf{Correction-induced errors:} Correctors may introduce new errors while addressing detected ones, particularly when the underlying knowledge is genuinely uncertain~\citep{dhuliawala2024chain, shinn2024reflexion}. In CLD contexts, a corrector might replace a valid but uncommon causal relationship with a more stereotypical one, trading one error type for another; when available, evidence-grounding can help reduce such failures.
+\end{enumerate}
+
+\subsection{Limitations}
+
+Several fundamental limitations constrain the applicability of judge--corrector pipelines for CLD validation:
+
+\begin{itemize}
+    \item \textbf{Circular validation risk:} Using the same model (or model family) for generation, judgement, and correction creates potential for circular validation, where systematic biases are reinforced rather than detected~\citep{li2024llmsjudges}.
+    
+    \item \textbf{Knowledge boundary constraints:} Without access to external evidence (e.g., retrieval or citations), judges and correctors share the same parametric knowledge limitations as generators, and therefore cannot reliably verify claims that fall outside the model's knowledge boundary~\citep{huang2025hallucination, kalai2025languagemodelshallucinate, xu2025hallucination}.
+    
+    \item \textbf{Causal reasoning limitations:} LLMs exhibit systematic weaknesses in causal reasoning, including sensitivity to variable ordering and susceptibility to spurious correlations~\citep{kiciman2024causal, joshi2024causalfallacies}. These limitations affect judges assessing causal validity and correctors attempting to repair causal claims.
+    
+    \item \textbf{Computational cost:} Multi-step judge--corrector pipelines multiply inference costs. For large-scale CLD generation, this overhead may be prohibitive without selective application guided by uncertainty signals.
+    
+    \item \textbf{Evaluation complexity:} Assessing judge and corrector performance requires ground-truth labels, which are expensive to obtain for CLD edges and may themselves reflect expert disagreement rather than objective truth.
+\end{itemize}
+
+Taken together, this literature supports hybrid detection approaches that combine LLM-based judges and correctors with complementary uncertainty and grounding signals, rather than relying on any single mechanism in isolation.
+
+
+
+
+
+

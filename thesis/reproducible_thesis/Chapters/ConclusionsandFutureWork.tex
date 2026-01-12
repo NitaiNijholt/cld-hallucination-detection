@@ -1,0 +1,50 @@
+%==============================================================================
+\chapter{Conclusion}
+\label{sec:conclusion}
+%==============================================================================
+
+This thesis investigated whether methods independent of researcher-provided corpora can detect and mitigate hallucinations in LLM-generated Causal Loop Diagrams (CLDs), motivated by the reliability requirements of using LLMs for structured scientific knowledge generation. Across three research questions, we evaluated LLM-as-a-Judge configurations, LLM-as-a-correctors, uncertainty quantification (UQ) signals, automated literature-oriented validation via Deep Research, and adaptive deployment of Deep Research based on judge uncertainty signals.
+
+Overall, the results support a nuanced conclusion: corpus-independent detection and correction methods can work in controlled settings, but their effectiveness degrades when the target is expert-grounded causal structure. In our dataset of three health-domain CLDs, correctness-judge performance is high in a controlled synthetic hallucination setting (GT Synth), but it drops in the literature ground-truth setting (GT Lit), with only the causal mechanistic prompt beating random baselines. In expert domains, disagreement with an expert CLD should not automatically be treated as fabrication: it can also reflect scope choices, tacit knowledge, or construct mismatch between an edge claim and what is explicitly evidenced in accessible sources. As a consequence, LLM-generated CLDs are best used as candidate drafts that focus expert attention on the contested edge space, rather than as self-validating outputs.
+
+For corpus-independent hallucination signals, generator-side UQ metrics (perplexity, minimum probability, maximum window entropy, and ``corpus-dependent'' cosine similarity) do not effectively flag hallucinations independently. They can contribute as features to supervised ensemble classifiers in-distribution, but they fail to generalise out-of-CLD, reinforcing their role as auxiliary signals for monitoring and triage rather than as standalone detectors.
+
+For judge-guided correction, LLM-as-a-corrector consistently improves judge scores and slightly improves CLD quality in the synthetic setting, but not versus literature ground truth. This highlights a Goodhart-like risk~\citep{goodhart1984problems} in judge--corrector feedback loops: optimizing for proxy judge satisfaction without improving expert-grounded alignment.
+
+Finally, for literature-oriented validation, we piloted a multi-agent Deep Research (DR) system as adaptive test-time compute. DR retrieves direct causal evidence for 62.4\% of false positive edges and 42.9\% of false negative edges. Single-rater human validation (\(n=50\)) suggests that at applicability threshold \(t=0.7\), 66\% of DR-evidenced edges pass the threshold and, among passing edges, 90.9\% are correct-causal; however, a preliminary second-rater overlap (\(n=13\)) indicates only fair agreement on categorical verdicts and poor agreement on applicability scores, so calibration-based extrapolations should be interpreted as exploratory and potentially rater-sensitive. Under this calibration, extrapolated ground-truth enrichment suggests substantial gains in aggregate edge F1: \(0.267 \to 0.527\) (Scenario 1: FP\(\to\)TP) and \(0.267 \to 0.582\) (Scenario 2: LLM+DR), with conservative estimates of 0.472 and 0.500. Using a mechanistic correctness judge to flag uncertain edges for adaptive DR deployment suggests an estimated 15\% accuracy-per-dollar increase.
+
+%------------------------------------------------------------------------------
+\section{Key Contributions}
+\label{sec:conclusion_contributions}
+%------------------------------------------------------------------------------
+
+\begin{itemize}[noitemsep]
+    \item We provide an end-to-end experimental evaluation of corpus-independent CLD generation and post-hoc validation, spanning generation, judging, correction, uncertainty signals, and evidence-oriented verification, with methods established in literature but not tested systematically in CLD context.
+    \item We show that the \textit{Correctness Judge} performs strongly in controlled synthetic hallucination settings (GT Synth) but does not reliably transfer to literature ground truth (GT Lit), where only the Mechanistic prompt exceeds random baselines.
+    \item We find that the \textit{Citation Judge} does not reliably discriminate valid from hallucinated edges under either GT Synth or GT Lit: while it shows substantial alignment with a human rater when provided with relevant references (with a systematic leniency bias), weak discrimination appears to stem primarily from upstream constraints---evidence type/strength and retrieval quality. Retrieval and evidence asymmetries (notably, \textit{absence of evidence} being treated as \textit{evidence of absence} for negative edges) further make citation judging better suited to permissive screening than automated filtering.
+    \item We benchmark generator-side uncertainty quantification (UQ) metrics as corpus-independent hallucination signals and show that they are weak as standalone detectors and do not generalise reliably across CLDs, but can serve as auxiliary features for monitoring and triage.
+    \item We identify and characterise failure modes that matter specifically for CLDs (e.g., scope-vs-factual disagreement, plausibility bias, evidence-of-absence effects, and construct/applicability mismatch).
+    \item We demonstrate that judge-guided correction can optimise for judge satisfaction without improving expert-grounded alignment, highlighting a Goodhart-like risk~\citep{goodhart1984problems} in judge--corrector feedback loops.
+    \item We provide evidence that literature-oriented validation can enrich the disagreement space: calibrated with human validation and under strong assumptions (relationship isolation, a single human validator, and extrapolation), Deep Research yields substantial but bounded F1 gains; future work should test enrichment performance as these assumptions are relaxed. We also show a proof-of-concept judge-triggered deployment policy that improves cost-efficiency by selectively invoking Deep Research on uncertain edges.
+\end{itemize}
+
+%------------------------------------------------------------------------------
+\section{Concluding Remarks}
+\label{sec:conclusion_remarks}
+%------------------------------------------------------------------------------
+
+Taken together, these findings position LLMs as scalable assistants for proposing and stress-testing causal structures, not as autonomous validators. The most promising workflow is hybrid: use LLMs to expand the edge space, use judges and UQ signals to triage uncertainty, and selectively apply evidence-oriented validation (e.g., Deep Research with an explicit applicability threshold) to focus expert attention on the contested edges that most affect the final model.
+
+A key finding is that ``hallucination'' in this setting may not be equivalent to fabrication. In our experiments, a substantial proportion of LLM-generated edges classified as false positives against expert ground truth nonetheless had retrievable direct causal evidence under Deep Research (62.4\%). This indicates that the expert--LLM disagreement space can mix multiple phenomena: genuine fabrications, expert scoping choices, and construct or operationalisation mismatch where evidence supports a related---but not identical---claim. Accordingly, disagreement with an expert CLD should not automatically be treated as error; it can also be a signal for targeted evidence review and model refinement.
+
+This perspective positions LLMs not merely as reproducers of expert consensus, but as tools for systematically surfacing candidate relationships for expert adjudication---an increasingly valuable function as system complexity grows and the edge space ($O(|V|^2)$) exceeds the capacity for exhaustive expert deliberation. As LLM capabilities continue to advance, the methods evaluated here---particularly uncertainty-guided selective deployment combined with literature-grounded validation---provide a foundation for integrating LLM-assisted causal synthesis into rigorous research workflows. The path forward is not to replace expert judgement, but to augment it: use LLMs to handle scalable generation and evidence gathering, while reserving expert attention for construct definition, applicability assessment, and the causal modelling decisions that require domain knowledge.
+
+The most valuable next step would be a systematic Deep Research ablation (single-agent vs.\ multi-agent, search depth, evidence filters, and trigger policies) replicated and (human) validated, across a larger, domain-diverse CLD corpus (beyond health) to quantify generalisation and isolate which components drive gains.
+
+
+
+
+
+
+
+

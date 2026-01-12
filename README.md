@@ -7,38 +7,34 @@ Computational reproducibility package for the MSc thesis:
 
 ## Quick Start (3 Steps)
 
-### Step 1: Clone and Compile BEFORE Reproduction
+### Step 1: Clone and Setup
 
 ```bash
 git clone https://github.com/NitaiNijholt/cld-hallucination-detection.git
-cd cld-hallucination-detection/thesis/final_thesis/def_submission_template
-pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
+cd cld-hallucination-detection
+uv sync
 ```
-
-**Result**: PDF compiles with placeholder boxes for figures and "[Table: run reproduction]" text.
 
 ---
 
 ### Step 2: Run Reproduction (~10 minutes)
 
 ```bash
-cd ../../..
-uv sync
 uv run python final_runs/reproduce_all_thesis_assets.py
 ```
 
-**Result**: All 30 figures and tables generated from experimental data.
+**Result**: All 30 figures and tables generated from experimental data into `final_runs/`.
 
 ---
 
-### Step 3: Recompile
+### Step 3: Compile Thesis
 
 ```bash
-cd thesis/final_thesis/def_submission_template
+cd thesis/reproducible_thesis
 pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
-**Result**: Full thesis PDF with all generated figures and tables.
+**Result**: Full thesis PDF with all reproduced figures and tables.
 
 ---
 
@@ -64,6 +60,30 @@ pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 
 ---
 
+## Repository Structure
+
+```
+cld-hallucination-detection/
+├── final_runs/                     # Experimental data + analysis scripts
+│   ├── reproduce_all_thesis_assets.py   # Master reproduction script
+│   ├── RQ1_unified_analysis.py     # RQ1 analysis
+│   ├── RQ2_unified_analysis.py     # RQ2 analysis
+│   ├── RQ3_unified_analysis.py     # RQ3 analysis
+│   ├── RQ1a_gt_*/                  # RQ1 experimental data
+│   ├── RQ2_uq_*/                   # RQ2 experimental data
+│   └── RQ3_deep_research_*/        # RQ3 experimental data
+│
+└── thesis/
+    ├── reproducible_thesis/        # Clean thesis (53 files, 4MB)
+    │   ├── main.tex                # Main document
+    │   ├── Chapters/               # All chapters
+    │   ├── Appendices/             # Appendices
+    │   └── Figures/                # Static figures only
+    └── final_runs -> ../final_runs # Symlink to data
+```
+
+---
+
 ## Verification
 
 After Step 2, check the reproduction report:
@@ -78,4 +98,3 @@ cat /tmp/thesis_reproducibility_*/reproducibility_report.json | grep total_cover
 ## License
 
 MIT License
-
