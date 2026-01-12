@@ -1000,7 +1000,7 @@ Each experiment in the Results chapter (Chapter~\ref{ch:results}) references its
 \label{sec:reproduction}
 %==============================================================================
 
-All analysis scripts and experimental result data required to reproduce the thesis outputs (figures and tables) are available in a public reproduction repository:\footnote{\url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction})}
+All analysis scripts and experimental result data required to reproduce the thesis outputs (figures and tables) are available in a public reproduction repository.\footnote{Public reproduction repository: \url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction}). Private platform repository (for re-running generation/judging experiments): \url{https://github.com/CausalixAI/platform} (branch: \texttt{thesis-nitai}).}
 
 \begin{itemize}[noitemsep]
     \item \textbf{Quick start:} Clone repository, install dependencies with \texttt{uv sync}, run \texttt{uv run python final\_runs/reproduce\_all\_thesis\_assets.py}
@@ -1010,7 +1010,7 @@ All analysis scripts and experimental result data required to reproduce the thes
     \item \textbf{Execution commands:} Appendix~\ref{sec:execution_commands} (simulation scripts; requires private platform access)
 \end{itemize}
 
-\noindent Analysis scripts regenerate all Results-chapter figures and tables from included experimental data without API keys. Re-running the original generation/judging experiments requires access to the private platform repository and OpenAI/Brave Search API keys.
+\noindent Analysis scripts regenerate all Results-chapter figures and tables from included experimental data without API keys. Re-running the original generation/judging experiments requires access to the private platform repository (see footnote) and OpenAI/Brave Search API keys; see Section~\ref{ch:ethics} (Data Management) for access details and data availability summary.
 
 %==============================================================================
 \section{Validity Considerations}
