@@ -48,8 +48,8 @@ Analysis scripts (reproduction snapshot) & Public GitHub reproduction snapshot (
 
 \paragraph{Human Validation Raters.} Human validation labels for the datasets listed in Table~\ref{tab:data_availability} were provided by the following individuals:
 \begin{itemize}[noitemsep]
-    \item \textbf{RQ1a human validation data ($n=72$ edges):} Primary rater: Mick Scheide (Data Manager, Antoni van Leeuwenhoek Hospital); Secondary rater: Nitai Nijholt (MSc Student, UvA FNWI). This dataset covers edges from the Depressive Symptoms and Social Norms CLDs.
-    \item \textbf{RQ3 human validation data ($n=50$ edges):} Primary rater: Cillian Hourican (PhD Candidate, UvA FNWI); Secondary rater: Nitai Nijholt (MSc Student, UvA FNWI). This dataset covers Deep Research validation edges from the Depressive Symptoms CLD.
+    \item \textbf{RQ1a human validation data ($n=72$ edges):} Primary rater: Mick Scheide (Data Manager, Antoni van Leeuwenhoek Hospital) validated File~1 (Depressive Symptoms, GPT-4.1, $n=30$) and File~2 (Depressive Symptoms, Claude 4 Sonnet, $n=30$). For File~3 (Social Norms, GPT-4.1, $n=12$), both Mick Scheide and Nitai Nijholt (MSc Student, UvA FNWI) provided ratings to establish inter-rater reliability.
+    \item \textbf{RQ3 human validation data ($n=50$ edges):} Primary rater: Nitai Nijholt validated all 50 sampled Deep Research edges from the Depressive Symptoms CLD (\texttt{final\_runs/RQ3\_deep\_research\_validation/validation/}). Secondary rater: Cillian Hourican (PhD Candidate, UvA FNWI) validated a 13-edge overlap subset for inter-rater reliability assessment.
 \end{itemize}
 
 All experimental artefacts, including generated CLDs, judge outputs, corrector outputs, and Deep Research evidence, are preserved in structured formats (JSON, CSV) with full provenance tracking (run IDs, timestamps, model versions, prompts). Reproducibility procedures are described in Section~\ref{sec:execution_commands}.
