@@ -32,7 +32,6 @@ Neural Network & 0.709 $\pm$ 0.032 & 0.739 & 0.648 $\pm$ 0.211 & 0.092 & 0.317 $
 \textbf{Uncertainty:} Columns with $\pm$95\% CI use the $t$-distribution with $df=n-1$ over folds, per the uncertainty reporting rule (Methods Section~\ref{sec:uncertainty_rule}).
 Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
 \textbf{Selected thresholds:} Logistic Regression: $t^*=0.470$; Random Forest: $t^*=0.467$; Gradient Boosting: $t^*=0.162$; Neural Network: $t^*=0.141$.
-\textbf{No Phase 6 p-value vs.\ the random-ranking reference:} Although $\mathrm{AUC}=0.5$ corresponds to random-ranking discrimination, we do not report a formal p-value comparison to 0.5 in Phase~6 because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.
 \end{tablenotes}
 \end{threeparttable}
 \end{minipage}
