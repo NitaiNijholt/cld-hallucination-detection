@@ -130,8 +130,8 @@ Water Tank & 6 & 7 & Pascal's Law~\cite{pascal1663equilibre}; Torricelli's Law~\
 
 \textbf{Construction process.} The physics CLDs were constructed as follows:
 \begin{enumerate}[noitemsep]
-    \item \textbf{Causal structure definition:} Variables and directed edges were derived from established physical laws (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka-Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). Edge polarities (\texttt{POSITIVE}/\texttt{NEGATIVE}) follow directly from the mathematical relationships in each law.
-    \item \textbf{Motivation generation:} For each edge, causal explanations (``motivations'') were authored in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus}, among the best-benchmarked models at time of writing. The prompt pattern was: ``\textit{Write a motivation for the edge [Source] $\rightarrow$ [Target] with polarity [POSITIVE/NEGATIVE] based on [Physical Law]. Include the relevant equation and cite sources.}'' This interactive process ensured each motivation accurately reflected the underlying physics while remaining accessible.
+    \item \textbf{Causal structure definition:} Variables, directed edges, and polarities were proposed in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus} by translating established physical laws into CLD form (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka--Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). The resulting edge directions and polarities (\texttt{POSITIVE}/\texttt{NEGATIVE}) were then manually checked against these sources.
+    \item \textbf{Motivation generation:} For each edge, causal explanations (``motivations'') were authored in the same interactive Opus session and manually verified against the same source texts. The prompt pattern was: ``\textit{Write a motivation for the edge [Source] $\rightarrow$ [Target] with polarity [POSITIVE/NEGATIVE] based on [Physical Law]. Include the relevant equation and cite sources.}''
     \item \textbf{Reference mapping:} Each edge was annotated with bibliographic references to seminal papers and standard textbooks. Post-processing scripts (\texttt{add\_urls\_to\_references.py}, \texttt{add\_supporting\_quotes.py}) enriched the references with URLs (where publicly accessible) and supporting quotes extracted from source texts.
     \item \textbf{Verification:} All motivations and supporting quotes were manually verified against source texts to ensure scientific accuracy. URLs were browser-verified for accessibility (\texttt{verify\_and\_fix\_urls.py}).
     \item \textbf{Data format:} Final JSON structure: \texttt{\{source, target, polarity, motivation, references[\{short\_citation, full\_citation, url, supporting\_quote\}]\}}. Converted to Excel format via \texttt{create\_thermostat\_excel.py}.
@@ -283,7 +283,6 @@ RQ3 Validation Tables & \texttt{final\_runs/RQ3\_deep\_research\_validation/scri
 Generator Model Comparison & \texttt{final\_runs/prelim\_generator\_model\_comparison/analysis\_scripts/analyze\_generator\_models.py} \\
 Random Baseline Analysis & \texttt{final\_runs/random\_baseline\_generator/compute\_random\_baseline.py} \\
 Embedding Model Benchmark & \texttt{final\_runs/supp\_embedding\_benchmark/embedding\_benchmark\_real\_cld.py} \\
-Power Analysis & \texttt{final\_runs/power\_analysis/compute\_power\_analysis.py} \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Cost \& Scaling Analysis}} \\
 Complete Cost Analysis & \texttt{final\_runs/supp\_cost\_analysis/calculate\_all\_costs.py} \\
@@ -1721,12 +1720,13 @@ CLDs & Thermostat (8 edges), Predator-Prey (10), RC Circuit (7), Water Tank (6) 
 Total Edges & 31 \\
 Judge Model & GPT-4.1 \\
 Temperature & 0.0 \\
+Structure + motivations authored with & Claude 4.5 Opus~\cite{anthropic2025claude45opus} (manual verification against sources) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Physics Principles}} \\
-Thermostat & Newton's Law of Cooling, First Law of Thermodynamics \\
-Predator-Prey & Lotka (1925), Volterra (1926) population dynamics \\
-RC Circuit & Ohm's Law (1827), Kirchhoff's Laws (1845) \\
-Water Tank & Conservation of Mass, Torricelli's Law (1643) \\
+Thermostat & Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat} \\
+Predator-Prey & Lotka--Volterra population dynamics~\cite{lotka1925elements,volterra1928fluctuations} \\
+RC Circuit & Ohm's Law~\cite{ohm1827galvanische}, Kirchhoff's Laws~\cite{kirchhoff1845durchgang} \\
+Water Tank & Pascal's Law~\cite{pascal1663equilibre}, Torricelli's Law~\cite{torricelli1644opera} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1780,22 +1780,6 @@ GPT-5-mini & \$0.15/1M input, \$0.60/1M output tokens \\
     \item \texttt{cost\_complete\_report\_*.txt}: Human-readable cost report
     \item \texttt{cost\_complete\_table.tex}: LaTeX table for thesis
     \item \texttt{cost\_by\_experiment\_results.json}: Detailed per-experiment breakdown
-\end{itemize}
-
-\subsection{Power Analysis}
-\label{sec:power_analysis}
-
-Computes statistical power for pairwise prompt comparisons using effect sizes from experimental data.
-
-\begin{verbatim}
-cd final_runs/power_analysis/
-
-python compute_power_analysis.py
-\end{verbatim}
-
-\textbf{Output Files:}
-\begin{itemize}[noitemsep]
-    \item Console output with power estimates and required sample sizes
 \end{itemize}
 
 \subsection{Embedding Model Benchmark}

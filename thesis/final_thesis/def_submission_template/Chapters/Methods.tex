@@ -813,7 +813,7 @@ where $C_e$ denotes the number of usable fetched citations for edge $e$. The com
 \begin{equation}
     \Delta \text{Score} = \overline{s}_{A} - \overline{s}_{B}
 \end{equation}
-representing the difference in mean citation-judge scores between configurations $A$ and $B$. The overall approval rate measures the proportion of all edges receiving citation-judge scores above the acceptance threshold. To isolate judge performance from infrastructure limitations, we additionally report the conditional approval rate, computed only over edges with at least one successfully retrieved citation ($C_e \ge 1$).
+representing the difference in mean citation-judge scores between configurations $A$ and $B$. For retrieval diagnostics, we report an \emph{approval} rate defined as the proportion of edges whose citation-judge aggregate verdict indicates non-zero support (\texttt{FULLY\_SUPPORTED} or \texttt{PARTIALLY\_SUPPORTED}, i.e., score $\ge 0.5$). To isolate judge behaviour from infrastructure limitations, we additionally report the conditional approval rate computed only over edges with at least one successfully retrieved citation ($C_e \ge 1$). (This approval metric is used only for retrieval-validation reporting and should not be conflated with the hallucination decision threshold, which flags scores $\le 0.5$.)
 
 \paragraph{Computational Efficiency Metrics (Supplementary Analysis).}
 To characterise the cost--accuracy trade-off and parallelisation benefits, we report several efficiency metrics. The $\Delta$F1 per dollar metric quantifies accuracy improvement relative to compute expenditure, typically scaled as $\Delta$F1 per \$100 for interpretability. Relatedly, cost per +0.1 F1 extrapolates the dollar expenditure required to achieve a 0.1-point increase in expected F1 under a specified scaling model. For parallelisation analysis, we measure wall-clock time as the elapsed runtime in seconds for a fixed workload under a given worker count $W$. Speedup is defined as $\text{Speedup} = T_1/T_W$, where $T_1$ denotes single-worker runtime and $T_W$ denotes runtime with $W$ workers. Parallel efficiency normalises speedup by the worker count: $\text{Efficiency} = (\text{Speedup}/W)\times 100\%$, indicating how effectively additional workers are utilised.
@@ -1003,7 +1003,6 @@ Each experiment in the Results chapter (Chapter~\ref{ch:results}) references its
 All analysis scripts and experimental result data required to reproduce the thesis outputs (figures and tables) are available in a public reproduction repository:\footnote{\url{https://github.com/NitaiNijholt/cld-hallucination-detection} (branch: \texttt{thesis-reproduction})}
 
 \begin{itemize}[noitemsep]
-    \item \textbf{Quick start:} Clone repository, install dependencies with \texttt{uv sync}, run \texttt{uv run python final\_runs/reproduce\_all\_thesis\_assets.py}
     \item \textbf{Unified entry points:} Appendix~\ref{sec:unified_entry_points} (Table~\ref{tab:final_runs_script_inventory})
     \item \textbf{Data availability:} Appendix~\ref{sec:data_availability} (Tables~\ref{tab:gt_files},~\ref{tab:validation_datasets},~\ref{tab:experiment_datasets})
     \item \textbf{Environment setup:} Appendix~\ref{sec:software_env} (Tables~\ref{tab:system_env},~\ref{tab:software_citations})
