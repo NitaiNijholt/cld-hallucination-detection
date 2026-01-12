@@ -43,8 +43,8 @@
 \captionsetup[table]{listformat=simple}
 % Ensure long captions wrap instead of overflowing margins.
 \captionsetup{justification=raggedright,singlelinecheck=false}
-% Center table captions and allow full width
-\captionsetup[table]{justification=centering,singlelinecheck=true,width=\textwidth}
+% Center table captions and allow full width (use \linewidth so captions adapt to minipage containers)
+\captionsetup[table]{justification=centering,singlelinecheck=true,width=\linewidth}
 \setlength{\cftsecnumwidth}{3em}
 \setlength{\cftsubsecnumwidth}{4em}
 \setlength{\cftsubsubsecnumwidth}{5em}
