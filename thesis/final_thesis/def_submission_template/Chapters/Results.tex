@@ -435,9 +435,9 @@ As described in Methods~\S\ref{sec:prompt_sensitivity_rationale}, we include RM-
 \label{sec:rq1b_results}
 % ==============================================================================
 
-RQ1b evaluates whether an LLM-based corrector, conditioned on LLM-judge feedback, can improve CLD edge quality. The experimental design uses a \textbf{repeated-measures structure} with 9 blocks (3~CLDs $\times$ 3~runs), treating corrector prompt variant (\PromptBaseline{}, \PromptCoT{}, \PromptMechanistic{}) as the within-block factor. The corrector receives judge-flagged edges and attempts to revise causal narratives or change edge types to address detected issues.
+RQ1b evaluates whether an LLM-based corrector, conditioned on LLM-judge feedback, can improve CLD edge quality. The experimental design uses a repeated-measures structure with 9 blocks (3~CLDs $\times$ 3~runs), treating corrector prompt variant (\PromptBaseline{}, \PromptCoT{}, \PromptMechanistic{}) as the within-block factor. The corrector receives judge-flagged edges and attempts to revise causal narratives or change edge types to address detected issues.
 
-The \textbf{objective} is to determine (i)~whether the corrector improves edge F1 relative to ground truth, (ii)~whether improvements generalise from synthetic corruptions (GT~Synth) to literature ground truth (GT~Lit), and (iii)~which corrector prompt variant performs best. We focus on the Correctness Judge type only, given its better RQ1a performance and the prohibitive costs of Citation Judge experiments. For GT~Synth experiments, we use the \PromptBaseline{} Judge prompt; for GT~Lit experiments, we use the \textbf{Mechanistic Correctness Judge prompt}, which showed better discrimination in RQ1a GT~Lit experiments (see Figure~\ref{fig:rq1a_gt_correctness_row1}).
+The objective is to determine (i)~whether the corrector improves edge F1 relative to ground truth, (ii)~whether improvements generalise from synthetic corruptions (GT~Synth) to literature ground truth (GT~Lit), and (iii)~which corrector prompt variant performs best. We focus on the Correctness Judge type only, given its better RQ1a performance and the prohibitive costs of Citation Judge experiments. For GT~Synth experiments, we use the \PromptBaseline{} Judge prompt; for GT~Lit experiments, we use the Mechanistic Correctness Judge prompt, which showed better discrimination in RQ1a GT~Lit experiments (see Figure~\ref{fig:rq1a_gt_correctness_row1}).
 
 \medskip
 \noindent\textit{Experimental design: Section~\ref{sec:rq1b_experiments}.}
@@ -637,13 +637,9 @@ This preserves the spirit of RQ3: a computationally cheap uncertainty signal tri
 \label{sec:rq3_results}
 % ==============================================================================
 
-\medskip
-\noindent\textbf{RQ3: Deep Research Validation}
+\noindent RQ3 evaluates whether automated multi-agent literature search (Deep Research) can validate LLM-generated causal claims by retrieving direct causal evidence (RCTs, experimental manipulations, meta-analyses) from the scientific literature. The experimental design is an exploratory pilot study (single-run, no replication) due to computational cost ($\sim$\$248 for 285 edges). Edges are stratified by GT~Lit validation class (TP/FP/FN), and the primary metric is class-wise \textit{detection rate}---the fraction of edges for which Deep Research retrieves direct causal evidence.
 
-\medskip
-\noindent RQ3 evaluates whether automated multi-agent literature search (\textbf{Deep Research}) can validate LLM-generated causal claims by retrieving \textbf{direct causal evidence} (RCTs, experimental manipulations, meta-analyses) from the scientific literature. The experimental design is an \textbf{exploratory pilot study} (single-run, no replication) due to computational cost ($\sim$\$248 for 285 edges). Edges are stratified by GT~Lit validation class (TP/FP/FN), and the primary metric is class-wise \textit{detection rate}---the fraction of edges for which Deep Research retrieves direct causal evidence.
-
-The \textbf{objective} is to determine (i)~whether Deep Research can discriminate between valid (TP) and hallucinated (FP) edges better than the simple citation retrieval used in RQ1a, (ii)~whether detection rates vary by CLD domain, (iii)~whether DR-validated edges could improve generation performance under a ground-truth enrichment scenario, and (iv)~whether adaptive test-time compute allocation (smart-trigger deployment of DR) can improve accuracy-per-dollar relative to always-on DR. Following the main analysis, we report computational costs, per-CLD detection breakdowns, an exploratory enrichment analysis, and human validation of DR evidence applicability.
+The objective is to determine (i)~whether Deep Research can discriminate between valid (TP) and hallucinated (FP) edges better than the simple citation retrieval used in RQ1a, (ii)~whether detection rates vary by CLD domain, (iii)~whether DR-validated edges could improve generation performance under a ground-truth enrichment scenario, and (iv)~whether adaptive test-time compute allocation (smart-trigger deployment of DR) can improve accuracy-per-dollar relative to always-on DR. Following the main analysis, we report computational costs, per-CLD detection breakdowns, an exploratory enrichment analysis, and human validation of DR evidence applicability.
 
 \medskip
 \begin{center}
