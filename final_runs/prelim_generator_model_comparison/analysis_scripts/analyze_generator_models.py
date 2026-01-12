@@ -295,12 +295,8 @@ def generate_latex_table(df, agg_df):
     clds = ["social_norms", "depressive", "emergency_dept"]
     cld_display = {"social_norms": "Social Norms", "depressive": "Depressive", "emergency_dept": "Emergency Dept"}
     
-    # Find best F1 per CLD
-    best_f1_per_cld = {}
-    for cld in clds:
-        cld_data = df[df['CLD'] == cld]
-        if len(cld_data) > 0:
-            best_f1_per_cld[cld] = cld_data['F1'].max()
+    # Find overall best F1 across all per-CLD rows (not per-CLD, just the single highest)
+    best_f1_overall = df['F1'].max()
     
     # Find best metrics in aggregate
     best_agg_precision = agg_df['Precision'].max()
@@ -315,7 +311,7 @@ def generate_latex_table(df, agg_df):
     lines = [
         r"\begin{table}[H]",
         r"\centering",
-        r"\caption{Generator Model Comparison: Edge Recovery Performance. Bold indicates highest F1 per CLD; in aggregate row, bold indicates highest Precision, Recall, and F1 separately. \textbf{Edges processed} refers to the number of ordered (source, target) edge slots evaluated (including \texttt{NONE}).}",
+        r"\caption{Generator Model Comparison: Edge Recovery Performance. Bold indicates highest value in column. \textbf{Edges processed} refers to the number of ordered (source, target) edge slots evaluated (including \texttt{NONE}).}",
         r"\label{tab:generator_model_comparison}",
         r"\begin{threeparttable}",
         r"\begin{tabular}{llccccccc}",
@@ -332,8 +328,8 @@ def generate_latex_table(df, agg_df):
                 continue
             row = row.iloc[0]
             
-            # Check if this is best F1 for this CLD
-            is_best_f1 = abs(row['F1'] - best_f1_per_cld.get(cld, -1)) < 0.0001
+            # Check if this is the overall best F1 (single highest across all CLDs)
+            is_best_f1 = abs(row['F1'] - best_f1_overall) < 0.0001
             
             f1_str = fmt_bold(row['F1'], is_best_f1)
             
@@ -382,9 +378,6 @@ def generate_latex_table(df, agg_df):
         r"\small",
         # Note: runs are pooled as counts; this matches the micro-averaged definition used in the caption.
         rf"\item \textit{{Note.}} All models used identical prompts (Nitai\_C variant) and temperature (T=0.7). Results pool TP/FP/FN counts across {int(df['N_Runs'].min())} independent runs per CLD (same configuration; stochastic sampling). Nodes (variables) were directly retrieved from the \textbf{{GT lit CLDs}}. \textbf{{Edges processed}} denotes the number of ordered (source, target) edge slots evaluated (including \texttt{{NONE}}), i.e., ideally $|V|(|V|-1)$; it can be slightly lower if some rows are missing due to parsing/processing errors.",
-        rf"\item \textbf{{Interpretation:}} {agg_df.loc[agg_df['F1'].idxmax(), 'Model']} achieves the best aggregate F1 ({agg_df['F1'].max():.3f}).",
-        rf"\item {agg_df.loc[agg_df['Recall'].idxmax(), 'Model']} shows the highest aggregate recall ({agg_df['Recall'].max():.3f}), while {agg_df.loc[agg_df['Precision'].idxmax(), 'Model']} has the highest aggregate precision ({agg_df['Precision'].max():.3f}).",
-        rf"\item Based on best micro-average F1 score, \textbf{{{agg_df.loc[agg_df['F1'].idxmax(), 'Model']} was selected}} as the generator model for all subsequent experiments. Additionally, GPT-4.1 is the only model that provides token-level log probabilities (logprobs), enabling confidence-based edge filtering which is necessary for RQ2 experiments.",
         r"\end{tablenotes}",
         r"\end{threeparttable}",
         r"\end{table}"

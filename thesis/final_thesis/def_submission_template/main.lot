@@ -13,110 +13,110 @@
 \contentsline {table}{\numberline {6.1}{\ignorespaces Two uses of TP/FP/FN in this thesis (generator scoring vs.\ judge scoring).}}{64}{table.caption.204}%
 \contentsline {table}{\numberline {6.2}{\ignorespaces Master experimental configuration}}{77}{table.caption.255}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Generator Model Comparison: Edge Recovery Performance. Bold indicates highest F1 per CLD; in aggregate row, bold indicates highest Precision, Recall, and F1 separately. \textbf {Edges processed} refers to the number of ordered (source, target) edge slots evaluated (including \texttt {NONE}).}}{81}{table.caption.262}%
+\contentsline {table}{\numberline {7.1}{\ignorespaces Generator Model Comparison: Edge Recovery Performance. Bold indicates highest value in column. \textbf {Edges processed} refers to the number of ordered (source, target) edge slots evaluated (including \texttt {NONE}).}}{81}{table.caption.262}%
 \contentsline {table}{\numberline {7.2}{\ignorespaces Random Baseline Comparison for Generator Edge Recovery}}{82}{table.caption.267}%
 \contentsline {table}{\numberline {7.3}{\ignorespaces Generator Temperature Sensitivity: Edge F1 Score by CLD}}{83}{table.caption.269}%
 \contentsline {table}{\numberline {7.4}{\ignorespaces TruthfulQA Judge Verification (n=1634)}}{84}{table.caption.273}%
 \contentsline {table}{\numberline {7.5}{\ignorespaces Human Validation: LLM Judge vs.\ Expert Inter-Rater Agreement}}{95}{table.caption.299}%
 \contentsline {table}{\numberline {7.6}{\ignorespaces Confusion Matrix: LLM Judge vs.\ Human Expert (Combined, n=72)}}{95}{table.caption.302}%
 \contentsline {table}{\numberline {7.7}{\ignorespaces Search Provider Comparison on Uleman's Expert CLD (150 edges)}}{96}{table.caption.306}%
-\contentsline {table}{\numberline {7.8}{\ignorespaces Comparison of Correctness vs Citation-Based Judging on Physics CLDs. For the Correctness Judge, \emph {approval} denotes the fraction of edges with verdict \texttt {CORRECT} (score 1.0). For the Citation Judge, \emph {approval} denotes the fraction of edges with aggregate verdict \texttt {FULLY\_SUPPORTED} or \texttt {PARTIALLY\_SUPPORTED} (score $\ge 0.5$); \texttt {NO\_CITATION} indicates retrieval failure. ``Citation (All)'' counts \texttt {NO\_CITATION} as not approved; ``Citations Retrieved'' reports the fraction of edges with at least one successfully retrieved citation; ``Citation (Retrieved Only)'' reports approval conditioned on retrieval.}}{97}{table.caption.309}%
-\contentsline {table}{\numberline {7.9}{\ignorespaces Retrieval Success Comparison. Expert-provided references are curated by domain experts; automated fetch uses web search. Retrieval success indicates percentage of edges where citation content was successfully fetched.}}{98}{table.caption.311}%
-\contentsline {table}{\numberline {7.10}{\ignorespaces Corrector Performance on Synthetically Corrupted Data (Baseline Prompt)}}{100}{table.caption.322}%
-\contentsline {table}{\numberline {7.11}{\ignorespaces Corrector Prompt Ablation on Synthetic Corruptions: Performance Comparison}}{101}{table.caption.325}%
-\contentsline {table}{\numberline {7.12}{\ignorespaces Corrector Performance on Ground Truth Data Using Correctness-Based Validation (Baseline Prompt)}}{102}{table.caption.328}%
-\contentsline {table}{\numberline {7.13}{\ignorespaces Corrector Prompt Ablation on Ground Truth: Performance Comparison}}{103}{table.caption.331}%
-\contentsline {table}{\numberline {7.14}{\ignorespaces Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}}{106}{table.caption.339}%
-\contentsline {table}{\numberline {7.15}{\ignorespaces Shapiro-Wilk Normality Tests for UQ Metric Distributions}}{109}{table.caption.343}%
-\contentsline {table}{\numberline {7.16}{\ignorespaces Ensemble Classifier Performance Across Validation Phases (Block-Level Cross-Validation)}}{111}{table.caption.348}%
-\contentsline {table}{\numberline {7.17}{\ignorespaces Deep Research Detection Rate and Discrimination Analysis (n=285 edges)}}{114}{table.caption.356}%
-\contentsline {table}{\numberline {7.18}{\ignorespaces Per-CLD Pairwise Discrimination Tests (Fisher's Exact, Bonferroni $m=3$)}}{115}{table.caption.361}%
-\contentsline {table}{\numberline {7.19}{\ignorespaces LLM Generation Metrics: Two Enrichment Scenarios (Aggregate and Per-CLD)}}{116}{table.caption.364}%
-\contentsline {table}{\numberline {7.20}{\ignorespaces Human Validation: Evidence Verdict Distribution by Edge Classification ($n=50$)}}{117}{table.caption.366}%
-\contentsline {table}{\numberline {7.21}{\ignorespaces Human validation tradeoff curve (pooled): coverage vs.\ correct-causal rate}}{117}{figure.caption.368}%
-\contentsline {table}{\numberline {7.22}{\ignorespaces LLM Generation Metrics with Human-Validated Ground Truth Enrichment (Aggregate, extrapolated)}}{118}{table.caption.370}%
-\contentsline {table}{\numberline {7.23}{\ignorespaces Smart-trigger Deep Research enrichment estimates. Trigger: Mechanistic GT correctness score $\leq 0.5$. Calibration: human-validated applicability $\geq 0.7$.}}{119}{table.caption.373}%
-\contentsline {table}{\numberline {7.24}{\ignorespaces Effect Size Summary: Hypothesis Operationalization, Statistical Tests, and Conclusions}}{122}{table.caption.381}%
-\contentsline {table}{\numberline {7.25}{\ignorespaces Computational Efficiency Summary by Experiment}}{124}{table.caption.387}%
-\contentsline {table}{\numberline {7.26}{\ignorespaces Parallelization Benchmark: Wall-Clock Time and Speedup by Judge Type}}{125}{table.caption.390}%
+\contentsline {table}{\numberline {7.8}{\ignorespaces Comparison of Correctness vs Citation-Based Judging on Physics CLDs}}{97}{table.caption.310}%
+\contentsline {table}{\numberline {7.9}{\ignorespaces Retrieval Success Comparison}}{98}{table.caption.313}%
+\contentsline {table}{\numberline {7.10}{\ignorespaces Corrector Performance on Synthetically Corrupted Data (Baseline Prompt)}}{100}{table.caption.324}%
+\contentsline {table}{\numberline {7.11}{\ignorespaces Corrector Prompt Ablation on Synthetic Corruptions: Performance Comparison}}{101}{table.caption.327}%
+\contentsline {table}{\numberline {7.12}{\ignorespaces Corrector Performance on Ground Truth Data Using Correctness-Based Validation (Baseline Prompt)}}{102}{table.caption.330}%
+\contentsline {table}{\numberline {7.13}{\ignorespaces Corrector Prompt Ablation on Ground Truth: Performance Comparison}}{103}{table.caption.333}%
+\contentsline {table}{\numberline {7.14}{\ignorespaces Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}}{105}{table.caption.342}%
+\contentsline {table}{\numberline {7.15}{\ignorespaces Shapiro-Wilk Normality Tests for UQ Metric Distributions}}{108}{table.caption.345}%
+\contentsline {table}{\numberline {7.16}{\ignorespaces Ensemble Classifier Performance Across Validation Phases (Block-Level Cross-Validation)}}{110}{table.caption.351}%
+\contentsline {table}{\numberline {7.17}{\ignorespaces Deep Research Detection Rate and Discrimination Analysis (n=285 edges)}}{113}{table.caption.358}%
+\contentsline {table}{\numberline {7.18}{\ignorespaces Per-CLD Pairwise Discrimination Tests (Fisher's Exact, Bonferroni $m=3$)}}{114}{table.caption.363}%
+\contentsline {table}{\numberline {7.19}{\ignorespaces LLM Generation Metrics: Two Enrichment Scenarios (Aggregate and Per-CLD)}}{115}{table.caption.366}%
+\contentsline {table}{\numberline {7.20}{\ignorespaces Human Validation: Evidence Verdict Distribution by Edge Classification ($n=50$)}}{115}{table.caption.368}%
+\contentsline {table}{\numberline {7.21}{\ignorespaces Human validation tradeoff curve (pooled): coverage vs.\ correct-causal rate}}{116}{figure.caption.370}%
+\contentsline {table}{\numberline {7.22}{\ignorespaces LLM Generation Metrics with Human-Validated Ground Truth Enrichment (Aggregate, extrapolated)}}{116}{table.caption.372}%
+\contentsline {table}{\numberline {7.23}{\ignorespaces Smart-trigger Deep Research enrichment estimates. Trigger: Mechanistic GT correctness score $\leq 0.5$. Calibration: human-validated applicability $\geq 0.7$.}}{117}{table.caption.375}%
+\contentsline {table}{\numberline {7.24}{\ignorespaces Effect Size Summary: Hypothesis Operationalization, Statistical Tests, and Conclusions}}{120}{table.caption.383}%
+\contentsline {table}{\numberline {7.25}{\ignorespaces Computational Efficiency Summary by Experiment}}{122}{table.caption.389}%
+\contentsline {table}{\numberline {7.26}{\ignorespaces Parallelization Benchmark: Wall-Clock Time and Speedup by Judge Type}}{123}{table.caption.392}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {10.1}{\ignorespaces Data and code availability for thesis reproducibility.}}{153}{table.caption.500}%
+\contentsline {table}{\numberline {10.1}{\ignorespaces Data and code availability for thesis reproducibility.}}{152}{table.caption.503}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{\ignorespaces Judge Prompt Sensitivity Analysis}}{156}{table.caption.510}%
-\contentsline {table}{\numberline {A.2}{\ignorespaces RM-ANOVA Assumption Checks for Judge Prompt Sensitivity (Appendix K)}}{156}{table.caption.512}%
-\contentsline {table}{\numberline {A.3}{\ignorespaces Corrector Prompt Sensitivity Analysis}}{157}{table.caption.516}%
-\contentsline {table}{\numberline {A.4}{\ignorespaces RM-ANOVA Assumption Checks for Corrector Prompt Sensitivity (Appendix K)}}{158}{table.caption.518}%
-\contentsline {table}{\numberline {A.5}{\ignorespaces RQ1b Corrector Action Counts - Synthetic Corruptions (Full Breakdown)}}{158}{table.caption.521}%
-\contentsline {table}{\numberline {A.6}{\ignorespaces RQ1b Corrector Action Counts - Ground Truth (Full Breakdown)}}{158}{table.caption.523}%
+\contentsline {table}{\numberline {A.1}{\ignorespaces Judge Prompt Sensitivity Analysis}}{155}{table.caption.513}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces RM-ANOVA Assumption Checks for Judge Prompt Sensitivity (Appendix K)}}{155}{table.caption.515}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces Corrector Prompt Sensitivity Analysis}}{156}{table.caption.519}%
+\contentsline {table}{\numberline {A.4}{\ignorespaces RM-ANOVA Assumption Checks for Corrector Prompt Sensitivity (Appendix K)}}{157}{table.caption.521}%
+\contentsline {table}{\numberline {A.5}{\ignorespaces RQ1b Corrector Action Counts - Synthetic Corruptions (Full Breakdown)}}{157}{table.caption.524}%
+\contentsline {table}{\numberline {A.6}{\ignorespaces RQ1b Corrector Action Counts - Ground Truth (Full Breakdown)}}{157}{table.caption.526}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {B.1}{\ignorespaces Complete Function-to-Algorithm Mapping}}{159}{table.caption.526}%
+\contentsline {table}{\numberline {B.1}{\ignorespaces Complete Function-to-Algorithm Mapping}}{158}{table.caption.529}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {C.1}{\ignorespaces Ground Truth CLD Dataset Files}}{160}{table.caption.530}%
-\contentsline {table}{\numberline {C.2}{\ignorespaces Validation and Auxiliary Datasets}}{161}{table.caption.532}%
-\contentsline {table}{\numberline {C.3}{\ignorespaces Physics CLD Validation Dataset}}{161}{table.caption.534}%
-\contentsline {table}{\numberline {C.4}{\ignorespaces Experiment Result Datasets by Research Question}}{162}{table.caption.541}%
-\contentsline {table}{\numberline {C.5}{\ignorespaces Primary Experiment Execution Scripts}}{163}{table.caption.545}%
-\contentsline {table}{\numberline {C.6}{\ignorespaces Analysis and Evaluation Scripts}}{164}{table.caption.547}%
-\contentsline {table}{\numberline {C.7}{\ignorespaces Complete \texttt {final\_runs/} Script and Command Inventory}}{165}{table.caption.549}%
-\contentsline {table}{\numberline {C.8}{\ignorespaces Prompt Configuration Files (13 prompts: 2 judge tasks $\times $ 3 variants + 1 mech-lit + 1 corrector $\times $ 3 variants + 3 corruption)}}{166}{table.caption.551}%
-\contentsline {table}{\numberline {C.9}{\ignorespaces System and Runtime Environment}}{166}{table.caption.553}%
-\contentsline {table}{\numberline {C.10}{\ignorespaces Key Software Dependencies and Citations}}{167}{table.caption.556}%
-\contentsline {table}{\numberline {C.11}{\ignorespaces TruthfulQA Verification Configuration}}{168}{table.caption.560}%
-\contentsline {table}{\numberline {C.12}{\ignorespaces GT Synth Citation Judge Configuration (GPT-5-mini)}}{169}{table.caption.563}%
-\contentsline {table}{\numberline {C.13}{\ignorespaces RQ1a GT Lit Correctness Judge Configuration}}{170}{table.caption.564}%
-\contentsline {table}{\numberline {C.14}{\ignorespaces RQ1a GT Synth Correctness Judge Configuration}}{170}{table.caption.565}%
-\contentsline {table}{\numberline {C.15}{\ignorespaces RQ1a GT Lit Citation Judge Configuration}}{170}{table.caption.566}%
-\contentsline {table}{\numberline {C.16}{\ignorespaces RQ1b Corrector (GT Synth) Configuration}}{171}{table.caption.568}%
-\contentsline {table}{\numberline {C.17}{\ignorespaces RQ1b Corrector (GT Lit) Configuration}}{171}{table.caption.569}%
-\contentsline {table}{\numberline {C.18}{\ignorespaces Uleman's Citation Provider Comparison Configuration}}{172}{table.caption.571}%
-\contentsline {table}{\numberline {C.19}{\ignorespaces Human-LLM Agreement Validation Configuration}}{172}{table.caption.572}%
-\contentsline {table}{\numberline {C.20}{\ignorespaces Human validation rubric for RQ1}}{173}{table.caption.573}%
-\contentsline {table}{\numberline {C.21}{\ignorespaces RQ2 UQ Logprobs Configuration}}{174}{table.caption.575}%
-\contentsline {table}{\numberline {C.22}{\ignorespaces RQ2 Cosine Similarity (Embeddings) Configuration}}{174}{table.caption.576}%
-\contentsline {table}{\numberline {C.23}{\ignorespaces RQ2 Shared Experimental Configuration}}{175}{table.caption.577}%
-\contentsline {table}{\numberline {C.24}{\ignorespaces RQ2 Phases 1--3 (Single-Metric Analysis) Configuration}}{175}{table.caption.578}%
-\contentsline {table}{\numberline {C.25}{\ignorespaces RQ2 Analysis Pipeline Configuration}}{175}{table.caption.579}%
-\contentsline {table}{\numberline {C.26}{\ignorespaces RQ3 Deep Research Configuration}}{177}{table.caption.581}%
-\contentsline {table}{\numberline {C.27}{\ignorespaces GT Enrichment Experiment Configuration}}{177}{table.caption.582}%
-\contentsline {table}{\numberline {C.28}{\ignorespaces RQ3 Human Validation Configuration}}{177}{table.caption.583}%
-\contentsline {table}{\numberline {C.29}{\ignorespaces RQ3 Threshold Selection Configuration}}{178}{table.caption.584}%
-\contentsline {table}{\numberline {C.30}{\ignorespaces RQ3 Smart Trigger Configuration}}{178}{table.caption.585}%
-\contentsline {table}{\numberline {C.31}{\ignorespaces Human validation rubric for RQ3}}{179}{table.caption.586}%
-\contentsline {table}{\numberline {C.32}{\ignorespaces RQ3 Human Validation: Evidence Applicability Score Distribution by Edge Classification ($n=50$)}}{180}{table.caption.587}%
-\contentsline {table}{\numberline {C.33}{\ignorespaces Temperature Sensitivity Experiment Configuration}}{181}{table.caption.590}%
-\contentsline {table}{\numberline {C.34}{\ignorespaces Generator Model Comparison Configuration}}{182}{table.caption.592}%
-\contentsline {table}{\numberline {C.35}{\ignorespaces Random Baseline Configuration}}{182}{table.caption.594}%
-\contentsline {table}{\numberline {C.36}{\ignorespaces Prompt Sensitivity Analysis Configuration}}{183}{table.caption.596}%
-\contentsline {table}{\numberline {C.37}{\ignorespaces Parallelization Benchmark Configuration}}{184}{table.caption.598}%
-\contentsline {table}{\numberline {C.38}{\ignorespaces Time and Cost Scaling Analysis Configuration}}{184}{table.caption.600}%
-\contentsline {table}{\numberline {C.39}{\ignorespaces Physics CLD Validation Configuration}}{187}{table.caption.604}%
-\contentsline {table}{\numberline {C.40}{\ignorespaces Cost Analysis Configuration}}{187}{table.caption.606}%
-\contentsline {table}{\numberline {C.41}{\ignorespaces Embedding Model Benchmark Configuration}}{188}{table.caption.608}%
-\contentsline {table}{\numberline {C.42}{\ignorespaces Experiment Output File Types}}{189}{table.caption.612}%
-\contentsline {table}{\numberline {C.43}{\ignorespaces Output Token and API Call Analysis by Prompt Variant}}{189}{table.caption.615}%
+\contentsline {table}{\numberline {C.1}{\ignorespaces Ground Truth CLD Dataset Files}}{159}{table.caption.533}%
+\contentsline {table}{\numberline {C.2}{\ignorespaces Validation and Auxiliary Datasets}}{160}{table.caption.535}%
+\contentsline {table}{\numberline {C.3}{\ignorespaces Physics CLD Validation Dataset}}{160}{table.caption.537}%
+\contentsline {table}{\numberline {C.4}{\ignorespaces Experiment Result Datasets by Research Question}}{161}{table.caption.544}%
+\contentsline {table}{\numberline {C.5}{\ignorespaces Primary Experiment Execution Scripts}}{162}{table.caption.548}%
+\contentsline {table}{\numberline {C.6}{\ignorespaces Analysis and Evaluation Scripts}}{163}{table.caption.550}%
+\contentsline {table}{\numberline {C.7}{\ignorespaces Complete \texttt {final\_runs/} Script and Command Inventory}}{164}{table.caption.552}%
+\contentsline {table}{\numberline {C.8}{\ignorespaces Prompt Configuration Files (13 prompts: 2 judge tasks $\times $ 3 variants + 1 mech-lit + 1 corrector $\times $ 3 variants + 3 corruption)}}{165}{table.caption.554}%
+\contentsline {table}{\numberline {C.9}{\ignorespaces System and Runtime Environment}}{165}{table.caption.556}%
+\contentsline {table}{\numberline {C.10}{\ignorespaces Key Software Dependencies and Citations}}{166}{table.caption.559}%
+\contentsline {table}{\numberline {C.11}{\ignorespaces TruthfulQA Verification Configuration}}{167}{table.caption.563}%
+\contentsline {table}{\numberline {C.12}{\ignorespaces GT Synth Citation Judge Configuration (GPT-5-mini)}}{168}{table.caption.566}%
+\contentsline {table}{\numberline {C.13}{\ignorespaces RQ1a GT Lit Correctness Judge Configuration}}{169}{table.caption.567}%
+\contentsline {table}{\numberline {C.14}{\ignorespaces RQ1a GT Synth Correctness Judge Configuration}}{169}{table.caption.568}%
+\contentsline {table}{\numberline {C.15}{\ignorespaces RQ1a GT Lit Citation Judge Configuration}}{169}{table.caption.569}%
+\contentsline {table}{\numberline {C.16}{\ignorespaces RQ1b Corrector (GT Synth) Configuration}}{170}{table.caption.571}%
+\contentsline {table}{\numberline {C.17}{\ignorespaces RQ1b Corrector (GT Lit) Configuration}}{170}{table.caption.572}%
+\contentsline {table}{\numberline {C.18}{\ignorespaces Uleman's Citation Provider Comparison Configuration}}{171}{table.caption.574}%
+\contentsline {table}{\numberline {C.19}{\ignorespaces Human-LLM Agreement Validation Configuration}}{171}{table.caption.575}%
+\contentsline {table}{\numberline {C.20}{\ignorespaces Human validation rubric for RQ1}}{172}{table.caption.576}%
+\contentsline {table}{\numberline {C.21}{\ignorespaces RQ2 UQ Logprobs Configuration}}{173}{table.caption.578}%
+\contentsline {table}{\numberline {C.22}{\ignorespaces RQ2 Cosine Similarity (Embeddings) Configuration}}{173}{table.caption.579}%
+\contentsline {table}{\numberline {C.23}{\ignorespaces RQ2 Shared Experimental Configuration}}{174}{table.caption.580}%
+\contentsline {table}{\numberline {C.24}{\ignorespaces RQ2 Phases 1--3 (Single-Metric Analysis) Configuration}}{174}{table.caption.581}%
+\contentsline {table}{\numberline {C.25}{\ignorespaces RQ2 Analysis Pipeline Configuration}}{174}{table.caption.582}%
+\contentsline {table}{\numberline {C.26}{\ignorespaces RQ3 Deep Research Configuration}}{176}{table.caption.584}%
+\contentsline {table}{\numberline {C.27}{\ignorespaces GT Enrichment Experiment Configuration}}{176}{table.caption.585}%
+\contentsline {table}{\numberline {C.28}{\ignorespaces RQ3 Human Validation Configuration}}{176}{table.caption.586}%
+\contentsline {table}{\numberline {C.29}{\ignorespaces RQ3 Threshold Selection Configuration}}{177}{table.caption.587}%
+\contentsline {table}{\numberline {C.30}{\ignorespaces RQ3 Smart Trigger Configuration}}{177}{table.caption.588}%
+\contentsline {table}{\numberline {C.31}{\ignorespaces Human validation rubric for RQ3}}{178}{table.caption.589}%
+\contentsline {table}{\numberline {C.32}{\ignorespaces RQ3 Human Validation: Evidence Applicability Score Distribution by Edge Classification ($n=50$)}}{179}{table.caption.590}%
+\contentsline {table}{\numberline {C.33}{\ignorespaces Temperature Sensitivity Experiment Configuration}}{180}{table.caption.593}%
+\contentsline {table}{\numberline {C.34}{\ignorespaces Generator Model Comparison Configuration}}{181}{table.caption.595}%
+\contentsline {table}{\numberline {C.35}{\ignorespaces Random Baseline Configuration}}{181}{table.caption.597}%
+\contentsline {table}{\numberline {C.36}{\ignorespaces Prompt Sensitivity Analysis Configuration}}{182}{table.caption.599}%
+\contentsline {table}{\numberline {C.37}{\ignorespaces Parallelization Benchmark Configuration}}{183}{table.caption.601}%
+\contentsline {table}{\numberline {C.38}{\ignorespaces Time and Cost Scaling Analysis Configuration}}{183}{table.caption.603}%
+\contentsline {table}{\numberline {C.39}{\ignorespaces Physics CLD Validation Configuration}}{186}{table.caption.607}%
+\contentsline {table}{\numberline {C.40}{\ignorespaces Cost Analysis Configuration}}{186}{table.caption.609}%
+\contentsline {table}{\numberline {C.41}{\ignorespaces Embedding Model Benchmark Configuration}}{187}{table.caption.611}%
+\contentsline {table}{\numberline {C.42}{\ignorespaces Experiment Output File Types}}{188}{table.caption.615}%
+\contentsline {table}{\numberline {C.43}{\ignorespaces Output Token and API Call Analysis by Prompt Variant}}{188}{table.caption.618}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {F.1}{\ignorespaces Prompt Engineering Techniques Classification Matrix}}{221}{table.caption.682}%
-\contentsline {table}{\numberline {F.2}{\ignorespaces F1 Scores by Prompt Variant and Causal Loop Diagram}}{222}{table.caption.685}%
+\contentsline {table}{\numberline {F.1}{\ignorespaces Prompt Engineering Techniques Classification Matrix}}{220}{table.caption.685}%
+\contentsline {table}{\numberline {F.2}{\ignorespaces F1 Scores by Prompt Variant and Causal Loop Diagram}}{221}{table.caption.688}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {G.1}{\ignorespaces Node Generation Ablation: Hybrid F1 Scores by Prompt Variant}}{225}{table.caption.701}%
+\contentsline {table}{\numberline {G.1}{\ignorespaces Node Generation Ablation: Hybrid F1 Scores by Prompt Variant}}{224}{table.caption.704}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {H.1}{\ignorespaces Embedding Model Benchmark ($n=30$ causal narratives from CLD)}}{226}{table.caption.704}%
-\contentsline {table}{\numberline {H.2}{\ignorespaces MTEB Scores: MPNet vs.\ Qwen3-Embedding-8B}}{226}{table.caption.705}%
+\contentsline {table}{\numberline {H.1}{\ignorespaces Embedding Model Benchmark ($n=30$ causal narratives from CLD)}}{225}{table.caption.707}%
+\contentsline {table}{\numberline {H.2}{\ignorespaces MTEB Scores: MPNet vs.\ Qwen3-Embedding-8B}}{225}{table.caption.708}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {I.1}{\ignorespaces CLD Generation (\texttt {generate\_variables} + \texttt {discover\_relationships})}}{228}{table.caption.708}%
-\contentsline {table}{\numberline {I.2}{\ignorespaces Judge-Correctness (\texttt {judge\_all\_edges\_serial}, approach=``correctness'')}}{229}{table.caption.710}%
-\contentsline {table}{\numberline {I.3}{\ignorespaces Judge-Citation (\texttt {judge\_all\_edges\_with\_citations\_serial})}}{230}{table.caption.712}%
-\contentsline {table}{\numberline {I.4}{\ignorespaces Corruption (\texttt {\_corrupt\_relationships})}}{231}{table.caption.714}%
-\contentsline {table}{\numberline {I.5}{\ignorespaces Corrector (\texttt {correct\_edges\_serial})}}{231}{table.caption.716}%
-\contentsline {table}{\numberline {I.6}{\ignorespaces UQ Metrics (\texttt {logit\_metrics.py})}}{232}{table.caption.718}%
-\contentsline {table}{\numberline {I.7}{\ignorespaces Hallucination Classification (\texttt {train\_classifiers})}}{233}{table.caption.720}%
-\contentsline {table}{\numberline {I.8}{\ignorespaces Citation Search (\texttt {\_search\_with\_brave} + \texttt {SearchEngine.search})}}{234}{table.caption.722}%
-\contentsline {table}{\numberline {I.9}{\ignorespaces Citation Fetcher (\texttt {fetch\_citations\_with\_jina})}}{235}{table.caption.724}%
-\contentsline {table}{\numberline {I.10}{\ignorespaces Deep Research Multi-Agent Pipeline}}{236}{table.caption.726}%
-\contentsline {table}{\numberline {I.11}{\ignorespaces Deep Research Pipeline (\texttt {pydantic\_ai\_deepresearch\_orchestration.py})}}{237}{table.caption.728}%
-\contentsline {table}{\numberline {I.12}{\ignorespaces Node Concept Similarity (\texttt {compare\_session\_graph\_to\_validation}, similarity-weighted node metrics)}}{239}{table.caption.730}%
+\contentsline {table}{\numberline {I.1}{\ignorespaces CLD Generation (\texttt {generate\_variables} + \texttt {discover\_relationships})}}{227}{table.caption.711}%
+\contentsline {table}{\numberline {I.2}{\ignorespaces Judge-Correctness (\texttt {judge\_all\_edges\_serial}, approach=``correctness'')}}{228}{table.caption.713}%
+\contentsline {table}{\numberline {I.3}{\ignorespaces Judge-Citation (\texttt {judge\_all\_edges\_with\_citations\_serial})}}{229}{table.caption.715}%
+\contentsline {table}{\numberline {I.4}{\ignorespaces Corruption (\texttt {\_corrupt\_relationships})}}{230}{table.caption.717}%
+\contentsline {table}{\numberline {I.5}{\ignorespaces Corrector (\texttt {correct\_edges\_serial})}}{230}{table.caption.719}%
+\contentsline {table}{\numberline {I.6}{\ignorespaces UQ Metrics (\texttt {logit\_metrics.py})}}{231}{table.caption.721}%
+\contentsline {table}{\numberline {I.7}{\ignorespaces Hallucination Classification (\texttt {train\_classifiers})}}{232}{table.caption.723}%
+\contentsline {table}{\numberline {I.8}{\ignorespaces Citation Search (\texttt {\_search\_with\_brave} + \texttt {SearchEngine.search})}}{233}{table.caption.725}%
+\contentsline {table}{\numberline {I.9}{\ignorespaces Citation Fetcher (\texttt {fetch\_citations\_with\_jina})}}{234}{table.caption.727}%
+\contentsline {table}{\numberline {I.10}{\ignorespaces Deep Research Multi-Agent Pipeline}}{235}{table.caption.729}%
+\contentsline {table}{\numberline {I.11}{\ignorespaces Deep Research Pipeline (\texttt {pydantic\_ai\_deepresearch\_orchestration.py})}}{236}{table.caption.731}%
+\contentsline {table}{\numberline {I.12}{\ignorespaces Node Concept Similarity (\texttt {compare\_session\_graph\_to\_validation}, similarity-weighted node metrics)}}{238}{table.caption.733}%
 \addvspace {10\p@ }
