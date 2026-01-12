@@ -41,7 +41,7 @@
 \contentsline {section}{\numberline {3.2}Automated CLD construction paradigms (text-to-CLD vs.\ generation)}{22}{section.65}%
 \contentsline {section}{\numberline {3.3}LLM-Based Causal Loop Diagram Generation}{22}{section.66}%
 \contentsline {subsection}{\numberline {3.3.1}From LLM-Powered Causal Pattern Matching to Causal Loop Diagrams}{23}{subsection.67}%
-\contentsline {subsubsection}{\numberline {3.3.1.1}Positioning of this thesis}{25}{subsubsection.68}%
+\contentsline {subsubsection}{\numberline {3.3.1.1}Preliminary positioning}{25}{subsubsection.68}%
 \contentsline {subsection}{\numberline {3.3.2}Causal parrots: pattern retrieval versus genuine reasoning}{25}{subsection.69}%
 \contentsline {section}{\numberline {3.4}How Hallucinations Manifest in Causal Structure Generation}{25}{section.70}%
 \contentsline {subsubsection}{\numberline {3.4.0.1}Formal CLD Hallucination Taxonomies}{26}{subsubsection.71}%
@@ -107,7 +107,7 @@
 \contentsline {section}{\numberline {4.3}Corruptor (Synthetic corruption for GT Synth)}{50}{section.157}%
 \contentsline {section}{\numberline {4.4}Judges}{50}{section.158}%
 \contentsline {subsection}{\numberline {4.4.1}Design rationale: LLM-as-a-Judge}{50}{subsection.159}%
-\contentsline {paragraph}{Correctness Judge.}{50}{section*.160}%
+\contentsline {paragraph}{Correctness Judge.}{51}{section*.160}%
 \contentsline {paragraph}{Citation Judge.}{51}{section*.161}%
 \contentsline {subsection}{\numberline {4.4.2}Correctness Judge implementation}{51}{subsection.162}%
 \contentsline {subsection}{\numberline {4.4.3}Citation Judge implementation}{51}{subsection.166}%
@@ -127,9 +127,9 @@
 \contentsline {section}{\numberline {5.5}CLD Selection Rationale}{60}{section.194}%
 \contentsline {section}{\numberline {5.6}Edge Structure}{61}{section.195}%
 \contentsline {chapter}{\numberline {6}Experimental Design}{63}{chapter.199}%
-\contentsline {section}{\numberline {6.1}Input and Scope}{63}{section.200}%
-\contentsline {paragraph}{Input}{63}{section*.201}%
-\contentsline {paragraph}{Scope}{63}{section*.202}%
+\contentsline {section}{\numberline {6.1}Task, Scope and Input}{63}{section.200}%
+\contentsline {paragraph}{Task \& Scope}{63}{section*.201}%
+\contentsline {paragraph}{Input}{63}{section*.202}%
 \contentsline {section}{\numberline {6.2}Hallucination Operationalisation}{63}{section.203}%
 \contentsline {section}{\numberline {6.3}Chapter Overview}{64}{section.205}%
 \contentsline {section}{\numberline {6.4}Experimental Design Framework}{66}{section.207}%
@@ -166,258 +166,256 @@
 \contentsline {section}{\numberline {6.8}Detailed Experimental Specifications}{78}{section.256}%
 \contentsline {section}{\numberline {6.9}Reproducibility}{78}{section.257}%
 \contentsline {section}{\numberline {6.10}Validity Considerations}{78}{section.259}%
-\contentsline {chapter}{\numberline {7}Results}{79}{chapter.260}%
-\contentsline {section}{\numberline {7.1}Preliminary: Generator Model Comparison}{79}{section.261}%
-\contentsline {section}{\numberline {7.2}Preliminary: Generator Baseline Validation}{80}{section.264}%
-\contentsline {subsection}{\numberline {7.2.1}Generator Performance}{81}{subsection.265}%
-\contentsline {subsection}{\numberline {7.2.2}Temperature Robustness}{82}{subsection.268}%
-\contentsline {section}{\numberline {7.3}Preliminary: Judge Verification (TruthfulQA)}{82}{section.271}%
-\contentsline {section}{\numberline {7.4}RQ1a: LLM-as-a-Judge for Hallucination Detection}{83}{section.274}%
-\contentsline {subsection}{\numberline {7.4.1}Operational Definitions: GT Lit, GT Synth, and Hallucination}{83}{subsection.275}%
-\contentsline {subsection}{\numberline {7.4.2}GT Synth $\times $ Correctness Judge}{84}{subsection.276}%
-\contentsline {subsubsection}{\numberline {7.4.2.1}Performance Metrics Overview}{84}{subsubsection.277}%
-\contentsline {subsubsection}{\numberline {7.4.2.2}Detailed Analysis}{85}{subsubsection.279}%
-\contentsline {subsection}{\numberline {7.4.3}GT Lit $\times $ Correctness Judge}{87}{subsection.281}%
-\contentsline {subsubsection}{\numberline {7.4.3.1}Performance Metrics Overview}{87}{subsubsection.282}%
-\contentsline {subsubsection}{\numberline {7.4.3.2}Detailed Analysis}{88}{subsubsection.284}%
-\contentsline {subsection}{\numberline {7.4.4}GT Synth $\times $ Citation Judge}{89}{subsection.286}%
-\contentsline {subsubsection}{\numberline {7.4.4.1}Performance Metrics Overview}{89}{subsubsection.287}%
-\contentsline {subsubsection}{\numberline {7.4.4.2}Detailed Analysis}{90}{subsubsection.289}%
-\contentsline {subsection}{\numberline {7.4.5}GT Lit $\times $ Citation Judge}{91}{subsection.291}%
-\contentsline {subsubsection}{\numberline {7.4.5.1}Performance Metrics Overview}{91}{subsubsection.292}%
-\contentsline {subsubsection}{\numberline {7.4.5.2}Detailed Analysis}{92}{subsubsection.294}%
-\contentsline {subsubsection}{\numberline {7.4.5.3}Rationale for validation studies}{93}{subsubsection.296}%
-\contentsline {subsection}{\numberline {7.4.6}Validation: Human--LLM Agreement}{93}{subsection.297}%
-\contentsline {subsubsection}{\numberline {7.4.6.1}Per-Dataset and Combined Agreement}{94}{subsubsection.298}%
-\contentsline {subsubsection}{\numberline {7.4.6.2}Disagreement Analysis}{94}{subsubsection.301}%
-\contentsline {subsection}{\numberline {7.4.7}Validation: Uleman's External CLD}{95}{subsection.304}%
-\contentsline {subsubsection}{\numberline {7.4.7.1}Search Provider Comparison}{95}{subsubsection.305}%
-\contentsline {subsection}{\numberline {7.4.8}Validation: Physics CLDs}{96}{subsection.308}%
-\contentsline {subsection}{\numberline {7.4.9}Disentangling Retrieval Quality from Domain Dependence}{96}{subsection.310}%
-\contentsline {subsection}{\numberline {7.4.10}Synthesis of validation findings}{97}{subsection.312}%
-\contentsline {subsection}{\numberline {7.4.11}RQ1a: Main Findings (Summary)}{98}{subsection.313}%
-\contentsline {section}{\numberline {7.5}RQ1b: LLM-as-a-Corrector for Edge Quality Improvement}{99}{section.320}%
-\contentsline {subsection}{\numberline {7.5.1}GT Synth $\times $ Baseline Judge: Correction Results}{99}{subsection.321}%
-\contentsline {subsection}{\numberline {7.5.2}GT Synth $\times $ Baseline Judge: Prompt Ablation}{100}{subsection.324}%
-\contentsline {subsection}{\numberline {7.5.3}GT Lit $\times $ Mechanistic Judge: Correction Results}{101}{subsection.327}%
-\contentsline {subsection}{\numberline {7.5.4}GT Lit $\times $ Mechanistic Judge: Prompt Ablation}{101}{subsection.330}%
-\contentsline {subsection}{\numberline {7.5.5}RQ1b: Main Findings (Summary)}{102}{subsection.333}%
-\contentsline {section}{\numberline {7.6}RQ2: Corpus-Independent Hallucination Detection via UQ Metrics}{103}{section.337}%
-\contentsline {subsection}{\numberline {7.6.1}Single UQ Metric Performance}{103}{subsection.338}%
-\contentsline {subsection}{\numberline {7.6.2}Feature Distributions: Correct vs. Hallucinations}{107}{subsection.341}%
-\contentsline {subsection}{\numberline {7.6.3}Recursive Feature Elimination Analysis}{109}{subsection.345}%
-\contentsline {subsection}{\numberline {7.6.4}Ensemble Classification Results}{109}{subsection.347}%
-\contentsline {paragraph}{Practical operating-point comparison (F1 at a fixed threshold).}{110}{section*.350}%
-\contentsline {subsection}{\numberline {7.6.5}RQ2: Main Findings (Summary)}{111}{subsection.351}%
-\contentsline {section}{\numberline {7.7}RQ3: Deep Research Validation (Exploratory Pilot)}{112}{section.355}%
-\contentsline {subsection}{\numberline {7.7.1}Computational Cost}{113}{subsection.358}%
-\contentsline {subsection}{\numberline {7.7.2}Per-CLD Detection Rate Analysis}{114}{subsection.360}%
-\contentsline {subsection}{\numberline {7.7.3}Exploratory: Ground Truth Enrichment Analysis}{115}{subsection.363}%
-\contentsline {subsection}{\numberline {7.7.4}Smart-Trigger DR Deployment Estimate}{117}{subsection.372}%
-\contentsline {subsection}{\numberline {7.7.5}RQ3: Main Findings (Summary)}{119}{subsection.375}%
-\contentsline {section}{\numberline {7.8}Effect Size Summary}{120}{section.380}%
-\contentsline {section}{\numberline {7.9}Computational Scaling Analysis}{122}{section.383}%
-\contentsline {subsection}{\numberline {7.9.1}Time and Cost Scaling}{122}{subsection.384}%
-\contentsline {subsection}{\numberline {7.9.2}Token Cost Analysis}{123}{subsection.386}%
-\contentsline {subsection}{\numberline {7.9.3}Parallelization Speedup}{123}{subsection.388}%
-\contentsline {chapter}{\numberline {8}Discussion}{125}{chapter.392}%
-\contentsline {section}{\numberline {8.1}Direct Answers to the Research Questions}{125}{section.393}%
-\contentsline {section}{\numberline {8.2}Central Interpretive Claim: Error vs.\ Scope Disagreement}{126}{section.399}%
-\contentsline {section}{\numberline {8.3}CLD Generation Paradigm}{127}{section.400}%
-\contentsline {section}{\numberline {8.4}Mechanisms of Judge Failure}{127}{section.401}%
-\contentsline {subsection}{\numberline {8.4.1}The ``Evidence of Absence'' Paradox (Citation Judge)}{127}{subsection.402}%
-\contentsline {subsection}{\numberline {8.4.2}Plausibility Bias (Correctness Judge)}{128}{subsection.404}%
-\contentsline {subsection}{\numberline {8.4.3}Partial Credit and Non-Scientific Evidence Acceptance (Citation Judge)}{129}{subsection.406}%
-\contentsline {subsection}{\numberline {8.4.4}Domain-Dependent Failure: The Social Norms Anomaly}{129}{subsection.408}%
-\contentsline {section}{\numberline {8.5}RQ1 Interpretation: Judges as Screening Signals}{130}{section.409}%
-\contentsline {subsection}{\numberline {8.5.1}Correctness Judge}{130}{subsection.410}%
-\contentsline {subsection}{\numberline {8.5.2}Citation Judge}{130}{subsection.411}%
-\contentsline {subsection}{\numberline {8.5.3}Human Validation: Systematic Leniency}{131}{subsection.412}%
-\contentsline {subsection}{\numberline {8.5.4}Implication: Active Learning for Judge Calibration}{131}{subsection.413}%
-\contentsline {section}{\numberline {8.6}Mechanisms of Corrector Failure}{131}{section.414}%
-\contentsline {subsection}{\numberline {8.6.1}Judge-Satisficing Revisions (Goodhart-Style Metric Gaming)}{132}{subsection.415}%
-\contentsline {subsection}{\numberline {8.6.2}Precision Loss via Over-Addition Bias}{132}{subsection.417}%
-\contentsline {subsection}{\numberline {8.6.3}Polarity and Type Inconsistencies (Schema Slips)}{132}{subsection.419}%
-\contentsline {subsection}{\numberline {8.6.4}Noisy-Label Amplification Under Weak Judge Signal}{132}{subsection.421}%
-\contentsline {subsection}{\numberline {8.6.5}Instability Across Correction Sessions}{133}{subsection.422}%
-\contentsline {subsection}{\numberline {8.6.6}Per-CLD Variation in Corrector Effectiveness}{133}{subsection.424}%
-\contentsline {subsection}{\numberline {8.6.7}Diagnosing Judge--Corrector Coupling}{134}{subsection.425}%
-\contentsline {section}{\numberline {8.7}RQ2: UQ Metrics}{134}{section.426}%
-\contentsline {subsection}{\numberline {8.7.1}Counterintuitive Cosine Similarity Direction}{134}{subsection.427}%
-\contentsline {subsection}{\numberline {8.7.2}Cross-Domain Generalisation Failure}{134}{subsection.428}%
-\contentsline {subsection}{\numberline {8.7.3}Alternative UQ Metric Designs}{134}{subsection.429}%
-\contentsline {subsection}{\numberline {8.7.4}Temperature--Uncertainty Trade-off}{135}{subsection.430}%
-\contentsline {section}{\numberline {8.8}Implications for the Original RQ3 Design}{136}{section.431}%
-\contentsline {section}{\numberline {8.9}RQ3: Deep Research Validation}{136}{section.432}%
-\contentsline {subsection}{\numberline {8.9.1}Methodological Pivot and Scope of This Section}{136}{subsection.433}%
-\contentsline {subsection}{\numberline {8.9.2}Why Literature Validation Has Weak Discriminative Power}{136}{subsection.434}%
-\contentsline {subsection}{\numberline {8.9.3}The Variable-Mismatch Problem}{137}{subsection.435}%
-\contentsline {subsection}{\numberline {8.9.4}What Ground Truth Enrichment Reveals}{137}{subsection.436}%
-\contentsline {subsection}{\numberline {8.9.5}Efficiency Implications and Inherited Limitations of Judge-Triggered Deployment}{137}{subsection.437}%
-\contentsline {subsection}{\numberline {8.9.6}Limitations of the Deep Research Pivot}{138}{subsection.438}%
-\contentsline {subsection}{\numberline {8.9.7}Residual False Negatives: Partial Recovery and Tacit Expert Knowledge}{138}{subsection.439}%
-\contentsline {section}{\numberline {8.10}Synthesis: Compounding Dependencies and the Division of Labour}{139}{section.440}%
-\contentsline {subsection}{\numberline {8.10.1}Compounding Failure Modes Across Components}{139}{subsection.441}%
-\contentsline {paragraph}{Why the RQ3 design had to change.}{140}{section*.445}%
-\contentsline {subsection}{\numberline {8.10.2}The GT~Synth to GT~Lit Transfer Gap}{140}{subsection.446}%
-\contentsline {subsection}{\numberline {8.10.3}Emergent Division of Labour}{140}{subsection.447}%
-\contentsline {subsection}{\numberline {8.10.4}Implications for Group Model Building}{141}{subsection.448}%
-\contentsline {section}{\numberline {8.11}Practical Recommendations}{141}{section.449}%
-\contentsline {section}{\numberline {8.12}Limitations and Validity Threats}{142}{section.456}%
-\contentsline {subsection}{\numberline {8.12.1}Model Dependence}{142}{subsection.457}%
-\contentsline {subsection}{\numberline {8.12.2}Domain Dependence}{142}{subsection.458}%
-\contentsline {subsection}{\numberline {8.12.3}Construct Validity}{143}{subsection.459}%
-\contentsline {subsection}{\numberline {8.12.4}Edge-Isolation Design Constraint}{143}{subsection.460}%
-\contentsline {subsection}{\numberline {8.12.5}Node-Set Conditioning (Variable Extraction Omitted)}{144}{subsection.461}%
-\contentsline {subsection}{\numberline {8.12.6}Retrieval and Temporal Dependence}{144}{subsection.462}%
-\contentsline {subsection}{\numberline {8.12.7}Internal Validity}{144}{subsection.463}%
-\contentsline {subsection}{\numberline {8.12.8}Statistical Power and Sample Size}{144}{subsection.464}%
-\contentsline {subsection}{\numberline {8.12.9}Sensitivity Analysis Constraints}{145}{subsection.465}%
-\contentsline {subsection}{\numberline {8.12.10}Budget and Design Constraints}{145}{subsection.466}%
-\contentsline {section}{\numberline {8.13}Future Work}{145}{section.467}%
-\contentsline {subsection}{\numberline {8.13.1}General Directions}{146}{subsection.468}%
-\contentsline {subsection}{\numberline {8.13.2}LLM-as-a-Judge: From Screening Signal to Calibrated Triage}{146}{subsection.473}%
-\contentsline {subsection}{\numberline {8.13.3}LLM-as-a-Corrector: Making Edits Translate to Expert-Grounded Gains}{146}{subsection.477}%
-\contentsline {subsection}{\numberline {8.13.4}UQ Metrics: From Universal Thresholds to Robust Ranking Signals}{147}{subsection.483}%
-\contentsline {subsection}{\numberline {8.13.5}Deep Research: Optimising Applicability, Not Just Retrieval}{147}{subsection.488}%
-\contentsline {subsection}{\numberline {8.13.6}Adaptive Test-Time Compute: Policies that Avoid Compounding Failure}{148}{subsection.493}%
-\contentsline {chapter}{\numberline {9}Conclusion}{149}{chapter.496}%
-\contentsline {section}{\numberline {9.1}Key Contributions}{150}{section.497}%
-\contentsline {section}{\numberline {9.2}Concluding Remarks}{150}{section.498}%
-\contentsline {chapter}{\numberline {10}Ethics and Data Management}{152}{chapter.499}%
-\contentsline {section}{\numberline {10.1}Ethical Considerations}{152}{section.500}%
-\contentsline {section}{\numberline {10.2}Data Management}{152}{section.501}%
-\contentsline {chapter}{\numberline {A}Supplementary Sensitivity Analysis}{154}{appendix.503}%
-\contentsline {section}{\numberline {A.1}Judge Prompt Sensitivity}{154}{section.504}%
-\contentsline {subsection}{\numberline {A.1.1}Derivation: First-Order Sobol Index for a Categorical Factor}{154}{subsection.505}%
-\contentsline {section}{\numberline {A.2}Corrector Prompt Sensitivity}{157}{section.515}%
-\contentsline {subsection}{\numberline {A.2.1}Corrector Action Counts}{158}{subsection.521}%
-\contentsline {chapter}{\numberline {B}Function-to-Algorithm Mapping}{159}{appendix.526}%
-\contentsline {chapter}{\numberline {C}Reproducibility}{160}{appendix.528}%
-\contentsline {section}{\numberline {C.1}Data Availability}{160}{section.529}%
-\contentsline {subsection}{\numberline {C.1.1}Ground Truth CLD Datasets}{160}{subsection.530}%
-\contentsline {subsection}{\numberline {C.1.2}Validation and Auxiliary Datasets}{161}{subsection.532}%
-\contentsline {subsubsection}{\numberline {C.1.2.1}Physics CLD Details.}{161}{subsubsection.534}%
-\contentsline {subsection}{\numberline {C.1.3}Experiment Result Datasets by Research Question}{162}{subsection.541}%
-\contentsline {subsection}{\numberline {C.1.4}Final Experiment Results}{162}{subsection.543}%
-\contentsline {section}{\numberline {C.2}Code Availability}{163}{section.544}%
-\contentsline {subsection}{\numberline {C.2.1}Experiment Execution Scripts}{163}{subsection.545}%
-\contentsline {subsection}{\numberline {C.2.2}Analysis Scripts}{164}{subsection.547}%
-\contentsline {subsection}{\numberline {C.2.3}Complete \texttt {final\_runs/} Script and Command Inventory}{164}{subsection.549}%
-\contentsline {subsection}{\numberline {C.2.4}Prompt Configuration Files}{165}{subsection.551}%
-\contentsline {section}{\numberline {C.3}Software Environment}{166}{section.553}%
-\contentsline {subsection}{\numberline {C.3.1}Environment Installation}{166}{subsection.555}%
-\contentsline {subsection}{\numberline {C.3.2}Key Software Dependencies}{167}{subsection.556}%
-\contentsline {section}{\numberline {C.4}Execution Commands}{167}{section.558}%
-\contentsline {subsection}{\numberline {C.4.1}Unified Analysis Entry Points (Single-command pipelines)}{167}{subsection.559}%
-\contentsline {subsection}{\numberline {C.4.2}RQ1 Judge Verification (TruthfulQA)}{168}{subsection.560}%
-\contentsline {subsection}{\numberline {C.4.3}RQ1a Ground Truth Experiments}{169}{subsection.562}%
-\contentsline {subsection}{\numberline {C.4.4}RQ1a Corruption Detection Experiments}{169}{subsection.563}%
-\contentsline {subsection}{\numberline {C.4.5}RQ1b Corrector Experiments}{170}{subsection.568}%
-\contentsline {subsection}{\numberline {C.4.6}RQ1a Validation Studies}{171}{subsection.571}%
-\contentsline {subsection}{\numberline {C.4.7}RQ2 Hallucination Detection Analysis}{174}{subsection.575}%
-\contentsline {subsection}{\numberline {C.4.8}RQ3 Deep Research Experiments}{176}{subsection.581}%
-\contentsline {subsection}{\numberline {C.4.9}Generator Temperature Sensitivity Analysis}{180}{subsection.590}%
-\contentsline {subsection}{\numberline {C.4.10}Generator Model Comparison}{181}{subsection.592}%
-\contentsline {subsection}{\numberline {C.4.11}Random Baseline Generator}{182}{subsection.594}%
-\contentsline {subsection}{\numberline {C.4.12}Prompt Sensitivity Analysis}{183}{subsection.596}%
-\contentsline {subsection}{\numberline {C.4.13}Parallelization Benchmark}{183}{subsection.598}%
-\contentsline {subsection}{\numberline {C.4.14}Time and Cost Scaling Analysis}{184}{subsection.600}%
-\contentsline {subsection}{\numberline {C.4.15}Physics CLD Validation}{186}{subsection.604}%
-\contentsline {subsection}{\numberline {C.4.16}Cost Analysis}{187}{subsection.606}%
-\contentsline {subsection}{\numberline {C.4.17}Power Analysis}{188}{subsection.608}%
-\contentsline {subsection}{\numberline {C.4.18}Embedding Model Benchmark}{188}{subsection.609}%
-\contentsline {section}{\numberline {C.5}Output Artefacts}{189}{section.611}%
-\contentsline {subsection}{\numberline {C.5.1}Metadata Files}{189}{subsection.612}%
-\contentsline {subsection}{\numberline {C.5.2}Result Files}{189}{subsection.613}%
-\contentsline {subsection}{\numberline {C.5.3}Naming Convention}{189}{subsection.615}%
-\contentsline {section}{\numberline {C.6}Output Token Verification}{189}{section.616}%
-\contentsline {chapter}{\numberline {D}Statistical Procedures Reference}{191}{appendix.618}%
-\contentsline {subsubsection}{\numberline {D.0.0.1}Omnibus and Post-Hoc Tests.}{191}{subsubsection.619}%
-\contentsline {subsubsection}{\numberline {D.0.0.2}Parametric Sensitivity Analysis (Appendix~\ref {app:sensitivity_analysis}).}{191}{subsubsection.620}%
-\contentsline {subsubsection}{\numberline {D.0.0.3}Multiple-Comparison and Interval Methods.}{192}{subsubsection.621}%
-\contentsline {subsubsection}{\numberline {D.0.0.4}RQ2 Classifier Algorithms (Ensemble Models, Hyperparameters).}{192}{subsubsection.622}%
-\contentsline {chapter}{\numberline {E}Experimental Prompts}{193}{appendix.623}%
-\contentsline {section}{\numberline {E.1}Prompt File Locations}{193}{section.624}%
-\contentsline {section}{\numberline {E.2}Full Prompt Text: Generator (Nitai\_C)}{193}{section.625}%
-\contentsline {subsection}{\numberline {E.2.1}generateNodes Prompt}{194}{subsection.626}%
-\contentsline {subsection}{\numberline {E.2.2}generateEdges Prompt}{194}{subsection.627}%
-\contentsline {section}{\numberline {E.3}Full Prompt Text: Correctness Judge}{195}{section.628}%
-\contentsline {subsection}{\numberline {E.3.1}Baseline Variant}{195}{subsection.629}%
-\contentsline {subsection}{\numberline {E.3.2}Chain-of-Thought (CoT) Variant}{196}{subsection.630}%
-\contentsline {subsection}{\numberline {E.3.3}Mechanistic Variant (Bradford Hill Criteria)}{196}{subsection.631}%
-\contentsline {section}{\numberline {E.4}Full Prompt Text: Citation Judge}{197}{section.632}%
-\contentsline {subsection}{\numberline {E.4.1}Baseline Variant}{198}{subsection.633}%
-\contentsline {subsection}{\numberline {E.4.2}Chain-of-Thought (CoT) Variant}{198}{subsection.634}%
-\contentsline {subsection}{\numberline {E.4.3}Mechanistic Variant (Bradford Hill)}{199}{subsection.635}%
-\contentsline {subsection}{\numberline {E.4.4}Mechanistic-Literature Variant}{200}{subsection.636}%
-\contentsline {section}{\numberline {E.5}Full Prompt Text: Corrector}{200}{section.637}%
-\contentsline {subsection}{\numberline {E.5.1}Baseline Variant}{200}{subsection.638}%
-\contentsline {subsection}{\numberline {E.5.2}CoT Variant}{201}{subsection.639}%
-\contentsline {subsection}{\numberline {E.5.3}Mechanistic Variant (Bradford Hill)}{201}{subsection.640}%
-\contentsline {section}{\numberline {E.6}Prompt Engineering Ablation Study}{202}{section.641}%
-\contentsline {subsection}{\numberline {E.6.1}Experimental Design}{202}{subsection.642}%
-\contentsline {subsection}{\numberline {E.6.2}Prompt Engineering Techniques}{202}{subsection.643}%
-\contentsline {subsection}{\numberline {E.6.3}Results}{204}{subsection.645}%
-\contentsline {subsection}{\numberline {E.6.4}Key Findings}{204}{subsection.648}%
-\contentsline {subsection}{\numberline {E.6.5}Interpretation}{205}{subsection.649}%
-\contentsline {subsection}{\numberline {E.6.6}Limitations}{205}{subsection.650}%
-\contentsline {section}{\numberline {E.7}Generator Design Rationale}{205}{section.651}%
-\contentsline {section}{\numberline {E.8}Generator Prompt (Nitai\_C)}{206}{section.652}%
-\contentsline {section}{\numberline {E.9}Edge Generation Ablation Prompts}{206}{section.661}%
-\contentsline {chapter}{\numberline {F}Node Generation Prompt Ablation}{207}{appendix.662}%
-\contentsline {section}{\numberline {F.1}Node Generation Prompts}{207}{section.664}%
-\contentsline {chapter}{\numberline {G}Embedding Model Benchmark}{208}{appendix.665}%
-\contentsline {chapter}{\numberline {H}Algorithmic Descriptions}{210}{appendix.668}%
-\contentsline {section}{\numberline {H.1}Algorithm 0: CLD Generation}{210}{section.669}%
-\contentsline {section}{\numberline {H.2}Algorithm 1: Judge-Correctness}{211}{section.671}%
-\contentsline {section}{\numberline {H.3}Algorithm 2: Judge-Citation}{211}{section.673}%
-\contentsline {section}{\numberline {H.4}Algorithm 3: Corruption}{212}{section.675}%
-\contentsline {section}{\numberline {H.5}Algorithm 4: Corrector}{213}{section.677}%
-\contentsline {section}{\numberline {H.6}Algorithm 5: UQ Metrics Computation}{214}{section.679}%
-\contentsline {section}{\numberline {H.7}Algorithm 6: Hallucination Classification}{214}{section.681}%
-\contentsline {section}{\numberline {H.8}Algorithm 7: Citation Search (Brave)}{215}{section.683}%
-\contentsline {section}{\numberline {H.9}Algorithm 8: Citation Fetcher}{216}{section.685}%
-\contentsline {section}{\numberline {H.10}Deep Research Multi-Agent Components}{217}{section.687}%
-\contentsline {section}{\numberline {H.11}Algorithm 9: Deep Research Multi-Agent Pipeline}{218}{section.689}%
-\contentsline {section}{\numberline {H.12}Algorithm 10: Node Concept Similarity (Similarity-Weighted Node F1)}{220}{section.691}%
-\contentsline {chapter}{\numberline {I}ROC Curves}{222}{appendix.693}%
-\contentsline {section}{\numberline {I.1}Corruption Detection Correctness ROC Curves}{222}{section.694}%
-\contentsline {section}{\numberline {I.2}Corruption Detection Citation ROC Curves}{223}{section.696}%
-\contentsline {section}{\numberline {I.3}Ground Truth Correctness ROC Curves}{223}{section.698}%
-\contentsline {section}{\numberline {I.4}Ground Truth Citation ROC Curves}{224}{section.700}%
-\contentsline {chapter}{\numberline {J}Detailed Experimental Specifications}{225}{appendix.702}%
-\contentsline {section}{\numberline {J.1}Preliminary: Generator Selection}{225}{section.703}%
-\contentsline {subsubsection}{\numberline {J.1.0.1}Generator Model Selection}{225}{subsubsection.704}%
-\contentsline {subsubsection}{\numberline {J.1.0.2}Generator Prompt Selection (Nitai\_C)}{226}{subsubsection.705}%
-\contentsline {subsubsection}{\numberline {J.1.0.3}Generator Temperature Selection}{227}{subsubsection.706}%
-\contentsline {section}{\numberline {J.2}Preliminaries: Generator Performance}{228}{section.707}%
-\contentsline {section}{\numberline {J.3}Preliminary: TruthfulQA Verification}{228}{section.708}%
-\contentsline {section}{\numberline {J.4}RQ1a: LLM-as-a-Judge Hallucination Detection}{229}{section.709}%
-\contentsline {subsubsection}{\numberline {J.4.0.1}RQ1a: Correctness Judge (Lit)}{230}{subsubsection.710}%
-\contentsline {subsubsection}{\numberline {J.4.0.2}RQ1a: Correctness Judge (Synth)}{230}{subsubsection.711}%
-\contentsline {subsubsection}{\numberline {J.4.0.3}RQ1a: Citation Judge (Lit)}{231}{subsubsection.712}%
-\contentsline {subsubsection}{\numberline {J.4.0.4}RQ1a: Citation Judge (Synth)}{231}{subsubsection.713}%
-\contentsline {section}{\numberline {J.5}Sensitivity: Prompt Sensitivity Analysis}{231}{section.714}%
-\contentsline {section}{\numberline {J.6}Validation: Uleman's Provider Study}{232}{section.716}%
-\contentsline {subsection}{\numberline {J.6.1}Search Provider Comparison (Uleman's CLD)}{233}{subsection.717}%
-\contentsline {subsection}{\numberline {J.6.2}Human--LLM Agreement}{234}{subsection.718}%
-\contentsline {subsection}{\numberline {J.6.3}Physics Sanity Check}{234}{subsection.719}%
-\contentsline {subsection}{\numberline {J.6.4}Retrieval Success Analysis}{235}{subsection.724}%
-\contentsline {section}{\numberline {J.7}RQ1b: LLM-as-a-Corrector Evaluation}{235}{section.727}%
-\contentsline {subsubsection}{\numberline {J.7.0.1}RQ1b: Correctness Corrector (Synth)}{236}{subsubsection.728}%
-\contentsline {subsubsection}{\numberline {J.7.0.2}RQ1b: Correctness Corrector (Lit)}{236}{subsubsection.729}%
-\contentsline {section}{\numberline {J.8}RQ2: Corpus-Independent Hallucination Detection}{237}{section.730}%
-\contentsline {subsubsection}{\numberline {J.8.0.1}RQ2: UQ (Logprobs)}{238}{subsubsection.731}%
-\contentsline {subsubsection}{\numberline {J.8.0.2}RQ2: CosSim (Embeddings)}{238}{subsubsection.732}%
-\contentsline {subsubsection}{\numberline {J.8.0.3}RQ2: Analysis Pipeline (6 Phases)}{238}{subsubsection.733}%
-\contentsline {section}{\numberline {J.9}RQ3: Deep Research Literature Validation}{239}{section.734}%
-\contentsline {subsubsection}{\numberline {J.9.0.1}Deep Research}{239}{subsubsection.735}%
-\contentsline {subsubsection}{\numberline {J.9.0.2}Computational Cost}{240}{subsubsection.736}%
-\contentsline {subsubsection}{\numberline {J.9.0.3}Limitations}{240}{subsubsection.737}%
-\contentsline {subsubsection}{\numberline {J.9.0.4}Exploratory Analysis: Ground Truth Enrichment}{240}{subsubsection.738}%
-\contentsline {subsubsection}{\numberline {J.9.0.5}Human Validation}{241}{subsubsection.739}%
-\contentsline {subsubsection}{\numberline {J.9.0.6}Threshold Selection and Extrapolation}{242}{subsubsection.740}%
-\contentsline {subsubsection}{\numberline {J.9.0.7}Smart Trigger}{242}{subsubsection.741}%
+\contentsline {chapter}{\numberline {7}Results}{80}{chapter.260}%
+\contentsline {section}{\numberline {7.1}Preliminary: Generator Model Comparison}{80}{section.261}%
+\contentsline {section}{\numberline {7.2}Preliminary: Generator Baseline Validation}{81}{section.264}%
+\contentsline {subsection}{\numberline {7.2.1}Generator Performance}{82}{subsection.265}%
+\contentsline {subsection}{\numberline {7.2.2}Temperature Robustness}{83}{subsection.268}%
+\contentsline {section}{\numberline {7.3}Preliminary: Judge Verification (TruthfulQA)}{83}{section.271}%
+\contentsline {section}{\numberline {7.4}RQ1a: LLM-as-a-Judge for Hallucination Detection}{84}{section.274}%
+\contentsline {subsection}{\numberline {7.4.1}Operational Definitions: GT Lit, GT Synth, and Hallucination}{84}{subsection.275}%
+\contentsline {subsection}{\numberline {7.4.2}GT Synth $\times $ Correctness Judge}{85}{subsection.276}%
+\contentsline {subsubsection}{\numberline {7.4.2.1}Performance Metrics Overview}{85}{subsubsection.277}%
+\contentsline {subsubsection}{\numberline {7.4.2.2}Detailed Analysis}{86}{subsubsection.279}%
+\contentsline {subsection}{\numberline {7.4.3}GT Lit $\times $ Correctness Judge}{88}{subsection.281}%
+\contentsline {subsubsection}{\numberline {7.4.3.1}Performance Metrics Overview}{88}{subsubsection.282}%
+\contentsline {subsubsection}{\numberline {7.4.3.2}Detailed Analysis}{89}{subsubsection.284}%
+\contentsline {subsection}{\numberline {7.4.4}GT Synth $\times $ Citation Judge}{90}{subsection.286}%
+\contentsline {subsubsection}{\numberline {7.4.4.1}Performance Metrics Overview}{90}{subsubsection.287}%
+\contentsline {subsubsection}{\numberline {7.4.4.2}Detailed Analysis}{91}{subsubsection.289}%
+\contentsline {subsection}{\numberline {7.4.5}GT Lit $\times $ Citation Judge}{92}{subsection.291}%
+\contentsline {subsubsection}{\numberline {7.4.5.1}Performance Metrics Overview}{92}{subsubsection.292}%
+\contentsline {subsubsection}{\numberline {7.4.5.2}Detailed Analysis}{93}{subsubsection.294}%
+\contentsline {subsubsection}{\numberline {7.4.5.3}Rationale for validation studies}{94}{subsubsection.296}%
+\contentsline {subsection}{\numberline {7.4.6}Validation: Human--LLM Agreement}{94}{subsection.297}%
+\contentsline {subsubsection}{\numberline {7.4.6.1}Per-Dataset and Combined Agreement}{95}{subsubsection.298}%
+\contentsline {subsubsection}{\numberline {7.4.6.2}Disagreement Analysis}{95}{subsubsection.301}%
+\contentsline {subsection}{\numberline {7.4.7}Validation: Uleman's External CLD}{96}{subsection.304}%
+\contentsline {subsubsection}{\numberline {7.4.7.1}Search Provider Comparison}{96}{subsubsection.305}%
+\contentsline {subsection}{\numberline {7.4.8}Validation: Physics CLDs}{97}{subsection.308}%
+\contentsline {subsection}{\numberline {7.4.9}Disentangling Retrieval Quality from Domain Dependence}{97}{subsection.310}%
+\contentsline {subsection}{\numberline {7.4.10}Synthesis of validation findings}{98}{subsection.312}%
+\contentsline {subsection}{\numberline {7.4.11}RQ1a: Main Findings (Summary)}{99}{subsection.313}%
+\contentsline {section}{\numberline {7.5}RQ1b: LLM-as-a-Corrector for Edge Quality Improvement}{100}{section.320}%
+\contentsline {subsection}{\numberline {7.5.1}GT Synth $\times $ Baseline Judge: Correction Results}{100}{subsection.321}%
+\contentsline {subsection}{\numberline {7.5.2}GT Synth $\times $ Baseline Judge: Prompt Ablation}{101}{subsection.324}%
+\contentsline {subsection}{\numberline {7.5.3}GT Lit $\times $ Mechanistic Judge: Correction Results}{102}{subsection.327}%
+\contentsline {subsection}{\numberline {7.5.4}GT Lit $\times $ Mechanistic Judge: Prompt Ablation}{102}{subsection.330}%
+\contentsline {subsection}{\numberline {7.5.5}RQ1b: Main Findings (Summary)}{103}{subsection.333}%
+\contentsline {section}{\numberline {7.6}RQ2: Corpus-Independent Hallucination Detection via UQ Metrics}{104}{section.337}%
+\contentsline {subsection}{\numberline {7.6.1}Single UQ Metric Performance}{104}{subsection.338}%
+\contentsline {subsection}{\numberline {7.6.2}Feature Distributions: Correct vs. Hallucinations}{108}{subsection.341}%
+\contentsline {subsection}{\numberline {7.6.3}Recursive Feature Elimination Analysis}{110}{subsection.345}%
+\contentsline {subsection}{\numberline {7.6.4}Ensemble Classification Results}{110}{subsection.347}%
+\contentsline {paragraph}{Practical operating-point comparison (F1 at a fixed threshold).}{111}{section*.350}%
+\contentsline {subsection}{\numberline {7.6.5}RQ2: Main Findings (Summary)}{112}{subsection.351}%
+\contentsline {section}{\numberline {7.7}RQ3: Deep Research Validation (Exploratory Pilot)}{113}{section.355}%
+\contentsline {subsection}{\numberline {7.7.1}Computational Cost}{114}{subsection.358}%
+\contentsline {subsection}{\numberline {7.7.2}Per-CLD Detection Rate Analysis}{115}{subsection.360}%
+\contentsline {subsection}{\numberline {7.7.3}Exploratory: Ground Truth Enrichment Analysis}{116}{subsection.363}%
+\contentsline {subsection}{\numberline {7.7.4}Smart-Trigger DR Deployment Estimate}{118}{subsection.372}%
+\contentsline {subsection}{\numberline {7.7.5}RQ3: Main Findings (Summary)}{120}{subsection.375}%
+\contentsline {section}{\numberline {7.8}Effect Size Summary}{121}{section.380}%
+\contentsline {section}{\numberline {7.9}Computational Scaling Analysis}{123}{section.383}%
+\contentsline {subsection}{\numberline {7.9.1}Time and Cost Scaling}{123}{subsection.384}%
+\contentsline {subsection}{\numberline {7.9.2}Token Cost Analysis}{124}{subsection.386}%
+\contentsline {subsection}{\numberline {7.9.3}Parallelization Speedup}{124}{subsection.388}%
+\contentsline {chapter}{\numberline {8}Discussion}{126}{chapter.392}%
+\contentsline {section}{\numberline {8.1}Direct Answers to the Research Questions}{126}{section.393}%
+\contentsline {section}{\numberline {8.2}Central Interpretive Claim: Error vs.\ Scope Disagreement}{127}{section.399}%
+\contentsline {section}{\numberline {8.3}CLD Generation Paradigm}{128}{section.400}%
+\contentsline {section}{\numberline {8.4}Mechanisms of Judge Failure}{128}{section.401}%
+\contentsline {subsection}{\numberline {8.4.1}The ``Evidence of Absence'' Paradox (Citation Judge)}{128}{subsection.402}%
+\contentsline {subsection}{\numberline {8.4.2}Plausibility Bias (Correctness Judge)}{129}{subsection.404}%
+\contentsline {subsection}{\numberline {8.4.3}Partial Credit and Non-Scientific Evidence Acceptance (Citation Judge)}{130}{subsection.406}%
+\contentsline {subsection}{\numberline {8.4.4}Domain-Dependent Failure: The Social Norms Anomaly}{130}{subsection.408}%
+\contentsline {section}{\numberline {8.5}RQ1 Interpretation: Judges as Screening Signals}{131}{section.409}%
+\contentsline {subsection}{\numberline {8.5.1}Correctness Judge}{131}{subsection.410}%
+\contentsline {subsection}{\numberline {8.5.2}Citation Judge}{131}{subsection.411}%
+\contentsline {subsection}{\numberline {8.5.3}Human Validation: Systematic Leniency}{132}{subsection.412}%
+\contentsline {subsection}{\numberline {8.5.4}Implication: Active Learning for Judge Calibration}{132}{subsection.413}%
+\contentsline {section}{\numberline {8.6}Mechanisms of Corrector Failure}{132}{section.414}%
+\contentsline {subsection}{\numberline {8.6.1}Judge-Satisficing Revisions (Goodhart-Style Metric Gaming)}{133}{subsection.415}%
+\contentsline {subsection}{\numberline {8.6.2}Precision Loss via Over-Addition Bias}{133}{subsection.417}%
+\contentsline {subsection}{\numberline {8.6.3}Polarity and Type Inconsistencies (Schema Slips)}{133}{subsection.419}%
+\contentsline {subsection}{\numberline {8.6.4}Noisy-Label Amplification Under Weak Judge Signal}{134}{subsection.421}%
+\contentsline {subsection}{\numberline {8.6.5}Instability Across Correction Sessions}{134}{subsection.422}%
+\contentsline {subsection}{\numberline {8.6.6}Per-CLD Variation in Corrector Effectiveness}{134}{subsection.424}%
+\contentsline {subsection}{\numberline {8.6.7}Diagnosing Judge--Corrector Coupling}{135}{subsection.425}%
+\contentsline {section}{\numberline {8.7}RQ2: UQ Metrics and Cross-Domain Transfer}{135}{section.426}%
+\contentsline {subsection}{\numberline {8.7.1}Counterintuitive Cosine Similarity Direction}{135}{subsection.427}%
+\contentsline {subsection}{\numberline {8.7.2}Cross-Domain Generalisation Failure}{135}{subsection.428}%
+\contentsline {subsection}{\numberline {8.7.3}Alternative UQ Metric Designs}{136}{subsection.429}%
+\contentsline {subsection}{\numberline {8.7.4}Temperature--Uncertainty Trade-off}{136}{subsection.430}%
+\contentsline {section}{\numberline {8.8}RQ3: Deep Research Validation}{137}{section.431}%
+\contentsline {subsection}{\numberline {8.8.1}Why Literature Validation Has Weak Discriminative Power}{137}{subsection.432}%
+\contentsline {subsection}{\numberline {8.8.2}The Variable-Mismatch Problem}{137}{subsection.433}%
+\contentsline {subsection}{\numberline {8.8.3}What Ground Truth Enrichment Reveals}{138}{subsection.434}%
+\contentsline {subsection}{\numberline {8.8.4}Residual False Negatives: Partial Recovery and Tacit Expert Knowledge}{138}{subsection.435}%
+\contentsline {subsection}{\numberline {8.8.5}Judge-Triggered Deployment: Efficiency and Risks}{138}{subsection.436}%
+\contentsline {subsection}{\numberline {8.8.6}Limitations of the Deep Research Pivot}{139}{subsection.437}%
+\contentsline {section}{\numberline {8.9}Synthesis: Compounding Dependencies and the Division of Labour}{140}{section.438}%
+\contentsline {subsection}{\numberline {8.9.1}Compounding Failure Modes Across Components}{140}{subsection.439}%
+\contentsline {subsection}{\numberline {8.9.2}The GT~Synth to GT~Lit Transfer Gap}{140}{subsection.443}%
+\contentsline {subsection}{\numberline {8.9.3}Emergent Division of Labour}{140}{subsection.444}%
+\contentsline {subsection}{\numberline {8.9.4}Implications for Group Model Building}{141}{subsection.445}%
+\contentsline {section}{\numberline {8.10}Practical Recommendations}{142}{section.446}%
+\contentsline {section}{\numberline {8.11}Limitations and Validity Threats}{142}{section.453}%
+\contentsline {subsection}{\numberline {8.11.1}Model Dependence}{142}{subsection.454}%
+\contentsline {subsection}{\numberline {8.11.2}Domain Dependence}{143}{subsection.455}%
+\contentsline {subsection}{\numberline {8.11.3}Validation Studies}{143}{subsection.456}%
+\contentsline {subsection}{\numberline {8.11.4}Construct Validity}{143}{subsection.457}%
+\contentsline {subsection}{\numberline {8.11.5}Edge-Isolation Design Constraint}{144}{subsection.458}%
+\contentsline {subsection}{\numberline {8.11.6}Node-Set Conditioning (Variable Extraction Omitted)}{144}{subsection.459}%
+\contentsline {subsection}{\numberline {8.11.7}Retrieval and Temporal Dependence}{144}{subsection.460}%
+\contentsline {subsection}{\numberline {8.11.8}Structural Limitations of Scientific Literature}{145}{subsection.461}%
+\contentsline {subsection}{\numberline {8.11.9}Statistical Power and Sample Size}{145}{subsection.462}%
+\contentsline {subsection}{\numberline {8.11.10}Sensitivity Analysis Constraints}{145}{subsection.463}%
+\contentsline {subsection}{\numberline {8.11.11}Budget and Design Constraints}{146}{subsection.464}%
+\contentsline {section}{\numberline {8.12}Future Work}{146}{section.465}%
+\contentsline {subsection}{\numberline {8.12.1}General Directions}{146}{subsection.466}%
+\contentsline {subsection}{\numberline {8.12.2}LLM-as-a-Judge: From Screening Signal to Calibrated Triage}{147}{subsection.471}%
+\contentsline {subsection}{\numberline {8.12.3}LLM-as-a-Corrector: Making Edits Translate to Expert-Grounded Gains}{147}{subsection.475}%
+\contentsline {subsection}{\numberline {8.12.4}UQ Metrics: From Universal Thresholds to Robust Ranking Signals}{147}{subsection.481}%
+\contentsline {subsection}{\numberline {8.12.5}Deep Research: Optimising Applicability, Not Just Retrieval}{148}{subsection.486}%
+\contentsline {subsection}{\numberline {8.12.6}Adaptive Test-Time Compute: Policies that Avoid Compounding Failure}{148}{subsection.491}%
+\contentsline {chapter}{\numberline {9}Conclusion}{149}{chapter.494}%
+\contentsline {section}{\numberline {9.1}Key Contributions}{150}{section.495}%
+\contentsline {section}{\numberline {9.2}Concluding Remarks}{150}{section.496}%
+\contentsline {chapter}{\numberline {10}Ethics and Data Management}{152}{chapter.497}%
+\contentsline {section}{\numberline {10.1}Ethical Considerations}{152}{section.498}%
+\contentsline {section}{\numberline {10.2}Data Management}{152}{section.499}%
+\contentsline {paragraph}{Human Validation Raters.}{153}{section*.501}%
+\contentsline {chapter}{\numberline {A}Supplementary Sensitivity Analysis}{154}{appendix.502}%
+\contentsline {section}{\numberline {A.1}Judge Prompt Sensitivity}{154}{section.503}%
+\contentsline {subsection}{\numberline {A.1.1}Derivation: First-Order Sobol Index for a Categorical Factor}{154}{subsection.504}%
+\contentsline {section}{\numberline {A.2}Corrector Prompt Sensitivity}{157}{section.514}%
+\contentsline {subsection}{\numberline {A.2.1}Corrector Action Counts}{158}{subsection.520}%
+\contentsline {chapter}{\numberline {B}Function-to-Algorithm Mapping}{159}{appendix.525}%
+\contentsline {chapter}{\numberline {C}Reproducibility}{160}{appendix.527}%
+\contentsline {section}{\numberline {C.1}Data Availability}{160}{section.528}%
+\contentsline {subsection}{\numberline {C.1.1}Ground Truth CLD Datasets}{160}{subsection.529}%
+\contentsline {subsection}{\numberline {C.1.2}Validation and Auxiliary Datasets}{161}{subsection.531}%
+\contentsline {subsubsection}{\numberline {C.1.2.1}Physics CLD Details.}{161}{subsubsection.533}%
+\contentsline {subsection}{\numberline {C.1.3}Experiment Result Datasets by Research Question}{162}{subsection.540}%
+\contentsline {subsection}{\numberline {C.1.4}Final Experiment Results}{162}{subsection.542}%
+\contentsline {section}{\numberline {C.2}Code Availability}{163}{section.543}%
+\contentsline {subsection}{\numberline {C.2.1}Experiment Execution Scripts}{163}{subsection.544}%
+\contentsline {subsection}{\numberline {C.2.2}Analysis Scripts}{164}{subsection.546}%
+\contentsline {subsection}{\numberline {C.2.3}Complete \texttt {final\_runs/} Script and Command Inventory}{164}{subsection.548}%
+\contentsline {subsection}{\numberline {C.2.4}Prompt Configuration Files}{165}{subsection.550}%
+\contentsline {section}{\numberline {C.3}Software Environment}{166}{section.552}%
+\contentsline {subsection}{\numberline {C.3.1}Environment Installation}{166}{subsection.554}%
+\contentsline {subsection}{\numberline {C.3.2}Key Software Dependencies}{167}{subsection.555}%
+\contentsline {section}{\numberline {C.4}Execution Commands}{167}{section.557}%
+\contentsline {subsection}{\numberline {C.4.1}Unified Analysis Entry Points (Single-command pipelines)}{167}{subsection.558}%
+\contentsline {subsection}{\numberline {C.4.2}RQ1 Judge Verification (TruthfulQA)}{168}{subsection.559}%
+\contentsline {subsection}{\numberline {C.4.3}RQ1a Ground Truth Experiments}{169}{subsection.561}%
+\contentsline {subsection}{\numberline {C.4.4}RQ1a Corruption Detection Experiments}{169}{subsection.562}%
+\contentsline {subsection}{\numberline {C.4.5}RQ1b Corrector Experiments}{170}{subsection.567}%
+\contentsline {subsection}{\numberline {C.4.6}RQ1a Validation Studies}{171}{subsection.570}%
+\contentsline {subsection}{\numberline {C.4.7}RQ2 Hallucination Detection Analysis}{174}{subsection.574}%
+\contentsline {subsection}{\numberline {C.4.8}RQ3 Deep Research Experiments}{176}{subsection.580}%
+\contentsline {subsection}{\numberline {C.4.9}Generator Temperature Sensitivity Analysis}{180}{subsection.589}%
+\contentsline {subsection}{\numberline {C.4.10}Generator Model Comparison}{181}{subsection.591}%
+\contentsline {subsection}{\numberline {C.4.11}Random Baseline Generator}{182}{subsection.593}%
+\contentsline {subsection}{\numberline {C.4.12}Prompt Sensitivity Analysis}{183}{subsection.595}%
+\contentsline {subsection}{\numberline {C.4.13}Parallelization Benchmark}{183}{subsection.597}%
+\contentsline {subsection}{\numberline {C.4.14}Time and Cost Scaling Analysis}{184}{subsection.599}%
+\contentsline {subsection}{\numberline {C.4.15}Physics CLD Validation}{186}{subsection.603}%
+\contentsline {subsection}{\numberline {C.4.16}Cost Analysis}{187}{subsection.605}%
+\contentsline {subsection}{\numberline {C.4.17}Embedding Model Benchmark}{188}{subsection.607}%
+\contentsline {section}{\numberline {C.5}Output Artefacts}{188}{section.609}%
+\contentsline {subsection}{\numberline {C.5.1}Metadata Files}{188}{subsection.610}%
+\contentsline {subsection}{\numberline {C.5.2}Result Files}{189}{subsection.611}%
+\contentsline {subsection}{\numberline {C.5.3}Naming Convention}{189}{subsection.613}%
+\contentsline {section}{\numberline {C.6}Output Token Verification}{189}{section.614}%
+\contentsline {chapter}{\numberline {D}Detailed Experimental Specifications}{190}{appendix.616}%
+\contentsline {section}{\numberline {D.1}Preliminary: Generator Selection}{190}{section.617}%
+\contentsline {subsubsection}{\numberline {D.1.0.1}Generator Model Selection}{190}{subsubsection.618}%
+\contentsline {subsubsection}{\numberline {D.1.0.2}Generator Prompt Selection (Nitai\_C)}{191}{subsubsection.619}%
+\contentsline {subsubsection}{\numberline {D.1.0.3}Generator Temperature Selection}{192}{subsubsection.620}%
+\contentsline {section}{\numberline {D.2}Preliminaries: Generator Performance}{193}{section.621}%
+\contentsline {section}{\numberline {D.3}Preliminary: TruthfulQA Verification}{193}{section.622}%
+\contentsline {section}{\numberline {D.4}RQ1a: LLM-as-a-Judge Hallucination Detection}{194}{section.623}%
+\contentsline {subsubsection}{\numberline {D.4.0.1}RQ1a: Correctness Judge (Lit)}{195}{subsubsection.624}%
+\contentsline {subsubsection}{\numberline {D.4.0.2}RQ1a: Correctness Judge (Synth)}{195}{subsubsection.625}%
+\contentsline {subsubsection}{\numberline {D.4.0.3}RQ1a: Citation Judge (Lit)}{196}{subsubsection.626}%
+\contentsline {subsubsection}{\numberline {D.4.0.4}RQ1a: Citation Judge (Synth)}{196}{subsubsection.627}%
+\contentsline {section}{\numberline {D.5}Sensitivity: Prompt Sensitivity Analysis}{196}{section.628}%
+\contentsline {section}{\numberline {D.6}Validation: Uleman's Provider Study}{197}{section.630}%
+\contentsline {subsection}{\numberline {D.6.1}Search Provider Comparison (Uleman's CLD)}{198}{subsection.631}%
+\contentsline {subsection}{\numberline {D.6.2}Human--LLM Agreement}{199}{subsection.632}%
+\contentsline {subsection}{\numberline {D.6.3}Physics Sanity Check}{199}{subsection.633}%
+\contentsline {subsection}{\numberline {D.6.4}Retrieval Success Analysis}{200}{subsection.638}%
+\contentsline {section}{\numberline {D.7}RQ1b: LLM-as-a-Corrector Evaluation}{200}{section.641}%
+\contentsline {subsubsection}{\numberline {D.7.0.1}RQ1b: Correctness Corrector (Synth)}{201}{subsubsection.642}%
+\contentsline {subsubsection}{\numberline {D.7.0.2}RQ1b: Correctness Corrector (Lit)}{202}{subsubsection.643}%
+\contentsline {section}{\numberline {D.8}RQ2: Corpus-Independent Hallucination Detection}{202}{section.644}%
+\contentsline {subsubsection}{\numberline {D.8.0.1}RQ2: UQ (Logprobs)}{203}{subsubsection.645}%
+\contentsline {subsubsection}{\numberline {D.8.0.2}RQ2: CosSim (Embeddings)}{203}{subsubsection.646}%
+\contentsline {subsubsection}{\numberline {D.8.0.3}RQ2: Analysis Pipeline (6 Phases)}{204}{subsubsection.647}%
+\contentsline {section}{\numberline {D.9}RQ3: Deep Research Literature Validation}{205}{section.648}%
+\contentsline {subsubsection}{\numberline {D.9.0.1}Deep Research}{205}{subsubsection.649}%
+\contentsline {subsubsection}{\numberline {D.9.0.2}Computational Cost}{205}{subsubsection.650}%
+\contentsline {subsubsection}{\numberline {D.9.0.3}Limitations}{206}{subsubsection.651}%
+\contentsline {subsubsection}{\numberline {D.9.0.4}Exploratory Analysis: Ground Truth Enrichment}{206}{subsubsection.652}%
+\contentsline {subsubsection}{\numberline {D.9.0.5}Human Validation}{206}{subsubsection.653}%
+\contentsline {subsubsection}{\numberline {D.9.0.6}Threshold Selection and Extrapolation}{207}{subsubsection.654}%
+\contentsline {subsubsection}{\numberline {D.9.0.7}Smart Trigger}{208}{subsubsection.655}%
+\contentsline {chapter}{\numberline {E}Statistical Procedures Reference}{209}{appendix.656}%
+\contentsline {subsubsection}{\numberline {E.0.0.1}Omnibus and Post-Hoc Tests.}{209}{subsubsection.657}%
+\contentsline {subsubsection}{\numberline {E.0.0.2}Parametric Sensitivity Analysis (Appendix~\ref {app:sensitivity_analysis}).}{209}{subsubsection.658}%
+\contentsline {subsubsection}{\numberline {E.0.0.3}Multiple-Comparison and Interval Methods.}{210}{subsubsection.659}%
+\contentsline {subsubsection}{\numberline {E.0.0.4}RQ2 Classifier Algorithms (Ensemble Models, Hyperparameters).}{210}{subsubsection.660}%
+\contentsline {chapter}{\numberline {F}Experimental Prompts}{211}{appendix.661}%
+\contentsline {section}{\numberline {F.1}Prompt File Locations}{211}{section.662}%
+\contentsline {section}{\numberline {F.2}Full Prompt Text: Generator (Nitai\_C)}{211}{section.663}%
+\contentsline {subsection}{\numberline {F.2.1}generateNodes Prompt}{212}{subsection.664}%
+\contentsline {subsection}{\numberline {F.2.2}generateEdges Prompt}{212}{subsection.665}%
+\contentsline {section}{\numberline {F.3}Full Prompt Text: Correctness Judge}{213}{section.666}%
+\contentsline {subsection}{\numberline {F.3.1}Baseline Variant}{213}{subsection.667}%
+\contentsline {subsection}{\numberline {F.3.2}Chain-of-Thought (CoT) Variant}{214}{subsection.668}%
+\contentsline {subsection}{\numberline {F.3.3}Mechanistic Variant (Bradford Hill Criteria)}{214}{subsection.669}%
+\contentsline {section}{\numberline {F.4}Full Prompt Text: Citation Judge}{215}{section.670}%
+\contentsline {subsection}{\numberline {F.4.1}Baseline Variant}{216}{subsection.671}%
+\contentsline {subsection}{\numberline {F.4.2}Chain-of-Thought (CoT) Variant}{216}{subsection.672}%
+\contentsline {subsection}{\numberline {F.4.3}Mechanistic Variant (Bradford Hill)}{217}{subsection.673}%
+\contentsline {subsection}{\numberline {F.4.4}Mechanistic-Literature Variant}{218}{subsection.674}%
+\contentsline {section}{\numberline {F.5}Full Prompt Text: Corrector}{218}{section.675}%
+\contentsline {subsection}{\numberline {F.5.1}Baseline Variant}{218}{subsection.676}%
+\contentsline {subsection}{\numberline {F.5.2}CoT Variant}{219}{subsection.677}%
+\contentsline {subsection}{\numberline {F.5.3}Mechanistic Variant (Bradford Hill)}{219}{subsection.678}%
+\contentsline {section}{\numberline {F.6}Prompt Engineering Ablation Study}{220}{section.679}%
+\contentsline {subsection}{\numberline {F.6.1}Experimental Design}{220}{subsection.680}%
+\contentsline {subsection}{\numberline {F.6.2}Prompt Engineering Techniques}{220}{subsection.681}%
+\contentsline {subsection}{\numberline {F.6.3}Results}{222}{subsection.683}%
+\contentsline {subsection}{\numberline {F.6.4}Key Findings}{222}{subsection.686}%
+\contentsline {subsection}{\numberline {F.6.5}Interpretation}{223}{subsection.687}%
+\contentsline {subsection}{\numberline {F.6.6}Limitations}{223}{subsection.688}%
+\contentsline {section}{\numberline {F.7}Generator Design Rationale}{223}{section.689}%
+\contentsline {section}{\numberline {F.8}Generator Prompt (Nitai\_C)}{224}{section.690}%
+\contentsline {section}{\numberline {F.9}Edge Generation Ablation Prompts}{224}{section.699}%
+\contentsline {chapter}{\numberline {G}Node Generation Prompt Ablation}{225}{appendix.700}%
+\contentsline {section}{\numberline {G.1}Node Generation Prompts}{225}{section.702}%
+\contentsline {chapter}{\numberline {H}Embedding Model Benchmark}{226}{appendix.703}%
+\contentsline {chapter}{\numberline {I}Algorithmic Descriptions}{228}{appendix.706}%
+\contentsline {section}{\numberline {I.1}Algorithm 0: CLD Generation}{228}{section.707}%
+\contentsline {section}{\numberline {I.2}Algorithm 1: Judge-Correctness}{229}{section.709}%
+\contentsline {section}{\numberline {I.3}Algorithm 2: Judge-Citation}{229}{section.711}%
+\contentsline {section}{\numberline {I.4}Algorithm 3: Corruption}{230}{section.713}%
+\contentsline {section}{\numberline {I.5}Algorithm 4: Corrector}{231}{section.715}%
+\contentsline {section}{\numberline {I.6}Algorithm 5: UQ Metrics Computation}{232}{section.717}%
+\contentsline {section}{\numberline {I.7}Algorithm 6: Hallucination Classification}{232}{section.719}%
+\contentsline {section}{\numberline {I.8}Algorithm 7: Citation Search (Brave)}{233}{section.721}%
+\contentsline {section}{\numberline {I.9}Algorithm 8: Citation Fetcher}{234}{section.723}%
+\contentsline {section}{\numberline {I.10}Deep Research Multi-Agent Components}{235}{section.725}%
+\contentsline {section}{\numberline {I.11}Algorithm 9: Deep Research Multi-Agent Pipeline}{236}{section.727}%
+\contentsline {section}{\numberline {I.12}Algorithm 10: Node Concept Similarity (Similarity-Weighted Node F1)}{238}{section.729}%
+\contentsline {chapter}{\numberline {J}ROC Curves}{240}{appendix.731}%
+\contentsline {section}{\numberline {J.1}Corruption Detection Correctness ROC Curves}{240}{section.732}%
+\contentsline {section}{\numberline {J.2}Corruption Detection Citation ROC Curves}{241}{section.734}%
+\contentsline {section}{\numberline {J.3}Ground Truth Correctness ROC Curves}{241}{section.736}%
+\contentsline {section}{\numberline {J.4}Ground Truth Citation ROC Curves}{242}{section.738}%
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{243}{dummy.742}%
+\contentsline {chapter}{Bibliography}{243}{dummy.740}%
