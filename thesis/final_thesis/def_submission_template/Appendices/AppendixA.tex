@@ -130,10 +130,10 @@ Water Tank & 6 & 7 & Pascal's Law~\cite{pascal1663equilibre}; Torricelli's Law~\
 
 \textbf{Construction process.} The physics CLDs were constructed as follows:
 \begin{enumerate}[noitemsep]
-    \item \textbf{Causal structure definition:} Variables, directed edges, and polarities were proposed in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus} by translating established physical laws into CLD form (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka--Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). The resulting edge directions and polarities (\texttt{POSITIVE}/\texttt{NEGATIVE}) were then manually checked against these sources.
-    \item \textbf{Motivation generation:} For each edge, causal explanations (``motivations'') were authored in the same interactive Opus session and manually verified against the same source texts. The prompt pattern was: ``\textit{Write a motivation for the edge [Source] $\rightarrow$ [Target] with polarity [POSITIVE/NEGATIVE] based on [Physical Law]. Include the relevant equation and cite sources.}''
+    \item \textbf{Causal structure definition:} Variables, directed edges, and polarities were proposed in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus} by translating established physical laws into CLD form (Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat}, Lotka--Volterra equations~\cite{lotka1925elements,volterra1928fluctuations}, Ohm's and Kirchhoff's Laws~\cite{ohm1827galvanische,kirchhoff1845durchgang}, Pascal's and Torricelli's Laws~\cite{pascal1663equilibre,torricelli1644opera}). The resulting edge directions and polarities (\texttt{POSITIVE}/\texttt{NEGATIVE}) were then verified against these sources.
+    \item \textbf{Motivation generation:} For each edge, causal explanations (``motivations'') were authored in the same interactive Opus session and verified against the same source texts. The prompt pattern was: ``\textit{Write a motivation for the edge [Source] $\rightarrow$ [Target] with polarity [POSITIVE/NEGATIVE] based on [Physical Law]. Include the relevant equation and cite sources.}''
     \item \textbf{Reference mapping:} Each edge was annotated with bibliographic references to seminal papers and standard textbooks. Post-processing scripts (\texttt{add\_urls\_to\_references.py}, \texttt{add\_supporting\_quotes.py}) enriched the references with URLs (where publicly accessible) and supporting quotes extracted from source texts.
-    \item \textbf{Verification:} All motivations and supporting quotes were manually verified against source texts to ensure scientific accuracy. URLs were browser-verified for accessibility (\texttt{verify\_and\_fix\_urls.py}).
+    \item \textbf{Verification:} All motivations and supporting quotes were verified against source texts to ensure scientific accuracy. URLs were browser-verified for accessibility (\texttt{verify\_and\_fix\_urls.py}).
     \item \textbf{Data format:} Final JSON structure: \texttt{\{source, target, polarity, motivation, references[\{short\_citation, full\_citation, url, supporting\_quote\}]\}}. Converted to Excel format via \texttt{create\_thermostat\_excel.py}.
 \end{enumerate}
 
@@ -1720,7 +1720,7 @@ CLDs & Thermostat (8 edges), Predator-Prey (10), RC Circuit (7), Water Tank (6) 
 Total Edges & 31 \\
 Judge Model & GPT-4.1 \\
 Temperature & 0.0 \\
-Structure + motivations authored with & Claude 4.5 Opus~\cite{anthropic2025claude45opus} (manual verification against sources) \\
+Structure + motivations authored with & Claude 4.5 Opus~\cite{anthropic2025claude45opus} (verified against sources) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Physics Principles}} \\
 Thermostat & Newton's Law of Cooling~\cite{newton1701scala}, First Law of Thermodynamics~\cite{clausius1850heat} \\

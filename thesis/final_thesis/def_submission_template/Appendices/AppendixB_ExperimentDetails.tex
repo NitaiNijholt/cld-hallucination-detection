@@ -510,7 +510,7 @@ Four physics-based CLDs derived from fundamental laws (31 edges, 26 variables):
     \item RC Circuit: Ohm's Law~\cite{ohm1827galvanische}, Kirchhoff's Laws~\cite{kirchhoff1845durchgang}
     \item Water Tank: Pascal's Law~\cite{pascal1663equilibre}, Torricelli's Law~\cite{torricelli1644opera}
 \end{enumerate}
-CLD structure (variables, edges, polarities) and edge rationales were authored in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus} by translating these laws into CLD form, then manually verified against source texts. Per-CLD breakdown: Appendix Table~\ref{tab:physics_cld_dataset}.
+CLD structure (variables, edges, polarities) and edge rationales were authored in an interactive session with Claude 4.5 Opus~\cite{anthropic2025claude45opus} by translating these laws into CLD form, then verified against source texts. Per-CLD breakdown: Appendix Table~\ref{tab:physics_cld_dataset}.
 
 \paragraph{Metrics.} We report \emph{approval} rates computed from discrete judge verdicts. For the Correctness Judge, approval is the fraction of edges with verdict \texttt{CORRECT} (score 1.0). For the Citation Judge, approval is the fraction of edges with aggregate verdict \texttt{FULLY\_SUPPORTED} or \texttt{PARTIALLY\_SUPPORTED} (score $\ge 0.5$); \texttt{NO\_CITATION} indicates retrieval failure. We report approval across all edges and conditional approval restricted to edges with at least one retrieved citation ($C_e\ge1$).
 
