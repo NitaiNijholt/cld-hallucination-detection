@@ -220,15 +220,7 @@ The poor cross-CLD generalisation undermined the original RQ3 design of using UQ
 \label{sec:rq3_pivot}
 %------------------------------------------------------------------------------
 
-Our restated RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges.
-
-\subsection{Methodological Pivot and Scope of This Section}
-
-As argued in the synthesis (Section~\ref{sec:discussion_synthesis}), the original UQ-triggered correction pathway is not supported by our results. Accordingly, this section focuses on what Deep Research adds as a higher-cost \emph{evidence-gathering} component: when it succeeds, it can surface direct causal support (or lack thereof) for candidate edges; when it fails, it often fails via construct mismatch rather than simple retrieval absence.
-
-The Deep Research architecture instantiates the ReAct paradigm~\citep{yao2023react} for CLD validation: reasoning traces (causal claim analysis) guide search actions (query formulation), and action observations (retrieved evidence) refine subsequent reasoning (evidence evaluation and verdict assignment).
-
-The objective of \emph{maximising the chances of retrieving direct causal evidence} was defined after the RQ1 validation studies, especially the physics CLD results, which showed that when strong, unambiguous causal evidence is available and successfully retrieved, citation-based validation can achieve high approval on valid edges (Results Section~\ref{sec:physics_cld_validation_results}). This motivated using DR as a deliberately \textit{recall-oriented} search procedure that prioritises finding \emph{any} potentially relevant causal evidence to test an ``upper bound'' question: if direct causal evidence exists in the literature, can we actually retrieve it and thereby obtain stronger discrimination than the naive citation-retrieval baseline?
+Our restated RQ3 asks whether automated literature search (Deep Research; DR) can validate LLM-generated causal edges. The objective of \emph{maximising the chances of retrieving direct causal evidence} was defined after the RQ1 validation studies, especially the physics CLD results, which showed that when strong, unambiguous causal evidence is available and successfully retrieved, citation-based validation can achieve high approval on valid edges (Results Section~\ref{sec:physics_cld_validation_results}). This motivated using DR as a deliberately \textit{recall-oriented} search procedure that prioritises finding \emph{any} potentially relevant causal evidence to test an ``upper bound'' question: if direct causal evidence exists in the literature, can we actually retrieve it and thereby obtain stronger discrimination than the naive citation-retrieval baseline?
 
 \subsection{Why Literature Validation Has Weak Discriminative Power}
 
