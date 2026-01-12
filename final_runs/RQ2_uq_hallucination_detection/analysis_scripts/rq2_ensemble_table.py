@@ -230,11 +230,10 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
     latex = r"""\begin{table}[H]
 \centering
 \small
+\begin{threeparttable}
 \caption{Ensemble Classifier Performance Across Validation Phases (Block-Level Cross-Validation)}
 \label{tab:rq2_ensemble_performance}
-\begin{threeparttable}
 \setlength{\tabcolsep}{2pt}
-\resizebox{\linewidth}{!}{%
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Classifier} & \multicolumn{2}{c}{\textbf{Phase 5}} & \textbf{Phase 6: Cross-CLD} & \textbf{Drop} & \textbf{F1@t*} \\
@@ -254,17 +253,12 @@ def generate_latex(rows: list, n_folds: int, n_blocks: int, cv_method: str, phas
             latex += r"\midrule" + "\n"
     
     latex += r"""\bottomrule
-\end{tabular}}
+\end{tabular}
 \begin{tablenotes}
 \small
 """
     
-    latex += rf"""\item \textit{{Note.}} Block-level evaluation uses blocks = (CLD$\times$run, $N={n_blocks}$); entire blocks stay together in train/test splits to reduce pseudo-replication.
-\textbf{{Phase 5 (CV AUC):}} {n_folds}-fold GroupKFold over blocks ($\sim$67\% train / $\sim$33\% validation per fold); CI shown over folds ($n={n_folds}$).
-\textbf{{Phase 5 (Test AUC):}} Single evaluation on held-out test blocks ($\sim$33\% of blocks); point estimate only (no CI shown in the table).
-\textbf{{Phase 6 (Cross-CLD):}} Leave-one-CLD-out evaluation: for each held-out CLD, train on the other 2 CLDs and evaluate on that CLD's blocks; AUC and F1 are reported as mean $\pm$ 95\% CI over the 3 held-out-CLD folds ($n=3$). F1 uses a \textbf{{fixed}} threshold $t^*$ selected on \textbf{{Phase 5 training blocks only}} by maximizing out-of-fold F1, then frozen for Phase~6.
-\textbf{{Uncertainty:}} Columns with $\pm$95\% CI use the $t$-distribution with $df=n-1$ over folds, per the uncertainty reporting rule (Methods Section~\ref{{sec:uncertainty_rule}}).
-Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
+    latex += rf"""\item \textit{{Note.}} Block-level evaluation (blocks = CLD$\times$run, $N={n_blocks}$); entire blocks stay together in train/test splits. \textbf{{Phase 5:}} {n_folds}-fold GroupKFold CV ($n={n_folds}$); Test AUC on held-out $\sim$33\% of blocks (point estimate). \textbf{{Phase 6:}} Leave-one-CLD-out ($n=3$ folds); F1@$t^*$ uses threshold selected on Phase 5 training only, then frozen. 95\% CIs via $t$-distribution ($df=n-1$). Drop = Phase 5 Test AUC $-$ Phase 6 AUC.
 """
 
     # Add explicit t* values (selected on Phase 5 training blocks)
@@ -274,9 +268,8 @@ Performance Drop = Phase 5 Test AUC $-$ Phase 6 Mean AUC.
         if isinstance(t, (int, float)):
             t_parts.append(f"{row['classifier']}: $t^*={float(t):.3f}$")
     if t_parts:
-        latex += "\\textbf{Selected thresholds:} " + "; ".join(t_parts) + ".\n"
+        latex += "\\item \\textit{Selected $t^*$:} " + "; ".join(t_parts) + ".\n"
 
-    latex += "\\textbf{No Phase 6 p-value vs.\\ the random-ranking reference:} Although $\\mathrm{AUC}=0.5$ corresponds to random-ranking discrimination, we do not report a formal p-value comparison to 0.5 in Phase~6 because (i) the same CLDs are reused across folds, (ii) blocks within a held-out CLD share the same trained model, and (iii) training sets overlap heavily across folds; these dependencies violate i.i.d. assumptions, so p-values would be easy to over-interpret.\n"
     
     latex += r"""\end{tablenotes}
 \end{threeparttable}

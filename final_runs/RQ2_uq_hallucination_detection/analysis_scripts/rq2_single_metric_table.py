@@ -334,12 +334,11 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
     
     latex = r"""\begin{table}[H]
 \centering
+\begin{threeparttable}
 \caption{Single UQ Metric Performance for Hallucination Detection (Meta-Analysis)}
 \label{tab:rq2_single_metrics}
-\begin{threeparttable}
 \small
 \setlength{\tabcolsep}{4pt}
-\resizebox{\linewidth}{!}{%
 \begin{tabular}{lccccc}
 \toprule
 \textbf{UQ Metric} & \textbf{N Edges} & \textbf{Mean AUC} & \textbf{Correlation r} & \textbf{Significant} & \textbf{N Files} \\
@@ -430,22 +429,16 @@ def generate_latex_table(metrics_results: dict, bonferroni_results: dict, output
     alpha_adj = bonferroni_results.get('alpha_adjusted', ALPHA_ADJ)
     
     latex += r"""\bottomrule
-\end{tabular}}
+\end{tabular}
 \begin{tablenotes}
 \small
-\item \textit{Note.} Meta-analysis across experiment files using three logprob-derived generator metrics (perplexity, min prob, max window entropy) and one retrieval-alignment metric (cosine similarity). 
-N Edges = total causal edges analyzed; N Files = experiment files containing metric. 
-Gen Cosine Similarity has fewer observations because it requires retrieved citations (citation-judging runs only); correctness-judging runs lack retrieved text. One file excluded due to insufficient class counts ($<$2 hallucinations or $<$2 correct edges).
-\textbf{Mean AUC} is aggregated at the block level (CLD $\times$ Run, $N=9$ blocks); 95\% CIs computed via t-distribution over blocks. Significance markers on Mean AUC are based on one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ over blocks (with Bonferroni correction across the 4 metrics).
-\textbf{Correlation r} computed via Fisher z-transform aggregation across blocks; correlation significance markers are based on one-sample Wilcoxon signed-rank tests on block-level correlations (with Bonferroni correction across the 4 metrics).
-\textbf{Significant Files (\%)} = percentage of files where an edge-level Mann-Whitney U test (halluc vs.\ correct distributions) yields $p < 0.05$; this is a \textit{descriptive} consistency measure and is not used for confirmatory inference.
+\item \textit{Note.} Meta-analysis using three logprob-derived metrics and one retrieval-alignment metric (cosine similarity). N Edges = total causal edges analyzed; N Files = experiment files containing metric. Gen Cosine Similarity has fewer observations (citation-judging runs only).
+\item \textit{Units of analysis:} \textbf{Block-level} (CLD $\times$ Run, $N=9$ blocks) used for inference on Mean AUC and Correlation r; 95\% CIs via $t$-distribution ($df=8$). \textbf{Edge-level} ($n=$16k--32k) used only for descriptive diagnostics. \textbf{Significant Files (\%)} = percentage of files with edge-level Mann-Whitney U $p<0.05$ (descriptive only).
 """
     
-    latex += f"\\item \\textit{{Multiple comparisons:}} Bonferroni correction applied across {n_tests} single-metric AUC tests and {n_tests} single-metric correlation tests ($\\alpha_{{\\text{{adj}}}} = {alpha_adj:.4f}$ per family). Significance markers (*, **, ***) reflect Bonferroni-adjusted $p$-values ($p_{{\\text{{adj}}}} = p \\times {n_tests}$).\n"
+    latex += f"\\item \\textit{{Multiple comparisons:}} Bonferroni correction across {n_tests} metrics ($\\alpha_{{\\text{{adj}}}} = {alpha_adj:.4f}$). Significance: *** $p_{{\\text{{adj}}}}<0.001$, ** $<0.01$, * $<0.05$, $^{{ns}}$ = not significant. Hypothesis tests: one-sample Wilcoxon signed-rank on block-level $(\\mathrm{{AUC}}-0.5)$ or correlations.\n"
     
-    latex += r"""\item Significance levels: *** $p_{\text{adj}}<0.001$, ** $p_{\text{adj}}<0.01$, * $p_{\text{adj}}<0.05$, $^{ns}$ = not significant; $\downarrow$ = significantly below chance (one-sample Wilcoxon signed-rank test on $(\mathrm{AUC}-0.5)$ over blocks).
-\item \textit{Assumptions:} Edge-level metric distributions are non-normal (see Table~\ref{tab:rq2_normality_tests}); any edge-level Mann-Whitney U results are treated as descriptive diagnostics (via Significant Files \%). For block-level inference, we report mean $\pm$ 95\% CI using the $t$-distribution over blocks ($N=9$), and use one-sample Wilcoxon signed-rank tests on $(\mathrm{AUC}-0.5)$ for above-chance hypothesis tests; interpret $N=9$ p-values as approximate. Block-level aggregation handles dependence within each CLD$\times$run generation scenario.
-\end{tablenotes}
+    latex += r"""\end{tablenotes}
 \end{threeparttable}
 \end{table}
 """

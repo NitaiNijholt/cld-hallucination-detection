@@ -158,10 +158,8 @@ def generate_latex_table(results: list) -> str:
     latex = [r"""% Table: Correctness vs Citation Approval Comparison (Enhanced)
 \begin{table}[htbp]
 \centering
-\caption{Comparison of Correctness vs Citation-Based Judging on Physics CLDs. 
-``Citation (All)'' shows approval across all edges; ``Citations Retrieved'' shows the percentage of edges 
-where citation content was successfully fetched; ``Citation (Retrieved Only)'' shows approval among edges 
-with successfully retrieved citations.}
+\begin{threeparttable}
+\caption{Comparison of Correctness vs Citation-Based Judging on Physics CLDs}
 \label{tab:physics-comparison-enhanced}
 \begin{tabular}{lccccc}
 \toprule
@@ -180,6 +178,11 @@ with successfully retrieved citations.}
                 f"{total_cit_retrieved:.1f}\\%" + r""" & """ + f"{total_gap:.1f}\\%" + r""" \\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} For the Correctness Judge, \emph{approval} = edges with verdict \texttt{CORRECT} (score 1.0). For the Citation Judge, \emph{approval} = edges with verdict \texttt{FULLY\_SUPPORTED} or \texttt{PARTIALLY\_SUPPORTED} (score $\ge 0.5$); \texttt{NO\_CITATION} = retrieval failure. ``Citation (All)'' counts \texttt{NO\_CITATION} as not approved; ``Citations Retrieved'' = edges with $\ge$1 successfully retrieved citation; ``Citation (Retr.)'' = approval conditioned on retrieval. Gap = Correctness $-$ Citation (Retr.).
+\end{tablenotes}
+\end{threeparttable}
 \end{table}
 """)
     

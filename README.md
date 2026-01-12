@@ -5,34 +5,25 @@ Computational reproducibility package for the MSc thesis:
 
 ---
 
-## Quick Start (4 Steps)
+## Quick Start (3 Steps)
 
-### Step 1: Clone and Setup
+### Step 1: Clone and Compile BEFORE Reproduction
 
 ```bash
 git clone https://github.com/NitaiNijholt/cld-hallucination-detection.git
-cd cld-hallucination-detection
-uv sync
-```
-
----
-
-### Step 2: Compile BEFORE Reproduction (verify empty)
-
-```bash
-cd thesis/reproducible_thesis
+cd cld-hallucination-detection/thesis/final_thesis/def_submission_template
 pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
-**Result**: PDF compiles but figures show placeholder boxes or missing file warnings.  
-This proves figures are not pre-baked into the package.
+**Result**: PDF compiles with placeholder boxes for figures and "[Table: run reproduction]" text.
 
 ---
 
-### Step 3: Run Reproduction (~10 minutes)
+### Step 2: Run Reproduction (~10 minutes)
 
 ```bash
-cd ../..
+cd ../../..
+uv sync
 uv run python final_runs/reproduce_all_thesis_assets.py
 ```
 
@@ -40,14 +31,14 @@ uv run python final_runs/reproduce_all_thesis_assets.py
 
 ---
 
-### Step 4: Compile AFTER Reproduction (verify complete)
+### Step 3: Recompile
 
 ```bash
-cd thesis/reproducible_thesis
+cd thesis/final_thesis/def_submission_template
 pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
-**Result**: Full thesis PDF with all reproduced figures and tables.
+**Result**: Full thesis PDF with all generated figures and tables.
 
 ---
 
@@ -73,33 +64,9 @@ pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 
 ---
 
-## Repository Structure
-
-```
-cld-hallucination-detection/
-├── final_runs/                     # Experimental data + analysis scripts
-│   ├── reproduce_all_thesis_assets.py   # Master reproduction script
-│   ├── RQ1_unified_analysis.py     # RQ1 analysis
-│   ├── RQ2_unified_analysis.py     # RQ2 analysis
-│   ├── RQ3_unified_analysis.py     # RQ3 analysis
-│   ├── RQ1a_gt_*/                  # RQ1 experimental data
-│   ├── RQ2_uq_*/                   # RQ2 experimental data
-│   └── RQ3_deep_research_*/        # RQ3 experimental data
-│
-└── thesis/
-    ├── reproducible_thesis/        # Clean thesis (53 files, 4MB)
-    │   ├── main.tex                # Main document
-    │   ├── Chapters/               # All chapters
-    │   ├── Appendices/             # Appendices
-    │   └── Figures/                # Static figures only
-    └── final_runs -> ../final_runs # Symlink to data
-```
-
----
-
 ## Verification
 
-After Step 3, check the reproduction report:
+After Step 2, check the reproduction report:
 
 ```bash
 cat /tmp/thesis_reproducibility_*/reproducibility_report.json | grep total_coverage
@@ -111,3 +78,4 @@ cat /tmp/thesis_reproducibility_*/reproducibility_report.json | grep total_cover
 ## License
 
 MIT License
+
