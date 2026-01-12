@@ -547,7 +547,7 @@ GT Synth: \(y{=}1\) iff \texttt{corrupted=True}. GT Lit: \(y{=}1\) iff the gener
 \end{tabular}
 \end{table}
 
-\noindent This clarification is necessary because the same TP/FP/FN terminology is used in two distinct evaluation contexts throughout this thesis: generator performance (edge recovery against expert CLDs) and judge performance (hallucination detection against ground-truth labels). For example, when the generator predicts an edge that does not exist in the literature CLD, this is a generator FP (w.r.t.\ GT Lit). If the judge correctly flags this edge as hallucinated, this constitutes a judge TP (w.r.t.\ hallucination labels)---the judge correctly detected the generator's false positive.
+\noindent Table~\ref{tab:tp_fp_fn_notation} provides this clarification because the same TP/FP/FN terminology is used in two distinct evaluation contexts throughout this thesis: generator performance (edge recovery against expert CLDs) and judge performance (hallucination detection against ground-truth labels). For example, when the generator predicts an edge that does not exist in the literature CLD, this is a generator FP (w.r.t.\ GT Lit). If the judge correctly flags this edge as hallucinated, this constitutes a judge TP (w.r.t.\ hallucination labels)---the judge correctly detected the generator's false positive.
 
 %------------------------------------------------------------------------------
 \section{Chapter Overview}
@@ -628,7 +628,7 @@ The design framework is instantiated in four main experiments (RQ1a, RQ1b, RQ2, 
 
 \paragraph{RQ3 (Deep Research literature validation).}
 \begin{center}
-\rqMiniFlow{Sample\\Edges,Deep\\Research,Validate}
+\rqMiniFlow{Sample\\Edges,P4\\Deep\\Research,Validate}
 \end{center}
 \vspace{-0.8em}
 \textbf{Goal:} test whether the Deep Research system can distinguish valid from hallucinated causal claims by finding \textbf{direct causal evidence} in the scientific literature.\\
