@@ -671,21 +671,21 @@ This section consolidates all metrics used across experiments.
 
 \paragraph{Classification Metrics (Judge Evaluation; RQ1a).}
 To evaluate the discriminative performance of LLM judges, we adopt standard binary classification metrics. The area under the receiver operating characteristic curve (AUC-ROC) quantifies the judge's ability to rank hallucinated edges below correct edges across all possible score thresholds; an AUC of 0.5 corresponds to chance-level discrimination. Precision measures the proportion of edges flagged as hallucinations that are true positives:
-\begin{equation}
-    \mathrm{Precision} = \frac{TP}{TP + FP}
-\end{equation}
+    \begin{equation}
+        \mathrm{Precision} = \frac{TP}{TP + FP}
+    \end{equation}
 Recall (sensitivity) quantifies the proportion of actual hallucinations that the judge correctly identifies:
-\begin{equation}
-    \mathrm{Recall} = \frac{TP}{TP + FN}
-\end{equation}
+    \begin{equation}
+        \mathrm{Recall} = \frac{TP}{TP + FN}
+    \end{equation}
 The F1 score provides the harmonic mean of precision and recall, balancing both error types:
-\begin{equation}
-    \mathrm{F1} = \frac{2 \cdot TP}{2 \cdot TP + FP + FN}
-\end{equation}
+    \begin{equation}
+        \mathrm{F1} = \frac{2 \cdot TP}{2 \cdot TP + FP + FN}
+    \end{equation}
 To assess the linear relationship between continuous judge scores and binary hallucination labels, we compute the point-biserial correlation coefficient:
-\begin{equation}
-    r_{pb}=\frac{\bar{s}_1-\bar{s}_0}{s_s}\sqrt{pq}
-\end{equation}
+    \begin{equation}
+        r_{pb}=\frac{\bar{s}_1-\bar{s}_0}{s_s}\sqrt{pq}
+    \end{equation}
 where $\bar{s}_1$ and $\bar{s}_0$ denote the mean scores for hallucinated ($y{=}1$) and correct ($y{=}0$) edges respectively, $s_s$ is the pooled standard deviation of scores, and $p=\Pr(y{=}1)$, $q=\Pr(y{=}0)$ represent the class proportions. For binary classification, we apply a threshold of $\leq 0.5$ on judge scores to predict hallucination. The confusion matrix terms are defined as: $TP=\#\{y{=}1,\hat{y}{=}1\}$ (true positives), $FP=\#\{y{=}0,\hat{y}{=}1\}$ (false positives), $FN=\#\{y{=}1,\hat{y}{=}0\}$ (false negatives), and $TN=\#\{y{=}0,\hat{y}{=}0\}$ (true negatives).
 
 \noindent\textbf{Threshold justification.} Scores are ordinal and discrete by design (0.0/0.5/1.0): \textbf{0.0} indicates an explicit error, \textbf{0.5} indicates a detected partial flaw/uncertainty, and \textbf{1.0} indicates full correctness/support. Under our operational definition of hallucination as \emph{edge-level incorrectness}, any detected error (i.e., \texttt{INCORRECT} or \texttt{PARTIALLY\_CORRECT} / \texttt{NOT\_SUPPORTED} or \texttt{PARTIALLY\_SUPPORTED}) implies the edge should be flagged as hallucinated, which yields the natural cutpoint \(\le 0.5\). We additionally report ROC curves from a discrete threshold sweep over the only meaningful operating points induced by these three score levels (Appendix~\ref{sec:appendix_roc_curves}; Figures~\ref{fig:rq1a_gt_correctness_roc}--\ref{fig:rq1a_gt_citation_roc}, \ref{fig:rq1a_corr_correctness_roc}--\ref{fig:rq1a_corr_citation_roc}); for judges that exceed chance discrimination (AUC$>0.5$), the \(\le 0.5\) operating point corresponds to the intended ``any detected error'' decision rule used throughout the main thresholded Precision/Recall/F1 analyses.
