@@ -344,6 +344,8 @@ All three primary CLDs focus on health-related domains. Generalisation to other 
 \subsection{Validation Studies}
 \label{sec:validation_studies_limitations}
 
+The auxiliary and human validation studies carry several limitations that should temper interpretation of the results.
+
 \paragraph{Model confound in auxiliary validations.} Physics and Uleman's CLD validation studies used Claude 4.5 Opus to define CLD structure and generate narratives (Appendix~\ref{sec:physics_cld_validation}), whereas main experiments used GPT-4.1. High judge scores on physics CLDs may thus reflect Opus's superior narrative generation rather than solely domain ease. Human validation showed Claude 4 Sonnet-generated edges achieved near-perfect judge--human agreement ($\kappa = 0.923$) versus moderate agreement for GPT-4.1 ($\kappa = 0.435$; Table~\ref{tab:human_validation}), though sampling may have influenced this contrast. GPT-4.1-specific agreement should be treated with more caution, and future work should control for generator model.
 
 \paragraph{Human validation coverage and reliability.} RQ3 Deep Research validation used a small sample ($N=50$ edges), limiting power and making estimates sensitive to sampling variance. Preliminary second-rater overlap indicated low inter-rater reliability on categorical verdicts and poor applicability-score agreement. RQ1 human validation covered Depressive Symptoms and Social Norms but not Emergency Department, so LLM--human agreement may not transfer uniformly. Sample sizes and coverage gaps reflect budget and time constraints.
