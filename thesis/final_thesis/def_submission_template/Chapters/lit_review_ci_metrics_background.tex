@@ -190,6 +190,4 @@ The preceding sections established that LUQ metrics and embedding-based groundin
 
 The key insight motivating our evaluation strategy is that neither approach alone suffices for CLD validation. LUQ metrics may flag uncertainty but cannot verify factual correctness; embedding similarity may confirm topical relevance but cannot validate causal direction or polarity. We therefore treat both as lightweight features that complement---rather than replace---more expensive context-sensitive validation. Specifically, we pair these metrics with correctness-based and citation-based generate-then-search judging to assess whether retrieved passages provide causal evidence for an edge narrative.
 
-This layered approach enables adaptive test-time compute allocation: given that UQ metrics are computationally cheaper than LLM-as-a-judge or corrector pipelines, if effective, UQ signals could flag likely hallucinations and trigger deployment of more expensive verification only where needed. The experiments in this thesis quantify how much each component (LUQ, embedding grounding, retrieval, and judging) contributes to hallucination detection and, where effective, to adaptive allocation of test-time verification compute.
-
 \noindent The concrete UQ feature set and its use in our experiments are specified in Methods (Section~\ref{sec:uq_metrics_definition}).
