@@ -1,0 +1,79 @@
+{
+  "experiment_info": {
+    "experiment_type": "RQ1a_ground_truth_correctness",
+    "research_question": "Can judges distinguish TP from FP edges in clean CLDs?",
+    "timestamp": "2025-11-17T01:19:28.874049",
+    "script_name": "run_rq1a_ground_truth_judge.py",
+    "script_version": "1.0_ci_metrics_enabled"
+  },
+  "input_parameters": {
+    "base_session_id": "aa4b5b4f-92c2-4668-b02f-3ddaec942e38",
+    "base_session_seed": 10,
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/depressive/run_1",
+    "corruption_applied": false
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.0,
+    "seed": 42,
+    "judge_approach": "citation",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": true
+  },
+  "ci_metrics_configuration": {
+    "enabled": true,
+    "embedding_enable": true,
+    "ci_compute_embeddings": true,
+    "ci_parallel": true,
+    "ci_max_workers": 10,
+    "purpose": "Enable RQ2 analysis (CI metrics vs TP/FP)"
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_citation_baseline.yaml",
+      "description": "Citation Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_citation_cot.yaml",
+      "description": "Citation Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_citation_mechanistic.yaml",
+      "description": "Citation Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Citation Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251117_001802.xlsx",
+      "judged_session_id": "1819b29b-9ca4-4553-b959-ed885353e296",
+      "timestamp": "20251117_001802"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Citation Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251117_003704.xlsx",
+      "judged_session_id": "10cd25c4-28e0-494e-a685-66b26b4b9f2b",
+      "timestamp": "20251117_003704"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Citation Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/depressive/run_1/judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251117_005635.xlsx",
+      "judged_session_id": "15e1d6bb-3dae-428f-a5c3-d5841d6f859a",
+      "timestamp": "20251117_005635"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

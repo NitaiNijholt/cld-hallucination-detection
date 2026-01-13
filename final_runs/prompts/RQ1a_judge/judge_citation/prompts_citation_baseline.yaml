@@ -1,0 +1,424 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/prompts_citation_baseline.yaml
+# copied_on: 2026-01-10
+
+# Citation Judge Prompt Variant 1: BASELINE
+# Direct evaluation of citation support - NO SCAFFOLDING
+# Based on prompts_correctness_baseline.yaml but adapted for citation evaluation
+
+
+
+
+# Correctness Prompt Variant 3: MECHANISTIC FOCUS (mirrors citation mechanistic)
+# Emphasizes evaluation of causal mechanisms specifically
+
+# Correctness Prompt Variant 1: BASELINE (mirrors citation baseline)
+# Direct evaluation of causal reasoning quality - NO SCAFFOLDING
+
+
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: number_of_variables
+        type: int
+        description: The final expected number of variables in the CLD.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        You are a systems modeling assistant.
+        Your task is to identify exactly one variable that has a direct, causal influence on a specified target variable within the provided context, temporal scale, and spatial scale.
+        Rules for the variable you select:
+        - It must be **directly causal** (not correlational, not indirect).
+        - It must be **measurable in practice** with well-defined units.
+        - It must be **atomic and non-composite** (not a bundle of multiple factors).
+        - It must not overlap with the target variable or any excluded variables.
+        - It must stay **strictly relevant to the provided context**—do not generalize or introduce variables outside the described system.
+        Formatting requirements:
+        - Respond with **only one JSON object**, no extra commentary or explanation.
+        - Format:
+          {"Variable":"Concise name of the variable",
+          "Definition":"Precise, technical definition of the variable",
+          "Units":"Units of measurement for the variable"}
+        - Absolutely no text outside the JSON.
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context }}
+        Identify a single variable (2–3 words) with a **direct causal effect** on the target variable {{ target.lower() }}, defined as "{{ target_definition.lower() }}", over the timeframe {{ temporal.lower() }} and spatial scale {{ spatial.lower() }}.
+        The variable must be:
+        - One of the {{ number_of_variables }} most important **direct causal** drivers.
+        - **Measurable**, not abstract or composite.
+        - Precisely defined in scientific terms, with mechanisms and assumptions made explicit.
+        - Expressed in units appropriate to the variable and consistent with the given context.
+        Be extremely careful: the variable, its definition, and its units must all be **fully relevant to the context** of the system and cannot stray outside of it.
+        Return the output in **exactly** the following format:
+        {"Variable":"Concise name of the variable",
+        "Definition":"Definition of the variable",
+        "Units":"Units of measurement for the variable"}
+      usr_prompt_extension: "\nThe variable cannot be the same as or overlap with anything in the following list: "
+    version: default
+  - prompt_id: generateEdges
+    variables:
+      - name: var1
+        type: str
+        description: First variable in undefined relationship.
+      - name: var2
+        type: str
+        description: Second variable in undefined relationship.
+      - name: def1
+        type: str
+        description: Definition of first variable.
+      - name: def2
+        type: str
+        description: Definition of second variable.
+      - name: spatial
+        type: str
+        description: The spatial scale of the causality study.
+      - name: temporal
+        type: str
+        description: The temporal scale of the causality study.
+      - name: variables
+        type: list[string]
+        description: List of existing variables in the CLD.
+    prompts:
+      sys_prompt: >
+        You are a scientific system dynamics model expert specializing in causal loop diagrams. Given two variables and their definitions, your task is to determine the precise causal relationship between them.
+        
+        Approach this systematically:
+        1. First, clearly understand what each variable means and how it's measured
+        2. Consider the mechanisms by which the first variable might directly affect the second
+        3. Evaluate whether this mechanism works within the given spatial and temporal scales
+        4. Check for potential mediating variables that might explain the relationship
+        5. Distinguish between correlation and causation - focus only on true causal relationships
+        6. Determine if the relationship is positive, negative, complex, or non-existent
+        7. Verify your reasoning by considering hypothetical increases and decreases in the first variable
+        8. Provide a concise explanation that justifies your conclusion
+        
+        Select the most appropriate relationship type based on causal logic, not mere correlation. Respond with a dictionary: {"Relationship":"TYPE","Explanation":"A brief explanation.""}. Make sure there is no additional text.
+      usr_prompt: | 
+        I need to determine if there is a causal relationship between "{{ var1 }}" and "{{ var2 }}" for a Causal Loop Diagram (CLD). Let me think through this step by step:
+        
+        Step 1: Understand the variables
+        - Variable 1: "{{ var1 }}" defined as "{{ def1 }}"
+        - Variable 2: "{{ var2 }}" defined as "{{ def2 }}"
+        - Scale: Spatial = "{{ spatial }}", Temporal = "{{ temporal }}"
+        
+        Step 2: Consider potential causal mechanisms
+        - Does a change in "{{ var1 }}" directly cause a change in "{{ var2 }}" through a clear mechanism?
+        - Does this mechanism operate within the given spatial and temporal scales?
+        
+        Step 3: Check for mediating variables
+        - Are there variables in the CLD that mediate this relationship: {{ variables | join(", ") }}
+        - If a mediator exists, the direct relationship should not be included in the CLD
+        
+        Step 4: Determine relationship type
+        If there is a causal relationship, I'll classify it as one of these:
+        1. POSITIVE – An increase in "{{ var1 }}" causes an increase in "{{ var2 }}", or a decrease in "{{ var1 }}" causes a decrease in "{{ var2 }}" (direct relationship).
+        2. NEGATIVE – An increase in "{{ var1 }}" causes a decrease in "{{ var2 }}", or a decrease in "{{ var1 }}" causes an increase in "{{ var2 }}" (inverse relationship).
+        3. COMPLEX – The relationship between "{{ var1 }}" and "{{ var2 }}" is non-linear and changes direction at different levels (e.g., U-shaped, inverted U-shaped, or threshold effects).
+        4. DELAYED – A positive or negative causal relationship where the effect is delayed over time.
+        5. NONLINEAR – The effect of "{{ var1 }}" on "{{ var2 }}" is not strictly linear and may depend on thresholds or saturation.
+        6. NONE – No causal relationship exists between "{{ var1 }}" and "{{ var2 }}".
+
+        An important condition is that in your explanation you must mention explicitly the causal relationship, i.e. "{{ var1 }}" causes "{{ var2 }}" or "{{ var2 }}" causes "{{ var1 }}", because this ensures directional causality.
+
+        Provide a brief, maximum 4-sentence explanation in the format: {"Relationship":"TYPE","Explanation":"A brief explanation."}
+        
+        Example Responses:
+        1. For a Positive Causal Relationship:
+          {"Relationship":"POSITIVE","Explanation":"Force causes acceleration in a direct causal relationship. Increasing the force on an object of constant mass directly increases its acceleration. Conversely, reducing the force directly decreases the acceleration."}
+        2. For a Negative Causal Relationship:
+          {"Relationship":"NEGATIVE","Explanation":"Electrical resistance causes current flow to change in an inverse relationship. Increasing resistance in a circuit directly reduces the current flow (assuming constant voltage). Decreasing the resistance directly increases the current."}
+        3. For a Complex Causal Relationship:
+          {"Relationship":"COMPLEX","Explanation":"Work stress causes job performance to change in a U-shaped relationship. Low stress levels lead to poor performance due to lack of motivation, moderate stress enhances performance through optimal arousal, but high stress decreases performance due to anxiety and overwhelm."}
+        4. For a Delayed Relationship:
+          {"Relationship":"DELAYED","Explanation":"Planting seeds in fertile soil directly and causally leads to plant growth, but there is a delay because seeds need time to germinate and develop roots before sprouting."}
+        5. For a Nonlinear Relationship:
+          {"Relationship":"NONLINEAR","Explanation":"Increasing substrate concentration directly and causally raises the rate of an enzyme-catalyzed reaction up to a saturation point. Beyond that point, further increases have diminishing effects, showing a nonlinear causal relationship."}
+        6. For No CAUSAL Relationship:
+          {"Relationship":"NONE","Explanation":"The number of birds in a city does not cause stock market performance to change. There is no known direct causal link between these variables in either direction."}
+        7. For a Mediated Relationship:
+          {"Relationship":"NONE","Explanation":"Income Levels do not directly cause Housing Prices. A mediating variable (Economic Growth) is already present in the CLD that explains the relationship between these variables."}
+
+        IMPORTANT: In case you don't know, simply respond with {"Relationship":"NONE","Explanation":"I don't know"}
+        
+        Now, define the relationship between "{{ var1 }}" ("{{ def1 }}") and "{{ var2 }}" ("{{ def2 }}") following this format: {"Relationship":"TYPE","Explanation":"A brief explanation."} , taking particular care to make sure the relationships are causal and not just correlated or associated.
+
+      usr_prompt_extension: ""
+    version: 0.0.2
+  - prompt_id: edgeVerifier
+    variables:
+      - name: edge_description
+        type: string
+        description: The textual description for an edge relationship
+    prompts:
+      sys_prompt: |
+        Be precise. Only respond with either:
+        - OK
+        - INCONSISTENT:<short reason>
+
+      usr_prompt: |
+        Evaluate the following edge description for internal or logical consistency:
+        "{{ edge_description }}"
+
+        Step 1: Identify the proposed cause and effect variables.
+        Step 2: Analyze the temporal sequence (cause must precede effect).
+        Step 3: Assess plausible causal mechanisms.
+        Step 4: Identify potential confounders or mediators.
+        Step 5: Check for logical fallacies or reasoning errors.
+        Step 6: Evaluate if evidence supports a direct causal link.
+        Step 7: Provide your final judgment (OK or INCONSISTENT).
+
+        If the description is self-consistent, respond with `OK`.
+        If the description is not self-consistent, respond with `INCONSISTENT:` 
+        followed by a **brief** explanation.
+
+      usr_prompt_extension: ""
+  - prompt_id: generateSpuriousMotivation
+    variables:
+      - name: source
+        type: string
+        description: The source variable in the relationship
+      - name: target
+        type: string
+        description: The target variable in the relationship  
+      - name: relationship
+        type: string
+        description: The type of relationship between the variables
+      - name: motivation
+        type: string
+        description: The original motivation for the relationship
+    prompts:
+      sys_prompt: |
+        You are an expert in creating plausible but incorrect causal relationships.
+        Your task is to modify a causal relationship between two variables to make it sound plausible
+        but actually be incorrect in terms of the true causal mechanism.
+      usr_prompt: |
+        I have two variables with the following relationship:
+        - First variable - {{ source }}
+        - Second variable - {{ target }}
+        - Current relationship: {{ relationship }}
+        - Current motivation: {{ motivation }}
+
+        Please provide a new motivation that:
+        1. Sounds scientifically plausible
+        2. Uses appropriate academic language and tone
+        3. Contains a subtle but fundamental flaw in causal reasoning
+        4. Still connects the two variables but with incorrect mechanism
+        5. Is approximately the same length as the original
+        6. IMPORTANT: Always refer to the variables by their actual names "{{ source }}" and "{{ target }}", not as "Variable 1" or "Variable 2"
+
+        Provide ONLY the new motivation text with no additional commentary or explanations.
+      usr_prompt_extension: ""
+    version: 0.0.1
+  - prompt_id: judgeCitation
+    variables:
+      - name: source
+        type: string
+        description: The source variable in the relationship
+      - name: target
+        type: string
+        description: The target variable in the relationship
+      - name: relationship
+        type: string
+        description: The type of relationship between the variables
+      - name: motivation
+        type: string
+        description: The motivation explaining the relationship
+      - name: citations
+        type: string
+        description: The content of cited sources formatted as text
+    prompts:
+      sys_prompt: |
+        You are a precise and fair judge evaluating whether scientific claims are supported by their cited sources.
+        Your job is to carefully read the relationship motivation and the cited sources, and determine if the motivation is supported.
+        Base your judgment only on the content of the citations provided, not on general knowledge.
+      usr_prompt: |
+        Verify if this relationship is supported by its citations:
+        
+        SOURCE VARIABLE: {{ source }}
+        TARGET VARIABLE: {{ target }}
+        RELATIONSHIP TYPE: {{ relationship }}
+        MOTIVATION: {{ motivation }}
+        
+        Here are the contents of the cited sources:
+        {{ citations }}
+        
+        Based on the cited sources, evaluate if the relationship motivation is supported by the citations.
+        
+        Respond in this format:
+        VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|CONTRADICTED|UNADDRESSED]
+        REASON: [brief explanation of your judgment]
+      usr_prompt_extension: ""
+    version: 0.0.1
+  - prompt_id: fillInMissingCitations
+    variables:
+      - name: claim_text
+        type: string
+        description: The claim for which we want citations
+    prompts:
+      sys_prompt: |
+        You are an expert literature-search assistant. Provide the max 3 reputable scientific URLs 
+        that most support the following claim, plus a brief explanation of relevance (1–2 sentences). 
+        If you find no evidence, reply exactly NO_EVIDENCE.
+
+        Output must be in one of two forms:
+
+        NO_EVIDENCE
+
+        -- or --
+
+        CITATION: <URL>
+        RELEVANCE: <short statement>
+      usr_prompt: |
+        CLAIM:
+        {{ claim_text }}
+
+        Answer now.
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  # -----------------------------------------------------------------------
+  # NEW PROMPT for single citation judgment in per_citation_aggregate approach
+  # -----------------------------------------------------------------------
+  - prompt_id: judgeSingleCitation
+    variables:
+      - name: motivation
+        type: string
+        description: The motivation text
+      - name: citation_content
+        type: string
+        description: The text from one citation
+    prompts:
+      sys_prompt: |
+        You are a precise, fair judge evaluating if a claim (the "motivation")
+        is supported by ONE citation. Base your judgment ONLY on that citation.
+      usr_prompt: |
+        MOTIVATION: {{ motivation }}
+
+        CITATION CONTENT:
+        {{ citation_content }}
+
+        Respond EXACTLY in this format:
+        VERDICT: [SUPPORTED | PARTIALLY_SUPPORTED | CONTRADICTED | UNADDRESSED]
+        REASON: [brief explanation]
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  # -----------------------------------------------------------------------
+  # NEW PROMPT for the aggregator step in per_citation_aggregate
+  # -----------------------------------------------------------------------
+  - prompt_id: judgeAggregator
+    variables:
+      - name: partial_results
+        type: string
+        description: The partial results summary text
+    prompts:
+      sys_prompt: |
+        You are an aggregator. You see partial verdicts for multiple citations. 
+        Each citation is judged fully, partially, or not supported. 
+        Produce EXACTLY one final label:
+        - Fully supported
+        - Partially supported
+        - Not supported
+      usr_prompt: |
+        PARTIAL RESULTS:
+        {{ partial_results }}
+
+        Please respond with EXACTLY one of these lines:
+        Fully supported
+        Partially supported
+        Not supported
+      usr_prompt_extension: ""
+    version: 0.0.1
+
+  # -----------------------------------------------------------------------
+  # NEW PROMPT for the "one_causal_source_found" approach
+  # -----------------------------------------------------------------------
+  - prompt_id: judgeOneCausalSourceFound
+    variables:
+      - name: motivation
+        type: string
+        description: The motivation text
+      - name: citations
+        type: string
+        description: The text from all citations
+    prompts:
+      sys_prompt: |
+        You are a precise judge checking if these citations provide direct causal evidence
+        for the motivation below. Only rely on the text below.
+      usr_prompt: |
+        MOTIVATION: {{ motivation }}
+
+        ALL CITATIONS:
+        {{ citations }}
+
+        Respond EXACTLY with one of:
+        CAUSAL
+        NOT_CAUSAL
+      usr_prompt_extension: ""
+    version: 0.0.
+    
+
+#https://arxiv.org/abs/2205.11916 Language models are 0 shot reasoners
+prompts:
+  - prompt_id: judgeCitation
+    variables:
+      - name: source
+        type: string
+        description: The source variable in the relationship
+      - name: target
+        type: string
+        description: The target variable in the relationship
+      - name: relationship
+        type: string
+        description: The type of relationship between the variables
+      - name: motivation
+        type: string
+        description: The motivation explaining the relationship
+      - name: citations
+        type: string
+        description: The content of cited sources formatted as text
+    prompts:
+      sys_prompt: |
+        You are a precise and fair judge evaluating whether scientific claims are supported by their cited sources.
+        Your job is to carefully read the relationship motivation and the cited sources, and determine if the motivation is supported.
+        Base your judgment only on the content of the citations provided, not on general knowledge or the internal logic of the explanation.
+      usr_prompt: |
+        Evaluate whether the citations support this relationship claim:
+        
+        SOURCE VARIABLE: {{ source }}
+        TARGET VARIABLE: {{ target }}
+        RELATIONSHIP TYPE: {{ relationship }}
+        EXPLANATION: {{ motivation }}
+        
+        CITED SOURCES:
+        {{ citations }}
+        
+        Based on the cited sources, assess whether the explanation is adequately supported by the citations.
+        
+        Respond in this format:
+        REASON: [brief explanation of your judgment]
+        VERDICT: [SUPPORTED|PARTIALLY_SUPPORTED|NOT_SUPPORTED]
+        SCORE: [1.0 for SUPPORTED, 0.5 for PARTIALLY_SUPPORTED, 0.0 for NOT_SUPPORTED]
+      usr_prompt_extension: ""
+    version: 1.0.0

@@ -1,0 +1,1125 @@
+{
+  "timestamp": "2025-12-04T18:25:54.313865",
+  "judge_model": "gpt-4.1",
+  "cld_metadata": {
+    "thermostat_heating_system": {
+      "name": "Thermostat Heating System",
+      "short_name": "Thermostat",
+      "physics_basis": "Newton's Law of Cooling (1701), First Law of Thermodynamics",
+      "primary_sources": [
+        "Newton (1701)",
+        "Sterman (2000)",
+        "Incropera et al. (2007)"
+      ],
+      "num_variables": 7,
+      "num_edges": 8,
+      "variables": [
+        "Room Temperature",
+        "Desired Temperature",
+        "Temperature Gap",
+        "Heating Rate",
+        "Heat Loss Rate",
+        "Outside Temperature",
+        "Thermal Resistance"
+      ],
+      "edges": [
+        {
+          "source": "Room Temperature",
+          "target": "Temperature Gap",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Desired Temperature",
+          "target": "Temperature Gap",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Temperature Gap",
+          "target": "Heating Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Heating Rate",
+          "target": "Room Temperature",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Room Temperature",
+          "target": "Heat Loss Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Outside Temperature",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Heat Loss Rate",
+          "target": "Room Temperature",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Thermal Resistance",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE"
+        }
+      ]
+    },
+    "predator_prey": {
+      "name": "Predator-Prey (Lotka-Volterra)",
+      "short_name": "Predator-Prey",
+      "physics_basis": "Lotka (1925), Volterra (1926) - Population Dynamics",
+      "primary_sources": [
+        "Lotka (1925)",
+        "Volterra (1926)",
+        "Murray (2002)"
+      ],
+      "num_variables": 6,
+      "num_edges": 10,
+      "variables": [
+        "Prey Population",
+        "Predator Population",
+        "Prey Birth Rate",
+        "Prey Death Rate",
+        "Predator Birth Rate",
+        "Predator Death Rate"
+      ],
+      "edges": [
+        {
+          "source": "Prey Population",
+          "target": "Prey Birth Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Prey Birth Rate",
+          "target": "Prey Population",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Prey Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Predator Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Prey Death Rate",
+          "target": "Prey Population",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Prey Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Predator Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Predator Birth Rate",
+          "target": "Predator Population",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Predator Population",
+          "target": "Predator Death Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Predator Death Rate",
+          "target": "Predator Population",
+          "type": "NEGATIVE"
+        }
+      ]
+    },
+    "rc_circuit": {
+      "name": "RC Circuit (Capacitor Charging)",
+      "short_name": "RC Circuit",
+      "physics_basis": "Ohm's Law (1827), Kirchhoff's Laws (1845)",
+      "primary_sources": [
+        "Ohm (1827)",
+        "Kirchhoff (1845)",
+        "Nilsson & Riedel (2015)"
+      ],
+      "num_variables": 7,
+      "num_edges": 7,
+      "variables": [
+        "Capacitor Voltage",
+        "Supply Voltage",
+        "Voltage Difference",
+        "Current",
+        "Charging Rate",
+        "Capacitor Charge",
+        "Resistance"
+      ],
+      "edges": [
+        {
+          "source": "Supply Voltage",
+          "target": "Voltage Difference",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Capacitor Voltage",
+          "target": "Voltage Difference",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Voltage Difference",
+          "target": "Current",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Resistance",
+          "target": "Current",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Current",
+          "target": "Charging Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Charging Rate",
+          "target": "Capacitor Charge",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Capacitor Charge",
+          "target": "Capacitor Voltage",
+          "type": "POSITIVE"
+        }
+      ]
+    },
+    "water_tank": {
+      "name": "Water Tank (Stock-Flow)",
+      "short_name": "Water Tank",
+      "physics_basis": "Conservation of Mass, Pascal (1663), Torricelli (1643)",
+      "primary_sources": [
+        "Pascal (1663)",
+        "Torricelli (1643)",
+        "Bernoulli (1738)"
+      ],
+      "num_variables": 6,
+      "num_edges": 6,
+      "variables": [
+        "Water Level",
+        "Inflow Rate",
+        "Outflow Rate",
+        "Net Flow Rate",
+        "Outlet Pressure",
+        "Outlet Valve Opening"
+      ],
+      "edges": [
+        {
+          "source": "Inflow Rate",
+          "target": "Net Flow Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Outflow Rate",
+          "target": "Net Flow Rate",
+          "type": "NEGATIVE"
+        },
+        {
+          "source": "Net Flow Rate",
+          "target": "Water Level",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Water Level",
+          "target": "Outlet Pressure",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Outlet Pressure",
+          "target": "Outflow Rate",
+          "type": "POSITIVE"
+        },
+        {
+          "source": "Outlet Valve Opening",
+          "target": "Outflow Rate",
+          "type": "POSITIVE"
+        }
+      ]
+    }
+  },
+  "correctness_results": [
+    {
+      "cld_key": "thermostat_heating_system",
+      "session_id": "2a412d7f-2f07-4146-b772-4be52afdf6ff",
+      "duration_seconds": 6.091915607452393,
+      "edges": [
+        {
+          "source": "Room Temperature",
+          "target": "Heat Loss Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increase in room temperature to an increase in the temperature difference between inside and outside, which, according to Newton's Law of Cooling, leads to a higher rate of heat loss. The reasoning is internally coherent and consistent with the described relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Heating Rate",
+          "target": "Room Temperature",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increase in heating rate (input heat) to an increase in room temperature, using the First Law of Thermodynamics and specifying that heat loss is constant. The causal reasoning is sound because, under the stated assumption, more heat input will raise the room's internal energy and thus its temperature.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Room Temperature",
+          "target": "Temperature Gap",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increase in Room Temperature (T_actual) to a decrease in Temperature Gap (T_desired - T_actual) based on a direct mathematical relationship. The causal reasoning is clear, internally consistent, and does not rely on unsupported assumptions.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Temperature Gap",
+          "target": "Heating Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects a larger Temperature Gap (room colder than setpoint) to an increase in Heating Rate via thermostat control logic. It correctly describes both simple (bang-bang) and more sophisticated (PID) control responses, where the system responds to the size of the gap by increasing heating. The overall reasoning is internally consistent and accurately frames the causal link between the variables.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Thermal Resistance",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically links an increase in thermal resistance to a decrease in heat loss rate using the formula Q = \\u0394T/R, which explicitly shows an inverse relationship. The causal reasoning is clear, internally consistent, and free from logical errors.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Outside Temperature",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly states that as outside temperature decreases, the temperature difference between the inside and outside increases, which according to Newton's Law of Cooling leads to an increased heat loss rate. Conversely, a higher outside temperature reduces this difference and therefore the heat loss rate. This describes a negative (inverse) relationship between outside temperature and heat loss rate. The logic is coherent and follows directly from the stated law.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Heat Loss Rate",
+          "target": "Room Temperature",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increased heat loss rate to a decrease in room temperature by referencing the First Law of Thermodynamics, specifically stating that greater energy leaving the system (higher Q_out) reduces internal energy, which for a room manifests as lower temperature. The causal chain is sound and clearly articulated.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Desired Temperature",
+          "target": "Temperature Gap",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly defines the Temperature Gap as the difference between Desired Temperature and Room Temperature. It logically states that, if Room Temperature is held constant, increasing the Desired Temperature will increase the Temperature Gap. The causal reasoning is internally consistent and coherent, assuming the stated condition (constant Room Temperature).\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        }
+      ]
+    },
+    {
+      "cld_key": "predator_prey",
+      "session_id": "d2fecb68-6326-43de-8aab-4a46baac663d",
+      "duration_seconds": 4.6935906410217285,
+      "edges": [
+        {
+          "source": "Predator Population",
+          "target": "Predator Death Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation clearly states that the total number of predator deaths increases as the predator population increases, because death rate is proportional to population size in the model (deaths = \\u03b3P). This is a logically sound causal relationship: more predators means more individuals who could die, so the overall death rate increases.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Predator Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects the predator population to the total number of predator births, noting that more predators mean more potential breeding pairs, thus increasing the overall birth rate, assuming other resources (like prey) are sufficient. The relationship described is internally consistent and coherent.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Prey Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increase in prey population to increased food availability, which in turn supports higher predator birth rates. It references the Lotka-Volterra model equation for predator births, which explicitly relates predator birth rate to both prey and predator populations, supporting the positive relationship. The causal chain is coherent and internally consistent.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Prey Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly links the prey population to the prey death rate by referencing the interaction term \\u03b2RP in the Lotka-Volterra model. It logically explains that a higher prey population increases the likelihood of predator-prey encounters, thus raising the prey death rate. The causal reasoning aligns with the described mathematical relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Prey Population",
+          "target": "Prey Birth Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects prey population to prey birth rate by noting that more individuals in the population can produce more offspring, making the total number of births proportional to the population size. It correctly identifies the positive relationship and uses the Lotka-Volterra equation to justify the causality. The reasoning is internally consistent and scientifically coherent.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Predator Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically links an increase in predator population to a higher prey death rate, citing more predators leading to more hunting and encounters, which increases prey mortality. This is consistent with the stated relationship type and the structure of the Lotka-Volterra equation.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Prey Birth Rate",
+          "target": "Prey Population",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly identifies that birth rate is an inflow to the population stock and that an increase in birth rate leads to an increase in population over time. The mathematical representation further clarifies the direct relationship. The causal link is logically sound and internally coherent.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Prey Death Rate",
+          "target": "Prey Population",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly identifies that the death rate is an outflow from the prey population and that increasing the death rate decreases the stock of prey. The mathematical representation aligns with standard models of population dynamics, and the conservation principle is appropriately invoked to justify the negative relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Predator Death Rate",
+          "target": "Predator Population",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects an increased death rate (source variable) to a decrease in predator population (target variable) by describing deaths as an outflow and providing a valid mathematical expression showing that a higher death rate results in a larger subtraction from the population. The reasoning is clear and directly addresses the causal relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Predator Birth Rate",
+          "target": "Predator Population",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly identifies that births add to the predator population, representing an inflow to the population stock. The mathematical formulation provided clearly shows how an increased birth rate leads to an increase in population, assuming other factors constant. The causal link between birth rate and population is explicit and logically valid.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        }
+      ]
+    },
+    {
+      "cld_key": "rc_circuit",
+      "session_id": "0a6e3b26-8147-4b7e-9e7c-c11fef2ea9cd",
+      "duration_seconds": 3.6707537174224854,
+      "edges": [
+        {
+          "source": "Voltage Difference",
+          "target": "Current",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly applies Ohm's Law, stating that current is directly proportional to voltage difference when resistance is constant. The causal relationship is clearly and logically established.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Capacitor Voltage",
+          "target": "Voltage Difference",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly states that if Voltage Difference is defined as Supply Voltage minus Capacitor Voltage, then increasing Capacitor Voltage will decrease the Voltage Difference, assuming Supply Voltage is constant. The use of Kirchhoff's Voltage Law is appropriate in this context and the causal direction is logically sound.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Supply Voltage",
+          "target": "Voltage Difference",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically states that the voltage difference (\\u0394V) is calculated as the supply voltage (Vs) minus the capacitor voltage (Vc). It then correctly asserts that if the capacitor voltage is held constant, increasing the supply voltage will directly increase the voltage difference. The reasoning is internally coherent and follows the defined relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Charging Rate",
+          "target": "Capacitor Charge",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation accurately describes a stock-flow relationship: the charge on the capacitor (stock) increases as a result of the charging rate (flow), expressed as Q(t) = \\u222bI dt. It logically follows that an increase in charging rate would lead to a greater accumulation of charge over time.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Current",
+          "target": "Charging Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly identifies current as the rate of charge flow (I = dQ/dt) and equates the charging rate with the current flowing into the capacitor. The logic that increasing current increases the charging rate follows directly from the definition and is internally consistent.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Capacitor Charge",
+          "target": "Capacitor Voltage",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly states the fundamental equation relating charge and voltage for a capacitor, and accurately infers that, with constant capacitance, an increase in charge leads to an increase in voltage. The reasoning is logically sound and the causal direction is appropriately justified.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Resistance",
+          "target": "Current",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation clearly states the mathematical relationship between resistance and current, indicating that current is inversely proportional to resistance according to Ohm's Law. It also correctly specifies that this relationship holds for a given (constant) voltage, ensuring the causal reasoning is logically sound.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        }
+      ]
+    },
+    {
+      "cld_key": "water_tank",
+      "session_id": "dd560a17-26b8-44d8-8788-20631a79d3af",
+      "duration_seconds": 3.6206605434417725,
+      "edges": [
+        {
+          "source": "Outflow Rate",
+          "target": "Net Flow Rate",
+          "type": "NEGATIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation accurately describes how an increase in the outflow rate results in a decrease in the net flow rate, based on the given formula (Net Flow = Inflow - Outflow). The logic is clear and internally coherent, with a correct negative relationship established.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Water Level",
+          "target": "Outlet Pressure",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically links the increase in water level to an increase in outlet pressure using the hydrostatic pressure formula (P = \\u03c1gh), and it clearly states the assumption that the outlet is at the bottom of the tank. This reasoning is internally consistent and the causal relationship is sound.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Outlet Pressure",
+          "target": "Outflow Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation logically connects outlet pressure to outflow rate using established fluid dynamics principles. It references the correct formula, showing that higher pressure leads to increased flow rate, providing a clear mechanism for the positive relationship.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Net Flow Rate",
+          "target": "Water Level",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation clearly describes the stock-flow relationship between net flow rate and water level, correctly stating that water level integrates net flow over time and providing the correct mathematical expression. It logically explains how positive net flow causes the water level to rise, which is internally coherent and follows from the principles of integration in dynamical systems.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Inflow Rate",
+          "target": "Net Flow Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation correctly states that net flow rate is defined as inflow minus outflow, and logically deduces that increasing the inflow rate, all else held constant, will increase the net flow rate. The causal reasoning is sound and follows directly from the definition.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        },
+        {
+          "source": "Outlet Valve Opening",
+          "target": "Outflow Rate",
+          "type": "POSITIVE",
+          "judge_verdict": "CORRECT",
+          "judge_message": "{\"approach\": \"correctness\", \"judge_results\": [{\"judge_id\": 1, \"model\": \"gpt-4.1\", \"verdict\": \"CORRECT\", \"score\": 1.0, \"reason\": \"The explanation clearly connects valve opening to outflow rate by linking the physical mechanism (increase in effective flow area) to the mathematical relationship (Q = Cd*A_valve*\\u221a(2\\u0394P/\\u03c1)). It logically follows that increasing the valve opening increases the area, which increases flow rate, holding other variables constant.\\nVERDICT: CORRECT\\nSCORE: 1.0\"}], \"aggregate_score\": 1.0, \"aggregate_verdict\": \"CORRECT\"}",
+          "aggregate_score": 1.0
+        }
+      ]
+    }
+  ],
+  "citation_results": [
+    {
+      "cld_key": "thermostat_heating_system",
+      "session_id": "f925cfa6-a513-4f3c-9005-365a31fb5ea8",
+      "duration_seconds": 71.08690857887268,
+      "edges": [
+        {
+          "source": "Desired Temperature",
+          "target": "Temperature Gap",
+          "type": "POSITIVE",
+          "judged_claim": "Desired Temperature directly causes an increase in Temperature Gap",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Room Temperature",
+          "target": "Temperature Gap",
+          "type": "NEGATIVE",
+          "judged_claim": "Room Temperature directly causes a decrease in Temperature Gap",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Temperature Gap",
+          "target": "Heating Rate",
+          "type": "POSITIVE",
+          "motivation": "In thermostat control systems, the Temperature Gap triggers heating. When the gap is positive (room ...",
+          "judged_claim": "In thermostat control systems, the Temperature Gap triggers heating. When the gap is positive (room too cold), the thermostat activates the furnace, causing an increase in Heating Rate. Larger gaps cause more aggressive heating, either through longer on-cycles (bang-bang control) or proportionally higher output (PID control). This is the core of negative feedback temperature regulation (ASHRAE 2017, Ch. 17).",
+          "aggregate_score": 0.0,
+          "aggregate_verdict": "Not supported",
+          "aggregator_message": "Aggregator majority => Not supported | Judge 1: Not supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://www.ashrae.org/technical-resources/ashrae-handbook/ashrae-handbook-online",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The provided citation is a general description of the ASHRAE Handbook Online and its subscription features, not specific content from Chapter 17 or any explanation about thermostat control, temperature gap, or heating rate. There is no quoted or summarized technical content confirming the relationship between Temperature Gap and Heating Rate or describing feedback control mechanisms.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              }
+            ],
+            "aggregate_score": 0.0,
+            "aggregate_verdict": "Not supported"
+          }
+        },
+        {
+          "source": "Heating Rate",
+          "target": "Room Temperature",
+          "type": "POSITIVE",
+          "motivation": "Based on the First Law of Thermodynamics (conservation of energy), heat added to a system increases ...",
+          "judged_claim": "Based on the First Law of Thermodynamics (conservation of energy), heat added to a system increases its internal energy. For a room: dU = Q_in - Q_out. An increase in Heating Rate (Q_in) directly causes an increase in Room Temperature, assuming heat loss is constant (\u00c7engel & Boles 2015, Ch. 4).",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://ia600208.us.archive.org/16/items/fundamentals-of-heat-and-mass-transfer-theodore-l.-bergman-adrienne-s.-lavine-fr/Fundamentals of Heat and Mass Transfer -- Theodore L. Bergman, Adrienne S. Lavine, Frank P. Incropera, -- 8th, 2017 -- Wiley -- 9781118989173 -- ebe985ff177850912fb0e80779ba4103 -- Anna\u2019s Archive.pdf",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The explanation claims that an increase in Heating Rate (Q_in) directly causes an increase in Room Temperature, assuming heat loss is constant, and cites \u00c7engel & Boles 2015, Ch. 4. However, the citation provided is not from \u00c7engel & Boles, but instead from \"Fundamentals of Heat and Mass Transfer\" by Bergman & Lavine (2017). Nevertheless, the provided text (especially Chapter 1, Section 1.3 and 1.3.1) gives a thorough explanation of the first law of thermodynamics applied to a control volume, showing that the rate of energy increase in a system (such as a room) is equal to the rate at which energy enters (heating rate) minus the rate at which energy leaves (heat loss). This is mathematically shown as dU = Q_in - Q_out, and it is explained in the context of room heating, matching the explanation in the prompt. Therefore, even though the citation is not to \u00c7engel & Boles, the cited source (Bergman & Lavine) fully supports the claimed relationship between heating rate and room temperature.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Outside Temperature",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE",
+          "motivation": "Newton's Law of Cooling states: Q = hA(T_room - T_outside). A decrease in Outside Temperature increa...",
+          "judged_claim": "Newton's Law of Cooling states: Q = hA(T_room - T_outside). A decrease in Outside Temperature increases the temperature difference (T_room - T_outside), leading to increased Heat Loss Rate. Conversely, higher Outside Temperature reduces heat loss. This is an inverse relationship (Incropera et al. 2007, Ch. 3).",
+          "aggregate_score": 0.5,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://ia600208.us.archive.org/16/items/fundamentals-of-heat-and-mass-transfer-theodore-l.-bergman-adrienne-s.-lavine-fr/Fundamentals of Heat and Mass Transfer -- Theodore L. Bergman, Adrienne S. Lavine, Frank P. Incropera, -- 8th, 2017 -- Wiley -- 9781118989173 -- ebe985ff177850912fb0e80779ba4103 -- Anna\u2019s Archive.pdf",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The explanation accurately describes the relationship between outside temperature and heat loss rate via Newton's Law of Cooling, Q = hA(T_room - T_outside). It correctly states that lowering the outside temperature increases the temperature difference (T_room - T_outside), thereby increasing the heat loss rate, and conversely, a higher outside temperature reduces the heat loss. This relationship is explicitly explained in Incropera et al. 2007, Ch. 3, which presents Newton's Law of Cooling and its dependence on temperature difference between the room (or inside) and outside, and discusses how the driving force for heat loss is this temperature difference. The cited content includes the relevant physical principles and equations (see especially Newton's law of cooling in Section 1.2.2, and discussions in Chapter 3 about heat loss through walls and boundary conditions). Therefore, the explanation is well supported by the cited source.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://www.ashrae.org/technical-resources/ashrae-handbook/ashrae-handbook-online",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The cited source is a general description of the ASHRAE Handbook Online and does not provide any specific content about Newton's Law of Cooling, the relationship between outside temperature and heat loss rate, or the equations involved. There is no direct evidence in the provided citation that supports the explanation given in the relationship claim.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              },
+              {
+                "citation_idx": 3,
+                "url": "https://www.energy.gov/energysaver/principles-heating-and-cooling",
+                "verdict": "PARTIALLY_SUPPORTED",
+                "score": 0.5,
+                "reason": "Judge 1: PARTIALLY_SUPPORTED - The cited source (Principles of Heating and Cooling | Department of Energy) discusses the general principles of heat transfer\u2014conduction, convection, and radiation\u2014and mentions that heat moves from warmer to cooler areas. It notes that on hot days, heat is conducted into the home from outside and that cooler surroundings promote heat radiation away from the body. However, the source does not explicitly discuss the quantitative relationship between outside temperature and heat loss rate, nor does it mention Newton's Law of Cooling or the specific inverse relationship described in the explanation. The content provides general context but does not directly support the precise negative relationship or the reasoning involving temperature differences.\nVERDICT: PARTIALLY_SUPPORTED\nSCORE: 0.5"
+              }
+            ],
+            "aggregate_score": 0.5,
+            "aggregate_verdict": "Partially supported"
+          }
+        },
+        {
+          "source": "Room Temperature",
+          "target": "Heat Loss Rate",
+          "type": "POSITIVE",
+          "motivation": "According to Newton's Law of Cooling (1701), the rate of heat transfer is proportional to the temper...",
+          "judged_claim": "According to Newton's Law of Cooling (1701), the rate of heat transfer is proportional to the temperature difference: Q = hA(T_room - T_outside). As Room Temperature increases, the temperature difference with the outside environment increases, leading to a higher Heat Loss Rate (Incropera et al. 2007, Ch. 1).",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://ia600208.us.archive.org/16/items/fundamentals-of-heat-and-mass-transfer-theodore-l.-bergman-adrienne-s.-lavine-fr/Fundamentals of Heat and Mass Transfer -- Theodore L. Bergman, Adrienne S. Lavine, Frank P. Incropera, -- 8th, 2017 -- Wiley -- 9781118989173 -- ebe985ff177850912fb0e80779ba4103 -- Anna\u2019s Archive.pdf",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The explanation claims that as room temperature increases, the temperature difference between the room and the outside increases, which, by Newton's Law of Cooling (Q = hA(T_room - T_outside)), leads to a higher heat loss rate. The cited source, \"Fundamentals of Heat and Mass Transfer\" (Incropera et al., 2007, Ch. 1), contains explicit discussions of Newton's Law of Cooling, the proportionality of heat loss to temperature difference, and provides both the physical reasoning and the relevant equations (see Eq. 1.3a and its discussion in Chapter 1, as well as the example problems and conceptual explanations). The source also explains that the rate of heat transfer increases with increasing temperature difference, which is the essence of the relationship being explained. The citation thus directly and unambiguously supports the claimed relationship and explanation.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://en.wikipedia.org/wiki/Heat_transfer",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited Wikipedia article on \"Heat transfer\" explicitly describes Newton's Law of Cooling, stating that the rate of heat loss is proportional to the temperature difference between a body and its surroundings. The explanation in the relationship claim faithfully reflects this, noting that as room temperature increases (with outside temperature fixed), the temperature difference increases, leading to a higher heat loss rate. The formula and conceptual explanation are both present in the source.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Thermal Resistance",
+          "target": "Heat Loss Rate",
+          "type": "NEGATIVE",
+          "motivation": "According to Fourier's Law of Heat Conduction, heat transfer rate is inversely proportional to therm...",
+          "judged_claim": "According to Fourier's Law of Heat Conduction, heat transfer rate is inversely proportional to thermal resistance: Q = \u0394T/R. An increase in Thermal Resistance (better insulation, higher R-value) directly causes a decrease in Heat Loss Rate (Incropera et al. 2007, Ch. 3; ASHRAE 2017, Ch. 25).",
+          "aggregate_score": 0.16666666666666666,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://ia600208.us.archive.org/16/items/fundamentals-of-heat-and-mass-transfer-theodore-l.-bergman-adrienne-s.-lavine-fr/Fundamentals of Heat and Mass Transfer -- Theodore L. Bergman, Adrienne S. Lavine, Frank P. Incropera, -- 8th, 2017 -- Wiley -- 9781118989173 -- ebe985ff177850912fb0e80779ba4103 -- Anna\u2019s Archive.pdf",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The explanation states that, according to Fourier's Law of Heat Conduction, the heat transfer rate (Q) is inversely proportional to thermal resistance (R), with the relationship Q = \u0394T/R, meaning an increase in thermal resistance leads to a decrease in heat loss rate. The cited sources are:\n- \"Fundamentals of Heat and Mass Transfer,\" 8th edition by Bergman and Lavine (formerly Incropera et al.), specifically Chapter 3 and related sections.\n- ASHRAE 2017, Ch. 25."
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://www.ashrae.org/technical-resources/ashrae-handbook/ashrae-handbook-online",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The provided content for the ASHRAE Handbook Online is purely a description of the online resource's features, access options, and subscription details. It does not contain any technical content, equations, or discussions about the relationship between thermal resistance and heat loss rate. There is no evidence in the excerpt that supports the claim that heat loss rate is inversely proportional to thermal resistance.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              },
+              {
+                "citation_idx": 3,
+                "url": "https://en.wikipedia.org/wiki/Heat_transfer",
+                "verdict": "PARTIALLY_SUPPORTED",
+                "score": 0.5,
+                "reason": "Judge 1: PARTIALLY_SUPPORTED - The cited Wikipedia article on \"Heat transfer\" does discuss the concept of thermal resistance: \"Thermal resistance is a heat property and the measurement by which an object or material resists to heat flow (heat per time unit or thermal resistance) to temperature difference.\" It also mentions that thermal insulators reduce the flow of heat and that well-insulated parts of a building have low thermal transmittance (implying high resistance and low heat loss). However, while the article describes the concepts, it does not explicitly provide the formula Q = \u0394T/R or directly state the inverse proportionality between heat loss rate and thermal resistance as per Fourier's Law. The relationship is implied, but the specific, quantitative negative relationship is not directly established in the text of the citation.\nVERDICT: PARTIALLY_SUPPORTED\nSCORE: 0.5"
+              }
+            ],
+            "aggregate_score": 0.16666666666666666,
+            "aggregate_verdict": "Partially supported"
+          }
+        },
+        {
+          "source": "Heat Loss Rate",
+          "target": "Room Temperature",
+          "type": "NEGATIVE",
+          "motivation": "Based on the First Law of Thermodynamics, energy leaving a system reduces its internal energy. For a...",
+          "judged_claim": "Based on the First Law of Thermodynamics, energy leaving a system reduces its internal energy. For a room: dU = Q_in - Q_out. An increase in Heat Loss Rate (Q_out) directly causes a decrease in Room Temperature (\u00c7engel & Boles 2015, Ch. 4).",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://ia600208.us.archive.org/16/items/fundamentals-of-heat-and-mass-transfer-theodore-l.-bergman-adrienne-s.-lavine-fr/Fundamentals of Heat and Mass Transfer -- Theodore L. Bergman, Adrienne S. Lavine, Frank P. Incropera, -- 8th, 2017 -- Wiley -- 9781118989173 -- ebe985ff177850912fb0e80779ba4103 -- Anna\u2019s Archive.pdf",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The explanation claims that an increase in Heat Loss Rate (Q_out) leads to a decrease in Room Temperature, citing the First Law of Thermodynamics and using the energy balance equation dU = Q_in - Q_out. The cited source is \"Fundamentals of Heat and Mass Transfer\" by Bergman & Lavine (2017), specifically Chapter 4, but the provided citation is actually the full front matter, table of contents, and introductory chapters, with the relevant theoretical material on energy conservation and heat transfer mechanisms in Chapter 1 (particularly Section 1.3). Chapter 4 focuses on two-dimensional, steady-state conduction, but the principles of energy conservation in the context of a room or control volume are well established in Chapter 1, where the relationship between heat loss and temperature is clearly explained and illustrated with the First Law of Thermodynamics and energy balance equations for control volumes. The citation thus contains explicit, relevant, and sufficient information to support the claim that increased heat loss rate from a room results in a decrease in room temperature, based on standard thermodynamic analysis."
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        }
+      ]
+    },
+    {
+      "cld_key": "predator_prey",
+      "session_id": "106154f4-92eb-4520-852c-9899afe215b9",
+      "duration_seconds": 17.734933853149414,
+      "edges": [
+        {
+          "source": "Predator Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE",
+          "motivation": "Predator births require existing predators to reproduce. The birth rate scales with predator populat...",
+          "judged_claim": "Predator births require existing predators to reproduce. The birth rate scales with predator population: births = \u03b4RP. More predators means more breeding individuals, causing higher total birth rates (given sufficient prey).",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://link.springer.com/book/10.1007/b98868",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited source, \"Mathematical Biology\" by J.D. Murray, is a foundational text that covers classic models of interacting populations, such as the Lotka-Volterra predator-prey model. In these models, the predator birth rate is typically modeled as proportional to both the predator and prey populations (e.g., births = \u03b4RP), directly supporting the claim that the predator birth rate scales positively with predator population (assuming sufficient prey). While the provided description does not quote the exact equations, the Table of Contents and the well-known content of Murray's book strongly indicate coverage of these standard models and relationships.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Prey Population",
+          "target": "Predator Birth Rate",
+          "type": "POSITIVE",
+          "motivation": "Predator reproduction depends on food availability. In Lotka-Volterra, predator births = \u03b4RP, where ...",
+          "judged_claim": "Predator reproduction depends on food availability. In Lotka-Volterra, predator births = \u03b4RP, where \u03b4 is the conversion efficiency of prey to predator offspring. More prey means more food, enabling higher predator reproduction rates.",
+          "aggregate_score": 0.0,
+          "aggregate_verdict": "Not supported",
+          "aggregator_message": "Aggregator majority => Not supported | Judge 1: Not supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://archive.org/details/elementsofphysic017171mbp",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The provided citation gives bibliographic and access information about Lotka's \"Elements of Physical Biology,\" but does not include any content from the book itself. There is no quoted or summarized evidence from the source that explicitly describes the Lotka-Volterra predator birth rate equation or its dependence on prey population. Without direct content, it cannot be determined if the explanation is supported by the cited source.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              }
+            ],
+            "aggregate_score": 0.0,
+            "aggregate_verdict": "Not supported"
+          }
+        },
+        {
+          "source": "Prey Birth Rate",
+          "target": "Prey Population",
+          "type": "POSITIVE",
+          "judged_claim": "Prey Birth Rate directly causes an increase in Prey Population",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Prey Death Rate",
+          "target": "Prey Population",
+          "type": "NEGATIVE",
+          "judged_claim": "Prey Death Rate directly causes a decrease in Prey Population",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Predator Birth Rate",
+          "target": "Predator Population",
+          "type": "POSITIVE",
+          "judged_claim": "Predator Birth Rate directly causes an increase in Predator Population",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Predator Death Rate",
+          "target": "Predator Population",
+          "type": "NEGATIVE",
+          "judged_claim": "Predator Death Rate directly causes a decrease in Predator Population",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Predator Population",
+          "target": "Predator Death Rate",
+          "type": "POSITIVE",
+          "motivation": "In the Lotka-Volterra model, predator deaths occur at a rate proportional to population: deaths = \u03b3P...",
+          "judged_claim": "In the Lotka-Volterra model, predator deaths occur at a rate proportional to population: deaths = \u03b3P, where \u03b3 is the natural death rate. More predators means more individuals that can die, causing higher total death rates.",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://www.nature.com/articles/118558a0",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited source is Vito Volterra's classic 1926 paper introducing the Lotka-Volterra model. While the detailed content of the article is not provided in the excerpt, the title, author, and context make it clear that this is the foundational publication for the Lotka-Volterra predator-prey equations. These equations explicitly include a term for predator deaths proportional to predator population (i.e., deaths = \u03b3P), as described in the explanation. Therefore, the citation directly supports the claim that predator death rate is proportional to predator population in this model.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Prey Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE",
+          "motivation": "In the Lotka-Volterra model, prey deaths occur through predator-prey encounters. The death rate is p...",
+          "judged_claim": "In the Lotka-Volterra model, prey deaths occur through predator-prey encounters. The death rate is proportional to prey population: deaths = \u03b2RP, where \u03b2 is the predation rate coefficient, R is prey, and P is predators. More prey means more potential encounters with predators, causing higher death rates.",
+          "aggregate_score": 0.5,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://archive.org/details/elementsofphysic017171mbp",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The citation provided is a bibliographic and metadata summary of \"Elements of Physical Biology\" by Alfred J. Lotka, but it does not include any actual content from the book, such as the relevant mathematical equations, textual descriptions, or explicit statements regarding the relationship between prey population and prey death rate in the Lotka-Volterra model. Therefore, there is no direct evidence in the cited content to support the claim.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://link.springer.com/book/10.1007/b98868",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The explanation claims that in the Lotka-Volterra model, the prey death rate is proportional to the prey population, typically modeled as deaths = \u03b2RP. The cited source, \"Mathematical Biology\" by J.D. Murray, is a foundational text that is well-known for its detailed coverage of the Lotka-Volterra equations, including the specific formulation where the prey death term is proportional to both prey and predator populations. While the provided description does not quote the relevant equation directly, the table of contents and context strongly indicate that the book covers \"Models for Interacting Populations\" and the Lotka-Volterra model specifically. Therefore, the citation is appropriate and supports the explanation.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 0.5,
+            "aggregate_verdict": "Partially supported"
+          }
+        },
+        {
+          "source": "Prey Population",
+          "target": "Prey Birth Rate",
+          "type": "POSITIVE",
+          "motivation": "According to the Lotka-Volterra equations, prey reproduction follows exponential growth in the absen...",
+          "judged_claim": "According to the Lotka-Volterra equations, prey reproduction follows exponential growth in the absence of predation. The prey birth rate is proportional to the current prey population: dR/dt (births) = \u03b1R, where R is prey population and \u03b1 is the birth rate coefficient. More prey means more breeding individuals, directly causing higher birth rates.",
+          "aggregate_score": 0.75,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://archive.org/details/elementsofphysic017171mbp",
+                "verdict": "PARTIALLY_SUPPORTED",
+                "score": 0.5,
+                "reason": "Judge 1: PARTIALLY_SUPPORTED - The cited source is \"Elements of Physical Biology\" by Alfred J. Lotka, which is the foundational text introducing the Lotka-Volterra equations. Although the citation content provided is only bibliographic and does not quote or summarize relevant text, the book is widely known to contain the mathematical model where the prey birth rate is proportional to the prey population (dR/dt = \u03b1R). The explanation matches what is in Lotka's original work. However, since the provided citation content does not explicitly state this relationship, support is partial and depends on outside knowledge of the source's contents.\nVERDICT: PARTIALLY_SUPPORTED\nSCORE: 0.5"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://www.nature.com/articles/118558a0",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited source is Volterra's 1926 Nature article, which is foundational for the Lotka-Volterra equations. While the detailed content of the article is not provided, the title and context make it clear that the article presents mathematical models of species abundance, specifically including the interaction between prey and predators. The explanation refers to the standard Lotka-Volterra prey equation (dR/dt = \u03b1R), which states that the prey birth rate is proportional to the prey population. This is a direct reflection of the classic model introduced by Volterra. Therefore, the citation is appropriate and supports the explanation that prey birth rate increases with prey population in the absence of predation.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 0.75,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Predator Population",
+          "target": "Prey Death Rate",
+          "type": "POSITIVE",
+          "motivation": "The Lotka-Volterra predation term \u03b2RP shows that prey death rate increases with predator population....",
+          "judged_claim": "The Lotka-Volterra predation term \u03b2RP shows that prey death rate increases with predator population. More predators means more hunting, more encounters with prey, and thus higher prey mortality.",
+          "aggregate_score": 0.5,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://www.nature.com/articles/118558a0",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited source is the original 1926 paper by Vito Volterra, which introduced the mathematical formulation of predator-prey dynamics (the Lotka-Volterra model). While the abstract itself is not fully quoted, it is well established that this paper mathematically describes how the prey population's death rate is positively related to predator abundance via the interaction term (\u03b2RP). The explanation specifically references the predation term from this classical model, which the cited paper is known for introducing. Therefore, the relationship claim is directly supported by the citation.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://www.jstor.org/stable/j.ctvs32rq4",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The cited source does not provide any substantive scientific content relevant to the relationship claim. It is merely an access error message from JSTOR and does not contain any information about the Lotka-Volterra model, predator-prey dynamics, or the relationship between predator population and prey death rate.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              }
+            ],
+            "aggregate_score": 0.5,
+            "aggregate_verdict": "Partially supported"
+          }
+        }
+      ]
+    },
+    {
+      "cld_key": "rc_circuit",
+      "session_id": "e5424a1c-00dc-492a-8568-14ca7d577188",
+      "duration_seconds": 18.197022914886475,
+      "edges": [
+        {
+          "source": "Capacitor Voltage",
+          "target": "Voltage Difference",
+          "type": "NEGATIVE",
+          "judged_claim": "Capacitor Voltage directly causes a decrease in Voltage Difference",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Supply Voltage",
+          "target": "Voltage Difference",
+          "type": "POSITIVE",
+          "judged_claim": "Supply Voltage directly causes an increase in Voltage Difference",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Resistance",
+          "target": "Current",
+          "type": "NEGATIVE",
+          "judged_claim": "Resistance directly causes a decrease in Current",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Capacitor Charge",
+          "target": "Capacitor Voltage",
+          "type": "POSITIVE",
+          "judged_claim": "Capacitor Charge directly causes an increase in Capacitor Voltage",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Current",
+          "target": "Charging Rate",
+          "type": "POSITIVE",
+          "judged_claim": "Current directly causes an increase in Charging Rate",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Voltage Difference",
+          "target": "Current",
+          "type": "POSITIVE",
+          "motivation": "According to Ohm's Law (V = IR), the current through a resistor is directly proportional to the volt...",
+          "judged_claim": "According to Ohm's Law (V = IR), the current through a resistor is directly proportional to the voltage across it: I = \u0394V/R. An increase in voltage difference causes an increase in current.",
+          "aggregate_score": 0.0,
+          "aggregate_verdict": "Not supported",
+          "aggregator_message": "Aggregator majority => Not supported | Judge 1: Not supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://dl.icdst.org/pdfs/files4/39e1817b05cf155433309dbb2f3289fe.pdf",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The cited source does not contain any scientific content or information related to Ohm's Law, voltage difference, or current. It is a generic access restriction page from Cloudflare and does not support the explanation or the relationship claim.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              }
+            ],
+            "aggregate_score": 0.0,
+            "aggregate_verdict": "Not supported"
+          }
+        },
+        {
+          "source": "Charging Rate",
+          "target": "Capacitor Charge",
+          "type": "POSITIVE",
+          "motivation": "This is a stock-flow relationship. Charge accumulates on the capacitor at the charging rate: Q(t) = ...",
+          "judged_claim": "This is a stock-flow relationship. Charge accumulates on the capacitor at the charging rate: Q(t) = \u222bI dt. An increase in charging rate causes an increase in stored charge over time.",
+          "aggregate_score": 0.5,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://systemdynamics.org/product/business-dynamics-systems-thinking-and-modeling-for-a-complex-world/",
+                "verdict": "PARTIALLY_SUPPORTED",
+                "score": 0.5,
+                "reason": "Judge 1: PARTIALLY_SUPPORTED - The cited source, \"Business Dynamics: Systems Thinking and Modeling for a Complex World\" by Sterman, is described as a general text on system dynamics, explaining stocks, flows, and their relationships in a variety of contexts. However, based on the provided content, there is no specific mention of the physical relationship between charging rate (current) and capacitor charge, nor the equation Q(t) = \u222bI dt. While the book likely covers stock-flow relationships in general, the citation does not specifically address the capacitor charging scenario or directly support the explanation given.\nVERDICT: PARTIALLY_SUPPORTED\nSCORE: 0.5"
+              }
+            ],
+            "aggregate_score": 0.5,
+            "aggregate_verdict": "Partially supported"
+          }
+        }
+      ]
+    },
+    {
+      "cld_key": "water_tank",
+      "session_id": "186f0019-f9a3-4e53-bfa0-2765d6edb725",
+      "duration_seconds": 11.44419240951538,
+      "edges": [
+        {
+          "source": "Outflow Rate",
+          "target": "Net Flow Rate",
+          "type": "NEGATIVE",
+          "judged_claim": "Since Net Flow = Inflow - Outflow, an increase in outflow rate directly causes a decrease in net flow rate. This follows from conservation of mass: water leaving reduces the net accumulation.",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "Edge has no citations to judge."
+        },
+        {
+          "source": "Outlet Pressure",
+          "target": "Outflow Rate",
+          "type": "POSITIVE",
+          "judged_claim": "Outlet Pressure directly causes an increase in Outflow Rate",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Outlet Valve Opening",
+          "target": "Outflow Rate",
+          "type": "POSITIVE",
+          "judged_claim": "Outlet Valve Opening directly causes an increase in Outflow Rate",
+          "judge_verdict": "NO_CITATION",
+          "judge_message": "All citations failed to fetch valid content from ContentScraper."
+        },
+        {
+          "source": "Water Level",
+          "target": "Outlet Pressure",
+          "type": "POSITIVE",
+          "motivation": "According to hydrostatics, the pressure at a depth h below the water surface is P = \u03c1gh (Pascal's La...",
+          "judged_claim": "According to hydrostatics, the pressure at a depth h below the water surface is P = \u03c1gh (Pascal's Law). An increase in water level (h) directly causes an increase in outlet pressure, assuming the outlet is at the bottom of the tank.",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://fr.wikisource.org/wiki/Trait\u00e9s_de_l\u2019\u00e9quilibre_des_liqueurs_et_de_la_pesanteur_de_la_masse_de_l\u2019air",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The cited source is Blaise Pascal's \"Trait\u00e9s de l\u2019\u00e9quilibre des liqueurs,\" a foundational text in fluid statics. The chapter titles referenced (e.g., \"Que les liqueurs pesent suivant leur hauteur\") explicitly discuss that the weight (and thus pressure) exerted by a liquid depends on its height, which is directly relevant to the claim that water level determines outlet pressure. This supports the hydrostatic principle cited in the explanation (P = \u03c1gh), confirming a positive relationship between water level and outlet pressure.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Net Flow Rate",
+          "target": "Water Level",
+          "type": "POSITIVE",
+          "motivation": "This is a fundamental stock-flow relationship. The water level (stock) integrates the net flow rate ...",
+          "judged_claim": "This is a fundamental stock-flow relationship. The water level (stock) integrates the net flow rate over time: h(t) = h(0) + \u222b(net flow)/A dt, where A is tank cross-sectional area. Positive net flow causes water level to rise.",
+          "aggregate_score": 1.0,
+          "aggregate_verdict": "Fully supported",
+          "aggregator_message": "Aggregator majority => Fully supported | Judge 1: Fully supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://systemdynamics.org/product/business-dynamics-systems-thinking-and-modeling-for-a-complex-world/",
+                "verdict": "SUPPORTED",
+                "score": 1.0,
+                "reason": "Judge 1: SUPPORTED - The citation is for \"Business Dynamics\" by John D. Sterman, which is a foundational text in system dynamics. While the provided content does not explicitly mention the specific formula for water level as an integral of net flow, it does state that the book covers \"the dynamics of complex systems,\" including \"the structures that create growth,\" and provides tools for modeling and simulation. It also mentions that challenges and examples are provided, which often include stock-flow relationships, a core concept in system dynamics. Although the exact equation is not quoted in the citation, it is well-established that this book explains the relationship between stocks (such as water level) and flows (such as net flow rate), which is the basis for the claimed relationship. Therefore, the citation generally supports the explanation, though not with a direct quote or explicit mention in the provided excerpt.\nVERDICT: SUPPORTED\nSCORE: 1.0"
+              }
+            ],
+            "aggregate_score": 1.0,
+            "aggregate_verdict": "Fully supported"
+          }
+        },
+        {
+          "source": "Inflow Rate",
+          "target": "Net Flow Rate",
+          "type": "POSITIVE",
+          "motivation": "Net Flow Rate is defined as Inflow minus Outflow: dV/dt = Qin - Qout. An increase in inflow rate dir...",
+          "judged_claim": "Net Flow Rate is defined as Inflow minus Outflow: dV/dt = Qin - Qout. An increase in inflow rate directly causes an increase in net flow rate, by definition. This is conservation of mass applied to the tank.",
+          "aggregate_score": 0.25,
+          "aggregate_verdict": "Partially supported",
+          "aggregator_message": "Aggregator majority => Partially supported | Judge 1: Partially supported",
+          "details_json": {
+            "citations": [
+              {
+                "citation_idx": 1,
+                "url": "https://en.wikipedia.org/wiki/Trait%C3%A9_%C3%89l%C3%A9mentaire_de_Chimie",
+                "verdict": "PARTIALLY_SUPPORTED",
+                "score": 0.5,
+                "reason": "Judge 1: PARTIALLY_SUPPORTED - The cited source (Wikipedia summary of \"Trait\u00e9 \u00c9l\u00e9mentaire de Chimie\" by Lavoisier) discusses the law of conservation of mass and notes that nothing is lost or created, only transformed. While this underpins the general principle that the sum of inflow and outflow rates determines changes in system mass or volume, the source does not explicitly define net flow rate as dV/dt = Qin - Qout, nor does it directly state the mathematical relationship between inflow rate and net flow rate. The connection must be inferred from the conservation principle, rather than being explicitly supported by the citation.\nVERDICT: PARTIALLY_SUPPORTED\nSCORE: 0.5"
+              },
+              {
+                "citation_idx": 2,
+                "url": "https://systemdynamics.org/product/business-dynamics-systems-thinking-and-modeling-for-a-complex-world/",
+                "verdict": "UNADDRESSED",
+                "score": 0.0,
+                "reason": "Judge 1: UNADDRESSED - The provided citation is a general description of the book \"Business Dynamics: Systems Thinking and Modeling for a Complex World\" by John D. Sterman. While the description discusses that the book covers concepts such as system dynamics, flows, stocks, and modeling, the actual content excerpted here does not explicitly mention or define the relationship between inflow rate and net flow rate, nor does it provide the mass balance equation (dV/dt = Qin - Qout) or directly state that an increase in inflow increases net flow rate. Therefore, while the book likely covers such foundational relationships in system dynamics, the cited content itself does not directly support the specific claim or explanation given in the motivation.\nVERDICT: NOT_SUPPORTED\nSCORE: 0.0"
+              }
+            ],
+            "aggregate_score": 0.25,
+            "aggregate_verdict": "Partially supported"
+          }
+        }
+      ]
+    }
+  ]
+}

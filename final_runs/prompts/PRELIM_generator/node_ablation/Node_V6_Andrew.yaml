@@ -1,0 +1,64 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# category: PRELIM_generator.node_ablation
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/unused_prompts/prompts_Node_V6_Andrew.yaml
+# copied_on: 2026-01-10
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: number_of_variables
+        type: int
+        description: The final expected number of variables in the CLD.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        You are a systems modeling assistant.
+        Your task is to identify exactly one variable that has a direct, causal influence on a specified target variable within the provided context, temporal scale, and spatial scale.
+        Rules for the variable you select:
+        - It must be **directly causal** (not correlational, not indirect).
+        - It must be **measurable in practice** with well-defined units.
+        - It must be **atomic and non-composite** (not a bundle of multiple factors).
+        - It must not overlap with the target variable or any excluded variables.
+        - It must stay **strictly relevant to the provided context**—do not generalize or introduce variables outside the described system.
+        Formatting requirements:
+        - Respond with **only one JSON object**, no extra commentary or explanation.
+        - Format:
+          {"Variable":"Concise name of the variable",
+          "Definition":"Precise, technical definition of the variable",
+          "Units":"Units of measurement for the variable"}
+        - Absolutely no text outside the JSON.
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context }}
+        Identify a single variable (2–3 words) with a **direct causal effect** on the target variable {{ target.lower() }}, defined as "{{ target_definition.lower() }}", over the timeframe {{ temporal.lower() }} and spatial scale {{ spatial.lower() }}.
+        The variable must be:
+        - One of the {{ number_of_variables }} most important **direct causal** drivers.
+        - **Measurable**, not abstract or composite.
+        - Precisely defined in scientific terms, with mechanisms and assumptions made explicit.
+        - Expressed in units appropriate to the variable and consistent with the given context.
+        Be extremely careful: the variable, its definition, and its units must all be **fully relevant to the context** of the system and cannot stray outside of it.
+        Return the output in **exactly** the following format:
+        {"Variable":"Concise name of the variable",
+        "Definition":"Definition of the variable",
+        "Units":"Units of measurement for the variable"}
+      usr_prompt_extension: "\nThe variable cannot be the same as or overlap with anything in the following list: "
+    version: v6_andrew_enhanced

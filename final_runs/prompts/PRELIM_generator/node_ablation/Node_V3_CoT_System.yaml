@@ -1,0 +1,47 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# category: PRELIM_generator.node_ablation
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/unused_prompts/prompts_Node_V3_CoT_System.yaml
+# copied_on: 2026-01-10
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        Let's think step-by-step to identify a variable that causally influences the target:
+        1. First, understand the target variable, its definition, and the context
+        2. Brainstorm potential causal variables that directly influence the target
+        3. Evaluate each against measurability and directness of causal link
+        4. Select the most appropriate variable
+        5. Verify it works within the specified temporal and spatial scale
+        6. Define the variable concisely and specify appropriate units
+        
+        Once complete, respond with JSON: {"Variable":"name", "Definition":"definition", "Units":"units"}
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Definition: "{{ target_definition.lower() }}"
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        Identify a variable with a direct causal effect on {{ target.lower() }}.
+      usr_prompt_extension: " Cannot overlap with: "
+    version: v3_cot_system_wei2022

@@ -1,0 +1,118 @@
+% Deep Research Multi-Agent Pipeline Flowchart
+% Academic-style process flow diagram for thesis
+% Usage: \input{figures/deep_research_flowchart.tex}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.85, every node/.style={transform shape},
+    % Node styles
+    input/.style={rectangle, draw=black, fill=gray!10, thick, minimum width=3cm, minimum height=0.8cm, align=center, font=\footnotesize},
+    orchestrator/.style={rectangle, draw=black!70, fill=blue!8, thick, minimum width=4cm, minimum height=0.9cm, align=center, font=\footnotesize\bfseries, rounded corners=2pt},
+    agent/.style={rectangle, draw=black, fill=white, thick, minimum width=3.5cm, minimum height=0.8cm, align=center, font=\footnotesize},
+    agent_heavy/.style={agent, fill=orange!15},
+    agent_light/.style={agent, fill=green!10},
+    decision/.style={diamond, draw=black, fill=yellow!15, thick, minimum width=1.2cm, minimum height=0.6cm, align=center, font=\scriptsize, aspect=1.5, inner sep=1pt},
+    output/.style={rectangle, draw=black, fill=gray!20, thick, minimum width=3cm, minimum height=0.8cm, align=center, font=\footnotesize},
+    parallel/.style={rectangle, draw=black!50, dashed, inner sep=8pt},
+    arrow/.style={->, >=stealth, thick},
+    label_style/.style={font=\scriptsize\itshape, text=black!70},
+    iteration_box/.style={rectangle, draw=blue!50, dashed, thick, inner sep=12pt, rounded corners=3pt},
+]
+
+% === INPUT ===
+\node[input] (input) at (0, 0.3) {Causal Claim\\{\scriptsize\texttt{"[Source] causes [Target]. [Motivation]"}}};
+
+% === ORCHESTRATOR START ===
+\node[orchestrator] (manager) at (0, -1.1) {DeepResearchManager\\{\scriptsize Python Orchestrator}};
+
+% === ITERATION LOOP ===
+\node[agent_heavy] (hypo) at (0, -2.8) {\texttt{hypothesis\_evaluator}\\{\scriptsize GPT-5 $\rightarrow$ SearchPlan}};
+
+% === PARALLEL SEARCH BOX ===
+\node[agent_light] (search) at (0, -4.3) {\texttt{search\_agent} $\times$ 3--4\\{\scriptsize GPT-5-mini $\rightarrow$ List[SearchResult]}};
+\node[label_style, right=0.3cm of search] {parallel};
+
+% === PARALLEL SCORING ===
+\node[agent_light] (scorer) at (0, -5.6) {\texttt{evidence\_scorer} $\times$ results\\{\scriptsize GPT-5-mini $\rightarrow$ EvidenceScore}};
+\node[label_style, right=0.3cm of scorer] {parallel};
+
+% === ARTICLE SELECTOR ===
+\node[agent_heavy] (selector) at (0, -6.9) {\texttt{article\_selector}\\{\scriptsize GPT-5 $\rightarrow$ ArticleSelection}};
+
+% === FULL TEXT FETCH (not an agent) ===
+\node[input] (fetch) at (0, -8.3) {Full-Text Fetch\\{\scriptsize BeautifulSoup HTML parsing}};
+
+% === CAUSAL EVIDENCE DETECTOR ===
+\node[agent_heavy] (causal) at (0, -9.6) {\texttt{causal\_evidence\_detector}\\{\scriptsize GPT-5 $\rightarrow$ CausalEvidenceEvaluation}};
+
+% === EARLY STOP DECISION === (aligned with causal)
+\node[decision] (early_stop) at (5.5, -9.6) {Direct evid.\\+ 3 HQ?};
+
+% === JUDGMENT AGENT ===
+\node[agent_heavy] (judgement) at (0, -11.2) {\texttt{judgement\_agent}\\{\scriptsize GPT-5 $\rightarrow$ EvidenceJudgement}};
+
+% === ITERATION DECISION === (aligned with judgement)
+\node[decision] (iter_check) at (5.5, -11.2) {Iter < 3?};
+
+% === VERDICT AGENT ===
+\node[agent_heavy] (verdict) at (0, -13.8) {\texttt{verdict\_agent}\\{\scriptsize GPT-5 $\rightarrow$ FinalVerdict}};
+
+% === OUTPUT ===
+\node[output] (output) at (0, -15.1) {FinalVerdict\\{\scriptsize verdict, confidence, evidence URLs, cited passages}};
+
+% === ARROWS ===
+% Main flow
+\draw[arrow] (input) -- (manager);
+\draw[arrow] (manager) -- (hypo);
+\draw[arrow] (hypo) -- node[right, label_style] {3--4 queries} (search);
+\draw[arrow] (search) -- node[right, label_style] {search results} (scorer);
+\draw[arrow] (scorer) -- node[right, label_style] {scored evidence} (selector);
+\draw[arrow] (selector) -- node[right, label_style] {2--3 URLs} (fetch);
+\draw[arrow] (fetch) -- node[right, label_style] {full text} (causal);
+
+% Causal detector to early stop decision (straight horizontal)
+\draw[arrow] (causal.east) -- (early_stop.west);
+
+% Early stop: Yes -> skip to verdict (go far right then down, then left, then down to verdict)
+\draw[arrow] (early_stop.east) -- (8.5, -9.6) -- (8.5, -13.8) -- (2.2, -13.8) -- (verdict.east);
+\node[label_style] at (8.8, -9.6) {Yes};
+
+% Early stop: No -> continue to judgement (down, left, then down to judgement)
+\draw[arrow] (early_stop.south) -- (5.5, -10.5) -- (0, -10.5) -- (judgement.north);
+\node[label_style] at (5.9, -10.5) {No};
+
+% Judgement to iteration check (straight horizontal)
+\draw[arrow] (judgement.east) -- (iter_check.west);
+
+% Iteration check: Yes -> loop back (go right then up)
+\draw[arrow] (iter_check.east) -- (9, -11.2) -- (9, -2.8) -- (hypo.east);
+\node[label_style] at (9.3, -11.2) {Yes};
+\node[label_style] at (9.5, -6.5) {next iter};
+
+% Iteration check: No -> verdict (go down, then left, then down with 90-degree angles)
+\draw[arrow] (iter_check.south) -- (5.5, -13.0) -- (0, -13.0) -- (verdict.north);
+\node[label_style] at (6, -12.5) {No};
+
+% Verdict to output
+\draw[arrow] (verdict) -- (output);
+
+% === ITERATION BOX ===
+\begin{scope}[on background layer]
+\node[iteration_box, fit=(hypo)(search)(scorer)(selector)(fetch)(causal)(judgement)] (iterbox) {};
+\end{scope}
+% Label for iteration box - positioned to the left outside the box
+\node[font=\scriptsize\bfseries, text=blue!70, anchor=east, rotate=90] at ([xshift=-8pt]iterbox.west) {Iteration Loop (max 3)};
+
+% === LEGEND === (moved further left to avoid overlap)
+\node[agent_heavy, minimum width=1.2cm, minimum height=0.4cm] (leg1) at (-6.5, -13.8) {};
+\node[right=0.1cm of leg1, font=\scriptsize] {GPT-5 (heavy)};
+\node[agent_light, minimum width=1.2cm, minimum height=0.4cm] (leg2) at (-6.5, -14.4) {};
+\node[right=0.1cm of leg2, font=\scriptsize] {GPT-5-mini (light)};
+\node[input, minimum width=1.2cm, minimum height=0.4cm] (leg3) at (-6.5, -15.0) {};
+\node[right=0.1cm of leg3, font=\scriptsize] {Non-LLM step};
+
+\end{tikzpicture}
+\caption[Deep Research multi-agent pipeline]{Deep Research multi-agent pipeline execution flow. The DeepResearchManager orchestrates seven LLM agents across up to three iterations (experiments used max\_iterations=1; Table~\ref{tab:rq3_config}). The hypothesis evaluator generates 3--4 search queries executed in parallel; each query thread runs up to 5 searches. All search results are scored in parallel before article selection (2--3 articles). Early stopping occurs when direct causal evidence is found with 3+ high-quality sources. Orange nodes indicate GPT-5 (heavy model) for complex reasoning; green nodes indicate GPT-5-mini (light model) for high-volume tasks.}
+\label{fig:dr_flowchart}
+\end{figure}
+

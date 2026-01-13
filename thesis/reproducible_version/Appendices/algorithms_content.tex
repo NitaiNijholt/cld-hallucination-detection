@@ -1,0 +1,569 @@
+\section{Algorithm 0: CLD Generation}
+\label{alg:cld_generation}
+
+The CLD generator constructs causal loop diagrams through a two-phase process: node generation followed by edge generation. Both phases capture UQ metrics via logprobs for downstream hallucination detection.
+
+\begin{table}[H]
+\centering
+\caption{CLD Generation (\texttt{generate\_variables} + \texttt{discover\_relationships})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} target\_variable, temporal\_scale, spatial\_scale, num\_variables, context} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Neo4j session with nodes (variables) and edges (relationships) + UQ metrics} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Node Generation (generateNodes prompt)}} \\
+1. & session\_id $\leftarrow$ uuid.generate() \\
+2. & Neo4j.create\_node(target\_variable, is\_target=True, session\_id) \\
+3. & variables $\leftarrow$ [target\_variable] \\
+4. & \textbf{while} len(variables) $<$ num\_variables: \\
+5. & \quad vars $\leftarrow$ \{target, target\_units, target\_definition, temporal, spatial, context\} \\
+6. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``generateNodes'', vars) \\
+7. & \quad usr\_prompt $\leftarrow$ usr\_prompt + ``Exclude: '' + join(variables) \\
+8. & \quad response $\leftarrow$ generator\_llm.send\_message(prompts, logprobs=True, top\_logprobs=5) \\
+9. & \quad (name, definition, units, citations) $\leftarrow$ tree.read\_variable\_response(response) \\
+10. & \quad log\_metrics $\leftarrow$ compute\_uq\_metrics(response.logprobs) \\
+11. & \quad Neo4j.create\_node(name, definition, citations, log\_metrics, session\_id) \\
+12. & \quad variables.append(name) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: Edge Generation (generateEdges prompt)}} \\
+13. & pairs $\leftarrow$ generate\_ordered\_pairs(variables) \hfill\textit{// $N^2$ pairs, excludes self-loops} \\
+14. & \textbf{for each} (source, target) $\in$ pairs: \\
+15. & \quad (source\_def, target\_def) $\leftarrow$ Neo4j.fetch\_definitions(source, target) \\
+16. & \quad vars $\leftarrow$ \{var1: source, var2: target, def1, def2, temporal, spatial, variables\} \\
+17. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``generateEdges'', vars) \\
+18. & \quad response $\leftarrow$ generator\_llm.send\_message(prompts, logprobs=True, top\_logprobs=5) \\
+19. & \quad (rel\_type, motivation, citations) $\leftarrow$ tree.read\_relationships(response) \\
+20. & \quad log\_metrics $\leftarrow$ compute\_ci\_metrics(response.logprobs) \\
+21. & \quad Neo4j.create\_relationship(source, target, rel\_type, motivation, citations, log\_metrics) \\
+22. & \textbf{return} session\_id, variables, relationships \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Implementation:} \texttt{modules.py:698} (\texttt{generate\_variables}), \texttt{:1147} (\texttt{discover\_relationships}),\\ \texttt{:908} (\texttt{process\_variable\_pair})
+
+\noindent\textbf{Acknowledgement:} The CLD generation algorithm was conceived by Rick Quax with feedback from Cillian Hourican and implemented by Andrew Crossley. The author (Nitai Nijholt) contributed the mediation check, multi-provider LLM infrastructure with rate limiting and fallbacks, and prompt testing framework.
+
+\section{Algorithm 1: Judge-Correctness}
+\label{alg:judge_correctness}
+
+The correctness-based judge evaluates causal reasoning quality without external evidence.
+
+\begin{table}[H]
+\centering
+\caption{Judge-Correctness (\texttt{judge\_all\_edges\_serial}, approach=``correctness'')}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, judge\_models[], prompt\_config} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Per-edge verdicts with scores} \\
+\midrule
+1. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t) WHERE s.session\_id = \$sid'') \\
+2. & judges[] $\leftarrow$ create\_llm\_clients(judge\_models) \\
+3. & \textbf{for each} edge $\in$ edges: \\
+4. & \quad text $\leftarrow$ edge.spurious\_motivation $\lor$ edge.motivation \\
+5. & \quad \textbf{if} text = $\emptyset$: verdict $\leftarrow$ ``NO\_MOTIVATION''; \textbf{continue} \\
+6. & \quad variables $\leftarrow$ \{source, target, relationship, motivation: text\} \\
+7. & \quad (sys\_prompt, usr\_prompt) $\leftarrow$ tree.build\_prompt(``judgeCorrectness'', vars) \\
+8. & \quad scores[], verdicts[] $\leftarrow$ [], [] \\
+9. & \quad \textbf{for each} judge $\in$ judges: \\
+10. & \quad\quad response $\leftarrow$ judge.send\_message(sys\_prompt, usr\_prompt, logprobs=True) \\
+11. & \quad\quad (verdict, score, reason) $\leftarrow$ parse\_regex(response, ``VERDICT: SCORE:'') \\
+12. & \quad\quad verdicts.append(verdict); scores.append(score) \\
+13. & \quad aggregate\_score $\leftarrow$ mean(scores) \\
+14. & \quad aggregate\_verdict $\leftarrow$ majority\_vote(verdicts) \\
+15. & \quad update\_edge(edge, aggregate\_verdict, aggregate\_score) \\
+16. & \textbf{return} judged\_edges \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:4421} $\rightarrow$ \texttt{:4740} (correctness branch)
+
+\section{Algorithm 2: Judge-Citation}
+\label{alg:judge_citation}
+
+The citation-based judge validates causal claims against fetched scientific literature.
+
+\begin{table}[H]
+\centering
+\caption{Judge-Citation (\texttt{judge\_all\_edges\_with\_citations\_serial})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, judge\_models[], citation\_fetcher} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Per-edge aggregate verdicts with per-citation scores} \\
+\midrule
+1. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t) WHERE s.session\_id = \$sid'') \\
+2. & judges[] $\leftarrow$ create\_llm\_clients(judge\_models) \\
+3. & \textbf{for each} edge $\in$ edges: \\
+4. & \quad citations $\leftarrow$ edge.citations \\
+5. & \quad \textbf{if} citations = $\emptyset$: verdict $\leftarrow$ ``NO\_CITATION''; \textbf{continue} \\
+6. & \quad citation\_contents $\leftarrow$ ContentScraper.process\_citations(citations) \\
+7. & \quad per\_citation\_results $\leftarrow$ [] \\
+8. & \quad \textbf{for each} (url, content) $\in$ citation\_contents: \\
+9. & \quad\quad prompt $\leftarrow$ build\_citation\_prompt(edge.motivation, content) \\
+10. & \quad\quad judge\_verdicts $\leftarrow$ [] \\
+11. & \quad\quad \textbf{for each} judge $\in$ judges: \\
+12. & \quad\quad\quad response $\leftarrow$ judge.send\_message(prompt) \\
+13. & \quad\quad\quad verdict $\leftarrow$ parse(response) \hfill\textit{// SUPPORTED/PARTIAL/CONTRADICTED} \\
+14. & \quad\quad\quad judge\_verdicts.append(verdict) \\
+15. & \quad\quad citation\_verdict $\leftarrow$ majority\_vote(judge\_verdicts) \\
+16. & \quad\quad citation\_score $\leftarrow$ verdict\_to\_score(citation\_verdict) \hfill\textit{// 1.0, 0.5, 0.0} \\
+17. & \quad\quad per\_citation\_results.append(\{url, citation\_verdict, citation\_score\}) \\
+18. & \quad aggregate\_score $\leftarrow$ mean(per\_citation\_results.scores) \\
+19. & \quad aggregate\_verdict $\leftarrow$ aggregator\_llm(per\_citation\_results) \\
+20. & \quad update\_edge(edge, aggregate\_verdict, aggregate\_score) \\
+21. & \textbf{return} judged\_edges \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:5688} (\texttt{judge\_all\_edges\_with\_citations\_serial}) $\rightarrow$ \texttt{modules.py:4988}
+
+\section{Algorithm 3: Corruption}
+\label{alg:corruption}
+
+The corruptor introduces controlled errors using stratified sampling for balanced corruption types.
+
+\noindent\textbf{Parameters used in this thesis (GT Synth).} Unless otherwise stated, corruption experiments use \texttt{corruption\_rate=0.3} with a balanced 1/3 split across corruption types (motivation corruption, spurious edges, polarity flips). The corruptor LLM configuration is \texttt{model=gpt-4.1}, \texttt{temperature=0.7}, \texttt{top\_p=1.0}; corruption is seeded for reproducibility (see \texttt{corruption\_metadata.json} in the corresponding \texttt{final\_runs/} output directory).
+
+\begin{table}[H]
+\centering
+\caption{Corruption (\texttt{\_corrupt\_relationships})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, corruption\_rate (default 0.3), seed, corruptor\_llm} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Number of corrupted edges, corruption metadata} \\
+\midrule
+1. & random.seed(seed) \hfill\textit{// Reproducibility} \\
+2. & edges $\leftarrow$ Neo4j.query(``MATCH (s)-[r]->(t)'') \\
+3. & none\_edges $\leftarrow$ \{e $\in$ edges : e.type = ``NONE''\} \\
+4. & causal\_edges $\leftarrow$ \{e $\in$ edges : e.type $\in$ \{``POSITIVE'', ``NEGATIVE''\}\} \\
+5. & n\_corrupt $\leftarrow$ $\lfloor$len(edges) $\times$ corruption\_rate$\rfloor$ \\
+6. & target\_per\_type $\leftarrow$ n\_corrupt $\div$ 3 \hfill\textit{// Balanced: 1/3 each} \\
+7. & spurious\_sample $\leftarrow$ shuffle(none\_edges)[:target\_per\_type] \\
+8. & causal\_sample $\leftarrow$ shuffle(causal\_edges)[:target\_per\_type $\times$ 2] \\
+9. & \textbf{for each} edge $\in$ spurious\_sample $\cup$ causal\_sample: \\
+10. & \quad \textbf{if} edge.type = ``NONE'': corruption\_type $\leftarrow$ ``spurious\_edge'' \\
+11. & \quad \textbf{else}: corruption\_type $\leftarrow$ argmin(assigned[``polarity\_flip''], assigned[``motivation'']) \\
+12. & \quad assigned[corruption\_type] += 1 \\
+13. & \quad \textbf{if} corruption\_type = ``motivation'': \\
+14. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``corruptor'', edge) \\
+15. & \quad\quad edge.spurious\_motivation $\leftarrow$ corruptor\_llm.send(prompt) \\
+16. & \quad \textbf{elif} corruption\_type = ``spurious\_edge'': \\
+17. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``generateSpuriousEdge'', edge) \\
+18. & \quad\quad \{type, expl\} $\leftarrow$ JSON.parse(corruptor\_llm.send(prompt)) \\
+19. & \quad\quad Neo4j: DELETE NONE, CREATE edge.type $\leftarrow$ type, motivation $\leftarrow$ expl \\
+20. & \quad \textbf{elif} corruption\_type = ``polarity\_flip'': \\
+21. & \quad\quad prompt $\leftarrow$ tree.build\_prompt(``generateFlippedPolarity'', edge) \\
+22. & \quad\quad \{expl\} $\leftarrow$ JSON.parse(corruptor\_llm.send(prompt)) \\
+23. & \quad\quad Neo4j: DELETE old, CREATE edge.type $\leftarrow$ flip(type), motivation $\leftarrow$ expl \\
+24. & \quad edge.is\_corrupted $\leftarrow$ True \\
+25. & save\_metadata(``corrupted\_relationships\_\{session\_id\}.json'') \\
+26. & \textbf{return} corrupted\_count \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:1748} (\texttt{\_corrupt\_relationships}), \texttt{:1544} (\texttt{\_corrupt\_relationship}), \texttt{:1582} (\texttt{\_convert\_none\_to\_spurious}), \texttt{:1645} (\texttt{\_flip\_edge\_polarity})
+
+\section{Algorithm 4: Corrector}
+\label{alg:corrector}
+
+The corrector applies LLM-guided fixes to edges flagged by the judge.
+
+\begin{table}[H]
+\centering
+\caption{Corrector (\texttt{correct\_edges\_serial})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_id, corrector\_models[], action\_order, rejudge\_after} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Correction outcomes per edge} \\
+\midrule
+1. & candidates $\leftarrow$ Neo4j.query(``WHERE r.verdict IN [`INCORRECT', `PARTIAL', ...]'') \\
+2. & agent $\leftarrow$ create\_corrector\_agent(corrector\_models[0], prompt\_variant) \\
+3. & available\_vars $\leftarrow$ get\_all\_variables(session\_id) \\
+4. & outcomes $\leftarrow$ [] \\
+5. & \textbf{for each} edge $\in$ candidates: \\
+6. & \quad context $\leftarrow$ \{edge, available\_vars, graph\_structure\} \\
+7. & \quad \textbf{for each} action $\in$ action\_order: \hfill\textit{// revise\_motivation, change\_edge\_type} \\
+8. & \quad\quad result $\leftarrow$ agent.call\_tool(action, edge, context) \\
+9. & \quad\quad \textbf{if} result.success: \\
+10. & \quad\quad\quad outcomes.append(\{edge, action, corrected: True\}); \textbf{break} \\
+11. & \textbf{if} rejudge\_after: \\
+12. & \quad judge\_all\_edges\_with\_citations\_serial(approach=rejudge\_approach) \\
+13. & \textbf{return} outcomes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{modules.py:7050} (\texttt{correct\_edges\_serial})
+
+\section{Algorithm 5: UQ Metrics Computation}
+\label{alg:uq_metrics}
+
+Uncertainty Quantification (UQ) metrics computed from LLM logprobs during generation.
+
+\begin{table}[H]
+\centering
+\caption{UQ Metrics (\texttt{logit\_metrics.py})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} logprobs = \{tokens[], token\_logprobs[], top\_logprobs[]\}} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} perplexity, min\_prob, max\_window\_entropy, cosine\_sim} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Perplexity (compute\_avg\_nll + exp)}} \\
+1. & nll\_capped $\leftarrow$ [$\min$(-logprob$_i$, 20.0) for logprob$_i$ in token\_logprobs] \\
+2. & avg\_nll $\leftarrow$ mean(nll\_capped) \\
+3. & avg\_nll\_capped $\leftarrow$ $\min$(avg\_nll, 10.0) \\
+4. & perplexity $\leftarrow$ $\exp$(avg\_nll\_capped) \\
+\multicolumn{2}{@{}l}{\textit{// Minimum Token Probability (compute\_min\_prob)}} \\
+5. & probs $\leftarrow$ [$\exp$(logprob$_i$) for logprob$_i$ in token\_logprobs] \\
+6. & min\_prob $\leftarrow$ $\min$(probs) \\
+\multicolumn{2}{@{}l}{\textit{// Max Window Entropy (compute\_max\_window\_entropy)}} \\
+7. & entropies $\leftarrow$ [] \\
+8. & \textbf{for each} top\_k\_dict $\in$ top\_logprobs: \\
+9. & \quad p\_vals $\leftarrow$ softmax(top\_k\_dict.values()) \\
+10. & \quad H $\leftarrow$ $-\sum_i$ p$_i$ $\log$(p$_i$) \\
+11. & \quad entropies.append(H) \\
+12. & windowed $\leftarrow$ convolve(entropies, window\_size=5) \\
+13. & max\_window\_entropy $\leftarrow$ $\max$(windowed) \\
+\multicolumn{2}{@{}l}{\textit{// Cosine Similarity (get\_embedding\_local)}} \\
+14. & e$_{\text{narr}}$ $\leftarrow$ SentenceTransformer(motivation, model=``all-mpnet-base-v2'') \\
+15. & e$_{\text{cit}}$ $\leftarrow$ SentenceTransformer(citation\_text) \\
+16. & cosine\_sim $\leftarrow$ $\max_c$ $\frac{\mathbf{e}_{\text{narr}} \cdot \mathbf{e}_c}{\|\mathbf{e}_{\text{narr}}\| \|\mathbf{e}_c\|}$ \\
+17. & \textbf{return} \{perplexity, min\_prob, max\_window\_entropy, cosine\_sim\} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{logit\_metrics.py} -- \texttt{:177} (avg\_nll), \texttt{:251} (min\_prob), \texttt{:259} (max\_entropy), \texttt{:98} (embedding)
+
+\section{Algorithm 6: Hallucination Classification}
+\label{alg:classification}
+
+Ensemble classifiers trained on UQ metrics to predict hallucinations.
+
+\begin{table}[H]
+\centering
+\caption{Hallucination Classification (\texttt{train\_classifiers})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} X = [perplexity, min\_prob, max\_entropy, cosine\_sim], y = hallucination\_labels} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Trained models, metrics (AUC, Precision, Recall, F1)} \\
+\midrule
+1. & X\_scaled $\leftarrow$ StandardScaler.fit\_transform(X) \\
+2. & (X\_train, X\_test, y\_train, y\_test) $\leftarrow$ train\_test\_split(X\_scaled, y, test=0.3) \\
+3. & classifiers $\leftarrow$ \{LogReg, RandomForest(100), GradBoost(100), MLP(32,16)\} \\
+4. & \textbf{for each} (name, clf) $\in$ classifiers: \\
+5. & \quad cv $\leftarrow$ StratifiedKFold(n\_splits=5) \\
+6. & \quad cv\_auc $\leftarrow$ cross\_val\_score(clf, X\_train, y\_train, cv, scoring=``roc\_auc'') \\
+7. & \quad clf.fit(X\_train, y\_train) \\
+8. & \quad y\_pred\_proba $\leftarrow$ clf.predict\_proba(X\_test)[:,1] \\
+9. & \quad metrics[name].auc $\leftarrow$ roc\_auc\_score(y\_test, y\_pred\_proba) \\
+10. & \quad metrics[name].\{precision, recall, f1\} $\leftarrow$ precision\_recall\_fscore(y\_test, y\_pred) \\
+11. & \textbf{return} classifiers, metrics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Implementation:} \texttt{rq2\_ensemble\_classifier.py:32} (\texttt{train\_classifiers})
+
+\section{Algorithm 7: Citation Search (Brave)}
+\label{alg:citation_search_brave}
+
+This procedure retrieves candidate citation URLs for a CLD edge using the Brave Search API, optionally filtered by a trusted-domain whitelist (\cite{bravesearchapi}). It is invoked during citation filling when no usable citations are available from the LLM, and can also be used to obtain candidate sources for citation-based judging.
+
+\vspace{0.25em}
+\noindent\textbf{Trusted Academic Domains (23):} Results from the following domains are prioritised (\cite{bravesearchapi}):
+\begin{itemize}[noitemsep]
+    \item \texttt{pubmed.ncbi.nlm.nih.gov}
+    \item \texttt{arxiv.org}
+    \item \texttt{scholar.google.com}
+    \item \texttt{nature.com}
+    \item \texttt{science.org}
+    \item \texttt{cell.com}
+    \item \texttt{nejm.org}
+    \item \texttt{bmj.com}
+    \item \texttt{plos.org}
+    \item \texttt{frontiersin.org}
+    \item \texttt{springer.com}
+    \item \texttt{wiley.com}
+    \item \texttt{sciencedirect.com}
+    \item \texttt{tandfonline.com}
+    \item \texttt{sage.com}
+    \item \texttt{jstor.org}
+    \item \texttt{cochranelibrary.com}
+    \item \texttt{nih.gov}
+    \item \texttt{who.int}
+    \item \texttt{cdc.gov}
+    \item \texttt{academic.oup.com}
+    \item \texttt{cambridge.org}
+    \item \texttt{elsevier.com}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Citation Search (\texttt{\_search\_with\_brave} + \texttt{SearchEngine.search})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} src, rel, tgt, claim\_txt, api\_key, trusted\_domains[] (optional)} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} citations[] (URLs, up to 5)} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 0: Initialize Brave client (once per run)}} \\
+1. & search\_client $\leftarrow$ SearchEngine(api\_key, trusted\_domains) \\
+2. & session $\leftarrow$ requests.Session() with retries(total=3, backoff=1, status=\{429,500,502,503,504\}) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Build query from edge}} \\
+3. & q $\leftarrow$ ``src rel tgt claim\_txt'' \\
+4. & \textbf{if} words(q) $>$ 50: q $\leftarrow$ first\_50\_words(q) + ``...'' \\
+5. & \textbf{if} len(q) $>$ 400: q $\leftarrow$ q[0:397] + ``...'' \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: Brave Search API call}} \\
+6. & resp $\leftarrow$ GET(\texttt{https://api.search.brave.com/res/v1/web/search}, \\
+   & \quad headers=\{Accept: json, X-Subscription-Token: api\_key\}, \\
+   & \quad params=\{q: q, count: 5, search\_lang: en, extra\_snippets: True\}) \\
+7. & results $\leftarrow$ resp.json().web.results \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 3: Domain filter + URL extraction}} \\
+8. & citations $\leftarrow$ [] \\
+9. & \textbf{for each} result $\in$ results: \\
+10.& \quad url $\leftarrow$ result.url \\
+11.& \quad \textbf{if} trusted\_domains empty \textbf{or} any(domain $\in$ url.lower()): citations.append(url) \\
+12.& \textbf{return} citations \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Implementation:} \texttt{modules.py:2647} (\texttt{fill\_in\_missing\_citations}), \texttt{:2900} (\texttt{\_build\_brave\_search\_client}), \texttt{:2967} (\texttt{\_search\_with\_brave}),\\
+\texttt{search\_engine\_copy.py:47} (\texttt{SearchEngine.search}), \texttt{citation\_whitelist\_copy.py:250} (\texttt{CitationWhitelist.get\_domains})
+
+\section{Algorithm 8: Citation Fetcher}
+\label{alg:citation_fetcher}
+
+The citation fetcher retrieves scientific literature content from URLs using a two-tier architecture: Jina AI Reader as primary with ContentScraper fallback for PDF extraction.
+
+\begin{table}[H]
+\centering
+\caption{Citation Fetcher (\texttt{fetch\_citations\_with\_jina})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} citations[] (URLs), timeout, max\_retries, api\_key (optional)} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} Dict[URL $\rightarrow$ text\_content]} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Jina AI Reader (Primary)}} \\
+1. & max\_workers $\leftarrow$ 5 \textbf{if} api\_key \textbf{else} 2 \hfill\textit{// Rate limit tiers} \\
+2. & citation\_text\_map $\leftarrow$ \{\} \\
+3. & failed\_urls $\leftarrow$ [] \\
+4. & \textbf{parallel for each} url $\in$ citations (ThreadPoolExecutor): \\
+5. & \quad jina\_url $\leftarrow$ ``https://r.jina.ai/'' + url \\
+6. & \quad delay $\leftarrow$ 0.3s \textbf{if} api\_key \textbf{else} 1.0s \hfill\textit{// Respect rate limits} \\
+7. & \quad sleep(delay) \\
+8. & \quad headers $\leftarrow$ \{``Authorization'': ``Bearer '' + api\_key\} \textbf{if} api\_key \\
+9. & \quad \textbf{for} attempt $\in$ [0..max\_retries]: \\
+10. & \quad\quad response $\leftarrow$ GET(jina\_url, headers, timeout) \\
+11. & \quad\quad \textbf{if} response.ok $\land$ len(content) $>$ 200 $\land$ ``[ERROR]'' $\notin$ content[:500]: \\
+12. & \quad\quad\quad citation\_text\_map[url] $\leftarrow$ content; \textbf{break} \\
+13. & \quad\quad \textbf{else}: sleep($2^{\text{attempt}}$) \hfill\textit{// Exponential backoff} \\
+14. & \quad \textbf{if} url $\notin$ citation\_text\_map: failed\_urls.append(url) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: ContentScraper Fallback (PDF-capable)}} \\
+15. & \textbf{if} len(failed\_urls) $>$ 0: \\
+16. & \quad scraper $\leftarrow$ ContentScraper(timeout=15, whitelist=True) \hfill\textit{// PyMuPDF for PDFs} \\
+17. & \quad results $\leftarrow$ scraper.process\_citations(failed\_urls, fetch\_content=True) \\
+18. & \quad \textbf{for each} (url, content) $\in$ results: \\
+19. & \quad\quad \textbf{if} len(content) $>$ 200 $\land$ ``[ERROR]'' $\notin$ content[:100]: \\
+20. & \quad\quad\quad citation\_text\_map[url] $\leftarrow$ content \\
+21. & \textbf{return} citation\_text\_map \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{-0.5em}
+{\footnotesize \textbf{* Thesis configuration note:} In the experiments reported in this thesis, citation fetching was run in \textbf{ContentScraper-only} mode (Jina AI Reader disabled).}
+
+\noindent\textbf{Implementation:} \texttt{modules.py:265} (\texttt{fetch\_citations\_with\_jina}), \texttt{:302} (\texttt{fetch\_single\_citation}),\\ \texttt{:378-410} (ContentScraper fallback)
+
+\section{Deep Research Multi-Agent Components}
+\label{sec:dr_agents_appendix}
+
+Table~\ref{tab:dr_agents} details the complete multi-agent pipeline components used in the Deep Research system.
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Multi-Agent Pipeline}
+\label{tab:dr_agents}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\textwidth}{@{}l l l l X@{}}
+\toprule
+\textbf{Component} & \textbf{Model} & \textbf{Input} & \textbf{Output} & \textbf{Purpose} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Orchestrator}} \\
+\texttt{DeepResearchManager} & Python & Causal claim & FinalVerdict & Coordinate agent execution: iteration loop (max 3), early stopping on direct evidence, time limit (2 min), parallelization via \texttt{asyncio.gather()} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{LLM Agents}} \\
+\texttt{hypothesis\_evaluator} & GPT-5 & Causal claim & SearchPlan & Generate 3--4 targeted search queries, keywords, and potential confounders \\
+\texttt{search\_agent} & GPT-5-mini & Search query & List[SearchResult] & Execute iterative web searches (4--6 calls per query thread, max 5) \\
+\texttt{evidence\_scorer} & GPT-5-mini & Evidence content & EvidenceScore & Score relevance (1--10) and methodological quality (1--10) \\
+\texttt{article\_selector} & GPT-5 & Snippets + scores & ArticleSelection & Select 2--3 articles most likely to contain causal evidence for full-text fetch \\
+\texttt{judgement\_agent} & GPT-5 & Evidence + scores & EvidenceJudgement & Judge whether accumulated evidence supports the claim \\
+\texttt{causal\_evidence\_detector} & GPT-5 & All search results & CausalEvidenceEvaluation & Detect \textit{direct} causal evidence (RCTs, experiments, meta-analyses only) \\
+\texttt{verdict\_agent} & GPT-5 & All data & FinalVerdict & Synthesize final verdict with evidence summary and limitations \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Algorithm 9: Deep Research Multi-Agent Pipeline}
+\label{alg:deep_research}
+
+The Deep Research system validates causal claims through iterative literature search using a 7-agent pipeline with parallel execution.
+
+\begin{table}[H]
+\centering
+\caption{Deep Research Pipeline (\texttt{pydantic\_ai\_deepresearch\_orchestration.py})}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} causal\_claim = ``\{Source\} causes \{Target\}. \{Motivation\}''} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} FinalVerdict (verdict, confidence, direct\_causal\_found, evidence\_urls)} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 1: Search Plan Generation (hypothesis\_evaluator, GPT-5)}} \\
+1. & search\_plan $\leftarrow$ hypothesis\_evaluator.run(causal\_claim) \\
+2. & queries[] $\leftarrow$ [motivation] + search\_plan.queries \hfill\textit{// 3--4 queries} \\
+3. & keywords $\leftarrow$ search\_plan.keywords \\
+4. & confounders $\leftarrow$ search\_plan.potential\_confounders \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 2: Parallel Search Execution (search\_agent, GPT-5-mini)}} \\
+5. & all\_results $\leftarrow$ [] \\
+6. & \textbf{parallel for each} query $\in$ queries (asyncio.gather): \\
+7. & \quad history $\leftarrow$ fresh\_conversation() \hfill\textit{// Prevent token accumulation} \\
+8. & \quad search\_count $\leftarrow$ 0 \\
+9. & \quad \textbf{while} search\_count $<$ MAX\_SEARCHES (5): \\
+10. & \quad\quad results $\leftarrow$ search\_agent.run(query, tool=web\_search) \\
+11. & \quad\quad all\_results.extend(results) \\
+12. & \quad\quad search\_count += 1 \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 3: Parallel Evidence Scoring (evidence\_scorer, GPT-5-mini)}} \\
+13. & \textbf{parallel for each} result $\in$ all\_results: \\
+14. & \quad score $\leftarrow$ evidence\_scorer.run(result.content, causal\_claim) \\
+15. & \quad result.relevance $\leftarrow$ score.relevance \hfill\textit{// 1--10} \\
+16. & \quad result.quality $\leftarrow$ score.quality \hfill\textit{// 1--10: RCT $>$ cohort $>$ case-control} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 4: Smart Article Selection (article\_selector, GPT-5)}} \\
+17. & ranked $\leftarrow$ sort(all\_results, key=relevance $\times$ quality) \\
+18. & selected $\leftarrow$ article\_selector.run(ranked[:10]) \hfill\textit{// Select 2--3 articles} \\
+19. & \textbf{for each} article $\in$ selected: \\
+20. & \quad article.full\_text $\leftarrow$ fetch\_full\_text(article.url, max=50K chars) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 5: Direct Causal Evidence Detection (causal\_evidence\_detector, GPT-5)}} \\
+21. & causal\_eval $\leftarrow$ causal\_evidence\_detector.run(all\_results) \\
+22. & direct\_found $\leftarrow$ causal\_eval.direct\_evidence\_found \hfill\textit{// RCT/experiment/meta-analysis only} \\
+23. & causal\_confidence $\leftarrow$ causal\_eval.confidence \\
+24. & cited\_passage $\leftarrow$ causal\_eval.cited\_passage \hfill\textit{// Verbatim quote} \\
+25. & study\_type $\leftarrow$ causal\_eval.study\_type \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 6: Judgement with Early Stopping}} \\
+26. & high\_quality $\leftarrow$ \{r $\in$ all\_results : r.relevance $\geq$ 8 $\land$ r.quality $\geq$ 7\} \\
+27. & \textbf{if} direct\_found $\land$ $|$high\_quality$|$ $\geq$ 3: \\
+28. & \quad \textbf{early\_stop} \hfill\textit{// Strong evidence found} \\
+29. & judgement $\leftarrow$ judgement\_agent.run(all\_results, scores) \\
+30. & \textbf{if} judgement.verdict = ``supported'' $\land$ judgement.confidence $\geq$ 8: \\
+31. & \quad \textbf{early\_stop} \hfill\textit{// High confidence support} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Phase 7: Final Verdict Synthesis (verdict\_agent, GPT-5)}} \\
+32. & verdict $\leftarrow$ verdict\_agent.run(causal\_claim, all\_results, scores, judgement, causal\_eval) \\
+33. & \textbf{return} FinalVerdict\{ \\
+34. & \quad verdict: \{supported, partially\_supported, unsupported, inconclusive\}, \\
+35. & \quad confidence: 1--10, \\
+36. & \quad direct\_causal\_evidence\_found: direct\_found, \\
+37. & \quad strongest\_evidence: (url, cited\_passage, study\_type), \\
+38. & \quad evidence\_urls: [all supporting URLs] \\
+39. & \} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key Implementation Details:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Search API:} Brave Search with 23 trusted academic domains (PubMed, arXiv, Nature, etc.; \cite{bravesearchapi})
+    \item \textbf{Query enhancement:} All queries appended with ``scientific study research evidence''
+    \item \textbf{Retry strategy:} 3 retries with exponential backoff for transient failures
+    \item \textbf{Timeouts:} 10s connect, 40s read; 900s (15 min) total time limit per claim
+    \item \textbf{Full-text fetching:} BeautifulSoup HTML parsing, max 50K characters
+\end{itemize}
+
+\noindent\textbf{Implementation:} \texttt{pydantic\_ai\_deepresearch\_orchestration.py} -- agents defined at lines 166--248,\\ search execution at :953, evidence scoring at :1006, early stopping at :784--795
+
+
+\section{Algorithm 10: Node Concept Similarity (Similarity-Weighted Node F1)}
+\label{alg:node_concept_similarity}
+
+This metric quantifies conceptual overlap between a generated CLD's node set and a validation CLD's node set. It is implemented as (i) a node mapping phase (LLM- or cosine-driven, depending on mode) and (ii) a similarity-weighted score that assigns \textbf{1.0} to nodes matched in Stage~1 and assigns cosine similarity scores to a \textbf{greedy bipartite matching} over remaining unmatched nodes.
+
+\begin{table}[H]
+\centering
+\caption{Node Concept Similarity (\texttt{compare\_session\_graph\_to\_validation}, similarity-weighted node metrics)}
+\footnotesize
+\begin{tabular}{@{}r l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Input:} session\_nodes $S$, validation\_nodes $V$, node\_match\_mode, cosine\_percentile $p$ (default 85), embedding\_model (default \texttt{text-embedding-3-small})} \\
+\multicolumn{2}{@{}l}{\textbf{Output:} binary node mapping + binary node F1, cosine-only node F1, similarity-weighted (hybrid) node F1} \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 0: Build node texts for embeddings}} \\
+1. & \textbf{for each} node $n \in (S \cup V)$: \\
+2. & \quad text$(n) \leftarrow$ join(\{name($n$), description/definition($n$) if present, units($n$) if present\}, `` \texttt{|} '') \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 1: Compute cosine similarities}} \\
+3. & $E_S \leftarrow$ embed(text($S$)); $E_V \leftarrow$ embed(text($V$)) \\
+4. & $C \leftarrow \mathrm{cosine}(E_S, E_V)$ \hfill\textit{// via normalized dot product} \\
+5. & $\tau \leftarrow \mathrm{percentile}(C.\mathrm{flatten}(), p)$ \\
+6. & candidates $\leftarrow \{(s,v,C[s,v]) : C[s,v] \ge \tau\}$, sorted desc. \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 2: Stage 1 mapping (mode-dependent)}} \\
+7. & \textbf{if} node\_match\_mode = \texttt{cosine}: \\
+8. & \quad node\_mapping $\leftarrow$ greedy\_max\_weight\_matching(candidates) \hfill\textit{// 1:1 matching} \\
+9. & \textbf{elif} node\_match\_mode $\in$ \{\texttt{hybrid}, \texttt{llm}\}: \\
+10. & \quad to\_check $\leftarrow$ (all pairs $S{\times}V$ if \texttt{llm} else candidates) \\
+11. & \quad positives $\leftarrow \{(s,v,C[s,v]) : \texttt{LLM\_equivalent}(s,v)=\texttt{True} \text{ for } (s,v)\in \texttt{to\_check}\}$ \\
+12. & \quad node\_mapping $\leftarrow$ greedy\_max\_weight\_matching(positives) \\
+13. & \textbf{elif} node\_match\_mode = \texttt{llm\_batch}: \\
+14. & \quad \textit{// Single LLM call proposes best match (or NO\_MATCH) with confidence} \\
+15. & \quad \textbf{for each} $s \in S$: (v\_llm, conf) $\leftarrow$ LLM\_best\_match(s, V) \\
+16. & \quad \quad \textbf{if} v\_llm $\neq$ NO\_MATCH and conf $\ge 0.7$: node\_mapping[s] $\leftarrow$ v\_llm \\
+17. & \quad \quad \textbf{else}: v$^* \leftarrow \arg\max_{v \in V} C[s,v]$; \textbf{if} $C[s,v^*] \ge 0.7$ then node\_mapping[s] $\leftarrow$ v$^*$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 3: Binary node metrics (mapping cardinality)}} \\
+18. & $P_{\mathrm{bin}} \leftarrow |$node\_mapping$|/|S|$; $R_{\mathrm{bin}} \leftarrow |$node\_mapping$|/|V|$ \\
+19. & $F1_{\mathrm{bin}} \leftarrow 2PR/(P+R)$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 4: Cosine-only node metrics (max similarity per node)}} \\
+20. & $P_{\mathrm{cos}} \leftarrow \mathrm{mean}_{s\in S}\big[\max_{v\in V} C[s,v]\big]$ \\
+21. & $R_{\mathrm{cos}} \leftarrow \mathrm{mean}_{v\in V}\big[\max_{s\in S} C[s,v]\big]$ \\
+22. & $F1_{\mathrm{cos}} \leftarrow 2PR/(P+R)$ \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{// Step 5: Similarity-weighted (hybrid) node metrics via two-stage bipartite matching}} \\
+23. & matched\_S $\leftarrow$ keys(node\_mapping); matched\_V $\leftarrow$ values(node\_mapping) \\
+24. & $S_u \leftarrow S \setminus$ matched\_S; $V_u \leftarrow V \setminus$ matched\_V \\
+25. & cosine\_mapping $\leftarrow \texttt{greedy\_max\_weight\_matching}(\{(s,v,C[s,v]) : s\in S_u, v\in V_u\})$ \\
+26. & score\_gen$(s) \leftarrow \begin{cases}1.0 & s \in \text{matched\_S}\\ C[s, \text{cosine\_mapping}(s)] & s \in \text{cosine\_mapping}\\ 0.0 & \text{otherwise}\end{cases}$ \\
+27. & score\_val$(v) \leftarrow \begin{cases}1.0 & v \in \text{matched\_V}\\ C[\text{cosine\_rev}(v), v] & v \in \text{range}(\text{cosine\_mapping})\\ 0.0 & \text{otherwise}\end{cases}$ \\
+28. & $P_{\mathrm{hyb}} \leftarrow \mathrm{mean}_{s\in S}[\mathrm{score\_gen}(s)]$; $R_{\mathrm{hyb}} \leftarrow \mathrm{mean}_{v\in V}[\mathrm{score\_val}(v)]$ \\
+29. & $F1_{\mathrm{hyb}} \leftarrow 2PR/(P+R)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Adjusted (seed-excluding) variant:} If the target variable was \textit{seeded} from the validation CLD (e.g., the inferred target), the implementation additionally reports ``adjusted'' node metrics by excluding that variable from both $S$ and $V$ prior to metric computation.
+
+\noindent\textbf{Implementation:} \texttt{modules.py:8242} (\texttt{compare\_session\_graph\_to\_validation}), \texttt{:8098} (\texttt{\_compute\_node\_cosine\_candidates}), \texttt{:8151} (\texttt{\_maximum\_weight\_bipartite\_matching})
+
+

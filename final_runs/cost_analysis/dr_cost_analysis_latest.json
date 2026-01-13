@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-01-12T20:50:03.500056",
+  "pricing": {
+    "gpt4_input_per_m": 2.0,
+    "gpt4_output_per_m": 8.0,
+    "input_ratio": 0.865,
+    "output_ratio": 0.135
+  },
+  "per_cld": {
+    "Depressive": {
+      "costs": {
+        "edges": 84,
+        "total_tokens": 21761176,
+        "input_tokens": 18823417,
+        "output_tokens": 2937759,
+        "api_calls": 3342,
+        "input_cost": 37.646834,
+        "output_cost": 23.502072,
+        "total_cost": 61.148906,
+        "cost_per_edge": 0.7279631666666666,
+        "tokens_per_edge": 259061.61904761905
+      },
+      "edge_space": {
+        "variables": 14,
+        "total_possible_edges": 182,
+        "analyzed": 84,
+        "true_negatives": 98
+      }
+    },
+    "Social": {
+      "costs": {
+        "edges": 17,
+        "total_tokens": 4352963,
+        "input_tokens": 3765312,
+        "output_tokens": 587651,
+        "api_calls": 677,
+        "input_cost": 7.530624,
+        "output_cost": 4.701208,
+        "total_cost": 12.231832,
+        "cost_per_edge": 0.7195195294117648,
+        "tokens_per_edge": 256056.64705882352
+      },
+      "edge_space": {
+        "variables": 10,
+        "total_possible_edges": 90,
+        "analyzed": 17,
+        "true_negatives": 73
+      }
+    },
+    "Older": {
+      "costs": {
+        "edges": 184,
+        "total_tokens": 44250408,
+        "input_tokens": 38276602,
+        "output_tokens": 5973806,
+        "api_calls": 0,
+        "input_cost": 76.553204,
+        "output_cost": 47.790448,
+        "total_cost": 124.34365199999999,
+        "cost_per_edge": 0.6757807173913043,
+        "tokens_per_edge": 240491.34782608695
+      },
+      "edge_space": {
+        "variables": 34,
+        "total_possible_edges": 1122,
+        "analyzed": 184,
+        "true_negatives": 938
+      }
+    }
+  },
+  "aggregate": {
+    "costs": {
+      "edges": 285,
+      "total_tokens": 70364547,
+      "input_tokens": 60865333,
+      "output_tokens": 9499214,
+      "api_calls": 4019,
+      "input_cost": 121.730666,
+      "output_cost": 75.993712,
+      "total_cost": 197.724378,
+      "cost_per_edge": 0.693769747368421,
+      "tokens_per_edge": 246893.14736842105
+    },
+    "edge_space": {
+      "total_possible": 1394,
+      "analyzed": 285,
+      "true_negatives": 1109,
+      "coverage_pct": 20.444763271162124
+    },
+    "tn_analysis_cost": 769.3906498315789
+  }
+}

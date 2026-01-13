@@ -1,0 +1,865 @@
+[
+  {
+    "source": "Proactive attitude",
+    "target": "24/7-care mentality",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A proactive attitude encourages individuals or organizations to anticipate needs and address issues before they become urgent, which can foster a 24/7-care mentality where continuous attention and preventive action are prioritized.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater capacity, such as storage or processing ability, typically increases the accessibility of information by allowing more data to be stored, managed, and retrieved efficiently.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater financial resources can increase accessibility of information by enabling individuals or organizations to afford devices, internet access, subscriptions, and other resources necessary to access information.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"An increase in personnel, such as staff responsible for managing and disseminating information, can improve the accessibility of information by ensuring more resources are available for organizing, updating, and delivering information to those who need it.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "24/7-care mentality",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Organizational structure can influence the development of a 24/7-care mentality, as hierarchical or inflexible structures may foster expectations of continuous availability and constant care, shaping workplace culture and employee behavior accordingly.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A well-designed organizational structure facilitates the flow of information by clearly defining communication channels and hierarchies, which increases the accessibility of information throughout the organization.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Increased diagnostic resources, such as diagnostic tools and skilled personnel, enhance access to accurate medical information, improving the overall accessibility of health-related information to both healthcare providers and patients.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Greater availability of diagnostic resources can reduce the need for acute care and emergency department (ED) visits by allowing earlier identification and management of health issues in outpatient settings, thereby preventing escalation to acute emergencies.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Cognitive disorder",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised for greater accuracy while retaining the POSITIVE edge type:\n\nRevised Motivation:\nCognitive disorders can increase the likelihood of acute care demand and ED visits, primarily through indirect pathways. Individuals with cognitive disorders may have difficulty managing medications, recognizing symptoms, or adhering to treatment plans, which can result in the worsening of medical conditions and increase the risk of acute health events requiring emergency care. Thus, while cognitive disorders do not always directly cause ED visits, they elevate the risk through impaired self-management and increased vulnerability to health crises."
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Higher therapy compliance typically reduces the need for acute care, including emergency department visits, by effectively managing chronic conditions and preventing escalation of illness.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Mental disorder",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Mental disorders can exacerbate symptoms or lead to crises that require urgent intervention, increasing the likelihood of acute care demand and emergency department visits.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Acute event",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Greater compliance with therapy reduces the likelihood of an acute event by ensuring that the treatment regimen is followed, which improves disease management and decreases the risk of sudden complications.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Increasing diagnostic resources generally enhances a system's capacity to identify, manage, and respond to health needs by enabling more efficient detection and intervention\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Acute event",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is appropriate, as there is no direct causal relationship between Capacity and Acute event. However, the motivation was lacking. I have revised the motivation to:\n\n\"There is no direct causal relationship between capacity and the occurrence of an acute event. Capacity refers to the ability to respond or handle situations, while acute events are typically triggered by external or independent factors, not by the system's capacity itself.\""
+  },
+  {
+    "source": "Capacity",
+    "target": "Availability of alternatives for ED",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation(new_motivation=\"There is no direct causal relationship between the overall capacity of a healthcare system and the availability of alternatives to emergency departments (ED). The availability of alternatives depends on healthcare policy and infrastructure decisions, not solely on capacity levels.\")"
+  },
+  {
+    "source": "Frailty",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Increased frailty is associated with diminished physiological and functional capacity, as deteriorations in physical health, strength, and resilience directly reduce an individual's capacity to perform daily living activities.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A proactive attitude can enhance a person's capacity by encouraging initiative, problem-solving, and active engagement in tasks, thereby increasing their ability to achieve goals or handle responsibilities.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy lifestyle",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Adopting a healthy lifestyle, including regular exercise, balanced nutrition, and adequate sleep, can improve a person's physical and mental capacity, leading to better daily performance and resilience\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Higher health literacy increases an individual's capacity to understand, manage, and make informed decisions regarding their health, enabling them to better utilize health resources and improve health outcomes.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A well-designed organizational structure can enhance a company's capacity by clarifying roles, improving communication, and increasing operational efficiency, which collectively enable the organization to achieve greater output or performance.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A 24/7-care mentality can reduce capacity because it often leads to increased demand for continuous attention and resources, potentially stretching available personnel and infrastructure beyond sustainable limits. This constant pressure can exhaust resources and limit the overall capacity of the system.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"An increase in personnel typically increases a system's capacity, as having more staff or workers allows for more tasks to be completed and a greater workload to be managed, thereby expanding the overall capacity.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Higher therapy compliance is likely to reduce care avoidance behavior, as individuals engaged and compliant with therapy are less likely to avoid care. Better adherence to therapy often reflects greater willingness to engage with healthcare services.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A social network's willingness to provide support or resources can enhance an individual's or group's capacity by enabling access to assistance, information, and collaboration, thus increasing the ability to achieve goals.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased financial resources enable organizations or individuals to invest in infrastructure, training, technology, and personnel, thereby enhancing their overall capacity to perform tasks or deliver services.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A 24/7-care mentality, characterized by constant vigilance and the sense that individuals should always provide care, can increase stress and burnout. This overwhelming expectation can lead to care avoidance behavior as individuals attempt to manage their emotional exhaustion by distancing themselves from caregiving activities.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Healthcare avoidance is a type of care avoidance behavior; thus, engaging in healthcare avoidance directly leads to, or is equivalent to, displaying care avoidance behavior. The causal relationship is essentially definitional in this instance.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Chronic addiction",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A 24/7-care mentality, which involves providing continuous support and monitoring, can foster dependency and reduce opportunities for autonomous coping, thereby potentially contributing to the development or maintenance of chronic addiction in some individuals.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"A higher willingness of a person's social network to support care is likely to reduce care avoidance behavior, as social encouragement and support can make individuals feel more comfortable and less hesitant about seeking care.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Chronic addiction",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Healthcare avoidance can increase the risk or severity of chronic addiction by preventing individuals from accessing early interventions, treatment, or support services that could address substance use disorders before they become chronic.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy lifestyle",
+    "target": "Chronic addiction",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation for the edge was revised to better reflect the complexity of the relationship. The new explanation acknowledges that while a healthy lifestyle generally reduces the risk of chronic addiction, the relationship can be mediated or moderated by multiple other factors, addressing the judge's concern about oversimplification. The edge type remains NEGATIVE, which is appropriate."
+  },
+  {
+    "source": "Incorrect use of medication",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Incorrect use of medication can increase the risk of cognitive disorders due to adverse drug reactions, toxicity, or interference with normal brain function\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Feelings of fear and shame",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Chronic feelings of fear and shame can contribute to the development or worsening of cognitive disorders by increasing stress levels, which in turn may impair cognitive functions such as memory, attention, and executive functioning.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Acute event",
+    "target": "Feelings of fear and shame",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Experiencing an acute event can trigger strong emotional responses, including feelings of fear and shame, as individuals react to and process the event.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Feelings of fear and shame",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Greater health literacy can reduce feelings of fear and shame by increasing understanding, confidence, and empowerment when navigating health information and healthcare systems. People with higher health literacy are better equipped to comprehend medical information and communicate effectively with healthcare providers, which reduces uncertainty and negative emotions such as fear and shame.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Care avoidance behavior",
+    "target": "Feelings of fear and shame",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Care avoidance behavior can reinforce or intensify existing feelings of fear and shame, as people may avoid care due to these emotions and, in turn, experience greater isolation and self-judgment, creating a feedback loop that strengthens such feelings.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Feelings of fear and shame",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NONE) is correct, but the motivation was missing. I have revised the motivation to explain that there is no established direct causal relationship between the size of one's social network and feelings of fear and shame, as these emotions are influenced by more complex factors than just social network size."
+  },
+  {
+    "source": "Multi-morbidity",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Multi-morbidity, or the presence of multiple chronic conditions in an individual, increases physiological stress, reduces resilience, and can lead to greater vulnerability to stressors\u2014core features of frailty. Therefore, multi-morbidity is a significant risk factor and causal contributor to the development of frailty.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Frailty",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew motivation:\nA larger social network can reduce frailty because it increases access to social support, resources, and opportunities for engagement, all of which help maintain physical and mental health. Conversely, a smaller social network can increase frailty due to isolation and reduced support. The relationship is negative but is mediated by the availability of support and engagement provided by the network size."
+  },
+  {
+    "source": "Informal care",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Receiving informal care, such as help from family and friends, can reduce frailty in individuals by providing assistance with daily activities, ensuring proper nutrition, and encouraging physical activity, thereby helping to maintain or improve functional ability.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Increased therapy compliance is likely to reduce frailty, as adherence to prescribed treatments, exercises, or interventions can improve physical function and overall health, thereby decreasing the risk or severity of frailty.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Functioning of healthcare professionals",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Improved functioning of healthcare professionals can reduce frailty in patients by providing timely interventions, better monitoring, and effective management of health conditions that contribute to frailty.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher physical or functional capacity reduces the risk of frailty, as individuals with increased capacity are better able to maintain independence and resist the effects of aging or illness that contribute to frailty.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater capacity (such as increased staff, resources, or infrastructure) supports healthcare professionals in performing their duties more effectively, improving their overall functioning.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A proactive attitude can reduce the risk of frailty by promoting healthier behaviors, greater engagement in physical and social activities, and better management of physical and mental health, all of which are factors known to mitigate frailty.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A proactive attitude in healthcare professionals leads to improved functioning by encouraging initiative, problem-solving, and continuous improvement in patient care, which enhances overall workplace performance and outcomes.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Access to adequate diagnostic resources enables healthcare professionals to make more accurate and timely decisions, improving their ability to deliver effective care and enhancing their overall functioning.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A 24/7-care mentality can negatively impact the functioning of healthcare professionals by leading to overwork, increased stress, burnout, and fatigue, which ultimately reduce their effectiveness and well-being.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A well-designed organizational structure provides clear roles, responsibilities, and lines of communication, which can enhance the efficiency and effectiveness of healthcare professionals. Proper structure can improve workflow, reduce errors, and facilitate collaboration, leading to better functioning among healthcare staff.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater knowledge among healthcare professionals improves their ability to diagnose, treat, and manage patient care effectively, leading to better functioning in their roles.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"An adequate number of personnel positively affects the functioning of healthcare professionals by distributing workload, reducing burnout, and allowing for better collaboration and patient care\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Need for autonomy",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A higher need for autonomy among healthcare professionals, when supported, enhances their psychological well-being, motivation, and job satisfaction, which in turn leads to improved functioning and better workplace performance.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Availability of alternatives for ED",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"When there are more alternatives to emergency departments (ED), such as urgent care centers or telemedicine, healthcare professionals can distribute patient loads more evenly, reduce overcrowding, and improve their ability to provide effective care, thus positively affecting their functioning.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A proactive attitude can lead individuals to actively seek out health information, ask questions, and engage in educational opportunities, thereby increasing their health literacy.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Need for autonomy",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A greater need for autonomy can motivate individuals to seek out information and develop skills necessary for making independent health decisions, thereby increasing their health literacy.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"An individual's capacity (such as physical, cognitive, or financial capability) can positively influence their ability to maintain a healthy lifestyle, as greater capacity enables better access to healthy choices, resources, and behaviors.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to properly justify the \"NONE\" edge type:\n\n\"There is no established direct causal relationship between the size of an individual's social network and their health literacy. While social connections can provide access to information, mere network size does not directly cause changes in health literacy; other factors such as education or quality of information-sharing are more directly linked.\""
+  },
+  {
+    "source": "Size of social network",
+    "target": "Healthy lifestyle",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to remove the incorrect claim of a \"direct\" causal relationship and to better explain that the impact of a larger social network on a healthy lifestyle is mediated by factors such as emotional support, shared information, and social norms. The edge type remains POSITIVE, but the reasoning is now logically consistent with common causal mechanisms in social science."
+  },
+  {
+    "source": "Financial resources",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater financial resources provide individuals with improved access to healthy food, quality healthcare, safe exercise environments, and wellness resources, all of which support a healthier lifestyle.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater accessibility of information enables individuals to learn about healthy behaviors, nutrition, and exercise, making it easier for them to adopt and maintain a healthy lifestyle.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased knowledge, particularly about health, nutrition, and the benefits of exercise, empowers individuals to make informed decisions and adopt behaviors that lead to a healthier lifestyle.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher healthcare system capacity reduces healthcare avoidance because more resources, providers, and infrastructure make it easier for patients to access care, decreasing wait times and other barriers that might otherwise cause avoidance.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher levels of knowledge about health and healthcare systems generally reduce healthcare avoidance, as increased understanding can decrease fear, stigma, and misconceptions that lead to avoidance behavior.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Individuals with a proactive attitude are generally more likely to seek out healthcare and address potential health concerns early, reducing healthcare avoidance. Therefore, a proactive attitude tends to decrease the likelihood of healthcare avoidance.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Lower health literacy is associated with greater healthcare avoidance, as individuals with limited understanding of health information may feel less confident in navigating healthcare systems or may not recognize the importance of seeking care, leading to avoidance behaviors.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Multi-morbidity",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Individuals with multi-morbidity, or multiple co-existing chronic health conditions, may experience increased healthcare burden, complexity of care, and fear of negative experiences, which can lead to greater avoidance of healthcare services.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Care avoidance behavior",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Engaging in care avoidance behavior directly leads to healthcare avoidance, as individuals intentionally postpone or avoid seeking medical care even when needed.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Mental disorder",
+    "target": "Incorrect use of medication",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Individuals with mental disorders may have cognitive or behavioral symptoms that increase the likelihood of misunderstanding, forgetting, or misusing prescribed medications, leading to incorrect use.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Chronic addiction",
+    "target": "Incorrect use of medication",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Chronic addiction can lead to the incorrect use of medication, either through misuse (such as taking higher doses than prescribed) or abusing substances, which increases the likelihood of taking medications inappropriately.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Acute event",
+    "target": "Incorrect use of medication",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation text has been revised to provide a clearer explanation for the absence of a causal relationship between \"Acute event\" and \"Incorrect use of medication.\" The edge type (NONE) was correct, but the original motivation (\"I don't know\") was insufficient, so I updated it with a proper rationale."
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Informal care",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater accessibility of information can enable individuals providing informal care to find resources, guidance, and support, which can improve their ability and willingness to provide such care.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Knowledge",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A proactive attitude encourages individuals to actively seek out new information, engage in learning opportunities, and take initiative, which can lead to increased knowledge acquisition.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Knowledge",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Health literacy involves understanding and using health information, which directly increases an individual's health-related knowledge. Higher health literacy typically leads to greater knowledge about health topics, disease prevention, and healthy behaviors.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Language and cultural barriers",
+    "type": "NEGATIVE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NEGATIVE', new_type='NONE', \nnew_motivation=\"There is no direct causal relationship from health literacy to language and cultural barriers. Instead, language and cultural barriers can act as obstacles that reduce health literacy, but increasing health literacy does not inherently cause a reduction in those barriers. The directionality is reversed in the current edge.\")",
+    "new_type": "NONE"
+  },
+  {
+    "source": "Education level",
+    "target": "Language and cultural barriers",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Motivation Revised:\nHigher education levels are associated with reduced language and cultural barriers, as education can enhance language proficiency and cultural awareness. However, this relationship may be influenced by mediating factors such as personal motivation, social environment, and exposure to diverse cultures, so the causal pathway is not necessarily direct."
+  },
+  {
+    "source": "Incorrect use of medication",
+    "target": "Mental disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Incorrect use of medication can contribute to the development or worsening of mental disorders by causing side effects, drug interactions, or exacerbating underlying psychiatric conditions.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Feelings of fear and shame",
+    "target": "Mental disorder",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew Motivation:\nPersistent or intense feelings of fear and shame can increase vulnerability to certain mental disorders, such as anxiety and depression, by contributing to chronic stress and maladaptive coping mechanisms. However, the relationship is not strictly direct; other mediating and moderating factors such as genetics, environment, social support, and previous psychological history also play crucial roles in the development of mental disorders."
+  },
+  {
+    "source": "Health literacy",
+    "target": "Multi-morbidity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Higher health literacy enables individuals to better understand medical information, adhere to treatment plans, and engage in preventive health behaviors, which can reduce the risk of developing multiple chronic health conditions (multi-morbidity).\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NONE) is correct, but the motivation was lacking. I have revised the motivation to explain that there is no direct causal relationship between accessibility of information and need for autonomy, as the latter is a psychological trait not directly affected by information accessibility."
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is correct, since there is no established causal relationship between a proactive attitude and the need for autonomy. The motivation was lacking and has now been revised to: \"There is no established causal relationship between having a proactive attitude and an individual's need for autonomy; while both traits may be related to personality, being proactive does not directly cause or eliminate the need for autonomy.\""
+  },
+  {
+    "source": "Care avoidance behavior",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation was missing. I revised it to clearly explain why there is no direct causal relationship between care avoidance behavior and need for autonomy. The edge type (NONE) was already correct."
+  },
+  {
+    "source": "Health literacy",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to explain that there is no direct causal relationship between health literacy and need for autonomy, as these are distinct constructs. The edge type (NONE) is appropriate."
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Organizational structure",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A 24/7-care mentality in healthcare organizations often leads to specific changes in organizational structure, such as the need for around-the-clock staffing, scheduling flexibility, and additional support services, to ensure continuity of care. This mentality drives the organization to adopt structural features that accommodate continuous patient care.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Organizational structure",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased financial resources provide organizations with the means to restructure, expand departments, adopt new technologies, or adjust hierarchies in ways not possible under financial constraints. Thus, financial resources can directly influence and shape organizational structure.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Organizational structure",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"An organization's capacity, such as available resources and capabilities, can influence its organizational structure by determining how roles, responsibilities, and hierarchies are arranged to effectively utilize its assets.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Personnel",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Organizational structure influences personnel by defining roles, responsibilities, communication channels, and hierarchies, which in turn impact hiring, promotion, work allocation, and the overall functioning of personnel within an organization.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Consistent compliance with therapy can encourage the development of a proactive attitude, as individuals become more engaged and responsible in managing their health and well-being\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Higher health literacy can promote a more proactive attitude towards health, as individuals who understand health information are more likely to actively seek preventive measures, make informed decisions, and engage in healthy behaviors.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to clearly explain why there is no established causal relationship between diagnostic resources and proactive attitude. The edge type (NONE) was appropriate; only the explanation needed correction."
+  },
+  {
+    "source": "Size of social network",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is appropriate here; however, the motivation was missing. I have revised the motivation to:\n\n\"There is no established direct causal relationship between the size of one's social network and the development of a proactive attitude. While both may be correlated due to underlying personality traits, increasing the size of a social network does not inherently cause a change in someone's proactive outlook.\""
+  },
+  {
+    "source": "Financial resources",
+    "target": "Size of social network",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Financial resources can increase the size of an individual's social network by enabling greater participation in social activities, access to networking opportunities, and the ability to engage in events that facilitate meeting new people.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Mental disorder",
+    "target": "Size of social network",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Mental disorders can negatively impact the size of an individual's social network by causing social withdrawal, decreased social functioning, or increased stigma, leading to fewer social connections.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Therapy compliance",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to address the identified flaw. The corrected explanation now acknowledges that the relationship between social network size and therapy compliance is mediated by factors such as support, encouragement, accountability, and reminders. The edge type (POSITIVE) remains unchanged since the causal relationship is valid."
+  },
+  {
+    "source": "Financial barriers",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Financial barriers can reduce therapy compliance because individuals who cannot afford the costs associated with therapy are less likely to consistently attend sessions, leading to decreased adherence and follow-through with therapeutic recommendations.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased availability of diagnostic resources can identify patient needs and barriers early, enabling tailored interventions and support that enhance adherence to recommended therapy.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Need for autonomy",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Individuals with a higher need for autonomy are more likely to comply with therapy when it supports their sense of choice and self-direction, as autonomy-supportive approaches increase engagement and adherence to treatment plans.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Equipment",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to clarify that there is simply insufficient information to establish causality between 'Equipment' and 'Therapy compliance,' rather than asserting there is definitively no causal relationship. The edge type (NONE) remains appropriate, reflecting the lack of evidence for a causal connection."
+  },
+  {
+    "source": "Capacity",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A patient's capacity, such as cognitive ability or functional capacity, can directly influence their ability to understand, remember, and follow therapy recommendations, thereby increasing therapy compliance.\")",
+    "new_type": "POSITIVE"
+  }
+]

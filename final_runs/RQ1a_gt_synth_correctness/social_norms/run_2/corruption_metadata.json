@@ -1,0 +1,34 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption",
+    "timestamp": "2025-11-16T01:20:19.626683",
+    "script_name": "run_rq1_phase1_single_corrupt.py",
+    "script_version": "1.0"
+  },
+  "input_parameters": {
+    "base_session_id": "278d89e0-7980-4cd5-baf3-d5ed4ee27a13",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx",
+    "random_seed": 2,
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2"
+  },
+  "corruption_configuration": {
+    "corruption_rate": 0.3,
+    "corruption_seed": 2,
+    "corruptor_provider": "openai",
+    "corruptor_model": "gpt-4.1",
+    "corruptor_temperature": 0.7
+  },
+  "generator_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.7
+  },
+  "output": {
+    "corrupted_session_id": "9dfbcdb4-7963-419c-a110-188734c7be66",
+    "result_excel": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/social_norms/run_2/corrupted_9dfbcdb4.xlsx"
+  },
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

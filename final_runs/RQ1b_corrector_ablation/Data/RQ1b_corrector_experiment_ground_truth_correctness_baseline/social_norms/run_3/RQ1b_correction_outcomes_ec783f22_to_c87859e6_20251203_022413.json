@@ -1,0 +1,106 @@
+[
+  {
+    "source": "Healthy BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A healthy BMI serves as a general guideline for determining an individual's ideal BMI, suggesting that the concept of an ideal BMI is informed by what is considered medically healthy.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NONE', new_motivation=\"There is no causal relationship between 'Healthy BMI' and 'Norm BMI' because both represent overlapping concepts referring to body mass index values within a healthy or normal range. Labeling one as causing the other is tautological and not supported by causal reasoning.\")",
+    "new_type": "NONE"
+  },
+  {
+    "source": "Individual Ideal BMI",
+    "target": "Norm BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"An individual's ideal BMI does not determine or influence the population-level norm BMI, but rather, societal or medical 'norm' BMI often influences individuals' perceptions of their own ideal. Thus, the causal direction is reversed.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Norm BMI, or the average BMI considered normal in a society, can influence an individual's perception of what their ideal BMI should be through social norms and societal expectations surrounding body image. People frequently internalize societal standards when determining personal goals, including those related to weight and health.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Group-level BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The correct action was to revise the motivation. The edge type (NONE) was appropriate, but the previous motivation provided no justification. I supplied a new motivation: \"There is no direct causal relationship between group-level BMI and an individual's ideal BMI. An individual's ideal BMI is determined by personal health factors and clinical guidelines, not by the average BMI of the group to which they belong.\""
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Norm BMI (normal body mass index) is by definition a key component of what is considered a healthy BMI, as healthy BMI ranges are typically defined by established normal BMI standards.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Higher levels of physical activity increase energy expenditure, which helps maintain or achieve a healthy BMI by balancing caloric intake and output.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Basal Metabolic Rate",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised for clarity and causal correctness. The revised explanation now properly describes that physical activity level increases basal metabolic rate primarily through indirect mechanisms like increased muscle mass and metabolic adaptations, rather than a direct, independent effect. The edge type (POSITIVE) remains unchanged as it is appropriate."
+  },
+  {
+    "source": "Healthy BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Individuals with a healthy BMI contribute to a lower average BMI at the group level; thus, a higher proportion of people with healthy BMI in a group leads to a lower overall group-level BMI.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type (NONE) was correct, but the motivation was poor. I have revised the motivation to:\n\n\"There is currently no evidence to suggest that the average or normal BMI within a population directly determines or causes shifts in the socio-cultural ideal BMI, as cultural ideals can be influenced by media, historical trends, and social constructs independently of actual population averages.\""
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Socio-cultural ideal BMI can influence group-level BMI by shaping collective attitudes and behaviors toward body weight, diet, and physical activity. When lower BMI is idealized, populations may adopt practices that lower average group BMI, while societal preferences for higher BMI may result in higher group averages.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "error",
+    "corrected": false,
+    "note": "not enough values to unpack (expected 4, got 3)"
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "experiment_info": {
+    "experiment_type": "RQ1a_ground_truth_correctness",
+    "research_question": "Can judges distinguish TP from FP edges in clean CLDs?",
+    "timestamp": "2025-11-18T10:03:28.988082",
+    "script_name": "run_rq1a_ground_truth_judge.py",
+    "script_version": "1.0_ci_metrics_enabled"
+  },
+  "input_parameters": {
+    "base_session_id": "e84145ef-cc8a-4cd7-8adc-3e8f94904010",
+    "base_session_seed": 10,
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1",
+    "corruption_applied": false
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.0,
+    "seed": 42,
+    "judge_approach": "citation",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": true
+  },
+  "ci_metrics_configuration": {
+    "enabled": true,
+    "embedding_enable": true,
+    "ci_compute_embeddings": true,
+    "ci_parallel": true,
+    "ci_max_workers": 10,
+    "purpose": "Enable RQ2 analysis (CI metrics vs TP/FP)"
+  },
+  "prompt_variants": {
+    "cot": {
+      "yaml_file": "prompts_citation_cot.yaml",
+      "description": "Citation Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_citation_mechanistic.yaml",
+      "description": "Citation Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Citation Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251118_051100.xlsx",
+      "judged_session_id": "4fd98d73-f801-476f-85be-84119938cec6",
+      "timestamp": "20251118_051100"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Citation Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_citation/emergency_department/run_1/judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251118_072834.xlsx",
+      "judged_session_id": "517b9b0a-036d-4c81-ab56-585db00641f0",
+      "timestamp": "20251118_072834"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

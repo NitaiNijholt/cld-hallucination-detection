@@ -1,0 +1,157 @@
+{
+  "timestamp": "2025-12-17T16:56:14.121763",
+  "source": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness",
+  "prompt_filter": "mechanistic",
+  "clds": {
+    "depressive": {
+      "name": "Depressive Symptoms",
+      "statistics": {
+        "n": 3,
+        "values": [
+          0.5333333333333333,
+          0.5471698113207547,
+          0.509433962264151
+        ],
+        "mean": 0.5299790356394131,
+        "std": 0.019090234696573873,
+        "ci_lower": 0.48255626370407695,
+        "ci_upper": 0.5774018075747491
+      },
+      "run_details": [
+        {
+          "run": 1,
+          "prompt": "mechanistic",
+          "file": "judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_144306_20251116_144414.xlsx",
+          "tp": 28,
+          "fp": 43,
+          "fn": 6,
+          "precision": 0.39436619718309857,
+          "recall": 0.8235294117647058,
+          "f1": 0.5333333333333333
+        },
+        {
+          "run": 2,
+          "prompt": "mechanistic",
+          "file": "judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_145027_20251116_145141.xlsx",
+          "tp": 29,
+          "fp": 43,
+          "fn": 5,
+          "precision": 0.4027777777777778,
+          "recall": 0.8529411764705882,
+          "f1": 0.5471698113207547
+        },
+        {
+          "run": 3,
+          "prompt": "mechanistic",
+          "file": "judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_145556_20251116_145704.xlsx",
+          "tp": 27,
+          "fp": 45,
+          "fn": 7,
+          "precision": 0.375,
+          "recall": 0.7941176470588235,
+          "f1": 0.509433962264151
+        }
+      ]
+    },
+    "social_norms": {
+      "name": "Social Norms",
+      "statistics": {
+        "n": 3,
+        "values": [
+          0.43478260869565216,
+          0.4999999999999999,
+          0.41666666666666663
+        ],
+        "mean": 0.4504830917874396,
+        "std": 0.04382909978653149,
+        "ci_lower": 0.34160557213699766,
+        "ci_upper": 0.5593606114378815
+      },
+      "run_details": [
+        {
+          "run": 1,
+          "prompt": "mechanistic",
+          "file": "judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_145956_20251116_150030.xlsx",
+          "tp": 5,
+          "fp": 7,
+          "fn": 6,
+          "precision": 0.4166666666666667,
+          "recall": 0.45454545454545453,
+          "f1": 0.43478260869565216
+        },
+        {
+          "run": 2,
+          "prompt": "mechanistic",
+          "file": "judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_150319_20251116_150406.xlsx",
+          "tp": 6,
+          "fp": 7,
+          "fn": 5,
+          "precision": 0.46153846153846156,
+          "recall": 0.5454545454545454,
+          "f1": 0.4999999999999999
+        },
+        {
+          "run": 3,
+          "prompt": "mechanistic",
+          "file": "judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_150656_20251116_150735.xlsx",
+          "tp": 5,
+          "fp": 8,
+          "fn": 6,
+          "precision": 0.38461538461538464,
+          "recall": 0.45454545454545453,
+          "f1": 0.41666666666666663
+        }
+      ]
+    },
+    "emergency_dept": {
+      "name": "Emergency Department",
+      "statistics": {
+        "n": 3,
+        "values": [
+          0.12121212121212122,
+          0.12244897959183673,
+          0.1485148514851485
+        ],
+        "mean": 0.13072531742970214,
+        "std": 0.015418595788698865,
+        "ci_lower": 0.09242340216923511,
+        "ci_upper": 0.16902723269016917
+      },
+      "run_details": [
+        {
+          "run": 1,
+          "prompt": "mechanistic",
+          "file": "judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_152212_20251116_152757.xlsx",
+          "tp": 12,
+          "fp": 124,
+          "fn": 50,
+          "precision": 0.08823529411764706,
+          "recall": 0.1935483870967742,
+          "f1": 0.12121212121212122
+        },
+        {
+          "run": 2,
+          "prompt": "mechanistic",
+          "file": "judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_154340_20251116_154930.xlsx",
+          "tp": 12,
+          "fp": 122,
+          "fn": 50,
+          "precision": 0.08955223880597014,
+          "recall": 0.1935483870967742,
+          "f1": 0.12244897959183673
+        },
+        {
+          "run": 3,
+          "prompt": "mechanistic",
+          "file": "judged_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251116_160514_20251116_161111.xlsx",
+          "tp": 15,
+          "fp": 125,
+          "fn": 47,
+          "precision": 0.10714285714285714,
+          "recall": 0.24193548387096775,
+          "f1": 0.1485148514851485
+        }
+      ]
+    }
+  }
+}

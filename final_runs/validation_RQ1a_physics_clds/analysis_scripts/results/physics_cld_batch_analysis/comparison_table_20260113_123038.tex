@@ -1,0 +1,24 @@
+% Table: Correctness vs Citation Approval Comparison (Enhanced)
+\begin{table}[htbp]
+\centering
+\begin{threeparttable}
+\caption{Comparison of Correctness vs Citation-Based Judging on Physics CLDs}
+\label{tab:physics-comparison-enhanced}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{CLD} & \textbf{Correctness} & \textbf{Citation (All)} & \textbf{Citations Retrieved} & \textbf{Citation (Retr.)} & \textbf{Gap} \\
+\midrule
+Thermostat & 100.0\% & 50.0\% & 75.0\% (6/8) & 66.7\% & 33.3\% \\
+Predator--Prey & 100.0\% & 40.0\% & 60.0\% (6/10) & 66.7\% & 33.3\% \\
+RC Circuit & 100.0\% & 14.3\% & 28.6\% (2/7) & 50.0\% & 50.0\% \\
+Water Tank & 100.0\% & 50.0\% & 50.0\% (3/6) & 100.0\% & 0.0\% \\
+\midrule
+\textbf{Total} & 100.0\% & 38.7\% & 54.8\% (17/31) & 70.6\% & 29.4\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Note.} For the Correctness Judge, \emph{approval} = edges with verdict \texttt{CORRECT} (score 1.0). For the Citation Judge, \emph{approval} = edges with verdict \texttt{FULLY\_SUPPORTED} or \texttt{PARTIALLY\_SUPPORTED} (score $\ge 0.5$); \texttt{NO\_CITATION} = retrieval failure. ``Citation (All)'' counts \texttt{NO\_CITATION} as not approved; ``Citations Retrieved'' = edges with $\ge$1 successfully retrieved citation; ``Citation (Retr.)'' = approval conditioned on retrieval. Gap = Correctness $-$ Citation (Retr.).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

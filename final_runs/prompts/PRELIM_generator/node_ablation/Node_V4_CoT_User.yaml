@@ -1,0 +1,57 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# category: PRELIM_generator.node_ablation
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/unused_prompts/prompts_Node_V4_CoT_User.yaml
+# copied_on: 2026-01-10
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        Identify a variable that causally influences the target variable.
+        Respond with JSON: {"Variable":"name", "Definition":"definition", "Units":"units"}
+      usr_prompt: |
+        Target Variable: {{ target.title() }} (measured in {{ target_units }})
+        Definition: "{{ target_definition.lower() }}"
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        Let me think through this systematically:
+        
+        Step 1: Understand what {{ target.lower() }} means
+        - Consider the definition carefully
+        - Identify the key aspects that can vary
+        
+        Step 2: Consider what directly causes changes in {{ target.lower() }}
+        - Think about mechanisms within the {{ temporal.lower() }} timeframe
+        - Consider the {{ spatial.lower() }} spatial scale
+        - Stay relevant to the context: {{ context | join(', ') }}
+        
+        Step 3: Select the most direct causal variable
+        - Ensure it's measurable
+        - Verify the causal link is direct, not mediated
+        - Confirm it fits the specified scales
+        
+        Now, name a variable (2-3 words) with a direct causal effect on {{ target.lower() }}.
+        Provide its definition and units of measurement.
+      usr_prompt_extension: " Cannot overlap with: "
+    version: v4_cot_user_zhou2022

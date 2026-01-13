@@ -1,0 +1,182 @@
+\begin{tikzpicture}[
+    % === NODE STYLES ===
+    gen_color/.style={fill=green!15, draw=green!60!black, line width=0.7pt},
+    judge_color/.style={fill=blue!15, draw=blue!60!black, line width=0.7pt},
+    correct_color/.style={fill=orange!20, draw=orange!70!black, line width=0.7pt},
+    dr_color/.style={fill=violet!15, draw=violet!70!black, line width=0.7pt},
+    io_style/.style={fill=gray!10, draw=gray!60, line width=0.7pt, rounded corners=3pt},
+    corrupt_style/.style={fill=gray!15, draw=gray!60!black, dashed, line width=0.7pt, rounded corners=3pt},
+    decision/.style={diamond, aspect=2.2, minimum width=1.4cm, minimum height=0.6cm, text width=1.5cm, align=center, font=\scriptsize},
+    process/.style={rectangle, rounded corners=3pt, minimum width=2.8cm, minimum height=0.7cm, align=center, font=\scriptsize},
+    io/.style={rectangle, rounded corners=3pt, minimum width=2.6cm, minimum height=0.6cm, align=center, font=\scriptsize},
+    arrow/.style={-{Stealth[length=2.2mm, width=1.6mm]}, line width=0.5pt, draw=gray!70},
+    label_style/.style={font=\scriptsize, text=gray!60},
+    phase_label/.style={font=\small\bfseries, align=center},
+    data_label/.style={font=\scriptsize, text=gray!50, align=center},
+]
+
+% Column positions - calculated for equal 0.8cm gaps between box edges
+% Phase 2 is wider (6.36cm) due to split branches at ±1.5, others are 4.2cm
+\def\colGen{0}
+\def\colJudge{6.1}
+\def\colCorrect{12.2}
+\def\colDR{17.2}
+
+% ==========================================
+% PHASE 1: GENERATION (Green) - Column 1
+% ==========================================
+
+\node[io, io_style] (input) at (\colGen, 0) {Context Parameters\\{\tiny target, temporal, spatial}};
+\node[process, gen_color] (node_gen) at (\colGen, -1.2) {\texttt{generate\_variables}\\{\tiny GPT-4.1}};
+\node[process, gen_color] (edge_gen) at (\colGen, -2.4) {\texttt{discover\_relationships}\\{\tiny GPT-4.1, $N^2$ pairs}};
+\node[process, gen_color] (uq_metrics) at (\colGen, -3.6) {\texttt{compute\_uq\_metrics}\\{\tiny PPL, $P_{min}$, $H_{win}$, cosine sim}};
+\node[io, io_style] (gen_cld) at (\colGen, -4.8) {Generated CLD\\{\tiny nodes, edges, citations}};
+
+% ==========================================
+% PHASE 1.1: CORRUPTION (Gray/Dashed) - Below Generation Phase
+% ==========================================
+\node[process, corrupt_style, minimum width=2.4cm] (corruptor) at (\colGen, -6.6) {\texttt{corruptor}\\{\tiny GT Synth}};
+
+% ==========================================
+% PHASE 2: JUDGING (Blue) - Column 2
+% ==========================================
+
+\node[process, judge_color] (judge) at (\colJudge, 0) {\texttt{judge\_all\_edges}\\{\tiny GPT-4.1}};
+\node[decision, judge_color] (judge_type) at (\colJudge, -1.3) {Approach?};
+\node[process, judge_color] (judge_corr) at (\colJudge-1.5, -2.6) {\texttt{judgeCorrectness}\\{\tiny reasoning quality}};
+\node[process, judge_color] (judge_cit) at (\colJudge+1.5, -2.6) {\texttt{judgeCitation}\\{\tiny fetch \& verify}};
+\node[process, judge_color] (aggregate) at (\colJudge, -3.8) {Aggregate Verdicts\\{\tiny majority vote}};
+\node[io, io_style] (judged_cld) at (\colJudge, -5.0) {Judged CLD\\{\tiny verdict, score per edge}};
+
+% ==========================================
+% PHASE 3: CORRECTION (Orange) - Column 3
+% ==========================================
+
+\node[process, correct_color] (filter) at (\colCorrect, 0) {Filter Candidates\\{\tiny INCORRECT, PARTIAL}};
+\node[process, correct_color] (corrector) at (\colCorrect, -1.2) {\texttt{corrector\_agent}\\{\tiny GPT-4.1 + tools}};
+\node[process, correct_color] (rejudge) at (\colCorrect, -2.4) {Re-judge Corrected Edges\\{\tiny same judge pipeline}};
+\node[io, io_style] (corrected_cld) at (\colCorrect, -5.0) {Corrected CLD\\{\tiny updated edges, logs}};
+
+% ==========================================
+% PHASE 4: DEEP RESEARCH (Purple) - Column 4
+% ==========================================
+
+\node[process, dr_color] (dr_sample) at (\colDR, 0) {Sample Edges\\{\tiny stratified by TP/FP/FN}};
+\node[process, dr_color] (dr_search) at (\colDR, -1.2) {\texttt{deep\_research}\\{\tiny GPT-5 + web search}};
+\node[process, dr_color] (dr_evidence) at (\colDR, -2.4) {Evidence Detection\\{\tiny direct causal support}};
+\node[process, dr_color] (dr_synthesize) at (\colDR, -3.6) {Synthesize Verdict\\{\tiny confidence, sources}};
+\node[io, io_style] (dr_output) at (\colDR, -5.0) {Validated Edges\\{\tiny evidence, URLs, verdict}};
+
+% ==========================================
+% ARROWS - Generation Phase
+% ==========================================
+\draw[arrow] (input) -- (node_gen);
+\draw[arrow] (node_gen) -- (edge_gen);
+\draw[arrow] (edge_gen) -- (uq_metrics);
+\draw[arrow] (uq_metrics) -- (gen_cld);
+
+% ==========================================
+% ARROWS - Transition Gen → Judge
+% ==========================================
+% GT Lit path (no corruption): Generated CLD → judge (clean L-shape)
+\draw[arrow] (gen_cld.east) -- ++(0.6, 0) -- ++(0, 4.3) -- (\colJudge-1.5, -0.5) -- (\colJudge-1.5, 0) -- (judge.west);
+
+% Optional GT Synth path: Generated CLD → Corruptor → judge (dashed)
+\draw[arrow, dashed] (gen_cld.south) -- (corruptor.north);
+\draw[arrow, dashed] (corruptor.east) -- ++(0.6, 0) |- (judge.west);
+
+% ==========================================
+% ARROWS - Judging Phase
+% ==========================================
+\draw[arrow] (judge) -- (judge_type);
+\draw[arrow] (judge_type.west) -| (judge_corr.north);
+\node[label_style] at (\colJudge-1.0, -1.7) {Corr.};
+\draw[arrow] (judge_type.east) -| (judge_cit.north);
+\node[label_style] at (\colJudge+1.0, -1.7) {Cit.};
+\draw[arrow] (judge_corr.south) |- (judged_cld.west);
+\draw[arrow] (judge_cit.south) |- (aggregate.east);
+\draw[arrow] (aggregate) -- (judged_cld);
+
+% ==========================================
+% ARROWS - Transition Judge → Correct
+% ==========================================
+% Draw this transition *after* `correct_box` exists, so we can anchor the arrowhead
+% exactly on the Phase 3 box border (see below).
+
+% ==========================================
+% ARROWS - Correction Phase
+% ==========================================
+\draw[arrow] (filter) -- (corrector);
+\draw[arrow] (corrector) -- (rejudge);
+
+% Re-judge loops back to judge (dashed: stair-step pattern, ends horizontal)
+\draw[arrow, dashed]
+    (rejudge.west) -- ++(-0.3, 0)
+    -- ++(0, 1.0)
+    -- ++(-1.2, 0)
+    |- (judge.east);
+
+% Re-judge also outputs to corrected CLD
+\draw[arrow] (rejudge.south) -- (corrected_cld.north);
+
+% ==========================================
+% ARROWS - Deep Research Phase
+% ==========================================
+\draw[arrow] (dr_sample) -- (dr_search);
+\draw[arrow] (dr_search) -- (dr_evidence);
+\draw[arrow] (dr_evidence) -- (dr_synthesize);
+\draw[arrow] (dr_synthesize) -- (dr_output);
+
+% ==========================================
+% PHASE LABELS (Background boxes) - Fixed width for equal spacing
+% ==========================================
+\def\phaseBoxWidth{4.2cm}  % Uniform width for all phase boxes
+
+\begin{scope}[on background layer]
+    \node[draw=green!60!black, fill=green!5, rounded corners=5pt,
+          fit=(input)(gen_cld),
+          minimum width=\phaseBoxWidth,
+          inner sep=8pt] (gen_box) {};
+    \node[phase_label, text=green!60!black] at (\colGen, 0.9) {\textbf{Phase 1: Generation}};
+
+    % Phase 1.1 box (optional corruption step) - positioned below Generation
+    \node[draw=gray!60!black, fill=gray!5, rounded corners=5pt, dashed,
+          fit=(corruptor),
+          inner sep=10pt] (corrupt_box) {};
+    \node[phase_label, text=gray!60!black, font=\scriptsize\bfseries] at (corrupt_box.south) [yshift=-8pt] {P.~1.1 (GT Synth only)};
+
+    \node[draw=blue!60!black, fill=blue!5, rounded corners=5pt,
+          fit=(judge)(judge_type)(judge_corr)(judge_cit)(aggregate)(judged_cld),
+          minimum width=\phaseBoxWidth,
+          inner sep=8pt] (judge_box) {};
+    \node[phase_label, text=blue!60!black] at (\colJudge, 0.9) {\textbf{Phase 2: Judging}};
+
+    \node[draw=orange!70!black, fill=orange!5, rounded corners=5pt,
+          fit=(filter)(corrector)(rejudge)(corrected_cld),
+          minimum width=\phaseBoxWidth,
+          inner sep=8pt] (correct_box) {};
+    \node[phase_label, text=orange!70!black] at (\colCorrect, 0.9) {\textbf{Phase 3: Correction}};
+
+    \node[draw=violet!70!black, fill=violet!5, rounded corners=5pt,
+          fit=(dr_sample)(dr_search)(dr_evidence)(dr_synthesize)(dr_output),
+          minimum width=\phaseBoxWidth,
+          inner sep=8pt] (dr_box) {};
+    \node[phase_label, text=violet!70!black] at (\colDR, 0.9) {\textbf{Phase 4: Deep Research}};
+\end{scope}
+
+% ==========================================
+% ARROWS - Transition Judge → Correct (simple L-shape: right, up, right)
+% ==========================================
+\draw[arrow]
+    (judged_cld.east) -- ++(1.0, 0)
+    |- (filter.west);
+
+% ==========================================
+% ARROWS - Transition Correction → Deep Research
+% ==========================================
+% Primary path: from Filter Candidates to DR Sample Edges (flagged edges for validation)
+\draw[arrow, draw=violet!70]
+    (filter.east) -- (dr_sample.west);
+
+\end{tikzpicture}
+

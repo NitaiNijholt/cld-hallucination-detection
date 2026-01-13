@@ -1,0 +1,69 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption_detection_citation",
+    "timestamp": "2025-12-04T02:49:53.484064",
+    "script_name": "run_rq1_judge_citations_all_3_prompts.py",
+    "script_version": "2.0_auto_discovery"
+  },
+  "input_parameters": {
+    "base_session_id": "47d2431f-6937-4470-983a-72561e083424",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Depressive_symptoms_in_response_to_a_stressor_in_healthy_adults.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1"
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "seed": 42,
+    "use_structured_outputs": false,
+    "judge_approach": "per_citation_aggregate",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_citation_baseline.yaml",
+      "description": "Citation Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_citation_cot.yaml",
+      "description": "Citation Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_citation_mechanistic.yaml",
+      "description": "Citation Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Citation Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_baseline_20251204_020334.xlsx",
+      "judged_session_id": "5992f496-7fcf-4473-907c-f66e35f2f6a2",
+      "timestamp": "20251204_020334"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Citation Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_cot_20251204_021820.xlsx",
+      "judged_session_id": "b7f59979-5ea6-4099-b998-b39b7424be5c",
+      "timestamp": "20251204_021820"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Citation Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/depressive/run_1/judged_citation_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251204_023359.xlsx",
+      "judged_session_id": "af7f1814-0bb9-445f-be86-efa38351ea96",
+      "timestamp": "20251204_023359"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

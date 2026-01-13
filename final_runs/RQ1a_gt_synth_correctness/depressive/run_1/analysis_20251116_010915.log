@@ -1,0 +1,141 @@
+/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/analyze_prompt_variants_corrupted.py:623: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+  ax1.set_xticklabels(prompts, rotation=15, ha='right')
+================================================================================
+RQ1: PROMPT VARIANTS ANALYSIS - CORRUPTED CLD
+================================================================================
+Analyzing 3 prompt variant(s):
+  - BASELINE: judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_010220_20251116_010309.xlsx
+  - COT: judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_010552_20251116_010713.xlsx
+  - MECHANISTIC: judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_010609_20251116_010708.xlsx
+
+================================================================================
+JUDGE PERFORMANCE ANALYSIS
+================================================================================
+Analyzing judge ability to detect synthetic corruptions...
+Comparing judge verdicts (CORRECT/INCORRECT) against ground truth (Is Corrupted)
+
+
+BASELINE
+  File: judged_Depressive_symptoms_in_response_to_a_stressor_baseline_20251116_010220_20251116_010309.xlsx
+  Dataset: 60 corrupted + 150 clean = 210 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 50
+    TN (Correctly accepted clean):    133
+    FP (Incorrectly flagged clean):   17
+    FN (Missed corrupted):            10
+  Metrics:
+    Precision: 0.7463 (of flagged edges, % actually corrupted)
+    Recall:    0.8333 (of corrupted edges, % detected)
+    F1 Score:  0.7874 (harmonic mean)
+    Accuracy:  0.8714 (overall % correct)
+
+COT
+  File: judged_Depressive_symptoms_in_response_to_a_stressor_cot_20251116_010552_20251116_010713.xlsx
+  Dataset: 60 corrupted + 150 clean = 210 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 46
+    TN (Correctly accepted clean):    127
+    FP (Incorrectly flagged clean):   23
+    FN (Missed corrupted):            14
+  Metrics:
+    Precision: 0.6667 (of flagged edges, % actually corrupted)
+    Recall:    0.7667 (of corrupted edges, % detected)
+    F1 Score:  0.7132 (harmonic mean)
+    Accuracy:  0.8238 (overall % correct)
+
+MECHANISTIC
+  File: judged_Depressive_symptoms_in_response_to_a_stressor_mechanistic_20251116_010609_20251116_010708.xlsx
+  Dataset: 60 corrupted + 150 clean = 210 edges
+  Confusion Matrix:
+    TP (Correctly flagged corrupted): 56
+    TN (Correctly accepted clean):    86
+    FP (Incorrectly flagged clean):   64
+    FN (Missed corrupted):            4
+  Metrics:
+    Precision: 0.4667 (of flagged edges, % actually corrupted)
+    Recall:    0.9333 (of corrupted edges, % detected)
+    F1 Score:  0.6222 (harmonic mean)
+    Accuracy:  0.6762 (overall % correct)
+
+================================================================================
+CORRUPTION-SCORE CORRELATION ANALYSIS
+================================================================================
+Analyzing correlation between Is Corrupted (binary) and Aggregate Score (continuous)
+Point-biserial correlation measures judge's ability to distinguish corrupted vs clean edges
+
+
+BASELINE
+  Point-biserial correlation (r_pb): -0.5908
+  P-value: 0.000000
+  Significance: *** (highly significant)
+  Corrupted edges (n=60): mean score = 0.4000 ± 0.3542
+  Clean edges (n=149): mean score = 0.8993 ± 0.2905
+  Mean difference: -0.4993
+  Interpretation: Moderate - Judge scores moderately discriminate corruptions
+
+COT
+  Point-biserial correlation (r_pb): -0.4918
+  P-value: 0.000000
+  Significance: *** (highly significant)
+  Corrupted edges (n=60): mean score = 0.4500 ± 0.3762
+  Clean edges (n=149): mean score = 0.8691 ± 0.3205
+  Mean difference: -0.4191
+  Interpretation: Weak - Judge scores weakly discriminate corruptions
+
+MECHANISTIC
+  Point-biserial correlation (r_pb): -0.3756
+  P-value: 0.000000
+  Significance: *** (highly significant)
+  Corrupted edges (n=60): mean score = 0.4583 ± 0.2309
+  Clean edges (n=149): mean score = 0.7349 ± 0.3367
+  Mean difference: -0.2766
+  Interpretation: Weak - Judge scores weakly discriminate corruptions
+
+================================================================================
+PROMPT COMPARISON TABLE
+================================================================================
+     Prompt  Precision   Recall  F1 Score  Accuracy
+   BASELINE   0.746269 0.833333  0.787402  0.871429
+        COT   0.666667 0.766667  0.713178  0.823810
+MECHANISTIC   0.466667 0.933333  0.622222  0.676190
+
+================================================================================
+INTER-PROMPT AGREEMENT
+================================================================================
+
+BASELINE vs COT:
+  Agreement Rate: 0.6952 (146/210)
+
+BASELINE vs MECHANISTIC:
+  Agreement Rate: 0.6571 (138/210)
+
+COT vs MECHANISTIC:
+  Agreement Rate: 0.5476 (115/210)
+
+Full 3-way agreement:
+  Agreement Rate: 0.4905 (103/210)
+
+================================================================================
+PROMPT PERFORMANCE RANKING
+================================================================================
+
+Ranked by F1 Score (Judge Accuracy):
+  1. BASELINE: F1=0.7874, Precision=0.7463, Recall=0.8333
+  2. COT: F1=0.7132, Precision=0.6667, Recall=0.7667
+  3. MECHANISTIC: F1=0.6222, Precision=0.4667, Recall=0.9333
+
+🏆 Best performing prompt: BASELINE
+   F1 Score: 0.7874
+
+✓ Results saved to: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/depressive/run_1/analysis/prompt_variants_analysis.xlsx
+
+Generating visualization...
+✓ Plot saved to: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/depressive/run_1/analysis/prompt_variants_comparison.png
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+Results directory: /home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_correctness/depressive/run_1/analysis
+  - prompt_variants_analysis.xlsx
+  - prompt_variants_comparison.png
+

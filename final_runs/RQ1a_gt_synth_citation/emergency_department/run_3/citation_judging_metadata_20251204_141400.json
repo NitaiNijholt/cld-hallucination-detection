@@ -1,0 +1,69 @@
+{
+  "experiment_info": {
+    "experiment_type": "corruption_detection_citation",
+    "timestamp": "2025-12-04T14:14:00.115490",
+    "script_name": "run_rq1_judge_citations_all_3_prompts.py",
+    "script_version": "2.0_auto_discovery"
+  },
+  "input_parameters": {
+    "base_session_id": "81dbcd6a-47ed-4b21-baff-1097c0828998",
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/older_persons_emergency_department_visits_and_interactionstitled_spreadsheet.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3"
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "seed": 42,
+    "use_structured_outputs": false,
+    "judge_approach": "per_citation_aggregate",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_citation_baseline.yaml",
+      "description": "Citation Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_citation_cot.yaml",
+      "description": "Citation Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_citation_mechanistic.yaml",
+      "description": "Citation Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Citation Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_baseline_20251204_103601.xlsx",
+      "judged_session_id": "5a6a1fdb-cfa9-443e-bcbf-9e21e27ffde7",
+      "timestamp": "20251204_103601"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Citation Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_cot_20251204_115108.xlsx",
+      "judged_session_id": "106b2553-04c8-418c-bd40-68a2ff6fdcff",
+      "timestamp": "20251204_115108"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Citation Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_corruption_detection_citation_gpt5mini/emergency_department/run_3/judged_citation_older_persons_emergency_department_visits_and_interactionstitled_spreadsheet_mechanistic_20251204_130026.xlsx",
+      "judged_session_id": "b975120c-f2d7-4710-a384-6805f680cd49",
+      "timestamp": "20251204_130026"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

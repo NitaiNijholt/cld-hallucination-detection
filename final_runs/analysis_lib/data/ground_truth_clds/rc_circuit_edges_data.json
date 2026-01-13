@@ -1,0 +1,18 @@
+[
+  {"source": "Supply Voltage", "target": "Voltage Difference", "type": "POSITIVE", "motivation": "The voltage difference is defined as Supply Voltage minus Capacitor Voltage: ΔV = Vs - Vc. An increase in supply voltage directly causes an increase in the voltage difference across the resistor, assuming capacitor voltage is constant."},
+  {"source": "Capacitor Voltage", "target": "Voltage Difference", "type": "NEGATIVE", "motivation": "Since Voltage Difference = Supply Voltage - Capacitor Voltage, an increase in capacitor voltage directly causes a decrease in the voltage difference. This is Kirchhoff's Voltage Law applied to the RC circuit."},
+  {"source": "Voltage Difference", "target": "Current", "type": "POSITIVE", "motivation": "According to Ohm's Law (V = IR), the current through a resistor is directly proportional to the voltage across it: I = ΔV/R. An increase in voltage difference causes an increase in current."},
+  {"source": "Resistance", "target": "Current", "type": "NEGATIVE", "motivation": "Ohm's Law states I = V/R. Current is inversely proportional to resistance. An increase in resistance causes a decrease in current for a given voltage difference."},
+  {"source": "Current", "target": "Charging Rate", "type": "POSITIVE", "motivation": "By definition, current is the rate of charge flow: I = dQ/dt. The charging rate of the capacitor equals the current flowing into it. An increase in current directly causes an increase in charging rate."},
+  {"source": "Charging Rate", "target": "Capacitor Charge", "type": "POSITIVE", "motivation": "This is a stock-flow relationship. Charge accumulates on the capacitor at the charging rate: Q(t) = ∫I dt. An increase in charging rate causes an increase in stored charge over time."},
+  {"source": "Capacitor Charge", "target": "Capacitor Voltage", "type": "POSITIVE", "motivation": "The fundamental capacitor equation relates charge to voltage: Q = CV, or V = Q/C. An increase in stored charge directly causes an increase in capacitor voltage (for constant capacitance)."}
+]
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+# PROMPT ARCHIVE COPY (thesis deliverable)
+# category: PRELIM_generator.node_ablation
+# copied_from: data_science/parameter_tuning_experiments/alternative_prompts/unused_prompts/prompts_Node_V0_Minimal.yaml
+# copied_on: 2026-01-10
+
+prompts:
+  - prompt_id: generateNodes
+    variables:
+      - name: target
+        type: string
+        description: The target variable for the Model.
+      - name: target_units
+        type: string
+        description: Units by which the Target is measured.
+      - name: target_definition
+        type: string
+        description: The user provided definition of the selected target variable.
+      - name: temporal
+        type: string
+        description: The temporal scale of the causality study.
+      - name: spatial
+        type: string
+        description: The spatial scale of the causality study.
+      - name: context
+        type: list
+        description: List of key contextual factors for the Model
+    prompts:
+      sys_prompt: >
+        Identify a variable that causally influences the target variable.
+        Respond with JSON: {"Variable":"name", "Definition":"definition", "Units":"units"}
+      usr_prompt: |
+        Target: {{ target.title() }} ({{ target_units }})
+        Temporal Scale: {{ temporal.title() }}
+        Spatial Scale: {{ spatial.title() }}
+        Context: {{ context | join(', ') }}
+        
+        Provide a variable that causes {{ target.lower() }}.
+      usr_prompt_extension: " The variable cannot overlap with: "
+    version: v0_minimal_baseline

@@ -1,0 +1,949 @@
+[
+  {
+    "source": "Proactive attitude",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew motivation:\nThe lack of clear definitions for 'Proactive attitude' and 'Accessibility of information' makes it difficult to evaluate any potential causal link. While a plausible mechanism could exist\u2014for example, proactive individuals might more actively seek out and thus improve their accessibility to information\u2014no concrete causal relationship can be established without clearer variable definitions and supporting evidence. Therefore, we consider the relationship to be non-causal in this context due to insufficient specification and lack of substantiating data."
+  },
+  {
+    "source": "Capacity",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Increased capacity, such as more infrastructure, technology, or resources, generally improves the accessibility of information by enabling better storage, processing, and dissemination of data to users.\")\n\nReasoning:\n- Plausibility: There is a clear causal mechanism\u2014having greater capacity (whether in terms of technology, human resources, or infrastructure) allows for more effective information management, which makes information more accessible.\n- Temporality: Increased capacity must come before improved accessibility.\n- Strength: This is a strong and substantial causal relationship, as limitations in capacity often directly constrain accessibility.\n- Coherence: The new explanation is logically sound and directly addresses how capacity affects informational accessibility.\n\nTherefore, the edge should be POSITIVE with the provided motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 POSITIVE)\n\nNew Motivation:\nOrganizational structure shapes the flow of communication and determines decision-making hierarchies within a company. A well-designed, transparent structure can facilitate information dissemination and make it easier for employees to access relevant information, while a rigid or siloed structure can impede accessibility.\n\nReasoning:\n- Plausibility: There is a clear mechanism\u2014organizational structure either facilitates or hinders information flow.\n- Temporality: Structure is set first and its form directly affects accessibility.\n- Strength: The effect is substantial in real-world organizations.\n- Coherence: The new reasoning provides a logical, direct connection where the prior motivation did not.\n- Edge type was NONE, but a strong positive causal relationship exists, so the change is appropriate.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater knowledge can improve the accessibility of information by enabling individuals or organizations to develop better systems, tools, or content organization, making information easier to find and use.\")\n\nStep-by-step reasoning:\n- Plausibility: There is a direct mechanism\u2014more knowledge leads to improved ways to organize, present, or disseminate information, thus increasing accessibility.\n- Temporality: Knowledge must exist before improvements in accessibility can be made.\n- Strength: The influence is substantial in many fields (e.g., knowledge management, education, technology).\n- Coherence: The original motivation \"I don't know\" provided no reasoning or mechanism, but a causal relationship does exist.\n- Correct action: Changed edge type from NONE to POSITIVE with clear causal explanation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\nStep 1: The current motivation is simply \"I don't know,\" which does not provide any reasoning. However, there is a plausible pathway: the number or quality of personnel can influence how accessible information is within an organization or system (for example, more librarians mean better help finding library resources; more staff in a helpdesk improves answers for users).\n\nStep 2: The causal direction is plausible (Personnel \u2192 Accessibility of information), because changes in staffing typically precede and enable changes in how information is made available.\n\nStep 3: The relationship is substantial; the presence of qualified personnel is often a key determinant in whether information is easily accessed.\n\nStep 4: The reasoning is logically consistent, and the judge flagged the edge as INCORRECT due to a lack of explanation, not because the relationship is unjustified.\n\nStep 5: Action\nI changed the edge type from NONE to POSITIVE with the following motivation:\n\"An increase in personnel typically improves the accessibility of information because more people are available to collect, organize, and distribute information, making it easier for others to access needed resources.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Accessibility of information",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 POSITIVE)\n\nNew Motivation:\nGreater financial resources allow individuals or organizations to afford better internet access, digital devices, subscriptions, and other tools that make information more accessible. A lack of financial resources can limit one's ability to access various sources of information, especially those behind paywalls or requiring specialized equipment.\n\nReasoning:\n- There is a clear positive causal relationship between financial resources and accessibility of information, as resources are necessary for accessing and utilizing many forms of information, especially digital or specialized ones.\n- The prior motivation lacked any explanatory mechanism.\n- The polarity of the edge (NONE) was incorrect given strong plausibility and supporting evidence; it should be POSITIVE.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 NEGATIVE)\n\nNew Motivation:\nHigher therapy compliance typically reduces the risk of acute health deteriorations that could result in emergency department visits. When patients adhere to their therapy regimen, their underlying conditions are better managed, decreasing the likelihood of sudden exacerbations that require acute care.\n\nExplanation:\n- Step 1 (Plausibility): There is a well-established mechanism\u2014better therapy compliance prevents condition worsening, reducing acute care needs.\n- Step 2 (Temporality): Therapy compliance comes before potential ED visits.\n- Step 3 (Strength): Effect is substantial; non-compliance often leads to increased acute episodes.\n- Step 4 (Coherence): The reasoning is consistent with clinical literature and logic.\n- Step 5: Correction executed\u2014relationship is NEGATIVE (not NONE), as strong evidence supports causality.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Informal care",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Increased availability of informal care can reduce the need for acute care services such as emergency department (ED) visits by addressing health issues earlier at home or preventing deterioration of conditions that would require emergency treatment.\")\n\nStep-by-step reasoning:\n- Plausibility: There is a plausible mechanism; informal care can address health issues before they necessitate acute/emergent intervention.\n- Temporality: Informal care occurs before the decision to seek ED visits.\n- Strength: Substantial evidence suggests that support systems reduce unnecessary ED utilization.\n- Coherence: The relationship is negative\u2014more informal care tends to lower acute care demand.\n- Motivation was absent (\"I don't know\"). Therefore, the edge type needed correction (from NONE to NEGATIVE) with a proper mechanistic explanation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Care avoidance behavior",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"Care avoidance behavior, such as not seeking timely health care, can cause health issues to worsen or become unmanageable, increasing the likelihood of acute care needs that eventually lead to an emergency department (ED) visit.\")\n\nReasoning:\n\n- Step 1 (Plausibility): There is a clear mechanism\u2014avoiding medical care allows conditions to escalate, leading to acute episodes requiring ED visits.\n- Step 2 (Temporality): Care avoidance precedes rising acute care demand and subsequent ED visits.\n- Step 3 (Strength): This is a common, non-trivial cause of emergency visits in healthcare.\n- Step 4 (Coherence): The explanation is internally consistent and supported by empirical evidence.\n- Step 5: Changed edge from NONE to POSITIVE with proper causal reasoning.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Acute event",
+    "target": "Acute care demand leading to an ED visit",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Step-by-step reasoning:\n\n- The current edge type is NONE, with the uninformative motivation: \"I don't know.\"\n- The judge feedback notes there's no reasoning given, but in fact, causality between \"Acute event\" and \"Acute care demand leading to an ED visit\" is well established in clinical and healthcare research.\n- Applying Bradford Hill:\n    - Plausibility: There is a clear mechanism\u2014an acute event (e.g., sudden injury or illness) leads to symptoms that require immediate medical attention, resulting in care demand and ED visits.\n    - Temporality: The acute event occurs before care demand for an ED visit.\n    - Strength: This is a strong, direct relationship, highly coherent with medical practice.\n    - Coherence: The explanation fits common knowledge in healthcare and does not contradict itself.\n\nAction taken:\n\u2192 Changed the edge type from NONE to POSITIVE, providing a strong, clear causal motivation:\n\"An acute event, such as a sudden illness or injury, directly increases the likelihood of an individual seeking acute care services, often resulting in a visit to the emergency department (ED). The acute event prompts symptoms or concerns that lead to immediate healthcare demand.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Acute event",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action Taken:\nChanged edge type from NONE to NEGATIVE.\n\nNew Motivation:\n\"Higher therapy compliance generally reduces the risk of acute events because patients are more likely to follow medical advice, adhere to medication schedules, and participate in preventive care, thereby lowering the chances of sudden medical complications.\"\n\nReasoning:\n- Bradford Hill Criteria: Plausibility exists (mechanism through adherence), temporality is correct (compliance affects future events), strength is substantial (strong clinical consensus), and coherence is logical.\n- The previous NONE type was incorrect; there is a well-established negative causal relationship between therapy compliance and acute events.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Acute event",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis Step-by-Step:\n\nSTEP 1: Analyze Judge Feedback + Assess Plausibility\n- Judge pointed out lack of any reasoning for labeling this as NONE; explanation was \"I don't know\".\n- There is a plausible mechanism: access to diagnostic resources (e.g., imaging, lab tests) can reduce the incidence or severity of acute medical events by enabling earlier detection or intervention.\n\nSTEP 2: Evaluate Temporality\n- Diagnostic resources are present before/at the time of health assessment, so they can precede acute events (directionality correct for a potential negative causal edge).\n\nSTEP 3: Assess Strength\n- There is strong evidence that improved diagnostic capacity often reduces the likelihood or severity of acute events in many healthcare settings.\n\nSTEP 4: Evaluate Coherence\n- Original edge lacked any explanation.\n- Changing the edge from NONE to NEGATIVE, with mechanism explained, addresses the judge's criticism.\n\nSTEP 5: Execute Tool Call\n- I changed the edge type from NONE to NEGATIVE with the following motivation:\n  \"The availability of diagnostic resources can reduce the likelihood or severity of acute medical events by enabling earlier detection and intervention, thereby preventing or minimizing acute health crises.\"\n\nCorrection:\nChanged edge type to NEGATIVE with clear causal motivation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthy lifestyle",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A healthy lifestyle, including regular exercise, balanced nutrition, and adequate sleep, enhances an individual's physical and mental capacity by improving energy levels, cognitive function, and physical endurance.\")\n\nReasoning:\n- The current edge incorrectly uses \"NONE,\" ignoring the well-established causal relationship.\n- A healthy lifestyle (source) causally increases capacity (target) through known mechanisms (plausibility, strength, coherence).\n- The direction and polarity (POSITIVE) are appropriate; \"capacity\" is increased by healthy habits.\n- The new motivation clearly describes how this relationship operates and meets the Bradford Hill criteria for causality.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Availability of alternatives for ED",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action taken: \nrevise_motivation\n\nReasoning:\n- The judge indicated that the motivation (\"I don't know\") was insufficient, not that the edge type (NONE) was incorrect.\n- Bradford Hill stepwise assessment suggests: There is no inherent causal mechanism from the capacity of one resource causing the availability of alternatives for ED; other systemic factors are more significant.\n- Therefore, I kept the edge type as NONE but provided a clear, reasoned motivation: \"There is no direct causal relationship between the capacity of a particular service and the existence or availability of alternative options for emergency departments (ED). The capacity of one service does not inherently determine whether alternatives are available; system design, funding, and policy decisions play a larger role.\""
+  },
+  {
+    "source": "Informal care",
+    "target": "Availability of alternatives for ED",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge analysis step-by-step reasoning:\n\nSTEP 1: The judge noted that the motivation was \"I don't know,\" meaning there was no causal reasoning given to justify the relationship of NONE.\nSTEP 2: Considering plausibility, increased informal care (care by family/friends) can reduce reliance on emergency departments, as informal care serves as an alternative. This justifies a plausible positive relationship.\nSTEP 3: The relationship has sufficient strength as reliance on informal care often reduces ED demand, thereby increasing the perceived and real availability of alternatives.\nSTEP 4: Internal consistency exists, and the edge type NONE was incorrect, as a plausible mechanism and causal direction exists.\nSTEP 5: Action: Changed edge type from NONE to POSITIVE and supplied the correct motivation.\n\nCorrection:\nChanged NONE \u2192 POSITIVE\nNew Motivation: \"Increased informal care (such as care provided by family and friends) can reduce the demand for emergency department (ED) visits by providing patients with additional support, thereby increasing the availability and perceived sufficiency of alternatives to ED care.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Equipment",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased or improved equipment directly enhances capacity by allowing more production or service output, expanding the volume or range that an organization can handle.\")\n\nStep-by-step reasoning:\n- STEP 1 (Plausibility): There is a clear mechanism\u2014having more or better equipment increases an organization\u2019s capacity to produce goods or deliver services.\n- STEP 2 (Temporality): The causality runs from equipment (means of production) to capacity (amount producible).\n- STEP 3 (Strength): This is a substantial and widely recognized causal relationship in many industries.\n- STEP 4 (Coherence): The current motivation is insufficient (\"I don't know\"), but the verdict is about the explanation, not a fundamental lack of relationship.\n- STEP 5 (Action): The edge should clearly be POSITIVE, so changed type and provided mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The issue was that the motivation simply said \"I don't know,\" failing to justify the \"NONE\" edge type. Based on Bradford Hill criteria, there is no direct, substantial causal mechanism connecting a 24/7-care mentality to capacity, so the \"NONE\" type is justified. I have revised the motivation to explain this clearly:\n\n\"There is no direct causal relationship established between a 24/7-care mentality and capacity. While such a mentality may influence workload or resource utilization, it does not inherently alter capacity, which depends on available resources, staffing, and infrastructure rather than mindset alone.\""
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater availability of diagnostic resources improves a healthcare system's capacity by allowing faster, more accurate detection of diseases, which leads to better allocation of resources, more effective patient management, and increased ability to handle patient loads.\")\n\nReasoning:\n- There is a plausible and strong causal mechanism: increased diagnostic resources enhance the capacity of healthcare systems.\n- The direction is correct: more resources should precede increased capacity.\n- The original NONE edge type was incorrect because there is clearly a substantial link (per Bradford Hill criteria).\n- The previous motivation simply said \"I don't know,\" which provided no explanation.\n- Correction is to set the relationship as POSITIVE and provide a detailed causal motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\n- The initial edge was set to NONE with no motivation provided (\"I don't know\"), which means no justification was given for the absence of a causal relationship.\n- Upon review, there is a plausible mechanism: having a proactive attitude (source) can positively affect one's capacity (target) by driving individuals to develop solutions, skills, and readiness to handle challenges.\n\nCorrection:\n\nEdge: Proactive attitude -[POSITIVE]-> Capacity\nNew Motivation: \"A proactive attitude can enhance an individual's capacity by encouraging them to seek solutions, take initiative, and develop skills that increase their ability to handle tasks and challenges.\"\n\nThus, the relationship has been updated to POSITIVE with appropriate causal reasoning.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater health literacy enhances a person's ability to understand and use health information, which increases their capacity to manage their own health, make informed decisions, and navigate healthcare systems effectively.\")\n\nReasoning:\n- Step 1 (Plausibility): There is a clear and plausible mechanism\u2014health literacy directly improves an individual's ability to act effectively in health contexts (capacity).\n- Step 2 (Temporality): Health literacy precedes and enables increases in health management capacity.\n- Step 3 (Strength): The effect is substantial; this relationship is well-supported in public health literature.\n- Step 4 (Coherence): The change is internally consistent and corrects the issue of \"I don't know\" not being a valid motivation or explanation for a causal relationship.\n- Step 5: The appropriate action is to change the edge from NONE to POSITIVE and provide a proper causal motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"A well-defined organizational structure helps allocate roles, responsibilities, and resources efficiently, which enhances an organization's capacity to perform tasks and achieve objectives. Structural clarity enables better coordination and decision-making, directly increasing operational capacity.\")\n\nReasoning:\n\n- Plausibility: There is a clear and plausible mechanism; a strong organizational structure increases an organization's ability (\"capacity\") to deploy resources and coordinate actions effectively.\n- Temporality: Organizational structure is established before capacity is realized\u2014structure enables or constrains capacity.\n- Strength: The effect is substantial\u2014structure is a foundational determinant of what an organization can accomplish.\n- Coherence: The corrected motivation explains how and why the causal relationship holds.\n\nTherefore, the edge type should be POSITIVE with an improved motivation reflecting the mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"An increase in personnel increases organizational capacity by providing more human resources to complete tasks, manage operations, and achieve objectives. This enables the organization to handle a larger workload and expand its capabilities.\")\n\nReasoning:\n- PLAUSIBILITY: There is a clear mechanism\u2014more personnel allow an organization to do more (increase capacity).\n- TEMPORALITY: Increased personnel must precede increased capacity; the direction is correct.\n- STRENGTH: The causal relationship is strong and nontrivial in most organizational contexts.\n- COHERENCE: The original NONE edge was not rationalized; the corrected type and motivation align with real-world knowledge.\n\nTherefore, the correct action is to change the edge type to POSITIVE and provide a valid causal explanation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 POSITIVE)\n\nReasoning:\n- The existing motivation (\"I don't know\") fails to provide any reasoning, making evaluation impossible.\n- Bradford Hill Plausibility: There is a sound causal mechanism\u2014greater willingness in a social network facilitates cooperation and pooling of resources, increasing the group's capacity.\n- Temporality: Willingness (a collective attitude or intention) precedes and enables increases in capacity.\n- Strength and Coherence: This is a substantial and internally consistent relationship recognized in social science.\n- The verdict should not be NONE; it should be POSITIVE with a motivation explaining that higher willingness among a social network enhances collective capacity by fostering collaboration and effective resource sharing.\n\nCorrection:\nChanged relationship to POSITIVE with motivation: \"A higher willingness among members of a social network can increase collective capacity, as individuals are more likely to collaborate, share resources, and support coordinated efforts. This increased cooperation can enhance the overall abilities and effectiveness of the group.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Frailty",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Increased frailty leads to a decline in physical and/or mental capacity, as frailty typically reflects a state of increased vulnerability that limits a person's ability to perform daily activities and maintain functional independence.\")\n\nReasoning:\n- There is a strong and plausible causal mechanism: frailty (being more frail) increases vulnerability and loss of physiological reserve, directly reducing capacity (ability to function).\n- The original edge type was NONE, but there is a well-established negative causal relationship between increased frailty and reduced capacity.\n- The original motivation provided no information; thus, I provided a clear explanation of the mechanism to satisfy Bradford Hill criteria of plausibility, temporality, and strength.\n- Therefore, changed edge to NEGATIVE with proper causal motivation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Increased accessibility of information enables individuals or organizations to acquire the knowledge and resources needed to build or enhance their capacity, leading to greater competence and ability to perform tasks.\")\n\nStep-by-step reasoning:\n- The existing motivation was \"I don't know,\" providing no reasoning and failing Bradford Hill's plausibility and coherence criteria.\n- A plausible causal mechanism clearly exists: improving access to information helps individuals or groups build capacity by increasing knowledge and available skills.\n- Temporality is respected: accessibility of information (cause) precedes and can affect capacity (effect), and the relationship is positive.\n- The relationship is strong and substantial: lack of access to information is a major barrier to capacity development in numerous real-world and research settings.\n- Therefore, the correct edge type should be POSITIVE with the above mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 POSITIVE)\n\nStep-by-step reasoning:\n\n- Step 1 (Plausibility): There is a strong, established mechanism by which increased knowledge equips an individual or organization to do more and solve more complex problems\u2014increasing their capacity.\n- Step 2 (Temporality): Knowledge acquisition typically precedes increases in capacity, so the directionality is correct.\n- Step 3 (Strength): The relationship is substantial. Knowledge is a foundational causal factor for enhancing capacity.\n- Step 4 (Coherence): The original \"I don't know\" motivation gave no explanation and ignored common understanding and empirical evidence. The relationship is coherent and widely accepted.\n- Step 5 (Execution): The edge type should be POSITIVE, with motivation: \"Increased knowledge provides individuals or organizations with the information, skills, and understanding needed to expand their capacity to perform tasks, solve problems, and achieve goals. Greater knowledge enables greater capacity by supplying the foundation for effective action and decision-making.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Acute event",
+    "target": "Capacity",
+    "type": "NONE",
+    "action": "none",
+    "corrected": false,
+    "note": "Step 1: Analyze Judge Feedback + Assess PLAUSIBILITY\nThe judge marked the edge as INCORRECT because \"I don't know\" does not justify WHY there is no causal connection between 'Acute event' and 'Capacity.' The current motivation is inadequate, lacking any explanation or reasoning.\n\nStep 2: Evaluate TEMPORALITY\nCurrently, the edge type is NONE (no causal relationship). However, an acute event (e.g., injury, financial shock, disaster) often does influence capacity (such as physical, mental, or organizational capacity). The direction makes sense: acute events precede a change (usually decrease) in capacity.\n\nStep 3: Assess STRENGTH\nThere is a substantial causal relationship: a major acute event can significantly lower an individual's or system's capacity in numerous domains.\n\nStep 4: Evaluate COHERENCE\nThe current edge fails to capture a strong, plausible causal effect present in most interpretations of 'Acute event' and 'Capacity.' A better explanation and a causal edge (likely NEGATIVE) are needed.\n\nStep 5: Execute Tool Call\nBased on standard interpretations, I will change the edge to NEGATIVE and supply the mechanism: Acute events often reduce capacity.\n\nACTION:\n\nchange_edge_type(\n    old_type='NONE',\n    new_type='NEGATIVE',\n    new_motivation=\"Acute events, such as injuries, disasters, or sudden crises, can significantly decrease an individual's or system's capacity by causing disruption, damage, or resource depletion.\"\n)"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: change_edge_type (NONE \u2192 NEGATIVE)\n\nNew motivation: Increasing the availability of diagnostic resources can reduce care avoidance behavior by making it easier and more accessible for individuals to seek and receive diagnoses. When diagnostic resources are scarce, individuals may be more likely to avoid care due to anticipated barriers such as long wait times, lack of access, or perceived complexity.\n\nReasoning:\n- The original motivation did not provide any reasoning.\n- There is a plausible negative causal relationship: more diagnostic resources reduce care avoidance, addressing accessibility barriers.\n- Temporality and strength are satisfied: the intervention (diagnostic resources) typically precedes behavioral outcome, and literature supports the relationship as non-trivial.\n- The corrected edge now represents this negative causal link and provides appropriate mechanistic reasoning.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Healthcare avoidance is a form of care avoidance behavior; individuals who avoid seeking healthcare are exhibiting a broader tendency to avoid care-related services or interventions. Thus, healthcare avoidance causally drives or exemplifies care avoidance behaviors.\")\n\nStep-by-step reasoning:\n- Plausibility: Strong mechanism\u2014healthcare avoidance is a specific type of care avoidance, so one leads to the other.\n- Temporality: The behavior of avoiding healthcare occurs as part of or before general care avoidance is classified.\n- Strength: The relationship is substantial; healthcare avoidance meaningfully contributes to the broader target variable.\n- Coherence: The relationship and new motivation are logically consistent.\n- Edge type was NONE, but a positive causal relationship exists\u2014thus, the correction is to POSITIVE with clear mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "STEP 1: The judge noted that the motivation was missing (\"I don't know\") and thus there was no reasoning to assess. However, there could plausibly be a mechanism: a constant 24/7-care mentality might foster burnout, loss of autonomy, or feelings of surveillance in care recipients, leading them to avoid care settings to regain control or reduce discomfort.\n\nSTEP 2: The causal direction makes sense \u2013 the 24/7-care mentality precedes and drives the development of care avoidance behavior, not the reverse.\n\nSTEP 3: The relationship is potentially substantial. Overbearing or constantly available care environments have been shown to lead to avoidance by those wishing to escape perceived intrusiveness.\n\nSTEP 4: There is logical consistency. The current type (NONE) failed to describe this plausible mechanism and effect; instead, a POSITIVE relationship better fits the likely causality.\n\nSTEP 5: Action\nI corrected the edge type to POSITIVE and supplied a plausible mechanism:\n\"A 24/7-care mentality, where individuals or systems expect constant availability and oversight, can contribute to care avoidance behavior by fostering feelings of surveillance, lack of autonomy, and burnout. Individuals may withdraw from seeking care to maintain privacy or autonomy, or as a reaction to feeling overly monitored or dependent.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "STEP 1: The judge indicated there was no reasoning and no connection stated in the original motivation (\"I don't know\"). Reviewing the edge, there is a plausible causal mechanism: higher therapy compliance should discourage avoidance of care (the more patients comply, the less likely they are to avoid care).\n\nSTEP 2: Temporality fits: compliance with therapy typically comes before (and works against) avoidance of care.\n\nSTEP 3: Strength appears substantial, as therapy compliance is generally a key modifiable variable in addressing care avoidance behaviors.\n\nSTEP 4: Coherence: The prior motivation failed, but a direct negative relationship is logical\u2014therapy compliance reduces care avoidance.\n\nCORRECTION:\n- The original NONE type was incorrect.\n- The motivation was missing.\n- Correction: Type should be NEGATIVE, with improved motivation.\n\nAction Taken:\nChanged the edge type to NEGATIVE with new motivation: \"Higher therapy compliance typically reduces care avoidance behavior because patients who follow prescribed therapy are more likely to engage with the healthcare system and less likely to avoid follow-up or preventive care.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Education level",
+    "target": "Chronic addiction",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to better reflect the causal relationship between education level and chronic addiction. The new explanation clarifies that the negative association is largely indirect and influenced by confounding factors, addressing the lack of nuance highlighted by the judge. The edge type (NEGATIVE) is correct, as higher education is associated with decreased risk, but the reasoning now acknowledges the complexity of the causality."
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Chronic addiction",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Avoidance of healthcare can lead to untreated mental health issues, lack of intervention for substance use, and missed opportunities for early support, thereby increasing the risk of developing or perpetuating chronic addiction.\")\n\nReasoning:\n- There is a plausible and documented causal mechanism: avoiding healthcare reduces access to medical interventions and mental health services that may prevent or treat addiction.\n- Temporality is correct: healthcare avoidance typically precedes chronic addiction or prolongs it.\n- The relationship is strong, as lack of healthcare is a known risk factor for sustained substance use and addiction.\n- The original motivation (\"I don't know\") provided no reasoning, but a well-supported positive causal relationship exists. Therefore, the edge type was changed to POSITIVE with a proper causal explanation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Care avoidance behavior",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A willing and supportive social network can encourage individuals to seek health care by providing emotional, informational, or practical support, thereby reducing the likelihood that individuals will avoid necessary medical care.\")\n\nReasoning: There is strong evidence and plausible mechanism that the willingness of a social network to support an individual discourages care avoidance behaviors. The previous NONE relationship was incorrect; it should be NEGATIVE, as social network willingness reduces care avoidance.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Chronic addiction",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Step-by-step Bradford Hill reasoning:\n\n- Plausibility: There is a plausible mechanism\u2014if treatment environments emphasize 24/7 care, individuals may become reliant on constant support rather than developing self-management skills, increasing risk of chronic addiction due to dependency.\n- Temporality: The 24/7-care mentality precedes or coincides with care/treatment phases, potentially influencing addiction outcomes.\n- Strength: Literature and clinical experience suggest overdependence on care can hinder long-term recovery, though the effect\u2019s strength may vary.\n- Coherence: The original motivation (\u201cI don't know\u201d) gave no reasoning; the judge pointed out that no causal logic was present, and evaluation was therefore impossible.\n\nAction taken:\n- The edge was changed from NONE to POSITIVE, with a new motivation explaining that a 24/7-care mentality can promote chronic addiction by fostering overdependence on external support and undermining personal autonomy in recovery.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Feelings of fear and shame",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Type Correction: This edge should be POSITIVE, not NONE.\n\nReasoning:\n- Chronic or intense feelings of fear and shame can cause or worsen cognitive disorders. There is a plausible mechanism where such negative emotions increase stress hormones, disrupt neural pathways, and impair processes like memory or attention, all of which can contribute to cognitive dysfunction.\n- Therefore, the edge type should be POSITIVE with the following motivation:\n\nNew Motivation:\n\"Chronic or intense feelings of fear and shame can contribute to the development or exacerbation of certain cognitive disorders, such as anxiety disorders or depression, by increasing stress levels, altering brain chemistry, and impairing cognitive processes like attention, memory, and decision-making over time.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Frailty",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation has been revised to properly justify why there is no direct causal relationship between frailty and cognitive disorder. The explanation now addresses the general case and highlights the role of shared risk factors and confounding variables, rather than limiting the reasoning to the absence of both conditions. The edge remains NONE, but the justification is now logically sound and complete."
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge correction:\n\nThe current edge type is NONE, but there is a plausible and substantial negative causal relationship: increased diagnostic resources reduce the likelihood or severity of cognitive disorders by allowing earlier detection and intervention. The original motivation was missing (simply \"I don't know\"), so the edge type and explanation were both incorrect.\n\nAction taken:\nChanged the edge type from NONE to NEGATIVE with the motivation:\n\"Increased availability of diagnostic resources enables earlier detection and intervention for cognitive disorders, which can reduce their prevalence and severity by facilitating timely treatment and management. Therefore, access to diagnostic resources negatively affects (reduces) the occurrence or progression of cognitive disorders.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Incorrect use of medication",
+    "target": "Cognitive disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Incorrect use of medication, such as overuse, underuse, or misuse, can lead to or exacerbate cognitive disorders. Some medications, when taken improperly, can cause neurotoxic effects, increase risk of delirium, or impair cognition, particularly in vulnerable populations such as the elderly.\")\n\nReasoning:\n- The judge flagged a lack of motivation, but there is a plausible and significant causal mechanism: misuse of medications can impair cognition and cause cognitive disorders.\n- Temporality and direction are correct: \"Incorrect use of medication\" precedes and can cause \"Cognitive disorder\".\n- This satisfies Bradford Hill criteria for plausibility, temporality, and strength; the only issue was the absence of causal explanation.\n- Therefore, the edge type should be POSITIVE, not NONE, with appropriate motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Diagnostic resources",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater capacity in a healthcare system typically allows for investment in and allocation of more diagnostic resources, such as equipment and personnel, thereby increasing the availability of diagnostic services\")\n\nReasoning:\n- Bradford Hill Plausibility: There is a clear mechanism\u2014more capacity (e.g., funding, space, workforce) enables increased diagnostic resources.\n- Temporality: Capacity must precede the acquisition of diagnostic resources.\n- Strength: This is a substantial and well-accepted relationship in healthcare systems.\n- Coherence: The relationship is logically consistent and coherent with health system dynamics.\n- The previous motivation provided no explanation or justification. The causal connection should be POSITIVE with correct reasoning.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial barriers",
+    "target": "Education level",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Financial barriers, such as high tuition fees or lack of access to funding, limit individuals' ability to afford educational opportunities and resources, thereby reducing the likelihood of achieving higher education levels\")\n\nReasoning:\n- Bradford Hill Plausibility: Strong, as financial constraints commonly inhibit pursuits of further education.\n- Temporality: Financial barriers must exist before the decision to pursue education, supporting the causal direction.\n- Strength: Evidence suggests financial barriers substantially reduce education attainment.\n- Coherence: The relationship is internally consistent and well-documented.\n- The original \"I don't know\" provides no reasoning. The edge should be NEGATIVE with a clear causal mechanism.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Mental disorder",
+    "target": "Feelings of fear and shame",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation was incoherent because it claimed a direct relationship while citing social stigma (a mediator) as part of the mechanism. However, a plausible and substantial positive causal relationship exists\u2014mental disorders increase fear and shame via symptoms and also by way of stigma and personal interpretation.\n\nAction taken: The edge type remained POSITIVE, but the motivation was revised to clarify that while a strong causal link exists, mediating variables like stigma and self-perception often play a role. The updated explanation now accurately reflects the mechanisms involved."
+  },
+  {
+    "source": "Acute event",
+    "target": "Feelings of fear and shame",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"Acute events, such as traumatic or highly stressful experiences, often trigger emotional responses, which can include feelings of fear and shame. The acute event serves as a precipitating cause for these emotional states due to psychological stress and trauma responses.\")\n\nReasoning:\n- Acute events (e.g., trauma, accidents) are well-established causes of emotional responses, including fear and shame, as shown by psychological research (Plausibility).\n- The effect (feelings of fear and shame) follows the event, satisfying Temporality.\n- The relationship is substantial and supported by literature (Strength).\n- The prior \"NONE\" assessment was due to a mischaracterization about variable definition, not about true causality.\n- Correction: This is a POSITIVE causal relationship; acute events can cause feelings of fear and shame.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Chronic addiction",
+    "target": "Financial resources",
+    "type": "NONE",
+    "action": "none",
+    "corrected": false,
+    "note": "STEP 1 (Plausibility): Chronic addiction plausibly affects financial resources through mechanisms such as increased spending on substances, loss of employment, and reduced ability to manage finances. There is a well-established negative causal relationship from chronic addiction to financial well-being.\n\nSTEP 2 (Temporality): The direction from \"Chronic addiction\" (source) to \"Financial resources\" (target) is appropriate: addiction precedes financial outcomes.\n\nSTEP 3 (Strength): There is a strong and substantial negative causal relationship, supported by research and real-world evidence.\n\nSTEP 4 (Coherence): The current edge is NONE, with motivation focused only on lack of variable definitions rather than true absence of causal mechanism. The judge notes that \"the absence of definitions does not inherently mean there is no possible causal relationship.\" Therefore, the edge type is wrong, as there is a clear negative causal mechanism.\n\nSTEP 5 (Action): The edge should be NEGATIVE, with motivation describing how chronic addiction erodes financial resources.\n\nACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Chronic addiction often leads to decreased financial resources due to increased spending on addictive substances, loss of employment, medical expenses, and impaired ability to manage finances effectively.\")"
+  },
+  {
+    "source": "Multi-morbidity",
+    "target": "Financial resources",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Multi-morbidity, the presence of multiple chronic health conditions in an individual, can negatively affect financial resources due to increased medical expenses, medication costs, reduced capacity to work, and potential need for long-term care. This increased financial burden is a well-documented consequence of poor health and chronic disease accumulation.\")\n\nReasoning:\n- The judge found the reasoning unsound because a plausible and interpretable relationship exists.\n- Multi-morbidity plausibly leads to increased personal healthcare costs and/or reduced earning power, lowering financial resources (plausibility, temporality, and strength are satisfied).\n- Motivation should be updated to reflect this negative causal mechanism instead of dismissing the relationship due to variable definition.\n- The correct action is to set the edge to NEGATIVE with an explanation of the financial burden caused by multi-morbidity.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Chronic addiction",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Chronic addiction can contribute to frailty by promoting poor nutrition, increasing risk of chronic diseases, impairing immune function, and leading to physical inactivity. Over time, these factors can result in muscle weakness, decreased bone density, and overall reduced physiological resilience, all characteristics of frailty.\")\n\nStep-by-step reasoning:\n- Judge identified that the motivation did not provide any reasoning, and the current edge type is NONE (no causal relationship).\n- There is a strong and plausible mechanism: chronic addiction negatively impacts nutrition, immune function, and physical capacity, all of which plausibly increase frailty.\n- Temporality is satisfied\u2014chronic addiction precedes the onset of frailty.\n- Strength of association is substantial and well-documented in medical literature.\n- Coherence is maintained by providing a specific mechanism and correcting the edge from NONE (incorrect) to POSITIVE (correct).\n- Therefore, changed the edge type to POSITIVE with improved motivation detailing the mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Language and cultural barriers",
+    "target": "Frailty",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action: revise_motivation\n\nReasoning:\n- The judge feedback indicated the current motivation incorrectly labeled the relationship as \"direct\" when the explanation described indirect, mediated mechanisms.\n- Bradford Hill analysis shows plausibility and temporality are satisfied, but the motivation misrepresents causality as direct.\n- Edge type remains POSITIVE, but the motivation now correctly characterizes the relationship as indirectly causal via mediators such as reduced healthcare access, misunderstanding, and less social support.\n\nCorrection:\nUpdated the motivation to:\n\"Language and cultural barriers can indirectly increase frailty by limiting individuals' access to healthcare, leading to poorer management of medical conditions, and reducing comprehension of medical advice. Additionally, cultural and language difficulties may decrease social support, contributing to isolation and unaddressed health needs. These factors collectively elevate the risk of frailty, although the relationship is primarily mediated through these socioeconomic and healthcare-related mechanisms rather than being directly causal.\""
+  },
+  {
+    "source": "Capacity",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Higher capacity\u2014defined as greater physical, cognitive, or physiological reserve\u2014reduces the likelihood of frailty because individuals with more capacity are better able to withstand health stressors and maintain function, thus preventing the development or progression of frailty.\")\n\nReasoning:\n- There is a strong, plausible negative causal relationship: greater capacity decreases frailty.\n- Temporality and direction make sense: higher capacity comes before and prevents frailty.\n- The original explanation provided no mechanism; correcting this provides a substantial, well-articulated causal explanation.\n- The new motivation directly addresses the Bradford Hill criteria for mechanism and coherence, changing the edge from NONE to NEGATIVE.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthy lifestyle",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A healthy lifestyle, which includes regular physical activity, balanced nutrition, and avoidance of harmful behaviors, reduces the risk of developing frailty by improving muscle strength, cardiovascular health, and metabolic function.\")\n\nReasoning: There is strong evidence and plausible mechanisms showing that a healthy lifestyle decreases the risk of frailty, not a lack of causal relationship. The previous NONE type was incorrect, and the explanation was missing. The correct edge is NEGATIVE with detailed causal motivation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\nStep 1: The judge notes complete lack of causal reasoning (\"I don't know\"), so the explanation is absent\u2014not a failure of edge type assessment per se.\nStep 2/3: Plausibility and strength\u2014there is substantial evidence that a proactive attitude leads to health-promoting behaviors, which protect against frailty. Temporality is appropriate: attitude precedes health outcomes like frailty.\nStep 4: The current edge type of NONE is incorrect; a causal (specifically, negative) relationship is supported and coherent.\nStep 5: I changed the edge to NEGATIVE and provided a proper motivation:\n\nA proactive attitude can reduce the risk of frailty because individuals who take initiative in maintaining their health are more likely to engage in regular physical activity, adopt healthy behaviors, and seek medical care when needed. These actions can help preserve muscle strength, balance, and overall physical function, thereby decreasing the likelihood of becoming frail.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"Increased therapy compliance can reduce the progression or severity of frailty by ensuring consistent adherence to interventions (such as physical therapy, nutrition, or medication management) designed to improve strength, mobility, and overall health. Conversely, poor therapy compliance may lead to worsening frailty due to lack of necessary treatment.\")\n\nReasoning:\n- There is a plausible negative causal relationship: better therapy compliance helps reduce or slow frailty by ensuring individuals benefit from prescribed therapies, while non-compliance can worsen frailty.\n- Temporality holds: therapy compliance necessarily precedes impact on frailty status.\n- Strength: The impact can be substantial, especially in populations where frailty is preventable or mitigatable with intervention.\n- Coherence: The original \"I don't know\" did not justify the NONE type and gave no mechanism.\n- Result: The relationship should be NEGATIVE, with the motivation describing the mechanism of adherence reducing frailty.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge analysis step-by-step:\n\nStep 1: PLAUSIBILITY \u2013 There is a clear causal mechanism: higher health literacy leads to better health management, helping to prevent or reduce frailty.\nStep 2: TEMPORALITY \u2013 Health literacy precedes and influences frailty status.\nStep 3: STRENGTH \u2013 Relationship is substantial and documented in health literature; poor health literacy is a risk factor for frailty.\nStep 4: COHERENCE \u2013 Existing NONE status ignores this mechanism; judgment correctly notes total lack of explanation.\n\nAction: The edge should be NEGATIVE (\"higher health literacy \u2192 less frailty\"), with a mechanism describing how better understanding and management of health reduces frailty risk.\n\nFinal correction:\nChanged edge type from NONE to NEGATIVE with new motivation:\n\"Higher health literacy enables individuals to understand health information, adhere to preventive measures, and manage chronic conditions effectively, thereby reducing the risk and severity of frailty in older adults.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n- Judge Reasoning: The explanation was lacking (simply \"I don't know\"), but they did not state that a causal relationship is implausible\u2014only that it was unsupported.\n- Bradford Hill Criteria:\n  - Plausibility: There is a plausible mechanism\u2014avoiding healthcare can lead to unmanaged health issues, which may increase risk of frailty over time, especially in older adults.\n  - Temporality: Healthcare avoidance (the cause) precedes the development of frailty (the effect).\n  - Strength: This is a substantial effect, especially in populations at risk.\n  - Coherence: The direction (POSITIVE) is justified; more avoidance increases frailty risk.\n\nAction Taken:\n- Changed edge type from NONE to POSITIVE and provided a clear causal mechanism: \"Healthcare avoidance can lead to untreated or poorly managed health conditions, which over time may contribute to physical decline, muscle weakness, and increased susceptibility to frailty, especially in older adults.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Multi-morbidity",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Multi-morbidity, the presence of multiple chronic conditions in an individual, increases the risk of frailty because the cumulative burden of diseases can lead to decreased physiological reserve, impaired physical function, and greater vulnerability to stressors, which are hallmarks of frailty.\")\n\nReasoning:\n- Bradford Hill assessment shows clear plausibility, temporality, and strength: Multi-morbidity precedes and increases risk of frailty, with extensive clinical evidence and a logical physiological mechanism.\n- The original edge was incorrectly set to NONE; a strong positive causal relationship is well-supported.\n- The new motivation clearly explains the mechanism connecting multi-morbidity to frailty.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Cognitive disorder",
+    "target": "Frailty",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Cognitive disorders can contribute to frailty by impairing an individual's ability to perform daily activities, manage their health, and maintain physical activity. This can lead to decreased muscle strength, mobility, and overall physiological reserve, thereby increasing the risk of frailty.\")\n\nReasoning:\n- PLAUSIBILITY: There is a well-documented causal mechanism\u2014cognitive disorders often limit functional independence and physical activity, leading to frailty.\n- TEMPORALITY: Cognitive decline often precedes or accompanies development of frailty.\n- STRENGTH: The causal link is substantial, supported by clinical and epidemiological studies.\n- COHERENCE: The new motivation provides logical, non-circular reasoning connecting the two.\n- The previous NONE type was incorrect due to the lack of explanation and failure to acknowledge the causal link. Thus, a POSITIVE relationship is supported.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Knowledge",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Increased knowledge among healthcare professionals improves their functioning by enabling more accurate diagnoses, better patient care, adherence to best practices, and informed decision-making\")\n\nReasoning:\n- There is a clear, plausible causal mechanism: Greater knowledge allows healthcare professionals to function better via informed decision-making and better skills.\n- The original type (NONE) was incorrect; a strong positive causal relationship exists.\n- The new motivation explicitly explains how increased knowledge causally enhances healthcare professionals' functioning.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Feelings of fear and shame",
+    "target": "Functioning of healthcare professionals",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Step-by-step reasoning:\n1. The judge noted a plausible negative mechanism (emotions undermine functioning) and correct causal direction but criticized the overstatement that the relationship is \u201cdirect and causal\u201d without justification.\n2. The edge type (NEGATIVE) is correct; the problem is the motivation\u2019s overreach and lack of mention of confounders.\n3. Strength and internal logic are otherwise supported. Thus, the correct action is to revise the motivation, clarifying mechanism and acknowledging confounders.\n\nAction:\nI revised the motivation for this edge to better explain how fear and shame impair professional functioning (via stress, impaired concentration, etc.) while also noting possible confounding influences, addressing the judge\u2019s feedback. The edge type remains NEGATIVE."
+  },
+  {
+    "source": "Capacity",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action Taken: Changed edge type from NONE to POSITIVE with improved motivation.\n\nReasoning:\n- There is a plausible causal mechanism: Increased capacity (staff, resources, infrastructure) supports the functioning of healthcare professionals by reducing strain, improving efficiency, and lowering risk of burnout.\n- Temporality: Greater capacity comes before and enables better functioning.\n- Strength: The relationship is substantial\u2014capacity is critical for the performance and well-being of healthcare professionals.\n- The previous motivation (\"I don't know\") gave no reasoning or justification for the absence of a relationship.\n- Therefore, the correct action is to establish a POSITIVE causal relationship with a clear causal mechanism in the motivation.\n\nNew Motivation: \"Greater capacity, such as staff, resources, or infrastructure, enables healthcare professionals to function more effectively by reducing workload, preventing burnout, and allowing them to perform their duties more efficiently and safely.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n- Diagnostic resources \u2192 Functioning of healthcare professionals\n- Current type: NONE\n- Current motivation: \"I don't know\"\n- Judge verdict: INCORRECT\u2014no reasoning provided.\n\nStep-by-step reasoning:\n\nSTEP 1: Plausibility\n- Diagnostic resources (such as lab tests, imaging, etc.) provide information that aids healthcare professionals in performing diagnoses and treatment.\n- Mechanism exists: availability of such resources allows better assessment and decisions, directly impacting functioning.\n- The absence of resources limits decision-making and impairs functioning.\n\nSTEP 2: Temporality\n- Diagnostic resources are a prerequisite and support for professional functioning. The direction makes sense.\n\nSTEP 3: Strength\n- The link is strong and substantial, not negligible or trivial.\n\nSTEP 4: Coherence\n- Clear and logical: resources support professionals\u2019 functional capabilities.\n\nSTEP 5: Action\n- Since a strong causal relationship exists but is currently marked NONE with no motivation, I changed the edge type to POSITIVE and provided a proper motivation.\n\nCorrection applied:\nChanged edge type from NONE to POSITIVE with motivation:\n\"Increased availability of diagnostic resources enhances healthcare professionals' ability to accurately assess, diagnose, and manage patient conditions, thereby improving their overall functioning and clinical performance.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Personnel",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Increasing the number or quality of personnel in a healthcare setting positively affects the functioning of healthcare professionals by reducing workload, preventing burnout, and allowing for more effective teamwork. This leads to improved efficiency, mental health, and overall patient care quality among healthcare staff.\")\n\nReasoning:\n- The edge was labeled as NONE, but there is a strong, plausible causal mechanism: increased personnel improves healthcare professionals' functioning.\n- Temporality and directionality are correct: changes in personnel (source) precede and affect functioning (target).\n- Strength is substantial; insufficient personnel is known to negatively impact healthcare functioning.\n- Motivation was missing, and the edge type needed to be POSITIVE, not NONE.\n- This correction provides proper causal reasoning and the correct edge type.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "none",
+    "corrected": false,
+    "note": "Step 1: Analyze Judge Feedback + Plausibility\n\n- The judge notes there is no explanation at all (\"I don't know\") and thus nothing to evaluate.\n- Plausibility: There is a plausible causal mechanism. A proactive attitude in healthcare professionals is likely to improve their functioning due to increased initiative, problem-solving, and engagement with tasks.\n\nStep 2: Temporal Order\n\n- Proactive attitude likely precedes and influences the functioning of healthcare professionals, not vice versa.\n\nStep 3: Strength\n\n- Relationship is likely substantial, as attitude and mindset influence workplace functioning and effectiveness, per organizational psychology literature.\n\nStep 4: Coherence\n\n- No internal reasoning issues \u2013 the current lack of explanation is the problem, not the edge type.\n\nStep 5: Execute Tool Call\n\n- The edge is currently NONE, but causality (positive edge) is supported by Bradford Hill criteria and literature.\n- The correct action is to change the edge type from NONE to POSITIVE, providing an appropriate causal explanation.\n\nACTION:\n\nchange_edge_type(\n  old_type='NONE',\n  new_type='POSITIVE',\n  new_motivation=\"A proactive attitude among healthcare professionals leads to improved functioning by fostering initiative, enhancing engagement with tasks, and supporting better problem-solving and teamwork. This attitude can contribute to higher adaptability, early identification of problems, and greater effectiveness in clinical settings.\"\n)"
+  },
+  {
+    "source": "Availability of alternatives for ED",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"The availability of alternatives for emergency departments (like urgent care clinics or telemedicine) can reduce patient load and stress on healthcare professionals in EDs, allowing them to function more effectively and with less burnout.\")\n\nReasoning:\n- The original motivation provided no reasoning.\n- There is a plausible positive causal mechanism: when alternatives to ED are available, some patients seek care elsewhere, which reduces overcrowding and stress for ED healthcare professionals and improves their functioning.\n- Temporality, plausibility, and strength are satisfied.\n- Therefore, the edge should be POSITIVE with a clear causal mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A larger social network can enhance health literacy by increasing exposure to diverse health information, facilitating the exchange of health-related knowledge, and providing opportunities to discuss and understand health topics through social interactions.\")\n\nStep-by-step reasoning:\n- PLAUSIBILITY: There is a plausible mechanism\u2014larger social networks increase opportunities to encounter and exchange health information.\n- TEMPORALITY: The size of a social network generally precedes and influences health literacy, not the reverse.\n- STRENGTH: Empirical studies have shown that individuals with larger social networks tend to have better health literacy.\n- COHERENCE: The previous \u201cI don\u2019t know\u201d was not a justification. A positive relationship is consistent with public health literature.\n- DECISION: Edge should be POSITIVE, with a new motivation giving the plausible causal pathway.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis Step-by-Step (Bradford Hill Criteria):\n\nStep 1: Plausibility\n- There is a plausible causal mechanism: Individuals with a proactive attitude are more likely to seek health information and educate themselves, increasing health literacy.\n\nStep 2: Temporality\n- The causal direction makes sense: A proactive attitude precedes and leads to gains in health literacy, not the reverse.\n\nStep 3: Strength\n- The relationship is meaningful: Adopting a proactive attitude can substantially improve health literacy, a significant factor for better health outcomes.\n\nStep 4: Coherence\n- The reasoning is logically consistent, and the edge was incorrectly marked as NONE.\n\nStep 5: Tool Call\n- I have changed the edge type from NONE to POSITIVE with a new motivation:\n\nNew Motivation:\n\"A proactive attitude encourages individuals to actively seek out information, engage in learning opportunities, and take initiative in managing their health. This behavior directly enhances their health literacy by increasing their knowledge, understanding, and ability to make informed health decisions.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Functioning of healthcare professionals",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "The edge was incorrectly set to NONE with no motivation. Applying causal reasoning:\n\nUpdated Edge: 24/7-care mentality -[NEGATIVE]-> Functioning of healthcare professionals\n\nNew Motivation: A 24/7-care mentality creates continuous work demands and expectations, leading to increased stress, fatigue, and burnout among healthcare professionals, which reduces their overall functioning and effectiveness.\n\nThis reflects strong evidence that relentless work expectations can negatively impact healthcare professional functioning. The correction both changes the edge type to NEGATIVE and provides a clear causal explanation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Need for autonomy",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A higher need for autonomy can lead individuals to take proactive steps in seeking information and developing their health literacy, as they are more motivated to make informed health decisions independently.\")\n\nStep-by-step reasoning:\n\n- Step 1 (Plausibility): There is a plausible mechanism\u2014those with a stronger need for autonomy are more likely to seek out information and boost their health literacy to make independent decisions.\n- Step 2 (Temporality): The need for autonomy precedes and motivates behavior leading to increased health literacy.\n- Step 3 (Strength): The impact is substantial as personal autonomy often drives health-related learning.\n- Step 4 (Coherence): The judge found no reasoning, but a strong causal explanation can be articulated.\n- Step 5 (Tool call): The current NONE edge is incorrect\u2014there is a positive causal relationship with clear mechanism, so edge type changed to POSITIVE with appropriate motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (NONE \u2192 POSITIVE)\n\nNew Motivation:\nCompliance with therapy often includes following recommendations on diet, exercise, medication, and mental health practices, all of which can promote and maintain a healthy lifestyle. Adhering to therapy can thus directly encourage and reinforce healthy behaviors.\n\nRationale:\n- Therapy compliance causally encourages a healthy lifestyle, as recommended actions in therapy typically involve healthy behavior changes.\n- The original \"I don't know\" lacked any reasoning, and the edge type should be POSITIVE, not NONE.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Health literacy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action taken: The edge type was changed from NONE to POSITIVE.\n\nRationale:\nThere is a plausible, substantial causal mechanism: When members of a social network are willing to engage and support one another, they can share health-related information and encourage health-promoting behaviors, thereby increasing health literacy. This relationship is well-supported by social and health behavior research.\n\nNew motivation:\n\"A social network that is willing to assist or engage can share valuable health information, encourage discussion, and support learning, thereby directly contributing to increased health literacy among its members.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Greater accessibility of information enables individuals to learn about healthy behaviors, nutrition, and exercise, making it easier for people to adopt and maintain a healthy lifestyle.\")\n\nStep-by-step reasoning:\n- Plausibility: There is a clear mechanism\u2014more accessible information allows individuals to acquire knowledge needed for healthy choices.\n- Temporality: Access to information must precede lifestyle behavior change.\n- Strength: This is a strong and well-supported causal link; public health research shows educating people about health improves lifestyle outcomes.\n- Coherence: The previous explanation (\"I don't know\") failed to provide causal reasoning, but a strong, coherent explanation exists.\n\nTherefore, I changed the edge type to POSITIVE and supplied a valid motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Healthy lifestyle",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"A larger social network can promote a healthier lifestyle through increased social support, encouragement of healthy behaviors, and shared participation in activities such as exercise, leading to better health choices and adherence.\")\n\nReasoning:\n- Plausibility: There is a well-established causal mechanism: larger social networks provide more opportunities for support, motivation, and engagement in healthy behaviors.\n- Temporality: Increases in social network size can occur before healthy lifestyle changes.\n- Strength: Social relationships are recognized as significant determinants of health behaviors.\n- Coherence: The provided reasoning was lacking (\"I don't know\"), but a strong, positive causal relationship does exist per literature and public health research.\n\nTherefore, the edge type should be POSITIVE with an improved causal motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Chronic addiction",
+    "target": "Healthcare avoidance",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The motivation should be revised (not the edge type) because the judge found the causal relationship plausible but noted that the mechanism is mediated (not direct) by factors such as stigma, fear of judgment, and prior negative experiences with healthcare providers. The explanation needed to clarify that the effect is indirect, rather than describing it as a \"direct\" causal relationship.\n\nAction taken:\n- Revised the motivation to specify that chronic addiction leads to healthcare avoidance primarily through mediating factors like stigma, discrimination, and prior negative experiences, clarifying the correct nature of the causal pathway while retaining the positive causal edge."
+  },
+  {
+    "source": "Willingness of social network",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n- Edge: Willingness of social network -[NONE]-> Healthcare avoidance\n\nStep-by-step reasoning:\n1. Plausibility: There is a plausible mechanism\u2014greater willingness of a person's social network to seek healthcare could reduce that individual's avoidance by fostering supportive attitudes and positive social norms around healthcare use.\n2. Temporality: Social environment influences individual behavior, so temporality is appropriate (social network's willingness precedes changes in individual healthcare avoidance).\n3. Strength: Literature supports that peer/social network influences meaningfully affect health-seeking behaviors.\n4. Coherence: The previous motivation was \"I don't know,\" offering no reasoning. However, a strong, plausible NEGATIVE relationship exists: As willingness in the social network increases, healthcare avoidance decreases.\n5. Action: Since there is a causal (negative) relationship, the edge type needed to be changed from NONE to NEGATIVE, with a proper motivation.\n\nCorrection:\nChanged the edge type from NONE to NEGATIVE, and provided the following new motivation:\n\"A higher willingness within one's social network to seek healthcare can decrease an individual's avoidance of healthcare by providing encouragement, support, and positive norms around accessing medical services.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Multi-morbidity",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Individuals with multi-morbidity often face complex healthcare needs, frequent medical appointments, and increased financial and emotional burdens. These factors can lead to healthcare avoidance due to fear of negative diagnoses, treatment fatigue, or inability to manage multiple conditions simultaneously.\")\n\nReasoning:\n- There is a plausible mechanism: people with multiple health conditions often feel overwhelmed or discouraged by the healthcare system, leading to avoidance.\n- Temporality: Multi-morbidity precedes healthcare avoidance, not the other way around.\n- Strength: Empirical studies support that multi-morbidity can increase the likelihood of healthcare avoidance.\n- Coherence: The new explanation matches empirical findings and clarifies the previously missing mechanism.\n- The original edge type was NONE, which was incorrect; there is a substantial positive causal relationship present. The correction addresses this.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action Taken: Changed edge type from NONE to NEGATIVE with improved motivation.\n\nStep-by-step reasoning:\n\n- Plausibility: There is a well-established mechanism\u2014higher health literacy enables individuals to better understand medical information, reducing fear, misconceptions, or confusion that often lead to healthcare avoidance.\n- Temporality: Health literacy (the knowledge) precedes the decision to avoid or seek healthcare, so the direction is correct.\n- Strength: The relationship is supported in health behavior literature\u2014those with higher health literacy are less likely to avoid necessary healthcare.\n- Coherence: Motivation now explains how and why health literacy impacts healthcare avoidance, correcting both the edge type and reasoning.\n\nCorrected Motivation:\n\"Higher health literacy is associated with reduced healthcare avoidance, as individuals who understand health information are more likely to seek medical care and adhere to recommended treatments, thereby decreasing avoidance behaviors.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Functioning of healthcare professionals",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='NEGATIVE', new_motivation=\"Improved functioning of healthcare professionals, such as better communication, efficiency, and empathy, can reduce healthcare avoidance because patients feel more understood and confident in the care process, making them less likely to avoid seeking medical attention.\")\n\nReasoning:\n- There is clear plausibility and established mechanisms in the literature that better-functioning healthcare professionals decrease healthcare avoidance (e.g., through improved trust, communication, and patient satisfaction).\n- Temporality is correct: improvements in professional functioning precede decreased avoidance.\n- Strength is substantial, as numerous studies link provider quality and behavior to patients' willingness to seek care.\n- The previous motivation did not describe any mechanism; it simply stated \"I don't know.\"\n- Therefore, the edge should be NEGATIVE (not NONE), and the motivation is revised to explain the causal pathway.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\n- The edge was previously labeled as NONE, but the judge indicated that the absence of motivation (\"I don't know\") does not justify the lack of a relationship.\n- Reviewing evidence and causal theory, the size of a person's social network plausibly influences healthcare avoidance behavior: larger networks tend to offer supportive mechanisms (reminders, emotional support, sharing healthcare experiences) that reduce avoidance.\n\nBradford Hill Reasoning:\n- Plausibility: There is a plausible mechanism\u2014social networks encourage medical care.\n- Temporality: Size of social network is generally a stable trait preceding healthcare avoidance.\n- Strength: Substantial research supports the idea that social connectedness reduces avoidance.\n- Coherence: This reasoning is consistent with social support literature.\n\nAction Taken:\nchange_edge_type (NONE \u2192 NEGATIVE)\nNew Motivation: \"A larger social network can provide emotional support, encouragement, and information that reduce the likelihood of healthcare avoidance. Individuals with more social connections are more likely to be encouraged to seek medical attention and have less fear or stigma about accessing healthcare.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Mental disorder",
+    "target": "Incorrect use of medication",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Individuals with mental disorders may experience cognitive impairment, emotional instability, or difficulties in understanding medical instructions, which can increase the risk of incorrect use of medication.\")\n\nReasoning:\n- Plausibility: There is a clear causal mechanism, as mental disorders can impair judgment, memory, or comprehension, leading to misuse of medications.\n- Temporality: Mental disorder presence precedes and increases the risk of medication misuse.\n- Strength: This is a substantial and well-documented relationship, not trivial.\n- Coherence: The new motivation logically connects mental disorders to incorrect medication use.\n- The edge was incorrectly set to NONE; it should be POSITIVE with a causal mechanism explained.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Healthcare avoidance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='NEGATIVE', new_motivation=\"Increased availability of diagnostic resources reduces healthcare avoidance, as individuals are more likely to seek care when diagnostics are accessible and reliable. Conversely, a lack of diagnostic resources can increase avoidance due to perceived ineffectiveness or inconvenience of care.\")\n\nReasoning:\n- Diagnostic resources plausibly reduce healthcare avoidance, as accessible diagnostics encourage engagement with healthcare services.\n- Temporality is satisfied: improving resources comes before patients' decisions to avoid or seek care.\n- Strength: There is a substantial negative relationship; lack of diagnostics is a known barrier to care.\n- Coherence: The existing explanation (\"I don't know\") provides no mechanism or justification; thus, the edge type (NONE) is incorrect.\n- Correction was needed for both causal type and motivation to establish a NEGATIVE relationship with correct causal reasoning.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Feelings of fear and shame",
+    "target": "Mental disorder",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action: revise_motivation\n\nNew motivation:\nChronic or intense feelings of fear and shame can increase vulnerability to certain mental disorders, such as anxiety and depression, by fostering maladaptive thought patterns and stress responses. However, the relationship is complex and may involve mediators like social isolation, trauma, or maladaptive coping strategies. Additionally, the relationship can be bidirectional, as mental disorders may also heighten feelings of fear and shame. Nonetheless, sustained fear and shame are established risk factors for the onset and exacerbation of some mental health conditions."
+  },
+  {
+    "source": "Health literacy",
+    "target": "Language and cultural barriers",
+    "type": "NEGATIVE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NEGATIVE', new_type='NONE', new_motivation=\"There is no direct causal relationship where increasing health literacy causes an increase or decrease in language and cultural barriers. Instead, language and cultural barriers are determinants of health literacy, not the other way around.\")\n\nReasoning:\n- The judge correctly observed that the direction of causality is reversed in the current edge. Language and cultural barriers can lead to changes in health literacy, but higher health literacy does not directly influence or reduce language and cultural barriers.\n- There is no plausible mechanism where changes in population health literacy would directly shape the presence of language or cultural barriers.\n- Therefore, the relationship should be set to NONE, with explanation provided.",
+    "new_type": "NONE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Informal care",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action Taken: Changed edge type from NONE to POSITIVE with new motivation.\n\nStep-by-step reasoning:\n\nSTEP 1: Analyze Judge Feedback + Plausibility\n- The judge flagged the complete absence of reasoning and the use of \"I don't know.\" No mechanism was provided.\n- Plausibility exists: Increased healthcare capacity can reduce informal care, while limited capacity increases informal care provision.\n\nSTEP 2: Temporality\n- The correct causal direction is from \"Capacity\" to \"Informal care.\" When healthcare system capacity changes, it affects the need for informal care.\n\nSTEP 3: Strength\n- The relationship is substantial, as changes in capacity can shift the care burden between formal and informal sources.\n\nSTEP 4: Coherence\n- The previous explanation was non-existent. The new explanation provides a clear and coherent mechanism.\n\nSTEP 5: Execute Tool Call\n- Used change_edge_type to update the edge from NONE to POSITIVE and provided a correct motivation: an increase in capacity influences the prevalence of informal care.\n\nNew Motivation:\n\"An increase in healthcare system capacity can reduce the demand for informal care, as more individuals receive care from formal providers. Conversely, limited capacity in formal healthcare services often leads families and communities to provide informal care to fill the gap. Therefore, there is a positive causal relationship between healthcare system capacity and the prevalence of informal care.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Mental disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A proactive attitude can help reduce the risk of developing or worsening mental disorders by promoting active coping strategies, resilience, and engagement in problem-solving behaviors. These factors can buffer against stress and negative outcomes, lowering the likelihood or severity of mental health problems.\")\n\nReasoning:\n- Step 1 (Plausibility): There is a plausible mechanism\u2014proactive attitudes often promote behaviors that protect against mental disorders.\n- Step 2 (Temporality): Proactive attitudes typically precede changes in mental health status.\n- Step 3 (Strength): The impact is meaningful; proactive coping is linked to lower mental disorder risk.\n- Step 4 (Coherence): The explanation resolves the previous absence of motivation and gives a clear, consistent causal pathway.\n- Step 5: The type should be NEGATIVE, as a proactive attitude reduces risk/severity of mental disorders, not NONE.\n\nCorrection: The edge should be NEGATIVE with a proper causal motivation.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Chronic addiction",
+    "target": "Mental disorder",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Chronic addiction can increase the risk of developing mental disorders due to neurobiological changes, social consequences, and psychological stress associated with sustained substance use. Many substances involved in addiction can alter brain chemistry, which may contribute to the onset or exacerbation of mental health conditions such as depression, anxiety, or psychosis.\")\n\nReasoning:\n- There is strong evidence and established mechanisms showing chronic addiction can causally contribute to the development of mental disorders.\n- The prior motivation was invalid (mistakenly said concepts were 'None' and ignored the actual terms).\n- The correct relationship is POSITIVE, since addiction increases risk/severity of mental disorders.\n- The new motivation gives a clear, plausible mechanism linking source to target.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Healthy lifestyle",
+    "target": "Multi-morbidity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "change_edge_type(old_type='NONE', new_type='NEGATIVE', \nnew_motivation=\"A healthy lifestyle, which includes regular physical activity, a balanced diet, not smoking, and moderate alcohol consumption, reduces the risk of developing multiple chronic diseases (multi-morbidity) due to its protective effects on cardiovascular, metabolic, and immune health.\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Multi-morbidity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "CHANGE TYPE (NONE \u2192 NEGATIVE)\n\nStep-by-step reasoning:\n- Plausibility: There is a strong, plausible mechanism\u2014higher health literacy empowers people to make healthier choices, adhere to care plans, and seek preventive care, all of which lower the risk of developing multiple chronic health conditions.\n- Temporality: Health literacy typically precedes and influences the development of (or protection against) multi-morbidity.\n- Strength: This is a substantial and well-supported relationship in public health literature.\n- Coherence: The original (\"I don't know\") motivation did not justify either the edge type or its absence. Evidence supports a negative relationship.\n\nAction:\nchange_edge_type (old_type='NONE', new_type='NEGATIVE', new_motivation=\"Higher health literacy enables individuals to better understand health information, follow medical advice, and adopt healthy behaviors, reducing the risk of developing multiple chronic conditions (multi-morbidity).\")",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Multi-morbidity",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The judge noted that the NEGATIVE edge type is correct but the motivation overstated the directness, not fully accounting for the mediating role of health behaviors and potential confounders.\n\nBradford Hill analysis:\n\n- Plausibility: There\u2019s a clear mechanism\u2014proactive attitude \u2192 healthier behaviors \u2192 reduced multi-morbidity.\n- Temporality: Proactive attitude precedes the health outcome.\n- Strength: The relationship is meaningful but notably mediated by behaviors and context.\n- Coherence: The motivation needed to clarify that the causal pathway is not strictly \u201cdirect,\u201d but involves mediators.\n\nAction taken: \nI revised the motivation to clarify that the effect is mediated by health behaviors (such as preventive care, adherence to treatment), and that other factors (like socioeconomic status) may also influence the relationship\u2014not just the proactive attitude alone.\n\nNo change in polarity was needed (NEGATIVE is correct). Only the motivation was improved for accuracy."
+  },
+  {
+    "source": "Healthcare avoidance",
+    "target": "Multi-morbidity",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Step-by-step reasoning using Bradford Hill criteria:\n\nSTEP 1: Analyze Judge Feedback + Plausibility\n- Judge notes no reasoning was given (\"I don't know\"), so no causal argument was assessed.\n- There is a plausible mechanism: avoiding healthcare leads to conditions going untreated, which may develop into multiple diseases.\n\nSTEP 2: Temporality\n- Healthcare avoidance precedes the development or worsening of multiple conditions, so temporality is correct.\n\nSTEP 3: Strength\n- There is evidence that not seeking care results in unmanaged, compounding health problems, which can lead to multi-morbidity\u2014a substantial and non-trivial relationship.\n\nSTEP 4: Coherence\n- The new reasoning is internally consistent and matches clinical and epidemiological research.\n\nSTEP 5: Tool Decision\n- The previous type (NONE) is incorrect; there is actually a strong POSITIVE causal relationship.\n- Change edge type to POSITIVE with a proper causal mechanism.\n\nAction taken:\nChanged edge type from NONE to POSITIVE with motivation: \"Avoiding healthcare can lead to untreated or poorly managed health conditions, which may accumulate over time and result in the development of multiple chronic diseases (multi-morbidity). Therefore, healthcare avoidance increases the risk of multi-morbidity by allowing preventable or manageable conditions to worsen or multiply.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Care avoidance behavior",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Individuals who exhibit care avoidance behavior may do so because they have a heightened need for autonomy, seeking to maintain independence and avoid situations where they feel their autonomy is threatened. Thus, a need for autonomy can causally contribute to the development of care avoidance behavior.\")\n\nReasoning:\n- The original edge set the relationship as NONE without any justification.\n- There is a plausible causal mechanism: people who feel a strong need for autonomy may avoid care to preserve their independence.\n- Temporality and strength are satisfied because need for autonomy (a psychological trait) is likely to precede and influence behavior (care avoidance).\n- The appropriate relationship is POSITIVE, with increased need for autonomy leading to more care avoidance behavior.\n- The motivation is fixed to explain the mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Organizational structure",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The main issue was that the motivation provided no reasoning (\"I don't know\"), making it impossible to judge the validity of the edge type. Applying the Bradford Hill criteria:\n\n- PLAUSIBILITY: There is no established mechanism by which diagnostic resources directly cause changes to organizational structure; the direction of causality typically runs the other way.\n- TEMPORALITY: Organizational structure can determine resource allocation, but the reverse is not causally established.\n- STRENGTH & COHERENCE: No substantial direct causal relationship exists.\n\nTherefore, the motivation was revised to clearly explain why the edge should remain as NONE: \"There is no direct causal relationship between the presence of diagnostic resources and the organizational structure of an institution. While organizational structure can influence allocation of resources, the existence or level of diagnostic resources does not by itself alter or determine organizational structure.\" The edge type (NONE) was correct; only the motivation needed improvement."
+  },
+  {
+    "source": "Organizational structure",
+    "target": "Personnel",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type (old_type='NONE', new_type='POSITIVE', new_motivation=\"Organizational structure determines the distribution of roles, responsibilities, and authority within an organization, which directly shapes the composition, function, and behavior of personnel.\")\n\nReasoning:\n- PLAUSIBILITY: There is a clear mechanism\u2014organizational structure influences how personnel are allocated, managed, and interact.\n- TEMPORALITY: Organizational structure is established before (and thus affects) the state and characteristics of personnel.\n- STRENGTH: This is a substantial causal relationship; structure routinely impacts personnel outcomes.\n- COHERENCE: The judge noted lack of reasoning, but there is a strong, plausible causal relationship.\n\nTherefore, the edge should be POSITIVE with a clear causal mechanism described.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Proactive attitude",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge analysis indicates the former motivation (\"I don't know\") failed to justify the absence of a causal relationship. However, a plausible causal mechanism exists: individuals with a proactive attitude tend to seek autonomy so they can act on their initiatives and ideas.\n\nCorrection: I have changed the edge type from NONE to POSITIVE and provided the following motivation:\n\n\"Individuals with a proactive attitude are inclined to take initiative and effect change, which often increases their desire for autonomy so they can act on their ideas without external constraints.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Need for autonomy",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "There is no direct causal link between the accessibility of information and the psychological need for autonomy. The need for autonomy is considered a basic and universal psychological drive, not determined by information access. While accessible information can help individuals satisfy their autonomy, it does not change the underlying need for autonomy itself.\n\n(The edge type is correctly set to NONE, but the new motivation now gives proper causal reasoning for this absence of a relationship.)",
+    "new_type": "NONE"
+  },
+  {
+    "source": "24/7-care mentality",
+    "target": "Personnel",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action Taken: Changed edge type from NONE to NEGATIVE with improved motivation.\n\nStep-by-step reasoning:\n- Plausibility: There is a well-recognized mechanism by which a \"24/7-care mentality\" can negatively affect personnel\u2014specifically by increasing pressure, workload, and risk of burnout.\n- Temporality: The mentality precedes effects on personnel, so the causal direction is appropriate.\n- Strength: The relationship is substantial, as a 24/7 expectation is known to have strong negative implications for staff well-being.\n- Coherence: The initial motivation provided no reasoning, but the new explanation describes a clear causal mechanism.\n\nCorrected Edge:\nEdge: 24/7-care mentality -[NEGATIVE]-> Personnel\nMotivation: \"A 24/7-care mentality may negatively impact personnel by increasing workloads and stress levels, leading to burnout and decreased job satisfaction among staff. This constant expectation of availability can create unsustainable working conditions for personnel.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Health literacy",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Higher health literacy equips individuals with the knowledge and understanding needed to make informed decisions about their health. This understanding often encourages a more proactive attitude toward seeking preventative care, adopting healthy behaviors, and engaging in self-management. Individuals who are more health literate are generally more likely to anticipate health needs and take initiative, rather than react passively to health issues.\")\n\nReasoning:\n- Plausibility: There is a clear causal mechanism; greater health literacy enables informed and self-initiated actions regarding one's health.\n- Temporality: Health literacy typically precedes and fosters the development of a proactive attitude.\n- Strength: The influence is substantial and well-supported in health behavior literature.\n- Coherence: The original motivation was lacking, but the revised explanation coherently supports a positive causal link.\n- The edge was previously set as NONE, but a strong, plausible causal relationship exists\u2014thus, POSITIVE is correct.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\n- The original edge had a type of NONE and no motivation.\n- The judge found this completely unsupported (score: 0), citing a lack of reasoning and no attempt to link the concepts.\n\nBradford Hill Assessment:\n1. Plausibility: There is a plausible causal mechanism\u2014larger social networks often provide more social support, access to new ideas, encouragement, and opportunities, which can drive a proactive attitude.\n2. Temporality: The size of one\u2019s social network can precede and influence changes in their attitude.\n3. Strength: Social networks are well documented to influence attitudes and behaviors, so the causal link is meaningful.\n4. Coherence: The explanation is logically consistent with behavioral and social science research.\n\nAction:\n- The edge should be changed from NONE to POSITIVE.\n- Motivation: \"Having a larger social network can foster a more proactive attitude by exposing individuals to a wider variety of perspectives, opportunities, resources, and encouragement. Social support and connections can motivate individuals to take initiative and pursue goals.\"\n\nCorrection Applied:\n- Edge type updated to POSITIVE with a clear causal mechanism provided.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n\n- Current edge: Diagnostic resources -[NONE]-> Proactive attitude\n- Motivation: \"I don't know\"\n- Judge: Says motivation is absent and thus incorrect.\n\nStep-by-step reasoning:\n- Plausibility: There is a plausible mechanism\u2014having diagnostic resources (e.g., access to tests, evaluation tools) can enable or encourage individuals or organizations to take proactive actions, since knowing more about your current state or risks enables earlier and more engaged behavior.\n- Temporality: Diagnostic resources would typically precede or enable a proactive attitude.\n- Strength: The effect can be meaningful\u2014diagnostic resources often facilitate a shift from reactive to proactive approaches in health and other domains.\n- Coherence: The original edge says NONE due to lack of reasoning, but the mechanism is widely supported as causal and positive.\n\nAction:\nChanged edge type from NONE to POSITIVE, with corrected causal motivation:\n\n\"Availability of diagnostic resources can encourage individuals to adopt a proactive attitude toward their health or tasks by providing them with the necessary tools and information to identify issues early and take preventive action.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Education level",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Higher education level is associated with increased critical thinking, problem-solving skills, and exposure to diverse perspectives, which can foster a more proactive attitude. Education often encourages initiative and personal responsibility, contributing to the development of proactive behaviors.\")\n\nReasoning:\n\nStep 1 (Plausibility): The judge points out that the previous motivation was a methodological issue (variable definitions), not about the existence or nonexistence of a causal mechanism. In reality, education plausibly promotes proactive attitudes by building relevant skills and mindsets.\n\nStep 2 (Temporality): Education typically precedes the development of proactive attitudes, and the causal direction is from education level to attitude, not the reverse.\n\nStep 3 (Strength): This is a well-supported causal link in the social sciences; education has substantial impacts on personality traits and behavioral tendencies, including proactivity.\n\nStep 4 (Coherence): The prior rationale was flawed (no definitions \u2260 no causality), and the aggregate verdict recognized a missed causal link.\n\nStep 5 (Execution): The relationship should be POSITIVE with an explanation rooted in psychological and educational mechanisms. Therefore, I changed the edge to POSITIVE and provided a coherent new motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Therapy compliance",
+    "target": "Proactive attitude",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"A proactive attitude can increase therapy compliance, as individuals who actively seek to manage their health and take initiative are more likely to follow prescribed therapeutic regimens. Therefore, a proactive attitude is causally linked to higher therapy compliance.\")\n\nReasoning:\n- Step 1 (Plausibility): There is a plausible mechanism: individuals with a proactive attitude are more likely to comply with therapy guidelines, through initiative and self-motivation.\n- Step 2 (Temporality): The causal direction should be from proactive attitude \u2192 therapy compliance, not the reverse.\n- Step 3 (Strength): Substantial evidence from behavioral science supports the influence of attitude on compliance.\n- Step 4 (Coherence): The original NONE edge was incorrect; there is a positive causal relationship (but in reverse direction to the original edge).\n- Step 5: Correction is made by establishing POSITIVE causality with a proper explanation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Size of social network",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Individuals with greater financial resources often have more opportunities to engage in social activities, join clubs, travel, or participate in events, which can facilitate the expansion of their social network. Increased financial means can lower barriers to socialization and provide access to a wider range of social circles.\")\n\nReasoning:\n- Plausibility: There is a plausible causal mechanism; greater financial resources enable access to more social opportunities.\n- Temporality: Increased financial resources typically precede or enable opportunities for social network growth.\n- Strength: The relationship is notable\u2014resources can measurably impact ability to build/maintain a social network.\n- Coherence: The original motivation was missing; the new explanation clearly describes the mechanism.\n- The edge should be positive causal, not NONE.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Size of social network",
+    "target": "Therapy compliance",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action taken: revise_motivation\n\nReasoning:\n- Bradford Hill: There is a plausible mechanism (emotional/practical support) linking larger social networks to therapy compliance (Plausibility).\n- Temporality and strength: Larger networks typically precede and support increased compliance in many empirical studies.\n- The original motivation failed coherence by describing the relationship as strictly \u201cdirect\u201d while citing mediated mechanisms.\n- Aggregate judgment found this minor inconsistency but did not dispute the relationship or its strength.\n\nCorrection: I revised the motivation to clarify that the positive influence of social network size on therapy compliance is mediated by emotional support, encouragement, and reminders, thus aligning the explanation with accepted causal logic. The edge type remains POSITIVE."
+  },
+  {
+    "source": "Financial barriers",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge: Financial barriers -[NONE]-> Therapy compliance\n\nStep-by-step reasoning:\n- Plausibility: There is a clear mechanism\u2014financial barriers (like high costs or lack of insurance) make it harder for people to continue or comply with therapy.\n- Temporality: Financial barriers precede and influence therapy compliance.\n- Strength: The relationship is substantial; finances are a well-documented barrier to continuous therapy.\n- Coherence: The original justification (\"I don't know\") provided no information, but all causal criteria are met.\n\nAction taken:\nChanged the edge type from NONE to NEGATIVE with the following motivation:\n\"Financial barriers, such as high costs or lack of insurance, can reduce an individual's ability to afford consistent therapeutic services, thereby lowering overall therapy compliance rates.\"",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Accessibility of information",
+    "target": "Willingness of social network",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Greater accessibility of information can positively influence the willingness of members in a social network to engage, share, or collaborate, as it removes barriers to knowledge and makes it easier for people to participate and make informed decisions.\")\n\nReasoning:\n\nStep 1 (Plausibility): There is a plausible causal mechanism: when information is more accessible, people in a social network are generally more inclined to participate and contribute, as barriers to understanding and engagement are reduced.\nStep 2 (Temporality): Information accessibility precedes\u2014and influences\u2014changes in willingness, supporting the causal direction.\nStep 3 (Strength): This is a substantial and well-documented effect in social and information sciences.\nStep 4 (Coherence): The reasoning is internally consistent and avoids circularity; the previous motivation simply said \"I don't know\" and failed to justify the non-relationship.\nStep 5 (Action): The edge should be POSITIVE with a proper explanation, not NONE. I have changed the edge type accordingly and provided the appropriate motivation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Financial resources",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "CHANGE: Edge changed from NONE to POSITIVE with improved motivation.\n\nReasoning:\n- Plausibility: There is a clear causal mechanism\u2014having more financial resources directly reduces barriers (such as cost of therapy, transport, and medicine) and enables better compliance with therapy.\n- Temporality: Financial resources precede and facilitate therapy compliance, satisfying correct causal direction.\n- Strength: The effect is substantial; inability to pay is a major reason for non-compliance with therapy.\n- Coherence: The new motivation provides a clear, logical mechanism, fixing the previous lack of reasoning.\n\nAction: \nChanged edge type from NONE to POSITIVE with the following motivation:\n\"Greater financial resources can increase therapy compliance by reducing barriers such as inability to pay for sessions, access to transportation, or affording necessary medications and co-pays, thereby enabling individuals to consistently attend and adhere to therapeutic recommendations.\"",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Action: Changed edge type from NONE to POSITIVE.\n\nReasoning: There is a plausible causal relationship\u2014enhanced diagnostic resources improve the accuracy and timeliness of diagnoses, which increases patient understanding and motivation, thereby boosting therapy compliance. The original \"NONE\" type was incorrect; the edge should indicate a positive causal effect with this mechanism.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Diagnostic resources",
+    "target": "Time",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Assessment Step-by-Step:\n\nStep 1: Plausibility\n- \"Diagnostic resources\" (equipment, staff, tools) can plausibly affect \"Time\" (likely, time to diagnosis or treatment) by expediting processes.\n\nStep 2: Temporality\n- More diagnostic resources would logically precede and lead to reduced time delays.\n\nStep 3: Strength\n- This is a substantial relationship in healthcare delivery; lacking resources is a common reason for delays.\n\nStep 4: Coherence\n- The original motivation \"I don't know\" was not adequate. The actual relationship is negative (more resources \u2192 less time).\n\nStep 5: Tool Call\n- I changed the edge from NONE to NEGATIVE, with the motivation: \"Increasing diagnostic resources typically reduces the time required to diagnose and treat patients, as more resources allow for faster and more efficient diagnostic processes.\"\n\nCorrection:\n- EDGE: Diagnostic resources -[NEGATIVE]-> Time\n- Motivation: Increasing diagnostic resources typically reduces the time required to diagnose and treat patients, as more resources allow for faster and more efficient diagnostic processes.",
+    "new_type": "NEGATIVE"
+  },
+  {
+    "source": "Capacity",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "The edge between \"Capacity\" and \"Therapy compliance\" should be POSITIVE, not NONE. There is a strong causal relationship: a patient's cognitive and physical capacity directly influences their ability to comply with therapy, as sufficient capacity is necessary to understand and follow therapeutic instructions. \n\nAction taken: Edge type changed from NONE to POSITIVE with an appropriate mechanistic explanation.",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Need for autonomy",
+    "target": "Therapy compliance",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "Edge Analysis:\n- The current edge marks \"Need for autonomy\" \u2192 \"Therapy compliance\" as NONE (no causal relationship), with an empty motivation.\n- Judge feedback notes no argument or rationale was provided, and the edge is rated incorrect.\n\nStep-by-step Bradford Hill application:\n1. Plausibility: There is a well-documented causal mechanism in self-determination theory: when individuals have a strong need for autonomy and this is supported in therapy (e.g., through collaborative decision-making), they are more likely to comply with therapy because their intrinsic motivation increases.\n2. Temporality: Autonomy is a psychological need that influences subsequent behaviors, such as compliance.\n3. Strength: Evidence in health psychology suggests this relationship is substantial and important.\n4. Coherence: The explanation requires a clear link, which was missing, but the literature strongly supports a causal relationship.\n\nConclusion: The edge should be POSITIVE, not NONE.\n\nAction:\n- Changed the edge type to POSITIVE with new motivation:\n  \"A higher need for autonomy can lead to greater therapy compliance when individuals feel they are allowed to make their own choices and participate actively in decision-making regarding their treatment, increasing their intrinsic motivation to comply with therapy.\"",
+    "new_type": "POSITIVE"
+  }
+]

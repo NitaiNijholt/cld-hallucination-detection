@@ -1,0 +1,79 @@
+{
+  "experiment_info": {
+    "experiment_type": "RQ1a_ground_truth_correctness",
+    "research_question": "Can judges distinguish TP from FP edges in clean CLDs?",
+    "timestamp": "2025-11-16T15:00:58.058074",
+    "script_name": "run_rq1a_ground_truth_judge.py",
+    "script_version": "1.0_ci_metrics_enabled"
+  },
+  "input_parameters": {
+    "base_session_id": "807f8397-1444-4605-b7c5-7a808e631bb7",
+    "base_session_seed": 10,
+    "excel_file": "/home/nitai/code/causalix.ai/data_science/parameter_tuning_experiments/ground_truth_clds_for_experiments/Social_norms_and_obesity_prevalence.xlsx",
+    "output_dir": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1",
+    "corruption_applied": false
+  },
+  "judge_configuration": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "temperature": 0.0,
+    "seed": 42,
+    "judge_approach": "correctness",
+    "num_judges": 1,
+    "judge_parallel": true,
+    "judge_max_workers": 10,
+    "judge_enable_web_search": false
+  },
+  "ci_metrics_configuration": {
+    "enabled": true,
+    "embedding_enable": true,
+    "ci_compute_embeddings": true,
+    "ci_parallel": true,
+    "ci_max_workers": 10,
+    "purpose": "Enable RQ2 analysis (CI metrics vs TP/FP)"
+  },
+  "prompt_variants": {
+    "baseline": {
+      "yaml_file": "prompts_correctness_baseline.yaml",
+      "description": "Correctness Baseline",
+      "max_tokens": 1500
+    },
+    "cot": {
+      "yaml_file": "prompts_correctness_cot.yaml",
+      "description": "Correctness Cot",
+      "max_tokens": 10000
+    },
+    "mechanistic": {
+      "yaml_file": "prompts_correctness_mechanistic.yaml",
+      "description": "Correctness Mechanistic",
+      "max_tokens": 1500
+    }
+  },
+  "execution_results": [
+    {
+      "prompt_name": "baseline",
+      "prompt_description": "Correctness Baseline",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_baseline_20251116_145753.xlsx",
+      "judged_session_id": "81297f79-62a0-433d-9cc7-6942e1ba1009",
+      "timestamp": "20251116_145753"
+    },
+    {
+      "prompt_name": "cot",
+      "prompt_description": "Correctness Cot",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_cot_20251116_145844.xlsx",
+      "judged_session_id": "76f105d4-0edd-48f2-b1a2-28e6ae3c49a4",
+      "timestamp": "20251116_145844"
+    },
+    {
+      "prompt_name": "mechanistic",
+      "prompt_description": "Correctness Mechanistic",
+      "result_file": "/home/nitai/code/causalix.ai/final_runs/RQ1a_ground_truth_correctness/social_norms/run_1/judged_Social_norms_and_obesity_prevalence_mechanistic_20251116_145956.xlsx",
+      "judged_session_id": "38728b21-c348-4f11-b644-1b1bd1dda961",
+      "timestamp": "20251116_145956"
+    }
+  ],
+  "system_info": {
+    "python_version": "3.10.18",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

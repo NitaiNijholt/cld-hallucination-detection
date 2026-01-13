@@ -1,0 +1,1050 @@
+{
+  "cld": "Social_norms_and_obesity_prevalence",
+  "timestamp": "20251012_213641",
+  "total_edges": 17,
+  "results": [
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "TP",
+      "source": "Group-level BMI",
+      "target": "Norm BMI",
+      "verdict": "partially_supported",
+      "confidence": 6,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 6,
+      "strongest_causal_evidence_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5818735/",
+      "strongest_causal_evidence_passage": "Participants who were exposed to women with obesity later underestimated the weight status of the woman with overweight (43%) significantly more than participants who were exposed to normal weight women (13%). Furthermore, participants exposed to women with obesity chose a larger body size as being the largest body that fell within the \u0018normal\u0019 range (upper norm boundary) than participants exposed to normal weight women.",
+      "strongest_causal_evidence_study_type": "Experimental manipulation (randomized visual exposure experiment)",
+      "strongest_causal_evidence_summary": "Source (Group-level BMI) operationalized as exposure to heavier bodies: In a randomized exposure experiment, exposing participants to images of people with obesity led to an increase in the target (Norm BMI), measured as a higher visual \u0018upper norm boundary\u0019 for what is considered \u0018normal\u0019 body size.",
+      "judge_reasoning": "Experimental studies show that visual exposure to heavier bodies causally increases the body sizes perceived as \u2018normal,\u2019 supporting a plausible mechanism linking higher group-level BMI to higher normative BMI. Multiple observational and multilevel studies also find that people living among heavier peers or in higher-BMI areas are less likely to perceive themselves as overweight, consistent with upwardly shifted norms. However, most contextual evidence is observational and susceptible to confounding, homophily, and reflection problems; some studies find mixed or attenuated effects after adjustment. Direct causal tests at the true group/area level are limited. Overall, the causal claim is partially supported with moderate confidence.",
+      "modified_claim": "Higher average BMI in one\u2019s social group or local area shifts upward what body size is perceived as \u201cnormal\u201d (i.e., raises normative/\u2018normal\u2019 BMI).",
+      "evidence_urls": [
+        "https://www.nejm.org/doi/full/10.1056/NEJMsa066082",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5818735/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5601193/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5905672/",
+        "https://pubmed.ncbi.nlm.nih.gov/20231401/",
+        "https://www.sciencedirect.com/science/article/abs/pii/S0277953621010261",
+        "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0189855"
+      ],
+      "key_evidence_summaries": [
+        "Longitudinal network analysis reporting increased obesity risk when friends, siblings, or spouses become obese; interpreted as social contagion though debated; suggests social influence pathways relevant to norms.",
+        "Three studies show exposure to heavier bodies shifts \u2018upper norm boundary\u2019 upward and increases underestimation of overweight; mediation analyses indicate norm shifts partly explain under-detection.",
+        "Systematic review proposing that rising population adiposity recalibrates visual norms, increasing underestimation; synthesizes cross-sectional and experimental adaptation evidence.",
+        "Multilevel Add Health analyses: higher county average BMI predicts lower likelihood of self-classifying as overweight, net of own BMI, especially among women/adolescents.",
+        "Population analyses show cohorts with higher average BMI increasingly classify heavier weights as \u2018about right,\u2019 indicating ecological shifts in weight norms as BMI rises.",
+        "Population-representative longitudinal data from the Netherlands: area-level BMI associated with overweight perception, but effects attenuate after adjusting for individual BMI; mixed evidence for strong contextual causality.",
+        "Experimental work shows that selective attention to thin/fat bodies mediates adaptation-induced shifts in perceived \u2018normal,\u2019 clarifying cognitive-perceptual mechanisms."
+      ],
+      "limitations": [
+        "Most area/group BMI evidence is observational and vulnerable to confounding, homophily, and correlated environments (reflection problem).",
+        "Experimental causal evidence manipulates visual exposure, not actual community BMI; external validity to real-world group contexts is assumed but not proven.",
+        "Measures of \u2018norm BMI\u2019 vary (self-classification vs. perceptual thresholds), complicating synthesis.",
+        "Context effects may differ by gender, age, culture, and media exposure; heterogeneity limits generalization.",
+        "Some longitudinal/contextual studies report attenuated or mixed effects after adjusting for individual BMI and covariates."
+      ],
+      "future_research": [
+        "Field or natural experiments that exogenously change exposure to heavier bodies (e.g., relocations, campus assignments, media saturation changes) and track shifts in perceived norms.",
+        "Longitudinal multilevel studies with strong controls/instruments to separate endogenous peer effects from contextual and correlated effects.",
+        "Preregistered lab-to-field replications assessing durability and magnitude of exposure-induced norm shifts in everyday settings.",
+        "Diverse samples across cultures and life stages to test moderators (gender, ethnicity, media exposure, baseline BMI)."
+      ],
+      "iteration_history": [],
+      "total_tokens": 288336,
+      "api_calls": 40,
+      "estimated_input_tokens": 282569,
+      "estimated_output_tokens": 5766
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "TP",
+      "source": "Physical Activity Level",
+      "target": "Total Daily Energy Expenditure (TDEE)",
+      "verdict": "partially_supported",
+      "confidence": 8,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 8,
+      "strongest_causal_evidence_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8441008/",
+      "strongest_causal_evidence_passage": "\"In the 20KKW group free-living TDEE increased by ~4% (p=0.03), which is attributed to the increased exercise energy expenditure (p=0.001), while 24EE in the chamber decreased by ~4% (p=0.04).\"",
+      "strongest_causal_evidence_study_type": "RCT",
+      "strongest_causal_evidence_summary": "A randomized controlled trial (Broskey et al., 2021) manipulated physical activity level via a 24-week structured aerobic exercise intervention. Participants randomized to the higher exercise dose (20 kcal/kg/week) showed a significant increase in Total Daily Energy Expenditure (TDEE) measured by doubly labeled water. This supports that increasing physical activity level (source) causes an increase in TDEE (target).",
+      "judge_reasoning": "There is direct experimental evidence that prescribing and increasing physical activity raises free-living TDEE, but the increase is frequently smaller than the nominal exercise cost due to physiological and behavioral compensation. Randomized, supervised trials using doubly labeled water (DLW) show modest TDEE increases with higher-dose exercise and, in some cases, no net TDEE change, while cross-sectional DLW studies suggest a plateau of TDEE at higher habitual activity (the constrained-energy model). Thus, PAL causally affects TDEE, but not in a simple proportional manner across the activity spectrum.",
+      "modified_claim": "Increasing physical activity level increases total daily energy expenditure on average, but the relationship is non-linear and often partially offset by compensatory reductions in other components of energy expenditure, especially at higher activity levels.",
+      "evidence_urls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8441008/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11214370/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4803033/",
+        "https://www.science.org/doi/10.1126/science.abe5017",
+        "https://pubmed.ncbi.nlm.nih.gov/11889152/",
+        "https://www.frontiersin.org/articles/10.3389/fphys.2013.00090/full",
+        "https://pubmed.ncbi.nlm.nih.gov/28724452/"
+      ],
+      "key_evidence_summaries": [
+        "In a 24-week supervised aerobic exercise RCT, the higher-dose (20 kcal/kg/week) group increased free-living TDEE by ~4% (~144 kcal/d) measured by DLW, while 24-h chamber EE decreased; suggests exercise increases TDEE but with compensatory reductions elsewhere.",
+        "Among exercisers in the same trial, ~48% exhibited exercise-related energy compensation (ExEC), expending ~308 kcal/d less than predicted; ExEC was unrelated to metabolic adaptation in sedentary EE components, indicating compensation occurs without reductions in REE/SEE.",
+        "Large cross-sectional DLW dataset shows TDEE rises with activity at low-to-moderate levels but plateaus at higher activity, consistent with a constrained-energy model where other expenditures are downregulated as activity rises.",
+        "DLW across the human life course indicates activity contributes to TDEE variation, but TDEE is also strongly shaped by basal metabolism, body composition, age, and tissue-specific metabolism, underscoring a complex, multi-component determinant of TDEE.",
+        "Randomized training in young women (endurance or resistance) did not significantly alter TDEE by DLW despite improved fitness or strength, indicating compensation can negate expected TDEE increases.",
+        "Review synthesizing DLW and training studies: supervised exercise increases activity EE, but total effects on TDEE are attenuated by compensation and changes in other components; discusses measurement and determinants of PAL/AEE.",
+        "Narrative review of DLW exercise studies concludes exercise-induced increases in EE are frequently compensated by higher intake and/or reduced non-exercise activity, so PAL and TDEE often rise less than expected."
+      ],
+      "limitations": [
+        "Some key evidence is cross-sectional (DLW plus accelerometry), which cannot establish within-person causality and is sensitive to PA measurement choices (e.g., hip vs wrist).",
+        "Several intervention studies have small sample sizes and limited duration (\u224824 weeks), reducing power to detect component changes and limiting generalizability.",
+        "DLW provides integrated TDEE over days/weeks but cannot directly attribute compensation to specific physiological systems; partitioning components relies on modeling and chamber estimates.",
+        "Energy intake was not strictly controlled in many trials; increases in intake can obscure the pure effect of PAL on TDEE and confound weight-change interpretations.",
+        "Heterogeneity by baseline TDEE/fitness, age, sex, and body composition complicates aggregation; responses are not uniform across populations.",
+        "Some trials measured TDEE shortly after training when improved efficiency may lower cost of activity, affecting observed net TDEE changes."
+      ],
+      "future_research": [
+        "Longer, adequately powered randomized trials across a broader range of activity doses with DLW, combining tight dietary control to isolate PAL\u2019s effect on TDEE.",
+        "Mechanistic studies quantifying changes in exercise efficiency, NEAT, and tissue-specific metabolism (e.g., mitochondrial function, SNS, thyroid) to locate where compensation occurs.",
+        "Use harmonized, multi-site accelerometry (wrist and hip) alongside DLW to reduce measurement bias when relating PA to TDEE.",
+        "Develop predictive models to identify individuals prone to compensation (e.g., high baseline TDEE/VO2max) to personalize exercise prescriptions.",
+        "Examine extreme and sustained activity doses and recovery periods to map the full shape of the PAL\u2013TDEE curve and its upper limits.",
+        "Test interventions that combine exercise with strategies to preserve non-exercise activity (NEAT) and assess whether this increases net TDEE without adverse compensation."
+      ],
+      "iteration_history": [],
+      "total_tokens": 281290,
+      "api_calls": 37,
+      "estimated_input_tokens": 275664,
+      "estimated_output_tokens": 5625
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "TP",
+      "source": "Body Mass Index (BMI)",
+      "target": "Basal Metabolic Rate",
+      "verdict": "unsupported",
+      "confidence": 8,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://www.nature.com/articles/s41366-022-01090-7",
+      "strongest_causal_evidence_passage": "On average, 60% of the total reduction in RMR were explained by energy-expending tissues losses, while 40% were attributed to metabolic adaptations... adipose tissue losses were positively associated with the reduction in RMR (r = 0.42, p < 0.001) and metabolic adaptations (r = 0.31, p < 0.001).",
+      "strongest_causal_evidence_study_type": "Randomized controlled trial (secondary analysis of CALERIE weight-loss intervention)",
+      "strongest_causal_evidence_summary": "During sustained caloric restriction, reductions in resting metabolic rate are causally attributable to loss of energy-expending tissues and to metabolic adaptations, with adipose tissue loss correlating with RMR decline. This shows body composition changes drive RMR, not BMI per se.",
+      "judge_reasoning": "The claim that BMI per se causes basal metabolic rate is not supported. Multiple high-quality studies and reviews show that BMR/REE is primarily determined by fat-free mass (and secondarily by fat mass) and the composition of metabolically active organs/tissues. BMI correlates with BMR mainly because it reflects body size and composition, not because BMI independently alters BMR. Interventional weight-loss data show changes in RMR are driven by losses of energy-expending tissues and metabolic adaptations, not BMI itself. Mendelian randomization suggests genetically higher BMR increases BMI (reverse direction), further contradicting the original causal direction.",
+      "modified_claim": "Basal/resting metabolic rate is causally determined primarily by fat-free mass and, to a lesser extent, fat mass and organ/tissue metabolic activity. The association between BMI and BMR is largely mediated by these body-composition components. Increases in BMI raise absolute BMR mainly insofar as they coincide with higher FFM/FM, while genetic predisposition to higher BMR may also lead to higher BMI.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/16280423/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4278349/",
+        "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2013.00047/full",
+        "https://pubmed.ncbi.nlm.nih.gov/10950820/",
+        "https://pubmed.ncbi.nlm.nih.gov/11739093/",
+        "https://www.nature.com/articles/s41366-022-01090-7",
+        "https://pubmed.ncbi.nlm.nih.gov/8043898/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10999873/"
+      ],
+      "key_evidence_summaries": [
+        "Cross-sectional ventilated-hood calorimetry shows FFM explains ~63% of BMR variance, FM ~6%, age ~2%; hormones like leptin add little once FM included.",
+        "Systematic reviews of BMR prediction equations consistently identify FFM as the best independent predictor across populations; FM sometimes adds modestly, BMI adds little beyond composition.",
+        "Review on adjusting REE for body size: FFM is the major determinant; organ/tissue composition explains residual differences; cautions against using BMI to infer REE.",
+        "Body-composition modeling indicates REE differences arise from amounts and proportions of high\u2013metabolic-rate organs within FFM; explains BMI\u2013REE associations via composition.",
+        "MRI/DXA organ-tissue models predict REE well; body-size dependence of REE is due to nonhomogeneity of FFM, not BMI per se.",
+        "Weight-loss RCT secondary analysis: RMR reductions (~100 kcal/d) were ~60% due to loss of energy-expending tissues and ~40% due to metabolic adaptations; adipose loss correlated with RMR decline and adaptations.",
+        "In obese vs. morbidly obese vs. controls, absolute REE rose with BMI but differences attenuated after adjusting for body cell mass/FFM, indicating composition drives REE.",
+        "Large MR study: genetically higher BMR associated with higher BMI and adverse metabolic traits, suggesting BMR\u2192BMI rather than BMI\u2192BMR."
+      ],
+      "limitations": [
+        "Many supporting studies are cross-sectional; causality for composition\u2192BMR is inferred from physiology and interventions but not always randomized to isolate specific tissues.",
+        "Organ/tissue modeling relies on assumptions and indirect estimates (e.g., DXA-derived organ masses) that introduce error.",
+        "Heterogeneity across populations (age, sex, obesity status, ethnicity) may affect the FM contribution to BMR and generalizability.",
+        "RMR and BMR are often used interchangeably; measurement protocols vary and can influence results.",
+        "Genetic evidence pertains to BMR\u2192BMI; there is limited MR directly testing BMI (as an exposure) on BMR as an outcome."
+      ],
+      "future_research": [
+        "Conduct Mendelian randomization analyses instrumenting BMI and body composition (FFM/FM) separately to test causal effects on BMR/RMR.",
+        "Randomized interventions selectively altering FFM (e.g., resistance training, anabolic therapies) or FM (e.g., lipolysis, pharmacologic) to quantify causal impacts on RMR independent of BMI changes.",
+        "High-resolution imaging (MRI) trials to assess organ-specific mass changes and their contributions to RMR in weight loss/gain.",
+        "Evaluate roles of fat distribution (visceral vs subcutaneous) and endocrine signals (thyroid, leptin) in modulating RMR at fixed FFM.",
+        "Standardize BMR/RMR measurement protocols across studies to reduce methodological variability and enable meta-analytic causal inference."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Replace with: \u201cBody composition\u2014especially fat-free mass and, to a lesser extent, fat mass\u2014causally determines basal (resting) metabolic rate; the association between BMI and BMR is largely mediated by these body-composition components and organ/tissue metabolic activity. Increases in BMI raise absolute BMR mainly via concomitant increases in FFM/FM, while genetically higher BMR may also predispose to higher BMI.\u201d",
+          "evidence_count": 31,
+          "high_quality_count": 1,
+          "judgment": "not_supported",
+          "judgment_confidence": 8
+        }
+      ],
+      "total_tokens": 277893,
+      "api_calls": 41,
+      "estimated_input_tokens": 272335,
+      "estimated_output_tokens": 5557
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "TP",
+      "source": "Basal Metabolic Rate",
+      "target": "Total Daily Energy Expenditure (TDEE)",
+      "verdict": "supported",
+      "confidence": 8,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://www.ncbi.nlm.nih.gov/articles/PMC6608565/",
+      "strongest_causal_evidence_passage": null,
+      "strongest_causal_evidence_study_type": "Clinical intervention/longitudinal treatment study (thyroid dysfunction treatment)",
+      "strongest_causal_evidence_summary": "Clinical studies reviewed show that overt hyperthyroidism increases resting energy expenditure (and weight loss), while hypothyroidism decreases it; treatment reverses these changes. These endocrine manipulations causally alter BMR and produce corresponding changes in total energy expenditure.",
+      "judge_reasoning": "Total daily energy expenditure (TDEE) is the sum of basal/resting metabolic rate (BMR/RMR), the thermic effect of food, and activity energy expenditure. Authoritative reviews and large doubly labeled water (DLW) datasets consistently show BMR is the largest single component of TDEE in most adults and a major determinant of between-person variation. Clinical interventions that alter physiological regulators of BMR (e.g., thyroid hormone) change resting expenditure and produce corresponding changes in total expenditure, supporting a causal contribution from BMR to TDEE. However, TDEE is not determined by BMR alone; activity and diet-induced thermogenesis also contribute and may partially compensate for changes, especially at high activity levels.",
+      "modified_claim": "Basal (resting) metabolic rate is the largest component and a major determinant of total daily energy expenditure. All else equal, changes in BMR\u2014primarily driven by fat\u2011free mass and endocrine status\u2014produce commensurate changes in TDEE, though activity energy expenditure and the thermic effect of food also contribute and can partially compensate.",
+      "evidence_urls": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK591031/",
+        "https://www.science.org/doi/10.1126/science.abe5017",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424457/",
+        "https://www.ncbi.nlm.nih.gov/articles/PMC6608565/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4803033/",
+        "https://pubmed.ncbi.nlm.nih.gov/7825536/",
+        "https://pubmed.ncbi.nlm.nih.gov/8641250/",
+        "https://www.ncbi.nlm.nih.gov/books/NBK591031/",
+        "https://www.cambridge.org/core/journals/proceedings-of-the-nutrition-society/article/exercise-energy-expenditure-and-energy-balance-as-measured-with-doubly-labelled-water/A00FAD78FB18AC376B94DAE63B5024BB",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5486561/"
+      ],
+      "key_evidence_summaries": [
+        "Institute of Medicine review defines TDEE as RMR/BMR + thermic effect of food + activity EE; RMR typically ~50\u201370% of adult TDEE.",
+        "Large pooled DLW analysis across the life course shows basal energy expenditure is a major component of TDEE and models TDEE as basal + activity.",
+        "Review: RMR is the largest TDEE component; fat\u2011free mass explains most interindividual variance in RMR, linking body composition to TDEE via RMR.",
+        "Thyroid hormone strongly regulates resting expenditure; treating hyper- or hypothyroidism changes REE and produces net changes in energy expenditure.",
+        "Multi-site DLW study: TDEE correlates with activity at low levels but plateaus at higher levels (constrained TEE); RMR is the largest, relatively stable component.",
+        "Meta-analysis: RMR correlates strongly with TEE (r\u22480.66), indicating RMR is a major determinant of between-person variation in TEE.",
+        "DLW analysis of 574 measurements shows BMR comprises the major component of free-living TDEE; typical PAL ranges imply BMR ~60\u201375% in many adults.",
+        "DRI/NCBI chapter reiterates TEE = REE + DIT + AEE and that REE/BMR is usually the largest portion of TEE in adults.",
+        "Review of DLW-based PAL shows typical population PAL ranges and plateauing of TDEE at high activity; emphasizes TEE/RMR relationship.",
+        "Technical DLW review confirms DLW as gold standard for free-living TDEE and standard partitioning with measured RMR."
+      ],
+      "limitations": [
+        "Many supporting analyses are observational or cross-sectional, limiting strict causal inference beyond physiological identity.",
+        "Partitioning TDEE requires assumptions (e.g., TEF ~10%) and sometimes predicted rather than measured RMR, introducing error.",
+        "BMR vs RMR protocol differences and measurement error can affect estimated contributions and associations.",
+        "Compensatory adaptations at higher activity levels mean TDEE is not a simple linear sum, moderating the impact of BMR changes.",
+        "Endocrine intervention evidence often comes from overt disease states, so generalization to healthy ranges may be limited.",
+        "Population heterogeneity (age, sex, obesity, ethnicity) affects relative component sizes and may limit generalizability of averages."
+      ],
+      "future_research": [
+        "Longitudinal interventions that manipulate fat\u2011free mass (e.g., resistance training) with DLW and calorimetry to quantify resulting TDEE changes.",
+        "Randomized studies that modulate thyroid and other endocrine axes within physiological ranges to estimate causal BMR\u2192TDEE effects in healthy adults.",
+        "Simultaneous measurement of TEF, RMR, and activity EE under controlled diet/activity to quantify compensation dynamics.",
+        "High-frequency repeated DLW and indirect calorimetry to assess within-person coupling of BMR and TDEE over time and during weight change.",
+        "Improved measurement and modeling of AEE (e.g., multi-sensor wearables) to reduce error when partitioning TDEE components.",
+        "Standardization of BMR/RMR protocols and broader inclusion of diverse populations (age, BMI, ethnicity, disease) to refine estimates."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Revise to: \"Basal (resting) metabolic rate is the largest component and a major determinant of total daily energy expenditure; changes in BMR\u2014primarily driven by fat\u2011free mass and endocrine state\u2014cause proportional changes in TDEE, although activity energy expenditure and the thermic effect of food also contribute and can partially compensate.\"",
+          "evidence_count": 36,
+          "high_quality_count": 14,
+          "judgment": "supported",
+          "judgment_confidence": 8
+        }
+      ],
+      "total_tokens": 272608,
+      "api_calls": 46,
+      "estimated_input_tokens": 267155,
+      "estimated_output_tokens": 5452
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "TP",
+      "source": "Socio-cultural Ideal BMI",
+      "target": "Norm BMI",
+      "verdict": "partially_supported",
+      "confidence": 6,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 8,
+      "strongest_causal_evidence_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5990741/",
+      "strongest_causal_evidence_passage": "Participants exposed to over- or normal-weight images subsequently perceived others' bodies as smaller, in comparison to those shown underweight bodies (p < 0.001). They also perceived their own bodies as smaller (mega-analysis, p = 0.001), and felt more satisfied with their size (mega-analysis, p = 0.006). There were no differences in chocolate consumption.",
+      "strongest_causal_evidence_study_type": "Randomized controlled laboratory experiments",
+      "strongest_causal_evidence_summary": "Two randomized studies showed that brief exposure to images of women manipulated to appear underweight, normal weight, or overweight causally shifted participants\u2019 perceived \u2018normal\u2019 body size, their own-size judgments, and body-size satisfaction shortly after exposure, with some effects persisting 24 hours.",
+      "judge_reasoning": "Randomized laboratory experiments and visual-adaptation paradigms show that manipulating exposure to thin/heavier bodies or peer body-size preferences reliably and causally shifts perceived normal body size and personal ideals over hours to about a day. Multilevel longitudinal work indicates contextual descriptive weight norms shape subjective weight status. However, evidence that these perceptual norm shifts translate into sustained behavioral change and population BMI distributions is inconsistent: network/observational studies are contested due to confounding and selection, RCTs of social influence change proximal behaviors more readily than BMI, and acculturation evidence is heterogeneous. Thus, the causal link is well supported for perceptual norms but not established for population BMI norms.",
+      "modified_claim": "Exposure to sociocultural body-size ideals causally shifts perceived normative body size (\u201cnorm BMI\u201d) and personal body ideals in the short term; downstream effects on weight-related intentions and behaviors are plausible, but evidence that such exposures causally change population BMI (group-level \u201cnorm BMI\u201d) is limited and mixed.",
+      "evidence_urls": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5990741/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6882410/",
+        "https://www.sciencedirect.com/science/article/abs/pii/S1740144514000370",
+        "https://www.sciencedirect.com/science/article/abs/pii/S1740144512000381",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5905672/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2727220/",
+        "https://www.nejm.org/doi/full/10.1056/NEJMsa066082",
+        "https://www.sciencedirect.com/science/article/abs/pii/S0167629608000362",
+        "https://onlinelibrary.wiley.com/doi/10.1111/obr.13044",
+        "https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-018-5451-4",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9793301/"
+      ],
+      "key_evidence_summaries": [
+        "Two randomized studies (N\u2248186 combined) show exposure to images altered to under/normal/overweight shifts perceived normal size of others, own-size perception (in high body-dissatisfaction sample and mega-analysis), and body-size satisfaction; effects persisted up to 24h for some outcomes.",
+        "Brief exposure to thin vs wide bodies produces perceptual aftereffects, shifting judgments of normality/attractiveness and even self-judgments; numerous lab experiments demonstrate causal, short-term perceptual norm updating.",
+        "Experimental manipulation of purported peer body-size preferences caused women to adopt thinner vs heavier personal ideals accordingly.",
+        "Controlled experiments demonstrate that manipulated descriptive norms (what is typical) shift ideal body size and sometimes self-perception shortly after exposure.",
+        "Using Add Health with multilevel models, county-level descriptive weight norms (average BMI among those saying \u2018about right\u2019) predicted subjective weight labeling beyond individual BMI and across time, indicating contextual norms shape perceived norms/status.",
+        "In a 13-year cohort, misperception of own size predicted differential BMI trajectories (e.g., obese women perceiving normal gained more), consistent with perception/norms influencing later weight change.",
+        "Longitudinal network analysis suggests social influence in weight gain, but identification is debated; econometric critiques show sensitivity to confounding/selection, limiting causal claims for population BMI.",
+        "System-dynamics modeling parameterized with survey data illustrates plausible causal loops from sociocultural ideals to perceived norms to behaviors and group BMI, but remains simulation-based.",
+        "Cluster-RCT training influential peers increased physical activity; BMI effects were small/null over short follow-up, showing behavior can be shifted via social norms but weight change is harder.",
+        "Longitudinal cohort of migrant families shows parents\u2019 underestimation of child weight predicts higher subsequent BMI in some groups, supporting a norms/perception \u2192 behavior/weight pathway."
+      ],
+      "limitations": [
+        "Ambiguity in \u2018Norm BMI\u2019: perceived normative size vs population mean BMI; evidence strength differs by definition.",
+        "Most experimental evidence measures short-term perceptual/attitudinal outcomes, not sustained behavior or BMI change.",
+        "Observational network and acculturation studies face unmeasured confounding, selection, and reverse causality; identification is contested.",
+        "Generalizability concerns: many experiments use young, predominantly female, Western samples; media stimuli often limited in diversity.",
+        "Effect sizes for perceptual shifts are modest; durability beyond 24\u201372 hours is uncertain.",
+        "Modeling studies illustrate mechanisms but do not establish causality.",
+        "Measurement heterogeneity in \u2018internalization,\u2019 \u2018norms,\u2019 and acculturation complicates synthesis and causal inference."
+      ],
+      "future_research": [
+        "Conduct cluster-randomized or natural experiments that shift community/media body-size norms (e.g., policy mandating diverse/healthy-range models) and follow objective behaviors and BMI over months/years.",
+        "Use causal network designs (peer encouragement, randomized seeding, instrumental variables) to isolate social influence on weight from homophily and shared environment.",
+        "Longitudinal cohort studies that repeatedly assess exposure to ideals, perceived norms, intentions/behaviors, and BMI to test mediation chains with strong confounder control.",
+        "Test interventions that recalibrate perceived norms (e.g., norm-correction feedback, visual adaptation training) for durability and downstream behavior/BMI effects.",
+        "Examine cross-cultural settings undergoing rapid media/ideal shifts to exploit quasi-experimental variation (e.g., media market entries) and difference-in-differences analyses.",
+        "Incorporate objective behavioral measures (dietary intake, activity, sleep) as mediators between perceptual norm shifts and BMI.",
+        "Expand samples to include men, diverse ages and ethnicities, and low-/middle-income contexts to assess generalizability."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Clarify scope and mechanism. For example: \"Exposure to sociocultural body-size ideals causally shifts perceived normative body size (\u2018norm BMI\u2019) and personal body ideals; over time, these perceptual norm shifts can influence weight-related intentions and behaviors and may contribute, alongside environmental and structural factors, to group-level BMI distributions.\"",
+          "evidence_count": 34,
+          "high_quality_count": 4,
+          "judgment": "supported",
+          "judgment_confidence": 6
+        }
+      ],
+      "total_tokens": 299290,
+      "api_calls": 44,
+      "estimated_input_tokens": 293304,
+      "estimated_output_tokens": 5985
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Body Mass Index (BMI)",
+      "target": "Group-level BMI",
+      "verdict": "unsupported",
+      "confidence": 7,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 8,
+      "strongest_causal_evidence_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0242681",
+      "strongest_causal_evidence_passage": "\"Results Consistent with roommate influence, participants randomized to roommates with a higher BMI gained more weight between times T2 and T4 (\u03b2 = 0.06; 95% CI = 0.02, 0.10).\" \"Conclusions Randomly assigned roommates influenced each other's weight trajectories.\"",
+      "strongest_causal_evidence_study_type": "Natural experiment (random roommate assignment)",
+      "strongest_causal_evidence_summary": "Source variable: individual BMI (roommate baseline BMI). Target variable: group-level BMI (others\u2019 BMI within the dyad/group; here, the participant\u2019s BMI). In a natural experiment with randomized roommate assignment, participants assigned to roommates with higher BMI subsequently gained more weight, demonstrating a causal peer effect from one person\u2019s BMI to another\u2019s BMI.",
+      "judge_reasoning": "The original claim is ill-posed as a causal statement: group-level BMI is an aggregate of individual BMIs, so saying \u201cBMI causes group-level BMI\u201d is largely tautological and does not specify a mechanism. The relevant causal question is whether peers\u2019 BMI or behaviors causally influence individuals\u2019 BMI, which in turn could shift group averages. Natural-experiment evidence from randomly assigned college roommates shows small but significant peer effects on BMI/weight change, and gene\u2013environment studies indicate effects vary by sex and genetic susceptibility. However, classic observational network claims of \u201cobesity contagion\u201d remain debated due to identification problems. Thus, while peer influence on individual BMI is supported in certain contexts, the original statement is not a meaningful causal claim and is unsupported as stated.",
+      "modified_claim": "Assignment to peers with higher BMI (e.g., randomly assigned college roommates) causes small increases in individuals\u2019 BMI, contributing over time to higher group-level BMI.",
+      "evidence_urls": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7685435/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8607809/",
+        "https://www.nejm.org/doi/full/10.1056/NEJMsa066082",
+        "https://www.sciencedirect.com/science/article/abs/pii/S0167629608000362",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6698226/",
+        "https://www.nber.org/papers/w7469"
+      ],
+      "key_evidence_summaries": [
+        "Measured-BMI longitudinal study of first-year students with random roommate assignment found that higher roommate BMI predicts greater BMI gain over the academic year; no comparable effect among non-roommate floormates (\u03b2\u22480.06 for time\u00d7roommate BMI).",
+        "Random roommate design using peers\u2019 pre-college exercise and FTO genotype shows that frequently exercising roommates reduce BMI among women with FTO risk alleles; suggests causal peer effects moderated by genetics and gender.",
+        "Longitudinal social network analysis reported increased risk of obesity if a friend becomes obese, interpreted as social contagion; however, it is observational and vulnerable to confounding and homophily.",
+        "Reanalysis and critique show that model specification and shared environment can generate apparent contagion; cautions against causal interpretation of observational network associations.",
+        "Within-school/across-cohort design indicates classmate BMI is associated with individual BMI; large sample strengthens precision though residual confounding remains possible.",
+        "Randomly assigned Dartmouth roommates show peer effects on several outcomes (e.g., academic effort), supporting the plausibility of room-level peer influence mechanisms."
+      ],
+      "limitations": [
+        "Original claim is conceptually tautological and not a properly specified causal hypothesis.",
+        "Strongest causal evidence comes from college roommate natural experiments, which may not generalize beyond first-year students or dorm settings.",
+        "Estimated peer effects are modest; population impact depends on network structure and exposure duration.",
+        "Some roommate assignments may deviate from perfect randomness; small samples in some studies reduce precision, especially for males.",
+        "Observational network studies remain vulnerable to homophily and shared-environment confounding despite controls.",
+        "Some studies rely on self-reported height/weight or behaviors, introducing measurement error."
+      ],
+      "future_research": [
+        "Pre-registered, multi-campus replications with measured anthropometrics and verified randomization to roommates/floormates, powered by sex and genotype.",
+        "Cluster-randomized or encouragement designs that manipulate peer exposure (e.g., health-behavior interventions at room/floor level) to test mechanisms and spillovers.",
+        "Longer-term follow-up to assess persistence and cumulative effects on group-level BMI beyond the first year.",
+        "Use of peers\u2019 exogenous characteristics (e.g., genotypes, housing lotteries) as instruments to strengthen identification in non-dorm contexts.",
+        "Mechanism mapping via intensive longitudinal data (diet, activity, sleep, norms) and mediation analyses to quantify pathways from peer influence to BMI.",
+        "Extension to other age groups and settings (schools, workplaces, families) to evaluate external validity and heterogeneity of peer effects."
+      ],
+      "iteration_history": [],
+      "total_tokens": 237679,
+      "api_calls": 38,
+      "estimated_input_tokens": 232925,
+      "estimated_output_tokens": 4753
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Physical Activity Level",
+      "target": "Basal Metabolic Rate",
+      "verdict": "partially_supported",
+      "confidence": 7,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://pubmed.ncbi.nlm.nih.gov/32397898/",
+      "strongest_causal_evidence_passage": "While there was no effect of aerobic exercise on RMR (MD: 81.65 kCal\u00b7day -1 [95% CI: -57.81, 221.10], P = 0.25), resistance exercise increased RMR compared to controls (MD: 96.17 kCal\u00b7day -1 [95% CI: 45.17, 147.16], P = 0.0002).",
+      "strongest_causal_evidence_study_type": "Systematic Review and Meta-analysis",
+      "strongest_causal_evidence_summary": "Yes. The strongest direct evidence shows that increasing Physical Activity Level via resistance exercise causes an increase in basal/resting metabolism. A systematic review and meta-analysis (PMID: 32397898) reported that resistance exercise increased Resting Metabolic Rate (RMR) versus controls (MD \u2248 +96 kCal/day). Since RMR is a direct measure of basal metabolic processes akin to Basal Metabolic Rate (BMR), this supports a causal effect of resistance-type physical activity on basal metabolism.",
+      "judge_reasoning": "The broad claim is too strong. High-quality syntheses indicate that exercise interventions overall do not reliably increase basal/resting metabolic rate (BMR/RMR). However, resistance training shows a modest, reproducible increase in RMR versus controls and helps preserve RMR during weight loss, with much of the effect mediated by gains in fat-free mass. Aerobic training alone typically shows little or no sustained effect. Heterogeneity, small samples, and measurement limitations temper certainty, but randomized trials and meta-analyses support a modality-specific causal effect (resistance training), not a general effect of higher physical activity on BMR.",
+      "modified_claim": "Regular resistance training can modestly increase or preserve basal/resting metabolic rate in adults\u2014largely via increases in fat-free mass\u2014whereas aerobic training alone generally does not materially change basal/resting metabolic rate.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/32397898/",
+        "https://pubmed.ncbi.nlm.nih.gov/7730525/",
+        "https://pubmed.ncbi.nlm.nih.gov/9688748/",
+        "https://link.springer.com/article/10.1007/BF00238557",
+        "https://pubmed.ncbi.nlm.nih.gov/25293431/",
+        "https://pubmed.ncbi.nlm.nih.gov/18356845/",
+        "https://pubmed.ncbi.nlm.nih.gov/9280173/",
+        "https://pubmed.ncbi.nlm.nih.gov/28871849/",
+        "https://www.nature.com/articles/s41598-020-62249-8"
+      ],
+      "key_evidence_summaries": [
+        "Systematic review/meta-analysis: Overall exercise interventions did not significantly increase RMR; resistance training increased RMR vs controls by ~96 kcal/day; aerobic training showed no effect.",
+        "RCT in older women (15\u201352 weeks resistance training): Increased strength but no change in BMR across groups.",
+        "Randomized study (young men): Resistance training increased BMR; endurance training improved aerobic capacity without increasing BMR; combined had mixed effects.",
+        "Meta-analysis (exercise/diet): Changes in RMR largely track changes in metabolically active tissue; exercise alone often does not produce large sustained RMR increases independent of fat-free mass.",
+        "9-month supervised resistance training: ~5% average increase in RMR with wide inter-individual variability; effect attenuated after adjusting for fat-free mass.",
+        "Weight-loss RCT in women: Resistance training conserved fat-free mass and resting energy expenditure during weight loss compared with aerobic or no training; differences diminished when adjusting for fat-free mass.",
+        "RCT in obese adults under caloric restriction: Strength training preserved fat-free mass and RMR relative to diet-only or aerobic training.",
+        "RCT in premenopausal women: Resistance training preserved/increased lean mass, but RMR changes were not significantly different between groups.",
+        "Randomized longitudinal study: Both aerobic and strength training improved body composition; strength training more likely to increase fat-free mass associated with higher RMR."
+      ],
+      "limitations": [
+        "Many studies measure resting metabolic rate (RMR) rather than true basal metabolic rate (BMR); protocols and timing relative to last exercise vary and can bias estimates.",
+        "High heterogeneity and risk of bias in included trials; small sample sizes reduce precision and generalizability.",
+        "Effects of resistance training on RMR are often mediated by changes in fat-free mass; independent effects after adjusting for FFM are small or non-significant in several studies.",
+        "Population differences (age, sex, training status, obesity, diet) and intervention duration/intensity may modify effects, limiting universal claims.",
+        "Some trials report preservation rather than increase of RMR during dieting, which is a different causal context than increasing RMR in weight-stable individuals."
+      ],
+      "future_research": [
+        "Large, preregistered RCTs that standardize true BMR measurement conditions and pre-measurement abstention from exercise to avoid EPOC carryover.",
+        "Quantify the independent effect of resistance training on BMR after rigorous adjustment for fat-free mass and organ-tissue composition changes.",
+        "Dose\u2013response trials comparing resistance training modalities (volume, intensity, frequency) and durations on BMR.",
+        "Longer-term follow-up to assess maintenance of RMR changes after training cessation and during different energy balance states.",
+        "Inclusion of diverse populations (older adults, women, clinical groups) with adequate power to assess effect modifiers and sex/age interactions."
+      ],
+      "iteration_history": [],
+      "total_tokens": 179759,
+      "api_calls": 32,
+      "estimated_input_tokens": 176163,
+      "estimated_output_tokens": 3595
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Socio-cultural Ideal BMI",
+      "target": "Individual Ideal BMI",
+      "verdict": "supported",
+      "confidence": 8,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 9,
+      "strongest_causal_evidence_url": "https://pubmed.ncbi.nlm.nih.gov/22494959/",
+      "strongest_causal_evidence_passage": "In Study One, female participants were randomly assigned to one of three experimental conditions: (1) a thinner body norm, (2) a heavier body norm, or (3) no body norm. Body norms were manipulated by indicating a bogus \"population average,\" and current and ideal body size perception were subsequently measured using a body silhouettes measure. Women had a thinner ideal body size in the thinner norm condition than in the heavier norm condition.",
+      "strongest_causal_evidence_study_type": "Randomized experiment (laboratory RCT)",
+      "strongest_causal_evidence_summary": "Yes. An RCT showed that manipulating the Socio-cultural Ideal BMI (via bogus \u201cpopulation average\u201d body norms: thinner vs heavier) caused changes in Individual Ideal BMI (participants\u2019 selected ideal body size). Specifically, women randomly assigned to the thinner-norm condition selected a thinner ideal than those assigned to the heavier-norm condition (PubMed: https://pubmed.ncbi.nlm.nih.gov/22494959/).",
+      "judge_reasoning": "Multiple randomized experiments that manipulate perceived social body-size norms or exposure to thin vs larger bodies reliably shift participants\u2019 selected ideal body size in the direction of the manipulated socio-cultural ideal. Meta-analytic findings corroborate small but consistent causal effects of idealized media exposure on proximal body-image outcomes. Natural experiments and econometric analyses link shifts in societal norms/media to changes in personal ideals. While many studies use silhouettes rather than numeric BMI and effects are often short-term and sample-restricted, the convergence of experimental, quasi-experimental, and observational evidence supports the causal claim.",
+      "modified_claim": "Exposure to socio-cultural body size ideals (social norms/media) causally influences individuals\u2019 ideal body size (and thus their ideal BMI), with typically small-to-moderate, context-dependent effects.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/22494959/",
+        "https://pubmed.ncbi.nlm.nih.gov/24958663/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5990741/",
+        "https://www.sciencedirect.com/science/article/abs/pii/S0272735812001638",
+        "https://pubmed.ncbi.nlm.nih.gov/33401202/",
+        "https://pubmed.ncbi.nlm.nih.gov/17605138/",
+        "https://pubmed.ncbi.nlm.nih.gov/12042229/",
+        "https://www.frontiersin.org/articles/10.3389/fpsyg.2022.983534/full"
+      ],
+      "key_evidence_summaries": [
+        "Randomized experiments manipulating perceived population body norms showed women chose thinner ideals under a thin norm and heavier ideals under a heavier norm; similar effects for men\u2019s muscularity ideals.",
+        "Randomized experiment exposing women to purported peer preferences (thin vs heavy ideals) shifted their personal ideal body size toward the presented norm.",
+        "Two randomized lab studies: exposure to thinner vs larger bodies shifted judgments of normal body size and affected body satisfaction, demonstrating malleability from exposure.",
+        "Meta-analysis of lab experiments: exposure to thin-ideal media causally increases body-image concerns in the short term, especially among high-risk individuals.",
+        "Online experiments: presenting arrays of larger vs smaller bodies shifted women\u2019s selected ideal body toward the displayed distribution, reducing underweight ideals.",
+        "Econometric analysis: local social-norm proxies (average perceived ideal BMI in reference groups) predict individuals\u2019 reported ideal BMI, consistent with social influence.",
+        "Naturalistic study in Fiji: introduction of Western television associated with shifts toward slimmer ideals and disordered eating attitudes, indicating socio-cultural media effects.",
+        "Narrative/umbrella review integrating experimental and correlational studies concludes socio-cultural ideals influence personal body ideals and related outcomes."
+      ],
+      "limitations": [
+        "Many experiments measure ideal body size via silhouettes or figure arrays rather than numeric BMI; mapping to BMI is indirect.",
+        "Most experimental effects are short-term and observed in controlled lab settings with predominantly Western, female, student or online samples; external validity and durability over time are less certain.",
+        "Publication bias and selective reporting in media-effects literature may inflate observed effects.",
+        "Causal disentanglement between socio-cultural ideals, peer influences, and individual predispositions is challenging in observational studies.",
+        "Cultural heterogeneity is substantial; effects vary by gender, age, baseline body dissatisfaction, and cultural background.",
+        "Ideal for self vs ideal for others are sometimes conflated; some studies assess perceived norms more than personal ideal BMI."
+      ],
+      "future_research": [
+        "Field and natural experiments leveraging exogenous changes in media or policy to test sustained effects on individual ideal BMI across diverse populations.",
+        "Pre-registered longitudinal studies measuring exposure to socio-cultural ideals, internalization, and repeated ideal BMI assessments mapped to numeric BMI scales.",
+        "Cross-cultural RCTs in non-Western contexts and among men to test generalizability and moderators (e.g., ethnicity, age, SES, baseline dissatisfaction).",
+        "Mechanistic studies testing mediation by internalization, social comparison, and self-compassion, with robust causal inference.",
+        "Improve measurement by linking figure ratings to population-specific BMI calibrations and using multi-method assessments of ideal BMI."
+      ],
+      "iteration_history": [],
+      "total_tokens": 192645,
+      "api_calls": 43,
+      "estimated_input_tokens": 188792,
+      "estimated_output_tokens": 3852
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Basal Metabolic Rate",
+      "target": "Total Daily Energy Intake (TDEI)",
+      "verdict": "supported",
+      "confidence": 7,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://pubmed.ncbi.nlm.nih.gov/26278004/",
+      "strongest_causal_evidence_passage": "\"Hierarchical multiple regression indicated that after controlling for age and sex, both fat-free mass (FFM; P<0.001) and RMR (P<0.001) predicted daily EI. However, a mediation model using path analysis indicated that the effect of FFM (and fat mass) on EI was fully mediated by RMR (P<0.001).\"",
+      "strongest_causal_evidence_study_type": "14-day residential ad libitum feeding study with mediation (path) analysis; RMR by indirect calorimetry; TDEE by doubly labeled water.",
+      "strongest_causal_evidence_summary": "In a controlled residential setting with covert ad libitum feeding, both FFM and RMR predicted daily energy intake, and path analysis showed that RMR fully mediated the FFM\u2192intake association, identifying RMR as a proximate determinant of intake under near energy-balance conditions.",
+      "judge_reasoning": "Multiple independent residential/laboratory studies with objective ad libitum intake measurements show that resting metabolic rate (RMR) predicts daily energy intake and hunger, and mediation/path analyses indicate that RMR largely mediates the fat\u2011free mass (FFM) \u2192 energy intake relationship. Reviews synthesize consistent findings across cohorts. Interventional endocrine data (levothyroxine treatment; clinical hyperthyroidism) triangulate a causal link by increasing REE and hunger, with trends toward increased intake. While most primary data are observational or short-term, the convergence of evidence, mechanistic plausibility (energetic demand generating a tonic drive to eat), and replication across settings support a causal interpretation under ad libitum conditions near energy balance. Effects are probabilistic and context-dependent rather than deterministic.",
+      "modified_claim": "Higher resting (basal) metabolic rate, largely determined by fat-free mass, is a proximate determinant of greater ad libitum daily energy intake. RMR mediates the fat-free mass\u2013intake relationship and provides a tonic drive to eat, especially when food is freely available and energy balance is near neutral; effects are moderate and context-dependent.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/26278004/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3909024/",
+        "https://pubmed.ncbi.nlm.nih.gov/23193010/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10363701/",
+        "https://www.sciencedirect.com/science/article/pii/S0022316623105578",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3424457/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10563635/"
+      ],
+      "key_evidence_summaries": [
+        "Hopkins et al. 2016 (Int J Obes): 14\u2011day residential feeding study (n=59) with covert ad libitum intake; both FFM and RMR predicted daily energy intake. Path analysis showed the FFM\u2192intake effect was fully mediated by RMR.",
+        "Weise/Votruba/Krakoff et al. 2014 (Int J Obes; n=184): In a 3\u2011day vending machine paradigm, FFM and 24\u2011h EE were positively associated with ad libitum caloric and macronutrient intake; EE and FFM also associated with overeating relative to maintenance needs.",
+        "Caudwell et al. 2013 (Am J Clin Nutr): RMR correlated with hunger, self\u2011selected meal size, and daily energy intake across experimental conditions in overweight/obese adults, suggesting RMR as a physiological marker of appetite.",
+        "Hopkins, Gibbons, Blundell et al. 2023 (Phil Trans R Soc B review): Synthesizes >14 studies showing consistent positive associations of FFM and RMR with energy intake; concludes RMR mediates the FFM\u2013intake link and provides a tonic drive to eat.",
+        "Interactive Diet and Activity Tracking in AARP secondary analysis (n=590 older adults): FFM and doubly labeled water TDEE predicted energy intake across 24\u2011h recalls; associations persisted after excluding under\u2011reporters.",
+        "Blundell et al. 2012 (review): Conceptual and empirical synthesis arguing energy expenditure\u2014especially RMR\u2014links to appetite control; reports associations of RMR/FFM with hunger, meal size, and daily intake.",
+        "Medici et al. 2023 (Endocr Connect): Levothyroxine increased REE (~+144 kcal/day) and fasting hunger in hypothyroid women; ad libitum intake rose numerically (ns), supporting a compensatory drive to eat with higher REE."
+      ],
+      "limitations": [
+        "Most primary evidence is observational or short\u2011term experimental; few studies randomize or directly manipulate RMR in isolation to test causal effects on daily intake.",
+        "Confounding by fat\u2011free mass/body size is substantial, although mediation analyses address this; residual confounding cannot be fully excluded.",
+        "Effects are context\u2011dependent (stronger when food is freely available and energy balance is near neutral); under energy restriction or strong hedonic cues, relationships may differ.",
+        "Some free\u2011living studies rely on self\u2011reported intake, which is prone to under\u2011reporting and measurement error.",
+        "Bidirectional dynamics between intake and expenditure complicate inference (intake acutely affects thermogenesis; activity affects EE and appetite).",
+        "Interventional thyroid studies alter multiple pathways (central and peripheral), and intake changes were small or not statistically significant due to limited power.",
+        "Generalizability to extreme phenotypes (athletes, severe obesity, children) and across diverse ethnicities and environments requires further confirmation."
+      ],
+      "future_research": [
+        "Randomized or quasi-experimental studies that selectively manipulate RMR/REE (e.g., pharmacologic thermogenesis, mild cold exposure) and measure ensuing changes in ad libitum daily intake over weeks to months.",
+        "Longitudinal free\u2011living studies using doubly labeled water (TEE) combined with objective intake estimation (intake\u2013balance) to quantify how changes in RMR predict changes in intake.",
+        "Mendelian randomization using genetic instruments for RMR/FFM to test causal effects on objectively assessed energy intake or eating behavior traits.",
+        "Mechanistic work to identify peripheral/central signals linking tissue energy demand to appetite (e.g., organ\u2011specific metabolic signaling, myokines, hepatic signals).",
+        "Context modifiers: evaluate how energy balance state, diet composition, palatability, physical activity, and obesity status modulate the RMR\u2192intake relationship.",
+        "Expand to under\u2011studied groups (children/adolescents, very old adults, diverse ancestries) and to clinical states (e.g., sarcopenia, cachexia) where FFM/RMR dynamics differ."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Refine to: Higher resting metabolic rate (largely determined by fat-free mass) is a proximate determinant of greater ad libitum daily energy intake, mediating the fat-free mass\u2013intake relationship and contributing a tonic drive to eat, particularly when food is freely available and energy balance is near neutral. Effects are moderate and context-dependent.",
+          "evidence_count": 29,
+          "high_quality_count": 2,
+          "judgment": "supported",
+          "judgment_confidence": 7
+        }
+      ],
+      "total_tokens": 364066,
+      "api_calls": 39,
+      "estimated_input_tokens": 356784,
+      "estimated_output_tokens": 7281
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Total Daily Energy Expenditure (TDEE)",
+      "target": "Group-level BMI",
+      "verdict": "unsupported",
+      "confidence": 8,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6735935/",
+      "strongest_causal_evidence_passage": "Significant compensation occurred in the 8 KKW and 20 KKW exercise groups. Energy intake increased by ~91\u2013124 kcal/day versus control and weight loss was only ~36\u201341% of that predicted from exercise energy expenditure.",
+      "strongest_causal_evidence_study_type": "Randomized controlled trial",
+      "strongest_causal_evidence_summary": "In a 24-week supervised exercise RCT, increasing PAEE (a component of TDEE) caused only modest weight/BMI reductions due to compensatory increases in energy intake and limited additive increases in TDEE, indicating constrained effects of TDEE manipulation on body mass.",
+      "judge_reasoning": "Across doubly labeled water datasets, absolute TDEE is largely determined by body size and fat\u2011free mass, and obese groups typically exhibit higher TDEE\u2014contradicting a simple claim that higher TDEE causes lower group BMI. Cross\u2011population studies show similar size\u2011adjusted TEE despite large activity differences, and exercise RCTs demonstrate only modest BMI reductions with substantial behavioral compensation (especially increased energy intake) and partial energetic constraint. Observational links between low energy flux and later fat gain exist but are confounded. Overall, TDEE both influences and is influenced by body composition and behavior; a unidirectional causal claim at the group level is not supported.",
+      "modified_claim": "At the population level, total daily energy expenditure primarily reflects body size/composition and compensatory physiology/behavior; thus, TDEE is more a consequence than a cause of group-level BMI. Increasing physical activity (and maintaining higher energy flux) can modestly lower average BMI via energy balance, but effects are constrained and strongly mediated by energy intake and compensation.",
+      "evidence_urls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4803033/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3021434/",
+        "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0040503",
+        "https://pubmed.ncbi.nlm.nih.gov/8641251/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6735935/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8441008/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7967650/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8365736/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10201660/"
+      ],
+      "key_evidence_summaries": [
+        "DLW-measured TDEE increases with activity at low levels but plateaus at higher activity after adjusting for body size, supporting a constrained TEE model.",
+        "Meta-analysis of DLW across countries found similar size-adjusted TEE and PAL between developing and industrialized settings, not tracking obesity prevalence.",
+        "Despite much higher activity, Hadza TEE is similar to Westerners after size adjustment, consistent with constrained TEE and limited population differences in TEE.",
+        "Obese adults have higher absolute TEE (driven by size/FFM), challenging the idea that low TEE causes higher BMI at group level.",
+        "Randomized trial: increasing exercise (and PAEE) led to modest weight loss with significant compensation via increased energy intake; most lost less than predicted.",
+        "Supervised aerobic exercise increased free-living TDEE modestly; chamber measures suggested reduced 24-h EE/activity, indicating compensatory adjustments; weight loss was smaller than expected.",
+        "Exercise-only RCTs reduced weight and BMI modestly; effects smaller than predicted, consistent with compensation and intake mediation.",
+        "Overview of 12 systematic reviews and 149 studies: exercise produces small-to-modest weight/BMI changes and mixed weight-maintenance effects; high heterogeneity.",
+        "Observational DLW cohorts: low energy intake plus low expenditure (low flux) predicted future fat gain, suggesting activity/flux can influence weight trajectory but with confounding risk.",
+        "Review argues evidence favors partial energetic constraint and compensation; calls for cautious interpretation and stronger causal designs."
+      ],
+      "limitations": [
+        "Many DLW datasets are cross-sectional; ecological and cross-population comparisons risk confounding.",
+        "Exercise RCTs are often short-to-medium term and may not capture long-term compensation or maintenance.",
+        "Group-level (ecological) inference may not reflect individual causal pathways; residual confounding by diet/environment persists.",
+        "Measurement of physical activity and non-exercise activity varies across studies; compensation detection is method-sensitive.",
+        "DLW quantifies TDEE accurately over 1\u20132 weeks but does not partition all components or isolate intake without modeling.",
+        "Heterogeneity in populations, interventions, and adherence complicates effect size generalization."
+      ],
+      "future_research": [
+        "Prospective longitudinal DLW cohorts linking baseline TDEE and energy flux to multi-year BMI change with rigorous confounder control.",
+        "Large, long-duration randomized trials manipulating energy flux (exercise \u00b1 dietary guidance) with DLW, intake, and NEAT measured to quantify compensation.",
+        "Natural experiments or policy interventions that shift activity environments, with DLW subsamples to test population-level TDEE/BMI responses.",
+        "Causal inference using genetic instruments for accelerometer-measured activity/PAEE and body composition (multivariable/bidirectional MR).",
+        "Mechanistic studies to quantify component-specific compensation (RMR, SPA/NEAT, TEF) across activity doses and diverse groups, testing the constrained TEE range."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Revise to: \"At the population level, total daily energy expenditure primarily reflects body size/composition and compensatory physiology/behavior; thus, TDEE is more a consequence than a cause of group-level BMI. Increasing physical activity (and maintaining higher energy flux) can modestly lower average BMI via energy balance, but effects are constrained and strongly mediated by energy intake and compensation.\"",
+          "evidence_count": 37,
+          "high_quality_count": 4,
+          "judgment": "not_supported",
+          "judgment_confidence": 8
+        }
+      ],
+      "total_tokens": 416650,
+      "api_calls": 47,
+      "estimated_input_tokens": 408317,
+      "estimated_output_tokens": 8333
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FP",
+      "source": "Physical Activity Level",
+      "target": "Body Mass Index (BMI)",
+      "verdict": "supported",
+      "confidence": 8,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 9,
+      "strongest_causal_evidence_url": "https://www.frontiersin.org/articles/10.3389/fendo.2023.1294362/full",
+      "strongest_causal_evidence_passage": "\"The results of NMA showed that only the AE groups had shown a significantly reduced body weight (\u22122.35 [\u22124.05, \u22120.64]) and BMI (\u22120.9 [\u22121.38, \u22120.42]) compared with control.\"",
+      "strongest_causal_evidence_study_type": "Network Meta-analysis of randomized controlled trials",
+      "strongest_causal_evidence_summary": "In a network meta-analysis of randomized controlled trials among adults with overweight or obesity, aerobic exercise (the physical activity intervention; SOURCE) significantly reduced body mass index (BMI; TARGET) compared with control: \"only the AE groups had shown a significantly reduced... BMI (\u22120.9 [\u22121.38, \u22120.42]) compared with control.\"",
+      "judge_reasoning": "Multiple randomized controlled trials and meta-analyses show that structured exercise interventions reduce BMI/weight compared with no exercise, albeit with small average effects. Mendelian randomization provides complementary causal evidence that greater sedentary time increases BMI, supporting a causal pathway from activity/inactivity to adiposity. Although some cohorts show weak prospective prediction of weight change by baseline activity and BMI also causally influences activity (bidirectional relationship), the preponderance of experimental and genetic evidence indicates that physical activity causally influences BMI, with modest effect sizes.",
+      "modified_claim": "Higher physical activity (and lower sedentary time) causally but modestly reduces BMI in adults.",
+      "evidence_urls": [
+        "https://www.frontiersin.org/articles/10.3389/fendo.2023.1294362/full",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7967650/",
+        "https://pubmed.ncbi.nlm.nih.gov/35254260/",
+        "https://elifesciences.org/articles/70386",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC2203404/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5071725/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8365736/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5251933/"
+      ],
+      "key_evidence_summaries": [
+        "Network meta-analysis of RCTs in adults with overweight/obesity found aerobic exercise reduced BMI (~\u22120.9 kg/m^2) versus control; different exercise modes improved anthropometry and composition.",
+        "Systematic review/meta-analysis of RCTs showed exercise-only interventions reduced weight (d\u2248\u22120.58) and BMI (d\u2248\u22120.50) and visceral fat in overweight/obese adults.",
+        "Two-sample bidirectional Mendelian randomization using accelerometer-based PA and BMI GWAS: longer sedentary time causally increased BMI; higher BMI causally increased sedentary time.",
+        "eLife study reporting the same bidirectional MR: genetic liability to sedentary time increased BMI, and higher BMI increased sedentary time, indicating causal links.",
+        "Meta-analysis of pedometer-based walking programs (no diet) showed modest weight loss (~\u22121.27 kg) that increased with program duration.",
+        "Meta-analysis of RCTs in adults with type 2 diabetes found pedometer interventions led to small but significant reductions in BMI (\u22120.15 kg/m^2) and weight (\u22120.65 kg).",
+        "Umbrella review of systematic reviews concluded exercise-only trials often yield limited weight/BMI change long-term, but confirm modest effects and stronger effects when combined with diet.",
+        "Prospective cohort across multiple countries found baseline accelerometer-measured PA did not predict 2\u20133 year weight change, highlighting limitations of observational prediction despite causal trial/MR evidence."
+      ],
+      "limitations": [
+        "Effect sizes from exercise-only interventions on BMI are modest and often not clinically large; adherence and energy compensation can attenuate weight loss.",
+        "Many RCTs are of limited duration and include mainly adults with overweight/obesity; generalizability to other populations and long-term maintenance is uncertain.",
+        "Heterogeneity across trials in exercise modality, intensity, and adherence; some trials include ancillary behavioral support.",
+        "Mendelian randomization relies on genetic instruments that may be weak for PA traits and subject to horizontal pleiotropy; results emphasize sedentary time more than MVPA.",
+        "Observational prospective studies sometimes show little predictive value of baseline activity for subsequent weight change, indicating behavioral compensation and confounding.",
+        "BMI is a coarse adiposity measure; changes in fat mass and distribution (e.g., visceral fat) may be more sensitive to PA than BMI per se."
+      ],
+      "future_research": [
+        "Long-term, adequately powered RCTs isolating physical activity dose, intensity, and mode with careful dietary monitoring to quantify uncompensated effects on BMI and body composition.",
+        "Mendelian randomization using improved, device-based PA and sedentary behavior instruments to refine causal estimates and explore nonlinearity.",
+        "Trials and mechanistic studies focusing on visceral and ectopic fat, energy compensation, appetite regulation, and individual variability (sex, age, genetics).",
+        "Factorial trials combining PA with dietary strategies to map dose\u2013response and synergy on BMI and composition, including maintenance phases beyond 1\u20132 years.",
+        "Life-course studies to assess whether early-life PA patterns causally shift BMI trajectories, using repeated device-based measures."
+      ],
+      "iteration_history": [],
+      "total_tokens": 223468,
+      "api_calls": 36,
+      "estimated_input_tokens": 218998,
+      "estimated_output_tokens": 4469
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Total Daily Energy Intake (TDEI)",
+      "target": "Body Mass Index (BMI)",
+      "verdict": "supported",
+      "confidence": 9,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 9,
+      "strongest_causal_evidence_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777747/",
+      "strongest_causal_evidence_passage": "During the 56 days of overeating, the participants consumed an excess of 50 729 kcal/d (95% CI, 47 065\u201354 393 kcal; P =.13 between groups); they all gained weight and there were no differences by sex ( P =.12) or by race ( P =.19; Figure 3 ). Overeating produced significantly less weight gain in the low protein diet group (3.16 kg; 95% CI, 1.88\u20134.44 kg) compared with the normal protein diet group (6.05 kg; 95% CI, 4.84\u20137.26 kg) or the high protein diet group (6.51 kg; 95% CI, 5.23\u20137.79 kg) ( P =.002).",
+      "strongest_causal_evidence_study_type": "Randomized Controlled Trial (inpatient overfeeding)",
+      "strongest_causal_evidence_summary": "In an inpatient randomized controlled trial (Bray et al., JAMA 2012), experimentally increasing Total Daily Energy Intake (TDEI) via deliberate overfeeding caused increases in body weight, which directly increases Body Mass Index (BMI) given stable height. All randomized groups consumed excess calories and consequently gained weight, demonstrating a causal effect of higher TDEI on BMI.",
+      "judge_reasoning": "Multiple randomized controlled feeding trials and long-duration calorie restriction interventions demonstrate that experimentally increasing total energy intake causes weight/BMI and fat mass to rise, while reducing energy intake causes them to fall. Overfeeding trials in metabolic wards establish direct causality and quantify fat mass gains; two-year randomized calorie restriction in non\u2011obese adults reduces BMI and adiposity versus ad libitum control. Short-term randomized feeding studies that induce higher ad libitum energy intake (e.g., ultra-processed diets) produce corresponding weight changes tightly correlated with energy intake. Systematic reviews of overfeeding and sugars corroborate the causal direction. While individual variability and compensatory responses modulate effect magnitude, the direction of effect of TDEI on BMI is robust across high-quality evidence.",
+      "modified_claim": "Sustained changes in total daily energy intake causally influence BMI: increasing intake raises BMI and decreasing intake lowers BMI (via energy balance), holding energy expenditure constant.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/31303390/",
+        "https://pubmed.ncbi.nlm.nih.gov/28228420/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777747/",
+        "https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7",
+        "https://pubmed.ncbi.nlm.nih.gov/32515127/",
+        "https://www.bmj.com/content/346/bmj.e7492",
+        "https://pubmed.ncbi.nlm.nih.gov/3479191/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5325830/"
+      ],
+      "key_evidence_summaries": [
+        "Assigning healthy adults to ~25% calorie restriction for 2 years significantly reduced body mass, adiposity, and BMI compared with ad libitum controls.",
+        "In 218 adults randomized to ~25% CR vs control, CR led to significant decreases in weight, waist circumference, fat mass, and BMI at 24 months.",
+        "In a controlled inpatient RCT, ~40% excess calories for 8 weeks caused significant weight and fat mass gain; calories accounted for fat gain regardless of protein level.",
+        "Randomized inpatient crossover showed participants ate ~508 kcal/d more on ultra-processed diets and gained ~0.9 kg in 2 weeks; they lost ~0.9 kg on unprocessed diets; weight change correlated with energy intake.",
+        "Comprehensive review concludes overfeeding consistently produces weight and fat gain across ages, with a clear relationship between energy ingested and fat storage over longer durations.",
+        "Pooled RCTs show that reducing dietary sugars (and thus energy intake) leads to weight loss, supporting a causal role of energy intake in body weight change.",
+        "Classical overfeeding shows positive energy balance produces predictable short-term weight and fat gains; quantified energy cost of weight gain.",
+        "Synthesizes experimental and observational data indicating increased energy intake, energy density, and sugary beverages drive weight gain; RCTs in youth and adults support causality."
+      ],
+      "limitations": [
+        "BMI is a proxy for adiposity and does not capture changes in body composition; effects on lean vs fat mass can differ by macronutrient composition.",
+        "Free-living measurement of TDEI is error-prone; underreporting is common and related to BMI, complicating observational inference.",
+        "Compensatory behavioral and physiological responses (changes in energy expenditure and spontaneous intake) attenuate realized weight change, so effect sizes vary.",
+        "Most long-duration RCTs are in non-obese or select populations; generalizability to diverse clinical groups and longer time horizons requires caution.",
+        "Diet composition and processing influence appetite and partitioning, meaning the same TDEI can yield different body composition outcomes."
+      ],
+      "future_research": [
+        "Longer-term randomized trials across diverse BMI, age, and metabolic phenotypes manipulating TDEI with objective intake and expenditure measures (e.g., DLW-calibrated).",
+        "Mechanistic studies to quantify individual variability and compensation (appetite, thermogenesis, NEAT) in response to sustained TDEI changes.",
+        "Trials testing combined manipulation of TDEI and energy expenditure to map iso-effect contours on BMI and body composition.",
+        "Free-living trials using digital tools and biomarkers to accurately track TDEI over months to years and relate to BMI trajectories.",
+        "Investigations into how diet composition and food processing modulate the TDEI\u2013BMI relationship and fat distribution independent of total energy."
+      ],
+      "iteration_history": [],
+      "total_tokens": 259183,
+      "api_calls": 38,
+      "estimated_input_tokens": 253999,
+      "estimated_output_tokens": 5183
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Total Daily Energy Expenditure (TDEE)",
+      "target": "Body Mass Index (BMI)",
+      "verdict": "unsupported",
+      "confidence": 7,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 7,
+      "strongest_causal_evidence_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6735935/",
+      "strongest_causal_evidence_passage": "In this 6-mo randomized controlled exercise trial, participants in the exercise groups compensated and lost less weight than expected. Compensation was found to primarily be the result of increased energy intake and not changes in metabolism/energy expenditure or non-exercise physical activity.",
+      "strongest_causal_evidence_study_type": "Randomized controlled trial",
+      "strongest_causal_evidence_summary": "E-MECHANIC randomized adults to two supervised exercise doses versus control and measured TDEE (DLW), intake, RMR, and activity. Exercise increased activity energy expenditure but resulted in substantially less weight loss than predicted due to increased energy intake; metabolic and non-exercise activity changes did not explain compensation.",
+      "judge_reasoning": "The original claim is directionally and conceptually incorrect. Total daily energy expenditure is largely determined by body size/composition and activity, and experimental increases in the activity component of TDEE produce at most modest, heterogeneous BMI changes due to substantial physiological and behavioral compensation, primarily via increased energy intake. High-quality DLW analyses find adjusted TEE changes are not associated with short-term body composition change, and RCTs show partial weight-loss responses to exercise. Genetic evidence for physical activity indicates some causal effect on BMI and reverse causation, while MR for basal metabolic rate (a major TDEE component) suggests higher genetically predicted BMR associates with higher BMI, underscoring complexity and bidirectionality rather than a simple TDEE\u2192BMI causal pathway.",
+      "modified_claim": "Changes in physical activity energy expenditure (a component of TDEE) can causally and modestly influence BMI via energy balance, but effects are constrained by physiological and behavioral compensation; conversely, BMI and body composition are major determinants of TDEE.",
+      "evidence_urls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6735935/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8441008/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4803033/",
+        "https://www.nature.com/articles/s41467-021-27246-z",
+        "https://www.science.org/doi/10.1126/science.abe5017",
+        "https://pubmed.ncbi.nlm.nih.gov/12796071/",
+        "https://pubmed.ncbi.nlm.nih.gov/30185845/",
+        "https://pubmed.ncbi.nlm.nih.gov/35254260/",
+        "https://www.nature.com/articles/s43856-023-00407-5",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10999873/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4880998/"
+      ],
+      "key_evidence_summaries": [
+        "Six-month RCT (E-MECHANIC) with two exercise doses showed significant compensation: participants lost far less weight than predicted; increases in energy intake explained most compensation; no differential change in RMR or non-exercise activity.",
+        "Ancillary E-MECHANIC DLW/chamber study found less-than-predicted weight loss and context-dependent reductions in 24-h energy expenditure, reinforcing compensation in expenditure components.",
+        "Cross-sectional DLW/accelerometry model proposing constrained TEE: TEE increases with activity at low levels but plateaus at higher levels due to physiological compensation.",
+        "IAEA DLW database analysis found adjusted TEE is repeatable in adults but not associated with short-term body composition changes, arguing against low TEE per se predicting short-term fat gain/loss.",
+        "Life-course DLW analysis shows TEE strongly tracks with fat-free mass and age; body composition is a dominant determinant of TEE.",
+        "Sixteen-month supervised exercise RCT showed exercise caused weight loss in men and prevented weight gain in women, demonstrating modest causal influence of increased activity on body weight/BMI.",
+        "Review of exercise-training studies shows initial exercise-induced energy imbalance declines toward zero over time due to compensation, often via increased energy intake.",
+        "MR with accelerometer-derived sedentary time shows sedentary behavior causally increases BMI and BMI increases sedentary time, implying bidirectional links between activity and adiposity.",
+        "MR suggests more physical activity causally lowers BMI while higher BMI increases sedentary behavior; results are complex with pleiotropy concerns.",
+        "MR indicates genetically higher basal metabolic rate is associated with higher BMI and adverse metabolic traits, contradicting a simplistic higher-TDEE\u2192lower-BMI assumption.",
+        "Prospective DLW-based cohorts show low energy flux (low intake paired with low TDEE) predicts future fat gain, suggesting context where raising expenditure may be protective."
+      ],
+      "limitations": [
+        "Many DLW analyses are observational or short-interval repeats, limiting causal inference about TDEE\u2192BMI over longer horizons.",
+        "Exercise RCTs often allow ad libitum diets, so compensation via intake is not controlled and may mask potential effects of increased TDEE.",
+        "Heterogeneity by sex, age, baseline adiposity, and metabolic phenotype leads to variable responses to activity-induced TDEE changes.",
+        "Mendelian randomization for BMR may be confounded by pleiotropy and mediation via body size/composition; instruments for PAEE/TEE are limited.",
+        "Constrained TEE models are largely cross-sectional; thresholds and compensation magnitudes may vary across populations.",
+        "Ancillary chamber studies have small samples, limiting precision and generalizability."
+      ],
+      "future_research": [
+        "Long-duration, adequately powered RCTs that increase PAEE while tightly controlling or pharmacologically modulating energy intake to quantify uncompensated effects on BMI and body composition.",
+        "Development of stronger genetic instruments for PAEE and TDEE components to enable multivariable MR separating effects of PAEE, BMR, and body composition on BMI.",
+        "Mechanistic studies quantifying adaptive thermogenesis and non-exercise activity changes across a wide range of exercise doses and phenotypes (sex, metabolic health).",
+        "Prospective DLW cohorts with repeated measures of intake, TEE components, and body composition over multi-year periods to test temporal directions and compensation dynamics.",
+        "Interventions targeting high energy flux (higher TDEE matched with appropriate intake) to test prevention of fat gain, especially in weight-reduced individuals.",
+        "Randomized comparisons of structured exercise versus NEAT-targeted interventions to determine which TDEE component changes most effectively influence BMI with minimal compensation."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Revise to: \u201cChanges in physical activity energy expenditure (a component of TDEE) can causally and modestly influence BMI through energy balance, but the effect is constrained by physiological and behavioral compensation\u2014while BMI and body composition strongly determine TDEE.\u201d",
+          "evidence_count": 30,
+          "high_quality_count": 4,
+          "judgment": "not_supported",
+          "judgment_confidence": 7
+        }
+      ],
+      "total_tokens": 285263,
+      "api_calls": 40,
+      "estimated_input_tokens": 279557,
+      "estimated_output_tokens": 5705
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Norm BMI",
+      "target": "Individual Ideal BMI",
+      "verdict": "partially_supported",
+      "confidence": 7,
+      "direct_causal_found": true,
+      "strongest_causal_evidence_confidence": 8,
+      "strongest_causal_evidence_url": "https://pubmed.ncbi.nlm.nih.gov/22494959/",
+      "strongest_causal_evidence_passage": "In Study One, female participants were randomly assigned to one of three experimental conditions: (1) a thinner body norm, (2) a heavier body norm, or (3) no body norm. Body norms were manipulated by indicating a bogus \"population average,\" and current and ideal body size perception were subsequently measured using a body silhouettes measure. Women had a thinner ideal body size in the thinner norm condition than in the heavier norm condition.",
+      "strongest_causal_evidence_study_type": "Randomized experiment",
+      "strongest_causal_evidence_summary": "Randomized manipulation of perceived Norm BMI (via a bogus \"population average\" indicating thinner vs heavier norms) caused changes in Individual Ideal BMI (ideal body size chosen on silhouette scales). Participants exposed to a thinner norm selected a thinner ideal body size compared to those exposed to a heavier norm.",
+      "judge_reasoning": "There is direct experimental evidence that manipulating perceived body-size norms shifts individuals\u2019 stated ideal body size, supporting a causal influence of norms on ideals. However, most studies are short-term, lab-based manipulations using silhouettes (not precise BMI), often with convenience samples, and generalizability across populations and long-term contexts is uncertain. Some adaptation studies show shifts in perceived normality/attractiveness and own-body judgments, but disentangle perception versus ideal preferences incompletely. Thus, the causal claim is supported in principle but warrants qualification in scope and strength.",
+      "modified_claim": "Perceived normative body size (what is considered the average or normal BMI/body size) causally influences individuals\u2019 ideal body size.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/22494959/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5358078/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3419644/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5805224/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6882410/"
+      ],
+      "key_evidence_summaries": [
+        "Randomized experiments assigning participants to thinner vs heavier population-average (norm) conditions found women selected thinner ideal bodies in the thin-norm condition vs heavier-norm; replicated in men for muscularity ideals.",
+        "Two-study paper: cross-sectional association and an experiment where bogus feedback about being heavier vs slimmer than average changed self-perceived weight status; demonstrates norm-comparison causally alters weight-status judgments (proximal to ideals).",
+        "Psychophysical adaptation studies show exposure to thin/fat bodies shifts perceived normality and attractiveness of bodies, and these aftereffects transfer across identities; suggests visual norms can change what is judged as attractive/ideal.",
+        "Review of visual adaptation literature concludes short exposures to extreme body types reliably shift perceived normality and ideals; outlines mechanisms and boundary conditions, supporting causal influence of visual norm exposure on judgments.",
+        "Experimental work finds body-size adaptation biases judgments similarly for self and others; indicates robust perceptual norm shifts, though suggests effects may act on perception of test stimuli rather than a self-specific internal body image, highlighting mechanistic nuance."
+      ],
+      "limitations": [
+        "Most evidence comes from short-term laboratory manipulations with convenience samples; ecological validity and durability of effects are unclear.",
+        "Ideal body size was often measured with figure-silhouette tasks, not precise numerical BMI; some male data focus on muscularity rather than BMI.",
+        "Norms were manipulated as perceived averages or via visual exposure, not through real community-level BMI changes; external generalizability is uncertain.",
+        "Adaptation studies sometimes affect perceptual judgments more than stable ideals; disentangling perceptual aftereffects from attitudinal preference change is challenging.",
+        "Cultural, age, and gender moderators are incompletely characterized, and there is limited longitudinal or field-experimental confirmation."
+      ],
+      "future_research": [
+        "Field and longitudinal experiments testing whether sustained exposure to different community body-size norms shifts individuals\u2019 ideal BMI over time.",
+        "Pre-registered randomized trials using normative feedback or visual-diet interventions measuring both perceptual and attitudinal ideals with validated scales and numeric BMI anchors.",
+        "Cross-cultural studies to map moderators (gender, age, culture, baseline BMI) and dose\u2013response relationships of norm exposure.",
+        "Mechanistic studies disentangling perceptual aftereffects from changes in evaluative preferences and internalized ideals, including neurocognitive markers.",
+        "Use objective community-level BMI prevalence or natural experiments (e.g., relocation, media market changes) to test external validity."
+      ],
+      "iteration_history": [],
+      "total_tokens": 212189,
+      "api_calls": 37,
+      "estimated_input_tokens": 207945,
+      "estimated_output_tokens": 4243
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Healthy BMI",
+      "target": "Individual Ideal BMI",
+      "verdict": "unsupported",
+      "confidence": 7,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": null,
+      "strongest_causal_evidence_url": null,
+      "strongest_causal_evidence_passage": null,
+      "strongest_causal_evidence_study_type": null,
+      "strongest_causal_evidence_summary": null,
+      "judge_reasoning": "Across the cited literature, there is no direct causal evidence that achieving a healthy BMI determines an individual's ideal body size. Studies largely show association between current BMI and perceived size but not causation. Longitudinal findings indicate that body ideals and perceptions can predict later BMI change (reverse direction), randomized dissonance-based interventions can causally alter internalization of thin ideals without reliably changing BMI, and large weight loss (e.g., after bariatric surgery) often does not normalize body image/ideals. Population-level analyses show cohort and social-norm shifts in ideals, and perceptual studies suggest normalization biases relative to one\u2019s exposure. Together, these lines of evidence argue against the proposed causal pathway from BMI to ideal body size.",
+      "modified_claim": "An individual's ideal body size is primarily shaped by sociocultural exposure and internalized body ideals; while current BMI is associated with perceived \u201cnormal/ideal\u201d size via perceptual normalization, attaining a \u201chealthy\u201d BMI does not causally determine one\u2019s ideal BMI.",
+      "evidence_urls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC2727220/",
+        "https://link.springer.com/article/10.1007/s40519-019-00722-8",
+        "https://link.springer.com/article/10.1007/s40519-021-01270-w",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760014/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3954852/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10880023/",
+        "https://ncbi.nlm.nih.gov/pmc/articles/PMC9197161/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8406361/"
+      ],
+      "key_evidence_summaries": [
+        "CARDIA longitudinal study: underestimation of body size, larger ideal size, and higher satisfaction predicted subsequent BMI change over 13 years.",
+        "Adolescent longitudinal study: body areas satisfaction related to BMI z-scores indirectly via actual\u2013ideal weight discrepancies.",
+        "Review of body image after bariatric surgery: substantial BMI reductions often do not resolve body image dissatisfaction; ideals may remain misaligned post-surgery.",
+        "Dissonance-based RCT in adolescent girls reduced thin-ideal internalization and body dissatisfaction versus controls, with limited effects on BMI.",
+        "Enhanced dissonance-based RCT in college women replicated reductions in thin-ideal internalization and dissatisfaction without consistent BMI change.",
+        "Large population-representative longitudinal study in the Netherlands documented cohort and life-course shifts in ideal BMI and ideal\u2013actual discrepancies, reflecting changing social norms.",
+        "Perceptual study shows contraction bias and misestimation of BMI; judgments of ideal/normal bodies are influenced by exposure and self-reference, not fixed by one\u2019s BMI state.",
+        "Validation of figure rating scales shows strong correlation between selected current-body silhouette and measured BMI, indicating association but not causation."
+      ],
+      "limitations": [
+        "Many cited studies are observational or cross-sectional, limiting causal inference about BMI and ideal body size.",
+        "Heterogeneity in measures of \"ideal\" (silhouettes, self-report, discrepancy indices) complicates synthesis.",
+        "Limited randomized or quasi-experimental studies that directly manipulate BMI and assess consequent changes in ideal body size.",
+        "Bariatric surgery literature is largely observational and may be confounded by psychological comorbidities and selection effects.",
+        "Cultural and cohort effects limit generalizability across populations and time; media environments and norms vary widely."
+      ],
+      "future_research": [
+        "Prospective studies that measure ideal body size repeatedly before, during, and after clinically meaningful BMI changes (e.g., weight-loss trials) to test whether ideals shift as a function of BMI change.",
+        "Randomized trials integrating psychological interventions (to alter internalization) with weight-change interventions, assessing bidirectional effects between BMI and ideals.",
+        "Natural experiments or quasi-experimental designs (e.g., policy/media exposure changes) to isolate sociocultural effects on ideal body size independent of BMI.",
+        "Mendelian randomization or within-family designs, if feasible, using genetic proxies for adiposity to test effects on body-ideal measures.",
+        "Cross-cultural longitudinal cohorts to map how changing media norms and social networks drive shifts in ideals across the life course."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Reframe to: \u201cIndividual ideal body size is shaped primarily by sociocultural exposure and internalization of body ideals; current BMI is associated with, and may modestly bias, perceived \u2018normal/ideal\u2019 size via perceptual normalization, but there is insufficient evidence that attaining a \u2018healthy\u2019 BMI causally determines one\u2019s ideal BMI.\u201d",
+          "evidence_count": 28,
+          "high_quality_count": 1,
+          "judgment": "not_supported",
+          "judgment_confidence": 7
+        }
+      ],
+      "total_tokens": 165366,
+      "api_calls": 38,
+      "estimated_input_tokens": 162058,
+      "estimated_output_tokens": 3307
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Individual Ideal BMI",
+      "target": "Physical Activity Level",
+      "verdict": "unsupported",
+      "confidence": 4,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": null,
+      "strongest_causal_evidence_url": null,
+      "strongest_causal_evidence_passage": null,
+      "strongest_causal_evidence_study_type": null,
+      "strongest_causal_evidence_summary": null,
+      "judge_reasoning": "The broad, unqualified causal claim that an individual\u2019s ideal BMI determines physical activity level is not supported. Most studies are cross\u2011sectional and show modest associations between greater actual\u2011ideal body discrepancy and lower physical activity. A small body of prospective evidence suggests that body dissatisfaction can precede and reduce later exercise via avoidance, and that internalization of athletic ideals can increase compulsive exercise; however, these findings are limited in scope, rely on self\u2011report, and do not establish robust causal effects on overall, health\u2011promoting physical activity. There is little experimental evidence that directly changes \u2018ideal body\u2019 perceptions and subsequently increases or decreases objectively measured physical activity. Confounding by actual BMI, mental health, and sociocultural factors is common and often incompletely controlled.",
+      "modified_claim": "Perceived discrepancy between one\u2019s actual and ideal body size (body dissatisfaction) is associated with and can prospectively predict lower subsequent physical activity partly via exercise avoidance and negative body\u2011related affect, whereas internalization of athletic body ideals may increase compulsive (not necessarily health\u2011promoting) exercise. Evidence is predominantly observational with limited short\u2011term prospective support; experimental evidence directly manipulating \u2018ideal body\u2019 and showing changes in objectively measured physical activity is scarce.",
+      "evidence_urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/30654275/",
+        "https://www.sciencedirect.com/science/article/abs/pii/S1471015300000155",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3923553/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9603811/",
+        "https://pubmed.ncbi.nlm.nih.gov/20226748/",
+        "https://www.tandfonline.com/doi/full/10.1080/13548506.2020.1859565"
+      ],
+      "key_evidence_summaries": [
+        "Prospective study indicating body dissatisfaction predicted later exercise avoidance, which mediated lower subsequent exercise; embarrassment and fatigue were mediators.",
+        "Cross\u2011sectional study of college women: greater actual\u2011ideal body image discrepancy correlated with lower leisure\u2011time physical activity (r\u2248\u22120.28) controlling for BMI.",
+        "University student sample using Feel\u2013Ideal Discrepancy: higher dissatisfaction generally linked to lower physical activity (notably among females).",
+        "Systematic review in adolescents: physical activity is associated with more positive body image; limited longitudinal data suggest body dissatisfaction can predict lower PA, but most studies are cross\u2011sectional.",
+        "Short\u2011term prospective study: internalization of athletic/thin ideals predicted increases in compulsive exercise over 7 months; effects pertain to compulsive, not necessarily healthful, activity.",
+        "Randomized media exposure reduced thin\u2011ideal internalization and improved body image immediately, but did not assess objective changes in physical activity, highlighting limited experimental behavioral evidence."
+      ],
+      "limitations": [
+        "Predominance of cross\u2011sectional designs limits causal inference and temporal ordering.",
+        "Physical activity frequently measured via self\u2011report, subject to recall and social desirability bias; objective measures are rare.",
+        "Body image constructs vary (ideal BMI, figure ratings, internalization), reducing comparability across studies.",
+        "Confounding by actual BMI/adiposity, mental health, weight stigma, and socioeconomic factors is common and often incompletely adjusted.",
+        "Prospective studies are short in duration and often use convenience samples (e.g., college students), limiting generalizability.",
+        "Experimental studies seldom manipulate ideal body perceptions and track objective physical activity outcomes."
+      ],
+      "future_research": [
+        "Randomized or quasi\u2011experimental studies that manipulate body image/ideal internalization (e.g., media literacy, cognitive\u2011dissonance programs) and measure downstream changes in objectively assessed physical activity over meaningful follow\u2011up.",
+        "Prospective cohort studies with repeated measures of body dissatisfaction/internalization and device\u2011measured physical activity to test bidirectional effects with rigorous confounder control and causal modeling (e.g., cross\u2011lagged panel, marginal structural models).",
+        "Mechanistic studies testing mediators (e.g., exercise avoidance, embarrassment, body\u2011related affect) with preregistered analyses and adequate power.",
+        "Diverse samples across age, gender, and cultural groups to assess effect heterogeneity and the distinct roles of thin\u2011ideal vs athletic\u2011ideal internalization.",
+        "Interventions distinguishing healthy physical activity from compulsive/compensatory exercise, with adverse event monitoring."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Refine to: \u201cPerceived discrepancy between one\u2019s actual and ideal body size (body dissatisfaction) influences physical activity behaviors, with greater discrepancy generally predicting lower subsequent activity partly via exercise avoidance and body\u2011related affect; in contrast, internalization of athletic body ideals may increase compulsive (not necessarily health\u2011promoting) exercise. Evidence is predominantly observational with some short\u2011term prospective support; experimental evidence on changing \u2018ideal body\u2019 to alter objective physical activity is limited.\u201d",
+          "evidence_count": 35,
+          "high_quality_count": 0,
+          "judgment": "not_supported",
+          "judgment_confidence": 4
+        }
+      ],
+      "total_tokens": 196764,
+      "api_calls": 45,
+      "estimated_input_tokens": 192828,
+      "estimated_output_tokens": 3935
+    },
+    {
+      "CLD": "Social_norms_and_obesity_prevalence",
+      "classification": "FN",
+      "source": "Individual Ideal BMI",
+      "target": "Total Daily Energy Intake (TDEI)",
+      "verdict": "unsupported",
+      "confidence": 8,
+      "direct_causal_found": false,
+      "strongest_causal_evidence_confidence": 6,
+      "strongest_causal_evidence_url": "https://pubmed.ncbi.nlm.nih.gov/18479780/",
+      "strongest_causal_evidence_passage": null,
+      "strongest_causal_evidence_study_type": "Randomized laboratory experiment (media exposure; ad libitum snack intake)",
+      "strongest_causal_evidence_summary": "Exposure to thin\u2011ideal media images reduced immediate snack intake among restrained eaters compared with exposure to average\u2011size images, indicating a short\u2011term, moderated effect of idealized body cues on intake.",
+      "judge_reasoning": "Across the evidence base, there is no direct, high\u2011quality causal test showing that a person\u2019s perceived or self\u2011set \u201cideal BMI\u201d causes sustained changes in objectively measured total daily energy intake. Stronger evidence indicates that energy intake requirements track fat\u2011free mass and energy expenditure, and that weight loss elicits compensatory biological drives that increase appetite. Laboratory manipulations of thin\u2011ideal exposure can transiently alter immediate snack intake in specific subgroups (e.g., restrained eaters), but these short\u2011term, context\u2011dependent effects do not establish a durable causal influence of ideal BMI on total daily energy intake.",
+      "modified_claim": "Actual body weight and fat\u2011free mass causally influence total daily energy expenditure\u2014and thus the energy intake required to maintain weight\u2014whereas perceived or self\u2011set \u201cideal BMI\u201d has, at most, context\u2011dependent and short\u2011term effects on ad libitum intake (e.g., after thin\u2011ideal exposure in restrained eaters), with no strong evidence for a sustained causal effect on total daily energy intake.",
+      "evidence_urls": [
+        "https://www.nejm.org/doi/full/10.1056/NEJM199503093321001",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5108589/",
+        "https://www.nejm.org/doi/full/10.1056/NEJMoa1105816",
+        "https://www.sciencedirect.com/science/article/pii/S0022316623105578",
+        "https://pubmed.ncbi.nlm.nih.gov/31105044/",
+        "https://pubmed.ncbi.nlm.nih.gov/11835293/",
+        "https://pubmed.ncbi.nlm.nih.gov/18479780/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9197161/"
+      ],
+      "key_evidence_summaries": [
+        "Energy expenditure scales with fat\u2011free mass; weight loss reduces TEE/RMR beyond composition alone (adaptive thermogenesis), indicating physiological determinants of energy needs rather than ideals.",
+        "Model\u2011based analysis of an RCT shows strong feedback: about +100 kcal/day increased appetite per kg of weight lost, implying biology drives intake upward after weight loss.",
+        "Post\u2011weight\u2011loss hormonal changes (lower leptin/PYY/CCK, higher ghrelin) and increased appetite persist for a year, pushing intake upward independent of goals.",
+        "In a large community sample, reported energy intake tracks fat\u2011free mass and measured TDEE, not fat mass, supporting intake requirements driven by metabolically active tissue.",
+        "Randomized, controlled inpatient trial shows diet processing level causally increases ad libitum energy intake and weight, highlighting environmental/food factors rather than body\u2011image ideals as drivers of TDEI.",
+        "Experimental thin\u2011ideal media exposure reliably increases body dissatisfaction; effects on immediate intake are mixed and small, often limited to restrained eaters or high\u2011risk groups.",
+        "Lab experiment: exposure to thin vs average body ideals altered immediate snack intake primarily in restrained eaters (reduced intake), indicating short\u2011term, moderated effects.",
+        "Studies show people misestimate or hold varying perceptions of ideal BMI; these are correlational with body dissatisfaction and do not demonstrate causal effects on TDEI."
+      ],
+      "limitations": [
+        "No study directly randomizes or manipulates individuals\u2019 numeric ideal/desired BMI and then measures objective TDEI over meaningful durations (e.g., weeks) using gold\u2011standard methods (DLW).",
+        "Laboratory thin\u2011ideal exposure studies typically involve small samples of young women and measure single\u2011meal intake, limiting generalizability to daily or long\u2011term intake.",
+        "Some observational studies rely on self\u2011reported intake or goals, which are prone to bias and confounding.",
+        "Physiological studies emphasize expenditure and appetite feedback but do not directly test the original \u2018ideal BMI \u2192 TDEI\u2019 pathway."
+      ],
+      "future_research": [
+        "Conduct randomized trials assigning different explicit weight/ideal\u2011BMI goals and measure multi\u2011week TDEI objectively via doubly labeled water while monitoring body composition.",
+        "Run preregistered lab experiments manipulating goal salience or thin\u2011ideal internalization and measuring 24\u2011 to 72\u2011hour ad libitum intake under controlled conditions.",
+        "Use ecological momentary assessment to link within\u2011person fluctuations in body\u2011ideal salience to real\u2011time dietary intake across diverse populations.",
+        "Test whether interventions that reduce thin\u2011ideal internalization (e.g., dissonance\u2011based programs) produce measurable, sustained reductions in objectively assessed TDEI."
+      ],
+      "iteration_history": [
+        {
+          "iteration": 1,
+          "claim": "Revise to: Actual body weight and fat\u2011free mass causally influence total daily energy expenditure\u2014and thus the energy intake required to maintain weight\u2014whereas perceived or self\u2011set \u201cideal BMI\u201d has, at most, context\u2011dependent and short\u2011term effects on ad libitum intake (e.g., after thin\u2011ideal exposure in restrained eaters), with no strong evidence for a sustained causal effect on total daily energy intake.",
+          "evidence_count": 26,
+          "high_quality_count": 0,
+          "judgment": "not_supported",
+          "judgment_confidence": 8
+        }
+      ],
+      "total_tokens": 200514,
+      "api_calls": 36,
+      "estimated_input_tokens": 196503,
+      "estimated_output_tokens": 4010
+    }
+  ],
+  "telemetry": {
+    "total_tokens": 4352963,
+    "total_input_tokens": 4265896,
+    "total_output_tokens": 87051,
+    "verdicts": {
+      "partially_supported": 5,
+      "unsupported": 7,
+      "supported": 5
+    }
+  }
+}

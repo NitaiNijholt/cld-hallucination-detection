@@ -1,0 +1,69 @@
+[
+  {
+    "source": "Norm BMI",
+    "target": "Socio-cultural Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "revise_motivation(new_motivation=\"There is no direct causal relationship from the actual average BMI (Norm BMI) to the socio-cultural ideal BMI, as societal ideals are influenced by cultural, historical, and media-driven factors rather than changes in the current BMI distribution.\")"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Total Daily Energy Intake (TDEI)",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"Higher physical activity levels generally lead to increased energy expenditure, which often results in increased total daily energy intake to meet the body's energy requirements.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Individual Ideal BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "The edge type NONE is appropriate. I revised the motivation to clarify that there is no direct causal relationship between Norm BMI and Individual Ideal BMI, as individual factors, not population norms, determine what is ideal for an individual."
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Healthy BMI",
+    "type": "NONE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Action taken: The motivation was missing, so I added a proper explanation to clarify why there is no direct causal relationship (NONE) between \"Norm BMI\" and \"Healthy BMI\".\n\nNew motivation:\n\"There is no direct causal relationship between Norm BMI as a concept and Healthy BMI; the former may describe a statistical average, while the latter is a category based on health criteria. The two are conceptually related, but one does not causally determine the other.\""
+  },
+  {
+    "source": "Group-level BMI",
+    "target": "Norm BMI",
+    "type": "POSITIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "ACTION: revise_motivation\n\nNew motivation: Group-level BMI can influence Norm BMI because, as average BMI increases within a population, the social perception of what constitutes a 'normal' or acceptable BMI may also rise. This effect is primarily mediated by social comparison and changes in cultural norms, rather than direct metabolic adaptation. Individuals adjust their expectations and definitions of normality based on the prevailing body sizes in their environment, shifting the collective standard for a 'normal' BMI upward as group averages increase."
+  },
+  {
+    "source": "Socio-cultural Ideal BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', new_motivation=\"Socio-cultural ideals regarding body weight can influence individuals' perceptions and behaviors, leading to changes in diet and physical activity at the population level, which in turn can shift group-level BMI toward the cultural ideal.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Norm BMI",
+    "target": "Group-level BMI",
+    "type": "NONE",
+    "action": "change_type",
+    "corrected": true,
+    "note": "ACTION: change_edge_type(old_type='NONE', new_type='POSITIVE', \nnew_motivation=\"The norm BMI (the typical or expected body mass index within a context, such as a reference or comparison group) can influence group-level BMI as individuals tend to align their behaviors, dietary choices, and physical activity based on perceived norms, which subsequently shift overall group BMI.\")",
+    "new_type": "POSITIVE"
+  },
+  {
+    "source": "Physical Activity Level",
+    "target": "Group-level BMI",
+    "type": "NEGATIVE",
+    "action": "revise",
+    "corrected": true,
+    "note": "Motivation revised:\n\nThe edge direction was already correct (NEGATIVE: Higher physical activity leads to lower BMI), but the motivation needed greater clarity on the mechanism. The new motivation is:\n\n\"Higher physical activity typically leads to lower group-level BMI because increased activity expends more energy, lowers fat accumulation, and improves metabolic regulation across populations.\""
+  }
+]
