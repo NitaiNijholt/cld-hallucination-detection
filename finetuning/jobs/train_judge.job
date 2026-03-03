@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH --job-name=cld_judge_finetune
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=finetuning/logs/%x_%j.out
+#SBATCH --error=finetuning/logs/%x_%j.err
+
+set -euo pipefail
+
+REPO_DIR="$HOME/cld-hallucination-detection"
+ENV_DIR="$REPO_DIR/venv"
+
+echo "=========================================="
+echo "Job   : $SLURM_JOB_ID  ($SLURM_JOB_NAME)"
+echo "Node  : $SLURMD_NODENAME"
+echo "Start : $(date)"
+echo "=========================================="
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+
+cd "$REPO_DIR"
+mkdir -p finetuning/logs finetuning/runs
+
+conda activate "$ENV_DIR"
+
+python finetuning/src/train_judge.py \
+    --base_model  mistralai/Mistral-7B-Instruct-v0.2 \
+    --train_file  finetuning/src/judge_train.xlsx \
+    --val_file    finetuning/src/judge_val_synth.xlsx \
+    --output_dir  finetuning/runs/mistral7b_judge_gtsynth \
+    --max_length  2048 \
+    --lora_rank   32 \
+    --epochs      3
+
+echo "=========================================="
+echo "Done : $(date)"
+echo "=========================================="
