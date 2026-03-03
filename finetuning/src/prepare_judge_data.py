@@ -26,12 +26,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CLD_DATA_ROOT = os.path.join(
-    os.path.dirname(REPO_ROOT),
-    "cld-hallucination-detection",
-    "final_runs",
-)
+# __file__ is at <repo>/finetuning/src/prepare_judge_data.py
+# Going up 3 levels lands at the repo root (<repo>/)
+# final_runs/ lives directly in the repo root
+_SRC_DIR        = os.path.dirname(os.path.abspath(__file__))   # .../finetuning/src
+_FINETUNING_DIR = os.path.dirname(_SRC_DIR)                     # .../finetuning
+REPO_ROOT       = os.path.dirname(_FINETUNING_DIR)              # .../cld-hallucination-detection
+CLD_DATA_ROOT   = os.path.join(REPO_ROOT, "final_runs")
 
 SYNTH_GLOB = os.path.join(CLD_DATA_ROOT, "RQ1a_gt_synth_correctness", "**", "*.xlsx")
 LIT_GLOB   = os.path.join(CLD_DATA_ROOT, "RQ1a_gt_lit_correctness",   "**", "*.xlsx")
@@ -171,7 +172,7 @@ def _split_by_edge_identity(df: pd.DataFrame, val_fraction: float, seed: int):
 
 
 def main():
-    out_dir = os.path.join(REPO_ROOT, "src")
+    out_dir = _SRC_DIR  # write outputs next to this script: finetuning/src/
     os.makedirs(out_dir, exist_ok=True)
 
     # ── GT Synth ──────────────────────────────────────────────────────────────
