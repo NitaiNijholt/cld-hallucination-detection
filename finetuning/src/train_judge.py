@@ -254,7 +254,7 @@ def main() -> None:
     val_ds   = load_split(cfg.val_file,   cfg.smoke_test)
     print(f"  train={len(train_ds):,}  val={len(val_ds):,}")
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.base_model, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(cfg.base_model)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -270,7 +270,7 @@ def main() -> None:
         train_dataset=train_tok,
         eval_dataset=val_tok,
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
 
     print("\nTraining …")

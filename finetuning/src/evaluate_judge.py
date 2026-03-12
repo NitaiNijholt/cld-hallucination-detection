@@ -102,7 +102,7 @@ def _load_model_tokenizer(model_path: str, base_model: str, is_peft: bool):
         bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True,
     )
-    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
 
