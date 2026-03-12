@@ -191,7 +191,7 @@ def build_training_args(cfg: FinetuneConfig) -> TrainingArguments:
         weight_decay=0.01,
         bf16=True,
         gradient_checkpointing=True,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="no",
         logging_strategy="steps",
         logging_steps=50,
