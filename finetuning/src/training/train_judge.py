@@ -202,11 +202,12 @@ def build_tokenised_dataset(
         ]
         return full_enc
 
+    num_proc = min(4, max(1, len(ds) // 4))  # avoid num_proc > shards for tiny datasets
     return ds.map(
         process,
         batched=True,
         remove_columns=["prompt", "completion"],
-        num_proc=4,
+        num_proc=num_proc,
         desc="Tokenising",
     )
 

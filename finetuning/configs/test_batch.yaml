@@ -1,6 +1,8 @@
 # Small test batch for pipeline validation (~5 train, 3 val, 1 eval)
 # Usage: python -m finetuning.src.training.train_judge --config-name test_batch
 #        sbatch finetuning/jobs/train_smoke.job
+#
+# Overrides: grad_accum=1 (5 samples can't accumulate 32), num_proc=1 for tiny ds
 
 defaults:
   - smoke
@@ -8,3 +10,5 @@ defaults:
 train_file: finetuning/data/test_batch/judge_train.xlsx
 val_file: finetuning/data/test_batch/judge_val_synth.xlsx
 output_dir: finetuning/runs/test_batch_smoke
+
+grad_accum: 1
