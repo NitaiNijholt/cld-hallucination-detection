@@ -1,0 +1,32 @@
+name: Finetuning smoke tests
+
+on:
+  push:
+    paths:
+      - "finetuning/**"
+  pull_request:
+    paths:
+      - "finetuning/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install finetuning deps
+        run: |
+          pip install -e finetuning/[dev]
+        env:
+          PIP_EXTRA_INDEX_URL: ""
+
+      - name: Run tests
+        run: pytest finetuning/tests/ -v
+        env:
+          WANDB_DISABLED: "true"
+          PYTHONPATH: .

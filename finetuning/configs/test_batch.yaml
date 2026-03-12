@@ -1,0 +1,10 @@
+# Small test batch for pipeline validation (~5 train, 3 val, 1 eval)
+# Usage: python -m finetuning.src.training.train_judge --config-name test_batch
+#        sbatch finetuning/jobs/train_smoke.job
+
+defaults:
+  - smoke
+
+train_file: finetuning/data/test_batch/judge_train.xlsx
+val_file: finetuning/data/test_batch/judge_val_synth.xlsx
+output_dir: finetuning/runs/test_batch_smoke

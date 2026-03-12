@@ -1,0 +1,9 @@
+# Override for Snellius HPC (paths assume $HOME/cld-hallucination-detection)
+# Usage: python -m finetuning.src.training.train_judge --config-name snellius
+
+defaults:
+  - default
+
+train_file: finetuning/src/judge_train.xlsx
+val_file: finetuning/src/judge_val_synth.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtsynth

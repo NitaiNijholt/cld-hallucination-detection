@@ -1,0 +1,42 @@
+# Base config for CLD judge QLoRA finetuning
+
+# Model
+base_model: mistralai/Mistral-7B-Instruct-v0.2
+
+# Data paths (relative to repo root)
+train_file: finetuning/src/judge_train.xlsx
+val_file: finetuning/src/judge_val_synth.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtsynth
+
+# Sequence
+max_length: 2048
+
+# LoRA
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+
+# Training
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+
+# Reproducibility
+seed: 42
+
+# Smoke test (quick local sanity check)
+smoke_test: false
+
+# Checkpointing
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+
+# Experiment tracking (set WANDB_PROJECT to enable)
+report_to: none
+
+# Logging (step progress to stdout and output_dir/train.log)
+logging_steps: 10

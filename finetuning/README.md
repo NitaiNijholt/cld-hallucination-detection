@@ -1,41 +1,143 @@
-# CLD Judge Finetuning — Snellius
+# CLD Judge Finetuning
 
 QLoRA finetuning of Mistral-7B-Instruct-v0.2 on the CLD correctness judge task.
 
 **Research question:** Does LoRA finetuning on GT Synth data close the GT Synth → GT Lit transfer gap identified in the thesis?
 
-## Files
+## Project structure
 
-| File | Purpose |
-|---|---|
-| `src/prepare_judge_data.py` | Load GT Synth/GT Lit xlsx, deduplicate by edge identity, output train/val/eval splits |
-| `src/train_judge.py` | QLoRA training (r=32, 4-bit NF4) on GT Synth only |
-| `src/evaluate_judge.py` | Inference + F1/AUC on GT Synth val (in-dist) and GT Lit (out-of-dist) |
-| `jobs/train_judge.job` | SLURM job: 1× H100, 3h wall time |
+```
+finetuning/
+├── configs/
+│   ├── default.yaml           # Base config
+│   ├── smoke.yaml             # Quick local runs (64 examples, 1 epoch)
+│   └── snellius.yaml          # HPC paths
+├── src/
+│   ├── data/
+│   │   └── prepare_judge_data.py
+│   ├── training/
+│   │   └── train_judge.py
+│   └── evaluation/
+│       └── evaluate_judge.py
+├── tests/
+├── jobs/
+│   └── train_judge.job
+├── pyproject.toml
+└── README.md
+```
+
+## Setup
+
+```bash
+# From repo root
+pip install -e finetuning/[dev]
+# or: uv pip install -e finetuning/[dev]
+```
+
+## Test batch (smoke pipeline)
+
+Small dataset for quick validation (~5 train, 3 val, 1 eval):
+
+```bash
+# Regenerate from fixtures
+python -m finetuning.src.data.prepare_judge_data \
+  --data-root finetuning/tests/fixtures/final_runs \
+  --output-dir finetuning/data/test_batch \
+  --val-fraction 0.3 --min-file-bytes 0
+
+# Train (local or Snellius)
+python -m finetuning.src.training.train_judge --config-name test_batch
+sbatch finetuning/jobs/train_smoke.job   # 20 min on H100
+
+# Evaluate
+python -m finetuning.src.evaluation.evaluate_judge \
+  --finetuned_model finetuning/runs/test_batch_smoke/lora_adapter \
+  --val_path finetuning/data/test_batch/judge_val_synth.xlsx \
+  --lit_path finetuning/data/test_batch/judge_eval_gtlit.xlsx
+```
 
 ## Workflow
 
+### 1. Prepare data
+
 ```bash
-# 1. Prepare data (run locally, needs cld-hallucination-detection final_runs/)
-python finetuning/src/prepare_judge_data.py
-# outputs: finetuning/src/judge_train.xlsx, judge_val_synth.xlsx, judge_eval_gtlit.xlsx
+python -m finetuning.src.data.prepare_judge_data
+# Outputs: finetuning/src/judge_train.xlsx, judge_val_synth.xlsx, judge_eval_gtlit.xlsx
 
-# 2. Upload to Snellius
-scp finetuning/src/judge_*.xlsx <user>@snellius.surf.nl:~/Thesis-LLM-CLD/src/
+# With custom paths (e.g. CI or fixtures):
+python -m finetuning.src.data.prepare_judge_data \
+    --data-root /path/to/final_runs \
+    --output-dir /tmp/out \
+    --min-file-bytes 0
+```
 
-# 3. On Snellius: clone Gijs's env repo, activate env, submit job
-git clone https://github.com/abcdev123/Thesis-LLM-CLD ~/Thesis-LLM-CLD
-cd ~/Thesis-LLM-CLD
-cp <uploaded scripts> src/
-sbatch jobs/train_judge.job
+### 2. Train
 
-# 4. After training: run evaluation
-python finetuning/src/evaluate_judge.py \
-    --finetuned_model Mistral-7B-Instruct-v0.2_qlora_cld_judge_gtsynth/lora_adapter \
+**Local (smoke test):**
+```bash
+python -m finetuning.src.training.train_judge --config-name smoke
+```
+
+**Local (full run):**
+```bash
+python -m finetuning.src.training.train_judge
+# Hydra overrides: epochs=5 lora_rank=16
+```
+
+**Snellius (SLURM):**
+```bash
+sbatch finetuning/jobs/train_judge.job
+```
+
+### 3. Evaluate
+
+```bash
+python -m finetuning.src.evaluation.evaluate_judge \
+    --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
     --eval_base
 ```
 
-## Expected results table
+## Config (Hydra)
+
+- **default.yaml**: Full hyperparameters (lora_rank=32, epochs=3, etc.)
+- **smoke.yaml**: Overrides for quick sanity check (smoke_test=true, epochs=1)
+- **snellius.yaml**: Paths for HPC
+
+CLI overrides: `python -m finetuning.src.training.train_judge epochs=5 lora_rank=8`
+
+## Experiment tracking (WandB)
+
+Set `WANDB_PROJECT` to enable:
+
+```bash
+export WANDB_PROJECT=cld-judge-finetuning
+python -m finetuning.src.training.train_judge
+```
+
+Disable in CI: `WANDB_DISABLED=true`
+
+## Logging
+
+- Step progress: every 10 steps to stdout and `output_dir/train.log`
+- Config: `logging_steps: 10` in config
+- SLURM jobs: `PYTHONUNBUFFERED=1` for immediate output
+
+## Reproducibility
+
+- Seeds: `seed=42` in config; `torch.manual_seed`, `np.random.seed` set at startup
+- `run_metadata.txt` in output dir: git SHA, full config
+
+## Testing
+
+```bash
+# From repo root (install finetuning deps for full coverage)
+pip install -e finetuning/[dev]
+pytest finetuning/tests/ -v
+
+# Lightweight tests run without full ML deps (data prep, eval utils, config)
+```
+
+## Expected results
 
 | Model | GT Synth F1 | GT Synth AUC | GT Lit F1 | GT Lit AUC | Cost/1k |
 |---|---|---|---|---|---|

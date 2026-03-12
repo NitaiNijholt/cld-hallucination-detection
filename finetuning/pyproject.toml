@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["finetuning*"]
+
+[project]
+name = "cld-judge-finetuning"
+version = "0.1.0"
+description = "QLoRA finetuning of Mistral-7B for CLD correctness judge task"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.0",
+    "transformers>=4.36",
+    "peft>=0.7",
+    "accelerate>=0.25",
+    "bitsandbytes>=0.41",
+    "datasets",
+    "scikit-learn",
+    "pandas",
+    "openpyxl",
+    "matplotlib",
+    "tqdm",
+    "hydra-core>=1.3",
+    "wandb",
+    "omegaconf",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".."]
+addopts = "-v"

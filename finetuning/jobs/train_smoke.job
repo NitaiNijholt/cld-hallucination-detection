@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=cld_judge_finetune
+#SBATCH --job-name=cld_judge_smoke
 #SBATCH --partition=gpu_h100
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=64G
-#SBATCH --time=03:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=00:20:00
 #SBATCH --output=finetuning/logs/%x_%j.out
 #SBATCH --error=finetuning/logs/%x_%j.err
 
@@ -16,7 +16,7 @@ REPO_DIR="$HOME/cld-hallucination-detection"
 ENV_DIR="$REPO_DIR/venv"
 
 echo "=========================================="
-echo "Job   : $SLURM_JOB_ID  ($SLURM_JOB_NAME)"
+echo "Job   : $SLURM_JOB_ID  (smoke test)"
 echo "Node  : $SLURMD_NODENAME"
 echo "Start : $(date)"
 echo "=========================================="
@@ -30,7 +30,7 @@ source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
-python -m finetuning.src.training.train_judge --config-name snellius
+python -m finetuning.src.training.train_judge --config-name test_batch
 
 echo "=========================================="
 echo "Done : $(date)"

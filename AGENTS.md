@@ -54,7 +54,7 @@ The doornode blocks SCP port-forwarding. Generate data files **on Snellius** dir
 # On Snellius — data is already in the cloned repo (final_runs/)
 cd ~/cld-hallucination-detection
 source venv/bin/activate
-python finetuning/src/prepare_judge_data.py
+python -m finetuning.src.data.prepare_judge_data
 ```
 
 Once your IP is whitelisted, direct SCP works:
@@ -73,9 +73,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
 uv venv venv --python 3.11
-uv pip install --python venv/bin/python \
-    torch transformers peft accelerate bitsandbytes \
-    datasets scikit-learn pandas openpyxl matplotlib tqdm
+source venv/bin/activate
+pip install -e finetuning/
 ```
 
 ### Submitting and monitoring jobs
@@ -85,7 +84,7 @@ cd ~/cld-hallucination-detection
 source venv/bin/activate
 
 # Prepare data (only needed once)
-python finetuning/src/prepare_judge_data.py
+python -m finetuning.src.data.prepare_judge_data
 
 # Submit training job
 mkdir -p finetuning/logs

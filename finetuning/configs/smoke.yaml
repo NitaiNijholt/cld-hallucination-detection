@@ -1,0 +1,10 @@
+# Override for quick local runs (no GPU required for sanity check)
+# Usage: python -m finetuning.src.training.train_judge --config-name smoke
+
+defaults:
+  - default
+
+smoke_test: true
+epochs: 1
+save_strategy: "no"
+load_best_model_at_end: false
