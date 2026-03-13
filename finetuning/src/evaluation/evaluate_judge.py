@@ -115,6 +115,12 @@ def parse_args() -> argparse.Namespace:
         default=4,
     )
     p.add_argument(
+        "--inference_backend",
+        choices=["transformers", "vllm"],
+        default="transformers",
+        help="Inference backend: transformers (HF) or vllm (faster batch)",
+    )
+    p.add_argument(
         "--output_dir",
         default=str(defaults["output_dir"]),
     )
@@ -186,6 +192,7 @@ def _load_model_tokenizer(model_path: str, base_model: str, is_peft: bool):
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"  # required for correct generation with decoder-only models
 
     if is_peft:
         base = AutoModelForCausalLM.from_pretrained(
@@ -239,17 +246,23 @@ def run_inference(
 
 
 def evaluate_on_df(
-    model,
-    tokenizer,
     df: pd.DataFrame,
     max_new_tokens: int,
     batch_size: int,
     dataset_label: str,
+    model=None,
+    tokenizer=None,
+    run_inference_fn=None,
 ) -> dict:
-    """Run inference and compute metrics for one evaluation split."""
+    """Run inference and compute metrics for one evaluation split.
+    Pass either (model, tokenizer) for HF, or run_inference_fn for vLLM.
+    """
     prompts = df["prompt"].tolist()
     logger.info("Running inference on %s (%s examples)...", dataset_label, f"{len(prompts):,}")
-    raw_outputs = run_inference(model, tokenizer, prompts, max_new_tokens, batch_size)
+    if run_inference_fn is not None:
+        raw_outputs = run_inference_fn(prompts)
+    else:
+        raw_outputs = run_inference(model, tokenizer, prompts, max_new_tokens, batch_size)
 
     df = df.copy()
     df["predicted"] = [parse_verdict(o) for o in raw_outputs]
@@ -386,46 +399,82 @@ def main() -> None:
 
     is_peft = os.path.exists(os.path.join(args.finetuned_model, "adapter_config.json"))
     model_label = "Mistral-7B QLoRA (GT Synth trained)"
-    logger.info("Loading finetuned model: %s (peft=%s)", args.finetuned_model, is_peft)
-    model, tokenizer = _load_model_tokenizer(args.finetuned_model, args.base_model, is_peft)
+    use_vllm = args.inference_backend == "vllm"
 
-    if len(val_df_loss) > 0:
-        logger.info("Computing eval loss (GT Synth Val) for finetuned model...")
-        loss_finetuned = compute_eval_loss(model, tokenizer, val_df_loss, batch_size=args.batch_size)
-        logger.info("Finetuned eval_loss (GT Synth Val) = %.4f", loss_finetuned)
-
-    for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
-        res = evaluate_on_df(model, tokenizer, df, args.max_new_tokens, args.batch_size, label)
-        res["model_label"] = model_label
-        if "Synth" in label and not np.isnan(loss_finetuned):
-            res["eval_loss"] = loss_finetuned
-        all_results.append(res)
-
-    del model
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-
-    if args.eval_base:
-        base_label = "Mistral-7B base (zero-shot)"
-        logger.info("Loading base model: %s", args.base_model)
-        base_model, tokenizer = _load_model_tokenizer(
-            args.base_model, args.base_model, is_peft=False
+    if use_vllm:
+        from .vllm_inference import run_inference_vllm
+        lora_path = args.finetuned_model if is_peft else None
+        base_for_finetuned = args.base_model if is_peft else args.finetuned_model
+        run_fn_finetuned = lambda p: run_inference_vllm(
+            p, base_for_finetuned, lora_path, args.max_new_tokens, args.batch_size
         )
-        if len(val_df_loss) > 0:
-            logger.info("Computing eval loss (GT Synth Val) for base model...")
-            loss_base = compute_eval_loss(base_model, tokenizer, val_df_loss, batch_size=args.batch_size)
-            logger.info("Base eval_loss (GT Synth Val) = %.4f", loss_base)
-
         for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
-            res = evaluate_on_df(base_model, tokenizer, df, args.max_new_tokens, args.batch_size, label)
-            res["model_label"] = base_label
-            if "Synth" in label and not np.isnan(loss_base):
-                res["eval_loss"] = loss_base
+            res = evaluate_on_df(
+                df, args.max_new_tokens, args.batch_size, label,
+                run_inference_fn=run_fn_finetuned,
+            )
+            res["model_label"] = model_label
             all_results.append(res)
 
-        del base_model
+        if args.eval_base:
+            base_label = "Mistral-7B base (zero-shot)"
+            run_fn_base = lambda p: run_inference_vllm(
+                p, args.base_model, None, args.max_new_tokens, args.batch_size
+            )
+            for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+                res = evaluate_on_df(
+                    df, args.max_new_tokens, args.batch_size, label,
+                    run_inference_fn=run_fn_base,
+                )
+                res["model_label"] = base_label
+                all_results.append(res)
+    else:
+        logger.info("Loading finetuned model: %s (peft=%s)", args.finetuned_model, is_peft)
+        model, tokenizer = _load_model_tokenizer(args.finetuned_model, args.base_model, is_peft)
+
+        if len(val_df_loss) > 0:
+            logger.info("Computing eval loss (GT Synth Val) for finetuned model...")
+            loss_finetuned = compute_eval_loss(model, tokenizer, val_df_loss, batch_size=args.batch_size)
+            logger.info("Finetuned eval_loss (GT Synth Val) = %.4f", loss_finetuned)
+
+        for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+            res = evaluate_on_df(
+                df, args.max_new_tokens, args.batch_size, label,
+                model=model, tokenizer=tokenizer,
+            )
+            res["model_label"] = model_label
+            if "Synth" in label and not np.isnan(loss_finetuned):
+                res["eval_loss"] = loss_finetuned
+            all_results.append(res)
+
+        del model
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+
+        if args.eval_base:
+            base_label = "Mistral-7B base (zero-shot)"
+            logger.info("Loading base model: %s", args.base_model)
+            base_model_obj, tokenizer = _load_model_tokenizer(
+                args.base_model, args.base_model, is_peft=False
+            )
+            if len(val_df_loss) > 0:
+                logger.info("Computing eval loss (GT Synth Val) for base model...")
+                loss_base = compute_eval_loss(base_model_obj, tokenizer, val_df_loss, batch_size=args.batch_size)
+                logger.info("Base eval_loss (GT Synth Val) = %.4f", loss_base)
+
+            for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+                res = evaluate_on_df(
+                    df, args.max_new_tokens, args.batch_size, label,
+                    model=base_model_obj, tokenizer=tokenizer,
+                )
+                res["model_label"] = base_label
+                if "Synth" in label and not np.isnan(loss_base):
+                    res["eval_loss"] = loss_base
+                all_results.append(res)
+
+            del base_model_obj
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
     if not np.isnan(loss_finetuned) or not np.isnan(loss_base):
         logger.info("\n" + "═" * 80)
