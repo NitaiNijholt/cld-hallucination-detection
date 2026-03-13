@@ -85,8 +85,15 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--eval_base",
         action="store_true",
-        help="Also evaluate base model zero-shot",
+        help="Evaluate base model zero-shot (for F1/AUC + loss baseline)",
     )
+    p.add_argument(
+        "--no_eval_base",
+        dest="eval_base",
+        action="store_false",
+        help="Skip base model evaluation",
+    )
+    p.set_defaults(eval_base=True)
     p.add_argument(
         "--val_path",
         default=str(defaults["val_path"]),
@@ -112,6 +119,60 @@ def parse_args() -> argparse.Namespace:
         default=str(defaults["output_dir"]),
     )
     return p.parse_args()
+
+
+def _make_chat_text(prompt: str, completion: str, tokenizer) -> str:
+    """Match train_judge: full prompt+completion for loss (completion tokens only)."""
+    clean = re.sub(r"<s>\[INST\]|\[/INST\]|</s>", "", prompt).strip()
+    messages = [
+        {"role": "user", "content": clean},
+        {"role": "assistant", "content": completion},
+    ]
+    return tokenizer.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=False
+    )
+
+
+@torch.no_grad()
+def compute_eval_loss(model, tokenizer, df: pd.DataFrame, max_length: int = 2048, batch_size: int = 4) -> float:
+    """Compute mean cross-entropy loss on completion tokens (same protocol as training)."""
+    df = df.dropna(subset=["prompt", "completion"])
+    if len(df) == 0:
+        return float("nan")
+    pad_id = tokenizer.pad_token_id or tokenizer.eos_token_id
+    total_loss = 0.0
+    n_tokens = 0
+    for i in tqdm(range(0, len(df), batch_size), desc="  Eval loss"):
+        batch = df.iloc[i : i + batch_size]
+        full_texts = []
+        prompt_lengths = []
+        for _, r in batch.iterrows():
+            full_texts.append(_make_chat_text(r["prompt"], r["completion"], tokenizer))
+            clean = re.sub(r"<s>\[INST\]|\[/INST\]|</s>", "", r["prompt"]).strip()
+            prompt_only = tokenizer.apply_chat_template(
+                [{"role": "user", "content": clean}],
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            p_ids = tokenizer(prompt_only, add_special_tokens=False)["input_ids"]
+            prompt_lengths.append(len(p_ids))
+        full_enc = tokenizer(
+            full_texts,
+            truncation=True,
+            max_length=max_length,
+            padding="max_length",
+            add_special_tokens=False,
+            return_tensors="pt",
+        ).to(model.device)
+        labels = full_enc["input_ids"].clone()
+        for j, p_len in enumerate(prompt_lengths):
+            labels[j, :p_len] = -100
+        labels[labels == pad_id] = -100
+        out = model(**full_enc, labels=labels)
+        n = (labels != -100).sum().item()
+        total_loss += out.loss.item() * n
+        n_tokens += n
+    return total_loss / n_tokens if n_tokens > 0 else float("nan")
 
 
 def _load_model_tokenizer(model_path: str, base_model: str, is_peft: bool):
@@ -226,7 +287,7 @@ def evaluate_on_df(
         "f1_macro": round(f1_macro, 4),
         "auc": round(auc, 4),
         "predictions": df[
-            ["source", "target", "domain", "judge_verdict", "predicted", "classification", "is_corrupted"]
+            [c for c in ["source", "target", "domain", "judge_verdict", "predicted", "classification", "is_corrupted"] if c in df.columns]
         ].to_dict(orient="records"),
     }
 
@@ -277,6 +338,7 @@ def print_summary_table(all_results: list[dict]) -> None:
         "model": "GPT-4.1 Mechanistic (thesis)",
         "GT Synth F1": f"{THESIS_BASELINES['GT Synth']['f1']:.2f}",
         "GT Synth AUC": f"{THESIS_BASELINES['GT Synth']['auc']:.2f}",
+        "GT Synth Val loss": "-",
         "GT Lit F1": f"{THESIS_BASELINES['GT Lit']['f1']:.2f}",
         "GT Lit AUC": f"{THESIS_BASELINES['GT Lit']['auc']:.2f}",
         "Cost/1k": "~$0.30",
@@ -291,9 +353,13 @@ def print_summary_table(all_results: list[dict]) -> None:
             if "Synth" in r["dataset"]:
                 row["GT Synth F1"] = f"{r['f1_macro']:.3f}"
                 row["GT Synth AUC"] = f"{r['auc']:.3f}"
+                if "eval_loss" in r and not np.isnan(r.get("eval_loss", float("nan"))):
+                    row["GT Synth Val loss"] = f"{r['eval_loss']:.4f}"
             elif "Lit" in r["dataset"]:
                 row["GT Lit F1"] = f"{r['f1_macro']:.3f}"
                 row["GT Lit AUC"] = f"{r['auc']:.3f}"
+        if "GT Synth Val loss" not in row:
+            row["GT Synth Val loss"] = "-"
         rows.append(row)
 
     df = pd.DataFrame(rows).fillna("-")
@@ -313,16 +379,26 @@ def main() -> None:
     lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt", "judge_verdict"])
     logger.info("Loaded: GT Synth val = %s rows | GT Lit = %s rows", f"{len(val_df):,}", f"{len(lit_df):,}")
 
+    val_df_loss = val_df.dropna(subset=["completion"]) if "completion" in val_df.columns else pd.DataFrame()
+
     all_results: list[dict] = []
+    loss_finetuned = loss_base = float("nan")
 
     is_peft = os.path.exists(os.path.join(args.finetuned_model, "adapter_config.json"))
     model_label = "Mistral-7B QLoRA (GT Synth trained)"
     logger.info("Loading finetuned model: %s (peft=%s)", args.finetuned_model, is_peft)
     model, tokenizer = _load_model_tokenizer(args.finetuned_model, args.base_model, is_peft)
 
+    if len(val_df_loss) > 0:
+        logger.info("Computing eval loss (GT Synth Val) for finetuned model...")
+        loss_finetuned = compute_eval_loss(model, tokenizer, val_df_loss, batch_size=args.batch_size)
+        logger.info("Finetuned eval_loss (GT Synth Val) = %.4f", loss_finetuned)
+
     for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
         res = evaluate_on_df(model, tokenizer, df, args.max_new_tokens, args.batch_size, label)
         res["model_label"] = model_label
+        if "Synth" in label and not np.isnan(loss_finetuned):
+            res["eval_loss"] = loss_finetuned
         all_results.append(res)
 
     del model
@@ -335,14 +411,29 @@ def main() -> None:
         base_model, tokenizer = _load_model_tokenizer(
             args.base_model, args.base_model, is_peft=False
         )
+        if len(val_df_loss) > 0:
+            logger.info("Computing eval loss (GT Synth Val) for base model...")
+            loss_base = compute_eval_loss(base_model, tokenizer, val_df_loss, batch_size=args.batch_size)
+            logger.info("Base eval_loss (GT Synth Val) = %.4f", loss_base)
+
         for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
             res = evaluate_on_df(base_model, tokenizer, df, args.max_new_tokens, args.batch_size, label)
             res["model_label"] = base_label
+            if "Synth" in label and not np.isnan(loss_base):
+                res["eval_loss"] = loss_base
             all_results.append(res)
 
         del base_model
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+
+    if not np.isnan(loss_finetuned) or not np.isnan(loss_base):
+        logger.info("\n" + "═" * 80)
+        logger.info("LOSS BASELINE (GT Synth Val) — cross-entropy on completion tokens")
+        logger.info("═" * 80)
+        logger.info("  Base (zero-shot):    %.4f", loss_base)
+        logger.info("  Finetuned (QLoRA):   %.4f", loss_finetuned)
+        logger.info("═" * 80)
 
     print_summary_table(all_results)
     plot_confusion(all_results, args.output_dir)
