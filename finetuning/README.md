@@ -105,6 +105,16 @@ python -m finetuning.src.evaluation.evaluate_judge \
 
 CLI overrides: `python -m finetuning.src.training.train_judge epochs=5 lora_rank=8`
 
+## Deploying to Snellius
+
+Copy `finetuning/.env` (W&B API key) to Snellius before training:
+
+```bash
+scp finetuning/.env snellius:~/cld-hallucination-detection/finetuning/.env
+```
+
+Or with explicit host: `scp finetuning/.env nnijholt@snellius.surf.nl:~/cld-hallucination-detection/finetuning/.env`
+
 ## Experiment tracking (W&B)
 
 Set `wandb_project` in config or `WANDB_PROJECT` env to enable:

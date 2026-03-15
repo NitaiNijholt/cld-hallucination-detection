@@ -9,7 +9,7 @@ Checklist of steps to execute training and evaluation runs on Snellius.
 - [ ] SURF Usage Agreement accepted at https://portal.cua.surf.nl
 - [ ] SSH key registered at https://portal.cua.surf.nl/user/keys
 - [ ] Repo cloned on Snellius: `~/cld-hallucination-detection` (branch `snellius-finetuning`)
-- [ ] Venv created and deps installed: `uv venv venv --python 3.11` + `pip install -e finetuning/`
+- [ ] Venv created and deps installed: `uv venv venv --python 3.11` + `uv pip install -e finetuning/` (see AGENTS.md; load Python module first)
 - [ ] Data prepared: `python -m finetuning.src.data.prepare_judge_data` → outputs `judge_train.xlsx`, `judge_val_synth.xlsx`, `judge_eval_gtlit.xlsx` in `finetuning/src/`
 
 ---

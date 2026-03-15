@@ -31,12 +31,20 @@ source "$ENV_DIR/bin/activate"
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
 
-python -m finetuning.src.evaluation.evaluate_judge \
-    --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
+# Create subsamples (~1000 each) for balanced, faster eval
+python -m finetuning.src.evaluation.create_eval_subsamples \
     --val_path finetuning/src/judge_val_synth.xlsx \
     --lit_path finetuning/src/judge_eval_gtlit.xlsx \
+    --target_n 1000 --seed 42
+
+# Full eval: finetuned + base, both splits, vLLM for speed
+python -m finetuning.src.evaluation.evaluate_judge \
+    --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
+    --val_path finetuning/src/judge_val_synth_1k.xlsx \
+    --lit_path finetuning/src/judge_eval_gtlit_1k.xlsx \
     --output_dir results \
-    --batch_size 16
+    --inference_backend vllm \
+    --batch_size 32
 
 echo "=========================================="
 echo "Done : $(date)"

@@ -65,17 +65,27 @@ scp localfile.txt nnijholt@snellius.surf.nl:~/destination/
 
 ### Environment setup (one-time on Snellius)
 
+Snellius allows installing packages in your home directory. We use **uv** for env management (faster than pip, respects lockfile). Install uv and create the venv:
+
 ```bash
 git clone -b snellius-finetuning https://github.com/NitaiNijholt/cld-hallucination-detection ~/cld-hallucination-detection
 cd ~/cld-hallucination-detection
 
+# Install uv (to ~/.local/bin)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
+# Load Snellius Python 3.11 (needed for uv venv --python 3.11)
+module load 2024
+module load Python/3.11.3-GCCcore-12.3.0
+
+# Create venv and install finetuning deps (includes vllm, mlflow, etc.)
 uv venv venv --python 3.11
 source venv/bin/activate
-pip install -e finetuning/
+uv pip install -e finetuning/
 ```
+
+To add or update packages later: `source venv/bin/activate && uv pip install -e finetuning/`
 
 ### Submitting and monitoring jobs
 
@@ -113,4 +123,5 @@ accuse
 | `You have not accepted the Usage Agreement` | Accept at https://portal.cua.surf.nl |
 | `tail -f` terminal frozen | Open new terminal, reconnect via doornode |
 | `venv/bin/activate: No such file or directory` | Run `uv venv venv --python 3.11 --clear` first |
+| `No module named 'vllm'` or missing deps | Reinstall: `source venv/bin/activate && uv pip install -e finetuning/` |
 | `channel 0: open failed: administratively prohibited` | Doornode blocks SCP — generate files on Snellius directly |

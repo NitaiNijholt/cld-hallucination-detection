@@ -30,8 +30,9 @@ source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
-# Optional: uncomment to enable W&B; or set wandb_project in config override
-# export WANDB_PROJECT=cld-judge-finetuning
+# W&B: set project; ensure WANDB_API_KEY in finetuning/.env or env
+export WANDB_PROJECT=cld-judge-finetuning
+# MLflow: uses $REPO_DIR/mlruns by default (mlflow_tracking_uri: mlruns)
 python -m finetuning.src.training.train_judge --config-name snellius
 
 echo "=========================================="

@@ -121,6 +121,12 @@ def parse_args() -> argparse.Namespace:
         help="Inference backend: transformers (HF) or vllm (faster batch)",
     )
     p.add_argument(
+        "--max_samples",
+        type=int,
+        default=None,
+        help="Max samples per split (for smoke test); None = use all",
+    )
+    p.add_argument(
         "--output_dir",
         default=str(defaults["output_dir"]),
     )
@@ -390,6 +396,10 @@ def main() -> None:
 
     val_df = pd.read_excel(args.val_path).dropna(subset=["prompt", "judge_verdict"])
     lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt", "judge_verdict"])
+    if args.max_samples is not None:
+        val_df = val_df.head(args.max_samples)
+        lit_df = lit_df.head(args.max_samples)
+        logger.info("Smoke test: limited to %s samples per split", args.max_samples)
     logger.info("Loaded: GT Synth val = %s rows | GT Lit = %s rows", f"{len(val_df):,}", f"{len(lit_df):,}")
 
     val_df_loss = val_df.dropna(subset=["completion"]) if "completion" in val_df.columns else pd.DataFrame()
