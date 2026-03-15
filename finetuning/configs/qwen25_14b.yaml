@@ -1,0 +1,8 @@
+# Qwen 2.5 14B Instruct — stronger, ~2x Mistral-7B VRAM
+# Usage: python -m finetuning.src.training.train_judge --config-name qwen25_14b
+
+defaults:
+  - default
+
+base_model: Qwen/Qwen2.5-14B-Instruct
+output_dir: finetuning/runs/qwen25_14b_judge_gtsynth

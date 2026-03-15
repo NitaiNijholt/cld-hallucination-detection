@@ -35,8 +35,20 @@ save_total_limit: 2
 load_best_model_at_end: true
 metric_for_best_model: eval_loss
 
-# Experiment tracking (set WANDB_PROJECT to enable)
+# Experiment tracking
+# W&B: set wandb_project or env WANDB_PROJECT to enable; WANDB_DISABLED=true to disable
+wandb_project: null
+wandb_run_name: null
+wandb_group: null
 report_to: none
+
+# MLflow: model versioning and registry; use MLFLOW_TRACKING_URI for remote
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+
+# Inference (eval)
+inference_backend: transformers  # or vllm for faster batch inference
 
 # Logging (step progress to stdout and output_dir/train.log)
 logging_steps: 10

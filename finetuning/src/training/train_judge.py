@@ -14,10 +14,19 @@ Run on Snellius (via SLURM):
 import logging
 import os
 import random
+
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+    _root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    load_dotenv(os.path.join(_root, ".env"))
+    load_dotenv(os.path.join(_root, "finetuning", ".env"))
+except ImportError:
+    pass
 
 import matplotlib
 matplotlib.use("Agg")
@@ -103,6 +112,27 @@ class StepProgressCallback(TrainerCallback):
         if eval_loss is not None:
             step = state.global_step
             self._emit(f"  step {step}  eval_loss={eval_loss:.4f}")
+
+
+class WandbConfigCallback(TrainerCallback):
+    """Log Hydra config, base model, and output paths to W&B on train begin."""
+
+    def __init__(self, cfg: DictConfig):
+        self.cfg = cfg
+
+    def on_train_begin(self, args, state, control, **kwargs):
+        try:
+            import wandb
+            if wandb.run is not None:
+                cfg_dict = OmegaConf.to_container(self.cfg, resolve=True)
+                wandb.config.update({"hydra_config": cfg_dict})
+                wandb.config.update({
+                    "base_model": str(self.cfg.get("base_model", "")),
+                    "output_dir": str(self.cfg.get("output_dir", "")),
+                })
+        except Exception:
+            pass
+
 
 from .train_config import (
     get_config_dir as _get_config_dir,
@@ -249,14 +279,25 @@ def load_quantised_model(cfg: DictConfig):
 # ── Training ──────────────────────────────────────────────────────────────────
 
 def build_training_args(cfg: DictConfig) -> TrainingArguments:
-    report_to = "wandb" if os.environ.get("WANDB_PROJECT") and not os.environ.get("WANDB_DISABLED") else "none"
+    wandb_project = getattr(cfg, "wandb_project", None) or os.environ.get("WANDB_PROJECT")
+    use_wandb = bool(wandb_project) and not os.environ.get("WANDB_DISABLED")
+    report_to = "wandb" if use_wandb else "none"
+    if use_wandb and not os.environ.get("WANDB_PROJECT"):
+        os.environ["WANDB_PROJECT"] = str(wandb_project)
+    if use_wandb:
+        group = getattr(cfg, "wandb_group", None)
+        if group:
+            os.environ["WANDB_GROUP"] = str(group)
+
     save_strategy = getattr(cfg, "save_strategy", "epoch")
     load_best = getattr(cfg, "load_best_model_at_end", True)
     metric_for_best = getattr(cfg, "metric_for_best_model", "eval_loss")
     save_total_limit = getattr(cfg, "save_total_limit", 2)
+    run_name = getattr(cfg, "wandb_run_name", None) or None
 
     return TrainingArguments(
         output_dir=cfg.output_dir,
+        run_name=run_name,
         num_train_epochs=cfg.epochs,
         per_device_train_batch_size=cfg.batch_size,
         per_device_eval_batch_size=cfg.batch_size,
@@ -363,6 +404,7 @@ def main(cfg: DictConfig) -> None:
     log_path = os.path.join(cfg.output_dir, "train.log")
     step_callback = StepProgressCallback(log_file=log_path)
 
+    callbacks = [step_callback, WandbConfigCallback(cfg)]
     trainer = Trainer(
         model=model,
         args=build_training_args(cfg),
@@ -370,7 +412,7 @@ def main(cfg: DictConfig) -> None:
         eval_dataset=val_tok,
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
         processing_class=tokenizer,
-        callbacks=[step_callback],
+        callbacks=callbacks,
     )
 
     logger.info("Training… (step logs every 10 steps)")
@@ -382,6 +424,37 @@ def main(cfg: DictConfig) -> None:
         f.write(f"config={OmegaConf.to_yaml(cfg)}\n")
     save_loss_curve(trainer, cfg.output_dir)
     save_artifacts(model, tokenizer, cfg)
+
+    # MLflow model versioning and registry
+    if getattr(cfg, "mlflow_experiment_name", None):
+        from .. import mlflow_utils as mlflow_mod
+        tracking_uri = mlflow_mod.resolve_tracking_uri(
+            getattr(cfg, "mlflow_tracking_uri", None),
+            repo_root=repo_root,
+        )
+        history = trainer.state.log_history
+        train_loss_final = next((h["loss"] for h in reversed(history) if "loss" in h), None)
+        eval_loss_best = trainer.state.best_metric
+        best_epoch = None
+        for h in reversed(history):
+            if "eval_loss" in h and h.get("eval_loss") == eval_loss_best:
+                best_epoch = h.get("epoch")
+                break
+        merged_dir = os.path.join(cfg.output_dir, "merged_fp16")
+        cfg_dict = OmegaConf.to_container(cfg, resolve=True)
+        if isinstance(cfg_dict, dict):
+            mlflow_mod.log_training_run(
+                tracking_uri=tracking_uri,
+                experiment_name=cfg.mlflow_experiment_name,
+                registry_name=getattr(cfg, "mlflow_registry_name", "cld_judge"),
+                merged_dir=merged_dir,
+                base_model=str(cfg.base_model),
+                cfg_dict=cfg_dict,
+                train_loss=train_loss_final,
+                eval_loss=float(eval_loss_best) if eval_loss_best is not None else None,
+                best_epoch=float(best_epoch) if best_epoch is not None else None,
+            )
+
     logger.info("Finished.")
 
 

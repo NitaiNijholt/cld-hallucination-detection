@@ -1,0 +1,9 @@
+# Qwen 2.5 7B Instruct — Apache 2.0, strong 7B baseline
+# Usage: python -m finetuning.src.training.train_judge --config-name qwen25_7b
+# Snellius: sbatch with config override or use snellius + qwen25_7b
+
+defaults:
+  - default
+
+base_model: Qwen/Qwen2.5-7B-Instruct
+output_dir: finetuning/runs/qwen25_7b_judge_gtsynth

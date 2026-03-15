@@ -1,0 +1,8 @@
+# Qwen 2.5 32B Instruct — larger, ~18GB in 4-bit
+# Usage: python -m finetuning.src.training.train_judge --config-name qwen25_32b
+
+defaults:
+  - default
+
+base_model: Qwen/Qwen2.5-32B-Instruct
+output_dir: finetuning/runs/qwen25_32b_judge_gtsynth

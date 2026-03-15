@@ -65,3 +65,215 @@ def test_build_training_args():
     args = build_training_args(cfg)
     assert args.num_train_epochs == 2
     assert args.seed == 42
+
+
+def test_build_training_args_with_wandb():
+    """When WANDB_PROJECT is set and WANDB_DISABLED is unset, report_to=wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 4,
+        "lr": 1e-4,
+        "warmup_ratio": 0.1,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+    orig_proj = os.environ.pop("WANDB_PROJECT", None)
+    orig_disabled = os.environ.pop("WANDB_DISABLED", None)
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning"
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_proj is not None:
+            os.environ["WANDB_PROJECT"] = orig_proj
+        elif "WANDB_PROJECT" in os.environ:
+            del os.environ["WANDB_PROJECT"]
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled
+
+
+def test_build_training_args_with_wandb():
+    """When WANDB_PROJECT is set, report_to is wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 1,
+        "lr": 1e-4,
+        "warmup_ratio": 0.0,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+    orig_project = os.environ.pop("WANDB_PROJECT", None)
+    orig_disabled = os.environ.pop("WANDB_DISABLED", None)
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning-test"
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_project is not None:
+            os.environ["WANDB_PROJECT"] = orig_project
+        elif "WANDB_PROJECT" in os.environ:
+            del os.environ["WANDB_PROJECT"]
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled
+
+
+def test_build_training_args_with_wandb():
+    """When WANDB_PROJECT is set and WANDB_DISABLED is unset, report_to is wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 1,
+        "lr": 1e-4,
+        "warmup_ratio": 0.0,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+
+    orig_project = os.environ.pop("WANDB_PROJECT", None)
+    orig_disabled = os.environ.pop("WANDB_DISABLED", None)
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning-test"
+        if "WANDB_DISABLED" in os.environ:
+            del os.environ["WANDB_DISABLED"]
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_project is not None:
+            os.environ["WANDB_PROJECT"] = orig_project
+        elif "WANDB_PROJECT" in os.environ:
+            del os.environ["WANDB_PROJECT"]
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled
+
+
+def test_build_training_args_with_wandb():
+    """With WANDB_PROJECT set and WANDB_DISABLED unset, report_to is wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 4,
+        "lr": 1e-4,
+        "warmup_ratio": 0.1,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+    orig_project = os.environ.pop("WANDB_PROJECT", None)
+    orig_disabled = os.environ.pop("WANDB_DISABLED", None)
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning"
+        if "WANDB_DISABLED" in os.environ:
+            del os.environ["WANDB_DISABLED"]
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_project is not None:
+            os.environ["WANDB_PROJECT"] = orig_project
+        elif "WANDB_PROJECT" in os.environ:
+            del os.environ["WANDB_PROJECT"]
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled
+
+
+def test_build_training_args_with_wandb():
+    """When WANDB_PROJECT is set and WANDB_DISABLED is not set, report_to=wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 4,
+        "lr": 1e-4,
+        "warmup_ratio": 0.1,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+    orig_project = os.environ.pop("WANDB_PROJECT", None)
+    orig_disabled = os.environ.pop("WANDB_DISABLED", None)
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning-test"
+        if "WANDB_DISABLED" in os.environ:
+            del os.environ["WANDB_DISABLED"]
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_project is not None:
+            os.environ["WANDB_PROJECT"] = orig_project
+        elif "WANDB_PROJECT" in os.environ:
+            del os.environ["WANDB_PROJECT"]
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled
+
+
+def test_build_training_args_with_wandb():
+    """When WANDB_PROJECT is set and WANDB_DISABLED is unset, report_to is wandb."""
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    import os
+    from finetuning.src.training.train_judge import build_training_args
+    from omegaconf import OmegaConf
+
+    cfg = OmegaConf.create({
+        "output_dir": "/tmp/out",
+        "epochs": 1,
+        "batch_size": 1,
+        "grad_accum": 1,
+        "lr": 1e-4,
+        "warmup_ratio": 0.0,
+        "seed": 42,
+        "save_strategy": "no",
+        "load_best_model_at_end": False,
+    })
+    orig_project = os.environ.get("WANDB_PROJECT")
+    orig_disabled = os.environ.get("WANDB_DISABLED")
+    try:
+        os.environ["WANDB_PROJECT"] = "cld-judge-finetuning-test"
+        os.environ.pop("WANDB_DISABLED", None)
+        args = build_training_args(cfg)
+        assert args.report_to == ["wandb"]
+    finally:
+        if orig_project is not None:
+            os.environ["WANDB_PROJECT"] = orig_project
+        elif "WANDB_PROJECT" in os.environ:
+            os.environ.pop("WANDB_PROJECT")
+        if orig_disabled is not None:
+            os.environ["WANDB_DISABLED"] = orig_disabled

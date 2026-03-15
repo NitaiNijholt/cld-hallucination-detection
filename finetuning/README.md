@@ -105,16 +105,31 @@ python -m finetuning.src.evaluation.evaluate_judge \
 
 CLI overrides: `python -m finetuning.src.training.train_judge epochs=5 lora_rank=8`
 
-## Experiment tracking (WandB)
+## Experiment tracking (W&B)
 
-Set `WANDB_PROJECT` to enable:
+Set `wandb_project` in config or `WANDB_PROJECT` env to enable:
 
 ```bash
 export WANDB_PROJECT=cld-judge-finetuning
 python -m finetuning.src.training.train_judge
+# Or in config: wandb_project: cld-judge-finetuning
 ```
 
-Disable in CI: `WANDB_DISABLED=true`
+Optional: `wandb_run_name`, `wandb_group` in config. Disable in CI: `WANDB_DISABLED=true`
+
+## Model versioning (MLflow)
+
+After training, models are logged to MLflow (experiment + registry). Default: local `mlruns/` in repo root.
+
+- **Local:** `mlflow_tracking_uri: mlruns` (default)
+- **Remote:** set `MLFLOW_TRACKING_URI` or override in config
+
+See [finetuning/docs/MLFLOW.md](docs/MLFLOW.md) for loading from registry and remote setup.
+
+## Inference (vLLM)
+
+- **Evaluation:** `--inference_backend vllm` for faster batch eval (e.g. `evaluate_judge --inference_backend vllm`)
+- **Serving:** vLLM OpenAI-compatible API for production. See [finetuning/docs/SERVING.md](docs/SERVING.md)
 
 ## Logging
 

@@ -1,0 +1,9 @@
+# Gemma 3 12B Instruct — Google, multimodal, 128K context
+# Requires accepting Gemma license on Hugging Face
+# Usage: python -m finetuning.src.training.train_judge --config-name gemma3_12b
+
+defaults:
+  - default
+
+base_model: google/gemma-3-12b-it
+output_dir: finetuning/runs/gemma3_12b_judge_gtsynth

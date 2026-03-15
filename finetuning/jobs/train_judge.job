@@ -30,6 +30,8 @@ source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
+# Optional: uncomment to enable W&B; or set wandb_project in config override
+# export WANDB_PROJECT=cld-judge-finetuning
 python -m finetuning.src.training.train_judge --config-name snellius
 
 echo "=========================================="

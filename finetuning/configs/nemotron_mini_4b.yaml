@@ -1,0 +1,8 @@
+# Nemotron Mini 4B Instruct — NVIDIA, compact, single-GPU friendly
+# Usage: python -m finetuning.src.training.train_judge --config-name nemotron_mini_4b
+
+defaults:
+  - default
+
+base_model: nvidia/Nemotron-Mini-4B-Instruct
+output_dir: finetuning/runs/nemotron_mini_4b_judge_gtsynth

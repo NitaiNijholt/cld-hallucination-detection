@@ -1,42 +1,40 @@
 #!/bin/bash
-#SBATCH --job-name=cld_judge_eval
+#SBATCH --job-name=cld_judge_serve
 #SBATCH --partition=gpu_h100
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
-#SBATCH --time=56:00:00
+#SBATCH --time=04:00:00
 #SBATCH --output=finetuning/logs/%x_%j.out
 #SBATCH --error=finetuning/logs/%x_%j.err
 
 set -euo pipefail
 
-REPO_DIR="$HOME/cld-hallucination-detection"
-ENV_DIR="$REPO_DIR/venv"
+REPO_DIR="${REPO_DIR:-$HOME/cld-hallucination-detection}"
+ENV_DIR="${ENV_DIR:-$REPO_DIR/venv}"
+LORA_PATH="${LORA_PATH:-finetuning/runs/mistral7b_judge_gtsynth/lora_adapter}"
+BASE_MODEL="${BASE_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}"
+PORT="${PORT:-8000}"
 
 echo "=========================================="
-echo "Job   : $SLURM_JOB_ID  (eval judge)"
+echo "Job   : $SLURM_JOB_ID  (vLLM serve)"
 echo "Node  : $SLURMD_NODENAME"
 echo "Start : $(date)"
 echo "=========================================="
 
 module purge
-
 cd "$REPO_DIR"
-mkdir -p finetuning/logs results
-
+mkdir -p finetuning/logs
 source "$ENV_DIR/bin/activate"
-
 export REPO_ROOT="$REPO_DIR"
-export PYTHONUNBUFFERED=1
 
-python -m finetuning.src.evaluation.evaluate_judge \
-    --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
-    --val_path finetuning/src/judge_val_synth.xlsx \
-    --lit_path finetuning/src/judge_eval_gtlit.xlsx \
-    --output_dir results \
-    --batch_size 16
+python -m finetuning.src.serving.serve_judge_vllm \
+    --base_model "$BASE_MODEL" \
+    --lora_path "$LORA_PATH" \
+    --host 0.0.0.0 \
+    --port "$PORT"
 
 echo "=========================================="
 echo "Done : $(date)"
