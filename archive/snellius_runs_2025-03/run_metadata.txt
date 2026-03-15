@@ -1,0 +1,23 @@
+git_sha=860f1c4f
+config=base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_train.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_val_synth.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+report_to: none
+logging_steps: 10
+

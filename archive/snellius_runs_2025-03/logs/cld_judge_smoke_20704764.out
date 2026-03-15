@@ -1,0 +1,220 @@
+==========================================
+Job   : 20704764  (smoke test)
+Node  : gcn98
+Start : Fri Mar 13 02:29:11 CET 2026
+==========================================
+2026-03-13 02:29:31 [INFO] Config: base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/test_batch/judge_train.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/test_batch/judge_val_synth.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 1
+epochs: 1
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: true
+save_strategy: 'no'
+save_total_limit: 2
+load_best_model_at_end: false
+metric_for_best_model: eval_loss
+report_to: none
+logging_steps: 10
+
+2026-03-13 02:29:31 [INFO] Git SHA: 6a6b9ca9
+2026-03-13 02:29:31 [INFO] Device: cuda
+2026-03-13 02:29:31 [INFO] GPU: NVIDIA H100 (100.0 GB)
+2026-03-13 02:29:31 [INFO] Loading data…
+2026-03-13 02:29:31 [INFO] train=5 val=3
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:32 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:29:32 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:32 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:32 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:32 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-13 02:29:32 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-13 02:29:33 [INFO] Loading mistralai/Mistral-7B-Instruct-v0.2 (4-bit QLoRA)…
+2026-03-13 02:29:33 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:33 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:33 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:29:33 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:29:33 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:33 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:36 [INFO] loading weights file model.safetensors from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/model.safetensors.index.json
+2026-03-13 02:29:36 [INFO] Will use dtype=torch.bfloat16 as defined in model's config object
+2026-03-13 02:29:36 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": true
+}
+
+2026-03-13 02:29:37 [INFO] We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2026-03-13 02:29:53 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:53 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:53 [INFO] loading configuration file generation_config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json
+2026-03-13 02:29:53 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2
+}
+
+trainable params: 83,886,080 || all params: 7,325,618,176 || trainable%: 1.1451
+2026-03-13 02:29:54 [WARNING] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+2026-03-13 02:29:54 [INFO] PyTorch: setting up devices
+2026-03-13 02:29:54 [INFO] Training… (step logs every 10 steps)
+2026-03-13 02:29:54 [WARNING] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 2}.
+2026-03-13 02:29:54 [INFO] ***** Running training *****
+2026-03-13 02:29:54 [INFO] ***** Running training *****
+2026-03-13 02:29:54 [INFO]   Num examples = 5
+2026-03-13 02:29:54 [INFO]   Num examples = 5
+2026-03-13 02:29:54 [INFO]   Num Epochs = 1
+2026-03-13 02:29:54 [INFO]   Num Epochs = 1
+2026-03-13 02:29:54 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:29:54 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:29:54 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 1
+2026-03-13 02:29:54 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 1
+2026-03-13 02:29:54 [INFO]   Gradient Accumulation steps = 1
+2026-03-13 02:29:54 [INFO]   Gradient Accumulation steps = 1
+2026-03-13 02:29:54 [INFO]   Total optimization steps = 5
+2026-03-13 02:29:54 [INFO]   Total optimization steps = 5
+2026-03-13 02:29:54 [INFO]   Number of trainable parameters = 83,886,080
+2026-03-13 02:29:54 [INFO]   Number of trainable parameters = 83,886,080
+2026-03-13 02:29:58 [INFO] 
+***** Running Evaluation *****
+2026-03-13 02:29:58 [INFO] 
+***** Running Evaluation *****
+2026-03-13 02:29:58 [INFO]   Num examples = 3
+2026-03-13 02:29:58 [INFO]   Num examples = 3
+2026-03-13 02:29:58 [INFO]   Batch size = 1
+2026-03-13 02:29:58 [INFO]   Batch size = 1
+{'eval_loss': '0.2276', 'eval_runtime': '0.5188', 'eval_samples_per_second': '5.783', 'eval_steps_per_second': '5.783', 'epoch': '1'}
+  step 5  eval_loss=0.2276
+2026-03-13 02:29:59 [INFO] 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+2026-03-13 02:29:59 [INFO] 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': '4.146', 'train_samples_per_second': '1.206', 'train_steps_per_second': '1.206', 'train_loss': '1.744', 'epoch': '1'}
+2026-03-13 02:29:59 [INFO] Saving LoRA adapter → /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/lora_adapter
+2026-03-13 02:29:59 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:59 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:59 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:29:59 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:29:59 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:29:59 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:29:59 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/lora_adapter/chat_template.jinja
+2026-03-13 02:29:59 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/lora_adapter/tokenizer_config.json
+2026-03-13 02:29:59 [INFO] Merging weights → /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16
+2026-03-13 02:30:04 [INFO] Configuration saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16/config.json
+2026-03-13 02:30:04 [INFO] Configuration saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16/generation_config.json
+2026-03-13 02:30:06 [INFO] Model weights saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16/model.safetensors
+2026-03-13 02:30:06 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16/chat_template.jinja
+2026-03-13 02:30:06 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/test_batch_smoke/merged_fp16/tokenizer_config.json
+2026-03-13 02:30:06 [INFO] Finished.
+==========================================
+Done : Fri Mar 13 02:30:08 CET 2026
+==========================================

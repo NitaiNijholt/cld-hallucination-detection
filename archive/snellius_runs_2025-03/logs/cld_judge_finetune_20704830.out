@@ -1,0 +1,149 @@
+==========================================
+Job   : 20704830  (cld_judge_finetune)
+Node  : gcn100
+Start : Fri Mar 13 02:47:12 CET 2026
+==========================================
+2026-03-13 02:47:24 [INFO] Config: base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_train.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_val_synth.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+report_to: none
+logging_steps: 10
+
+2026-03-13 02:47:24 [INFO] Git SHA: 6a6b9ca9
+2026-03-13 02:47:24 [INFO] Device: cuda
+2026-03-13 02:47:24 [INFO] GPU: NVIDIA H100 (100.0 GB)
+2026-03-13 02:47:24 [INFO] Loading data…
+2026-03-13 02:47:26 [INFO] train=12,983 val=1,420
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:26 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:47:26 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:26 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:26 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-13 02:47:26 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-13 02:47:34 [INFO] Loading mistralai/Mistral-7B-Instruct-v0.2 (4-bit QLoRA)…
+2026-03-13 02:47:34 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:34 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:34 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:47:34 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:47:34 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:34 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:37 [INFO] loading weights file model.safetensors from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/model.safetensors.index.json
+2026-03-13 02:47:37 [INFO] Will use dtype=torch.bfloat16 as defined in model's config object
+2026-03-13 02:47:37 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": true
+}
+
+2026-03-13 02:47:37 [INFO] We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2026-03-13 02:47:50 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:47:50 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:47:50 [INFO] loading configuration file generation_config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json
+2026-03-13 02:47:50 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2
+}
+
+trainable params: 83,886,080 || all params: 7,325,618,176 || trainable%: 1.1451
+2026-03-13 02:47:51 [WARNING] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+2026-03-13 02:47:51 [INFO] PyTorch: setting up devices
+2026-03-13 02:47:51 [INFO] Training… (step logs every 10 steps)
+2026-03-13 02:47:51 [WARNING] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 2}.
+2026-03-13 02:47:51 [INFO] ***** Running training *****
+2026-03-13 02:47:51 [INFO] ***** Running training *****
+2026-03-13 02:47:51 [INFO]   Num examples = 12,983
+2026-03-13 02:47:51 [INFO]   Num examples = 12,983
+2026-03-13 02:47:51 [INFO]   Num Epochs = 3
+2026-03-13 02:47:51 [INFO]   Num Epochs = 3
+2026-03-13 02:47:51 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:47:51 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:47:51 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-13 02:47:51 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-13 02:47:51 [INFO]   Gradient Accumulation steps = 32
+2026-03-13 02:47:51 [INFO]   Gradient Accumulation steps = 32
+2026-03-13 02:47:51 [INFO]   Total optimization steps = 1,218
+2026-03-13 02:47:51 [INFO]   Total optimization steps = 1,218
+2026-03-13 02:47:51 [INFO]   Number of trainable parameters = 83,886,080
+2026-03-13 02:47:51 [INFO]   Number of trainable parameters = 83,886,080

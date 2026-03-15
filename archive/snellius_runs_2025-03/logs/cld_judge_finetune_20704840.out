@@ -1,0 +1,604 @@
+==========================================
+Job   : 20704840  (cld_judge_finetune)
+Node  : gcn98
+Start : Fri Mar 13 02:49:32 CET 2026
+==========================================
+2026-03-13 02:49:38 [INFO] Config: base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_train.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/src/judge_val_synth.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+report_to: none
+logging_steps: 10
+
+2026-03-13 02:49:38 [INFO] Git SHA: 860f1c4f
+2026-03-13 02:49:38 [INFO] Device: cuda
+2026-03-13 02:49:38 [INFO] GPU: NVIDIA H100 (100.0 GB)
+2026-03-13 02:49:38 [INFO] Loading data…
+2026-03-13 02:49:39 [INFO] train=12,983 val=1,420
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:40 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:40 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:49:40 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:40 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:40 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-13 02:49:40 [INFO] HTTP Request: GET https://huggingface.co/api/models/mistralai/Mistral-7B-Instruct-v0.2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-13 02:49:48 [INFO] Loading mistralai/Mistral-7B-Instruct-v0.2 (4-bit QLoRA)…
+2026-03-13 02:49:48 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:48 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:48 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 02:49:48 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 02:49:48 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:48 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:49 [INFO] loading weights file model.safetensors from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/model.safetensors.index.json
+2026-03-13 02:49:49 [INFO] Will use dtype=torch.bfloat16 as defined in model's config object
+2026-03-13 02:49:49 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": true
+}
+
+2026-03-13 02:49:50 [INFO] We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2026-03-13 02:49:57 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 02:49:57 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json "HTTP/1.1 200 OK"
+2026-03-13 02:49:57 [INFO] loading configuration file generation_config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/generation_config.json
+2026-03-13 02:49:57 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 1,
+  "eos_token_id": 2
+}
+
+trainable params: 83,886,080 || all params: 7,325,618,176 || trainable%: 1.1451
+2026-03-13 02:49:58 [WARNING] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+2026-03-13 02:49:58 [INFO] PyTorch: setting up devices
+2026-03-13 02:49:58 [INFO] Training… (step logs every 10 steps)
+2026-03-13 02:49:58 [WARNING] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 2}.
+2026-03-13 02:49:59 [INFO] ***** Running training *****
+2026-03-13 02:49:59 [INFO] ***** Running training *****
+2026-03-13 02:49:59 [INFO]   Num examples = 12,983
+2026-03-13 02:49:59 [INFO]   Num examples = 12,983
+2026-03-13 02:49:59 [INFO]   Num Epochs = 3
+2026-03-13 02:49:59 [INFO]   Num Epochs = 3
+2026-03-13 02:49:59 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:49:59 [INFO]   Instantaneous batch size per device = 1
+2026-03-13 02:49:59 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-13 02:49:59 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-13 02:49:59 [INFO]   Gradient Accumulation steps = 32
+2026-03-13 02:49:59 [INFO]   Gradient Accumulation steps = 32
+2026-03-13 02:49:59 [INFO]   Total optimization steps = 1,218
+2026-03-13 02:49:59 [INFO]   Total optimization steps = 1,218
+2026-03-13 02:49:59 [INFO]   Number of trainable parameters = 83,886,080
+2026-03-13 02:49:59 [INFO]   Number of trainable parameters = 83,886,080
+  step 10  loss=1.9435  epoch=0.02
+{'loss': '1.944', 'grad_norm': '0.09864', 'learning_rate': '2.951e-05', 'epoch': '0.02465'}
+  step 20  loss=0.8791  epoch=0.05
+{'loss': '0.8791', 'grad_norm': '0.0336', 'learning_rate': '6.23e-05', 'epoch': '0.0493'}
+  step 30  loss=0.6186  epoch=0.07
+{'loss': '0.6186', 'grad_norm': '0.02796', 'learning_rate': '9.508e-05', 'epoch': '0.07394'}
+  step 40  loss=0.5029  epoch=0.10
+{'loss': '0.5029', 'grad_norm': '0.02447', 'learning_rate': '0.0001279', 'epoch': '0.09859'}
+  step 50  loss=0.4566  epoch=0.12
+{'loss': '0.4566', 'grad_norm': '0.02439', 'learning_rate': '0.0001607', 'epoch': '0.1232'}
+  step 60  loss=0.4420  epoch=0.15
+{'loss': '0.442', 'grad_norm': '0.02219', 'learning_rate': '0.0001934', 'epoch': '0.1479'}
+  step 70  loss=0.4235  epoch=0.17
+{'loss': '0.4235', 'grad_norm': '0.02021', 'learning_rate': '0.0001986', 'epoch': '0.1725'}
+  step 80  loss=0.4101  epoch=0.20
+{'loss': '0.4101', 'grad_norm': '0.01947', 'learning_rate': '0.0001969', 'epoch': '0.1972'}
+  step 90  loss=0.3969  epoch=0.22
+{'loss': '0.3969', 'grad_norm': '0.01874', 'learning_rate': '0.0001952', 'epoch': '0.2218'}
+  step 100  loss=0.3903  epoch=0.25
+{'loss': '0.3903', 'grad_norm': '0.01952', 'learning_rate': '0.0001934', 'epoch': '0.2465'}
+  step 110  loss=0.3699  epoch=0.27
+{'loss': '0.3699', 'grad_norm': '0.01909', 'learning_rate': '0.0001917', 'epoch': '0.2711'}
+  step 120  loss=0.3678  epoch=0.30
+{'loss': '0.3678', 'grad_norm': '0.01796', 'learning_rate': '0.00019', 'epoch': '0.2958'}
+  step 130  loss=0.3634  epoch=0.32
+{'loss': '0.3634', 'grad_norm': '0.01773', 'learning_rate': '0.0001882', 'epoch': '0.3204'}
+  step 140  loss=0.3568  epoch=0.35
+{'loss': '0.3568', 'grad_norm': '0.01889', 'learning_rate': '0.0001865', 'epoch': '0.3451'}
+  step 150  loss=0.3632  epoch=0.37
+{'loss': '0.3632', 'grad_norm': '0.01708', 'learning_rate': '0.0001848', 'epoch': '0.3697'}
+  step 160  loss=0.3486  epoch=0.39
+{'loss': '0.3486', 'grad_norm': '0.01704', 'learning_rate': '0.0001831', 'epoch': '0.3944'}
+  step 170  loss=0.3485  epoch=0.42
+{'loss': '0.3485', 'grad_norm': '0.01756', 'learning_rate': '0.0001813', 'epoch': '0.419'}
+  step 180  loss=0.3424  epoch=0.44
+{'loss': '0.3424', 'grad_norm': '0.01687', 'learning_rate': '0.0001796', 'epoch': '0.4437'}
+  step 190  loss=0.3418  epoch=0.47
+{'loss': '0.3418', 'grad_norm': '0.01771', 'learning_rate': '0.0001779', 'epoch': '0.4683'}
+  step 200  loss=0.3430  epoch=0.49
+{'loss': '0.343', 'grad_norm': '0.01685', 'learning_rate': '0.0001761', 'epoch': '0.493'}
+  step 210  loss=0.3330  epoch=0.52
+{'loss': '0.333', 'grad_norm': '0.01736', 'learning_rate': '0.0001744', 'epoch': '0.5176'}
+  step 220  loss=0.3246  epoch=0.54
+{'loss': '0.3246', 'grad_norm': '0.01812', 'learning_rate': '0.0001727', 'epoch': '0.5422'}
+  step 230  loss=0.3199  epoch=0.57
+{'loss': '0.3199', 'grad_norm': '0.01785', 'learning_rate': '0.000171', 'epoch': '0.5669'}
+  step 240  loss=0.3097  epoch=0.59
+{'loss': '0.3097', 'grad_norm': '0.01593', 'learning_rate': '0.0001692', 'epoch': '0.5915'}
+  step 250  loss=0.3204  epoch=0.62
+{'loss': '0.3204', 'grad_norm': '0.01854', 'learning_rate': '0.0001675', 'epoch': '0.6162'}
+  step 260  loss=0.3028  epoch=0.64
+{'loss': '0.3028', 'grad_norm': '0.0148', 'learning_rate': '0.0001658', 'epoch': '0.6408'}
+  step 270  loss=0.3052  epoch=0.67
+{'loss': '0.3052', 'grad_norm': '0.01717', 'learning_rate': '0.000164', 'epoch': '0.6655'}
+  step 280  loss=0.3116  epoch=0.69
+{'loss': '0.3116', 'grad_norm': '0.01625', 'learning_rate': '0.0001623', 'epoch': '0.6901'}
+  step 290  loss=0.2985  epoch=0.71
+{'loss': '0.2985', 'grad_norm': '0.01755', 'learning_rate': '0.0001606', 'epoch': '0.7148'}
+  step 300  loss=0.2982  epoch=0.74
+{'loss': '0.2982', 'grad_norm': '0.01779', 'learning_rate': '0.0001589', 'epoch': '0.7394'}
+  step 310  loss=0.2852  epoch=0.76
+{'loss': '0.2852', 'grad_norm': '0.01574', 'learning_rate': '0.0001571', 'epoch': '0.7641'}
+  step 320  loss=0.2900  epoch=0.79
+{'loss': '0.29', 'grad_norm': '0.0165', 'learning_rate': '0.0001554', 'epoch': '0.7887'}
+  step 330  loss=0.2874  epoch=0.81
+{'loss': '0.2874', 'grad_norm': '0.01627', 'learning_rate': '0.0001537', 'epoch': '0.8134'}
+  step 340  loss=0.2887  epoch=0.84
+{'loss': '0.2887', 'grad_norm': '0.01771', 'learning_rate': '0.0001519', 'epoch': '0.838'}
+  step 350  loss=0.2837  epoch=0.86
+{'loss': '0.2837', 'grad_norm': '0.01697', 'learning_rate': '0.0001502', 'epoch': '0.8627'}
+  step 360  loss=0.2600  epoch=0.89
+{'loss': '0.26', 'grad_norm': '0.01676', 'learning_rate': '0.0001485', 'epoch': '0.8873'}
+  step 370  loss=0.2728  epoch=0.91
+{'loss': '0.2728', 'grad_norm': '0.01877', 'learning_rate': '0.0001468', 'epoch': '0.912'}
+  step 380  loss=0.2647  epoch=0.94
+{'loss': '0.2647', 'grad_norm': '0.01854', 'learning_rate': '0.000145', 'epoch': '0.9366'}
+  step 390  loss=0.2621  epoch=0.96
+{'loss': '0.2621', 'grad_norm': '0.01549', 'learning_rate': '0.0001433', 'epoch': '0.9613'}
+  step 400  loss=0.2610  epoch=0.99
+{'loss': '0.261', 'grad_norm': '0.01744', 'learning_rate': '0.0001416', 'epoch': '0.9859'}
+2026-03-13 04:56:24 [INFO] 
+***** Running Evaluation *****
+2026-03-13 04:56:24 [INFO] 
+***** Running Evaluation *****
+2026-03-13 04:56:24 [INFO]   Num examples = 1420
+2026-03-13 04:56:24 [INFO]   Num examples = 1420
+2026-03-13 04:56:24 [INFO]   Batch size = 1
+2026-03-13 04:56:24 [INFO]   Batch size = 1
+{'eval_loss': '0.422', 'eval_runtime': '236.5', 'eval_samples_per_second': '6.004', 'eval_steps_per_second': '6.004', 'epoch': '1'}
+  step 406  eval_loss=0.4220
+2026-03-13 05:00:20 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406
+2026-03-13 05:00:20 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406
+2026-03-13 05:00:20 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 05:00:20 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 05:00:21 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 05:00:21 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 05:00:21 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 05:00:21 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 05:00:21 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406/chat_template.jinja
+2026-03-13 05:00:21 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406/tokenizer_config.json
+  step 410  loss=0.2575  epoch=1.01
+{'loss': '0.2575', 'grad_norm': '0.01594', 'learning_rate': '0.0001398', 'epoch': '1.01'}
+  step 420  loss=0.2068  epoch=1.03
+{'loss': '0.2068', 'grad_norm': '0.01665', 'learning_rate': '0.0001381', 'epoch': '1.035'}
+  step 430  loss=0.2127  epoch=1.06
+{'loss': '0.2127', 'grad_norm': '0.01613', 'learning_rate': '0.0001364', 'epoch': '1.059'}
+  step 440  loss=0.2189  epoch=1.08
+{'loss': '0.2189', 'grad_norm': '0.01601', 'learning_rate': '0.0001347', 'epoch': '1.084'}
+  step 450  loss=0.2188  epoch=1.11
+{'loss': '0.2188', 'grad_norm': '0.01563', 'learning_rate': '0.0001329', 'epoch': '1.108'}
+  step 460  loss=0.2163  epoch=1.13
+{'loss': '0.2163', 'grad_norm': '0.01538', 'learning_rate': '0.0001312', 'epoch': '1.133'}
+  step 470  loss=0.2121  epoch=1.16
+{'loss': '0.2121', 'grad_norm': '0.01617', 'learning_rate': '0.0001295', 'epoch': '1.158'}
+  step 480  loss=0.2195  epoch=1.18
+{'loss': '0.2195', 'grad_norm': '0.01826', 'learning_rate': '0.0001277', 'epoch': '1.182'}
+  step 490  loss=0.2064  epoch=1.21
+{'loss': '0.2064', 'grad_norm': '0.01625', 'learning_rate': '0.000126', 'epoch': '1.207'}
+  step 500  loss=0.2141  epoch=1.23
+{'loss': '0.2141', 'grad_norm': '0.01598', 'learning_rate': '0.0001243', 'epoch': '1.232'}
+  step 510  loss=0.2043  epoch=1.26
+{'loss': '0.2043', 'grad_norm': '0.01753', 'learning_rate': '0.0001226', 'epoch': '1.256'}
+  step 520  loss=0.2108  epoch=1.28
+{'loss': '0.2108', 'grad_norm': '0.01436', 'learning_rate': '0.0001208', 'epoch': '1.281'}
+  step 530  loss=0.2139  epoch=1.31
+{'loss': '0.2139', 'grad_norm': '0.01598', 'learning_rate': '0.0001191', 'epoch': '1.306'}
+  step 540  loss=0.2063  epoch=1.33
+{'loss': '0.2063', 'grad_norm': '0.01843', 'learning_rate': '0.0001174', 'epoch': '1.33'}
+  step 550  loss=0.2084  epoch=1.35
+{'loss': '0.2084', 'grad_norm': '0.01627', 'learning_rate': '0.0001156', 'epoch': '1.355'}
+  step 560  loss=0.2074  epoch=1.38
+{'loss': '0.2074', 'grad_norm': '0.01489', 'learning_rate': '0.0001139', 'epoch': '1.38'}
+  step 570  loss=0.2022  epoch=1.40
+{'loss': '0.2022', 'grad_norm': '0.0199', 'learning_rate': '0.0001122', 'epoch': '1.404'}
+  step 580  loss=0.2043  epoch=1.43
+{'loss': '0.2043', 'grad_norm': '0.01588', 'learning_rate': '0.0001105', 'epoch': '1.429'}
+  step 590  loss=0.1936  epoch=1.45
+{'loss': '0.1936', 'grad_norm': '0.01556', 'learning_rate': '0.0001087', 'epoch': '1.454'}
+  step 600  loss=0.2040  epoch=1.48
+{'loss': '0.204', 'grad_norm': '0.01498', 'learning_rate': '0.000107', 'epoch': '1.478'}
+  step 610  loss=0.1827  epoch=1.50
+{'loss': '0.1827', 'grad_norm': '0.01631', 'learning_rate': '0.0001053', 'epoch': '1.503'}
+  step 620  loss=0.2007  epoch=1.53
+{'loss': '0.2007', 'grad_norm': '0.01751', 'learning_rate': '0.0001035', 'epoch': '1.527'}
+  step 630  loss=0.1959  epoch=1.55
+{'loss': '0.1959', 'grad_norm': '0.01623', 'learning_rate': '0.0001018', 'epoch': '1.552'}
+  step 640  loss=0.2007  epoch=1.58
+{'loss': '0.2007', 'grad_norm': '0.01562', 'learning_rate': '0.0001001', 'epoch': '1.577'}
+  step 650  loss=0.1974  epoch=1.60
+{'loss': '0.1974', 'grad_norm': '0.01617', 'learning_rate': '9.836e-05', 'epoch': '1.601'}
+  step 660  loss=0.1952  epoch=1.63
+{'loss': '0.1952', 'grad_norm': '0.01586', 'learning_rate': '9.663e-05', 'epoch': '1.626'}
+  step 670  loss=0.1972  epoch=1.65
+{'loss': '0.1972', 'grad_norm': '0.01412', 'learning_rate': '9.49e-05', 'epoch': '1.651'}
+  step 680  loss=0.1905  epoch=1.68
+{'loss': '0.1905', 'grad_norm': '0.01566', 'learning_rate': '9.317e-05', 'epoch': '1.675'}
+  step 690  loss=0.1790  epoch=1.70
+{'loss': '0.179', 'grad_norm': '0.01718', 'learning_rate': '9.144e-05', 'epoch': '1.7'}
+  step 700  loss=0.1903  epoch=1.72
+{'loss': '0.1903', 'grad_norm': '0.01541', 'learning_rate': '8.971e-05', 'epoch': '1.725'}
+  step 710  loss=0.1884  epoch=1.75
+{'loss': '0.1884', 'grad_norm': '0.01391', 'learning_rate': '8.799e-05', 'epoch': '1.749'}
+  step 720  loss=0.1850  epoch=1.77
+{'loss': '0.185', 'grad_norm': '0.01407', 'learning_rate': '8.626e-05', 'epoch': '1.774'}
+  step 730  loss=0.1912  epoch=1.80
+{'loss': '0.1912', 'grad_norm': '0.0168', 'learning_rate': '8.453e-05', 'epoch': '1.799'}
+  step 740  loss=0.1768  epoch=1.82
+{'loss': '0.1768', 'grad_norm': '0.01419', 'learning_rate': '8.28e-05', 'epoch': '1.823'}
+  step 750  loss=0.1793  epoch=1.85
+{'loss': '0.1793', 'grad_norm': '0.01559', 'learning_rate': '8.107e-05', 'epoch': '1.848'}
+  step 760  loss=0.1862  epoch=1.87
+{'loss': '0.1862', 'grad_norm': '0.01502', 'learning_rate': '7.934e-05', 'epoch': '1.873'}
+  step 770  loss=0.1775  epoch=1.90
+{'loss': '0.1775', 'grad_norm': '0.01732', 'learning_rate': '7.761e-05', 'epoch': '1.897'}
+  step 780  loss=0.1890  epoch=1.92
+{'loss': '0.189', 'grad_norm': '0.01752', 'learning_rate': '7.589e-05', 'epoch': '1.922'}
+  step 790  loss=0.1815  epoch=1.95
+{'loss': '0.1815', 'grad_norm': '0.01523', 'learning_rate': '7.416e-05', 'epoch': '1.946'}
+  step 800  loss=0.1807  epoch=1.97
+{'loss': '0.1807', 'grad_norm': '0.01243', 'learning_rate': '7.243e-05', 'epoch': '1.971'}
+  step 810  loss=0.1773  epoch=2.00
+{'loss': '0.1773', 'grad_norm': '0.01473', 'learning_rate': '7.07e-05', 'epoch': '1.996'}
+2026-03-13 07:06:34 [INFO] 
+***** Running Evaluation *****
+2026-03-13 07:06:34 [INFO] 
+***** Running Evaluation *****
+2026-03-13 07:06:34 [INFO]   Num examples = 1420
+2026-03-13 07:06:34 [INFO]   Num examples = 1420
+2026-03-13 07:06:34 [INFO]   Batch size = 1
+2026-03-13 07:06:34 [INFO]   Batch size = 1
+{'eval_loss': '0.473', 'eval_runtime': '237.4', 'eval_samples_per_second': '5.98', 'eval_steps_per_second': '5.98', 'epoch': '2'}
+  step 812  eval_loss=0.4730
+2026-03-13 07:10:32 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-812
+2026-03-13 07:10:32 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-812
+2026-03-13 07:10:32 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 07:10:32 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 07:10:32 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 07:10:32 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 07:10:32 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 07:10:32 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 07:10:32 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-812/chat_template.jinja
+2026-03-13 07:10:32 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-812/tokenizer_config.json
+  step 820  loss=0.1434  epoch=2.02
+{'loss': '0.1434', 'grad_norm': '0.018', 'learning_rate': '6.897e-05', 'epoch': '2.02'}
+  step 830  loss=0.1280  epoch=2.04
+{'loss': '0.128', 'grad_norm': '0.0161', 'learning_rate': '6.724e-05', 'epoch': '2.044'}
+  step 840  loss=0.1269  epoch=2.07
+{'loss': '0.1269', 'grad_norm': '0.01529', 'learning_rate': '6.551e-05', 'epoch': '2.069'}
+  step 850  loss=0.1266  epoch=2.09
+{'loss': '0.1266', 'grad_norm': '0.01579', 'learning_rate': '6.379e-05', 'epoch': '2.094'}
+  step 860  loss=0.1278  epoch=2.12
+{'loss': '0.1278', 'grad_norm': '0.01889', 'learning_rate': '6.206e-05', 'epoch': '2.118'}
+  step 870  loss=0.1245  epoch=2.14
+{'loss': '0.1245', 'grad_norm': '0.01635', 'learning_rate': '6.033e-05', 'epoch': '2.143'}
+  step 880  loss=0.1260  epoch=2.17
+{'loss': '0.126', 'grad_norm': '0.01532', 'learning_rate': '5.86e-05', 'epoch': '2.168'}
+  step 890  loss=0.1307  epoch=2.19
+{'loss': '0.1307', 'grad_norm': '0.01533', 'learning_rate': '5.687e-05', 'epoch': '2.192'}
+  step 900  loss=0.1237  epoch=2.22
+{'loss': '0.1237', 'grad_norm': '0.01616', 'learning_rate': '5.514e-05', 'epoch': '2.217'}
+  step 910  loss=0.1276  epoch=2.24
+{'loss': '0.1276', 'grad_norm': '0.01674', 'learning_rate': '5.341e-05', 'epoch': '2.242'}
+  step 920  loss=0.1218  epoch=2.27
+{'loss': '0.1218', 'grad_norm': '0.01384', 'learning_rate': '5.169e-05', 'epoch': '2.266'}
+  step 930  loss=0.1262  epoch=2.29
+{'loss': '0.1262', 'grad_norm': '0.01539', 'learning_rate': '4.996e-05', 'epoch': '2.291'}
+  step 940  loss=0.1217  epoch=2.32
+{'loss': '0.1217', 'grad_norm': '0.01404', 'learning_rate': '4.823e-05', 'epoch': '2.315'}
+  step 950  loss=0.1276  epoch=2.34
+{'loss': '0.1276', 'grad_norm': '0.01698', 'learning_rate': '4.65e-05', 'epoch': '2.34'}
+  step 960  loss=0.1259  epoch=2.36
+{'loss': '0.1259', 'grad_norm': '0.01545', 'learning_rate': '4.477e-05', 'epoch': '2.365'}
+  step 970  loss=0.1215  epoch=2.39
+{'loss': '0.1215', 'grad_norm': '0.01539', 'learning_rate': '4.304e-05', 'epoch': '2.389'}
+  step 980  loss=0.1189  epoch=2.41
+{'loss': '0.1189', 'grad_norm': '0.01629', 'learning_rate': '4.131e-05', 'epoch': '2.414'}
+  step 990  loss=0.1252  epoch=2.44
+{'loss': '0.1252', 'grad_norm': '0.01736', 'learning_rate': '3.959e-05', 'epoch': '2.439'}
+  step 1000  loss=0.1206  epoch=2.46
+{'loss': '0.1206', 'grad_norm': '0.01604', 'learning_rate': '3.786e-05', 'epoch': '2.463'}
+  step 1010  loss=0.1205  epoch=2.49
+{'loss': '0.1205', 'grad_norm': '0.01533', 'learning_rate': '3.613e-05', 'epoch': '2.488'}
+  step 1020  loss=0.1209  epoch=2.51
+{'loss': '0.1209', 'grad_norm': '0.01794', 'learning_rate': '3.44e-05', 'epoch': '2.513'}
+  step 1030  loss=0.1217  epoch=2.54
+{'loss': '0.1217', 'grad_norm': '0.01547', 'learning_rate': '3.267e-05', 'epoch': '2.537'}
+  step 1040  loss=0.1208  epoch=2.56
+{'loss': '0.1208', 'grad_norm': '0.01547', 'learning_rate': '3.094e-05', 'epoch': '2.562'}
+  step 1050  loss=0.1185  epoch=2.59
+{'loss': '0.1185', 'grad_norm': '0.01769', 'learning_rate': '2.921e-05', 'epoch': '2.587'}
+  step 1060  loss=0.1164  epoch=2.61
+{'loss': '0.1164', 'grad_norm': '0.01702', 'learning_rate': '2.748e-05', 'epoch': '2.611'}
+  step 1070  loss=0.1163  epoch=2.64
+{'loss': '0.1163', 'grad_norm': '0.01481', 'learning_rate': '2.576e-05', 'epoch': '2.636'}
+  step 1080  loss=0.1176  epoch=2.66
+{'loss': '0.1176', 'grad_norm': '0.0165', 'learning_rate': '2.403e-05', 'epoch': '2.661'}
+  step 1090  loss=0.1153  epoch=2.69
+{'loss': '0.1153', 'grad_norm': '0.01688', 'learning_rate': '2.23e-05', 'epoch': '2.685'}
+  step 1100  loss=0.1132  epoch=2.71
+{'loss': '0.1132', 'grad_norm': '0.0149', 'learning_rate': '2.057e-05', 'epoch': '2.71'}
+  step 1110  loss=0.1113  epoch=2.73
+{'loss': '0.1113', 'grad_norm': '0.01597', 'learning_rate': '1.884e-05', 'epoch': '2.734'}
+  step 1120  loss=0.1103  epoch=2.76
+{'loss': '0.1103', 'grad_norm': '0.01693', 'learning_rate': '1.711e-05', 'epoch': '2.759'}
+  step 1130  loss=0.1182  epoch=2.78
+{'loss': '0.1182', 'grad_norm': '0.01768', 'learning_rate': '1.538e-05', 'epoch': '2.784'}
+  step 1140  loss=0.1157  epoch=2.81
+{'loss': '0.1157', 'grad_norm': '0.01664', 'learning_rate': '1.366e-05', 'epoch': '2.808'}
+  step 1150  loss=0.1159  epoch=2.83
+{'loss': '0.1159', 'grad_norm': '0.0164', 'learning_rate': '1.193e-05', 'epoch': '2.833'}
+  step 1160  loss=0.1133  epoch=2.86
+{'loss': '0.1133', 'grad_norm': '0.01357', 'learning_rate': '1.02e-05', 'epoch': '2.858'}
+  step 1170  loss=0.1087  epoch=2.88
+{'loss': '0.1087', 'grad_norm': '0.01562', 'learning_rate': '8.47e-06', 'epoch': '2.882'}
+  step 1180  loss=0.1129  epoch=2.91
+{'loss': '0.1129', 'grad_norm': '0.01736', 'learning_rate': '6.742e-06', 'epoch': '2.907'}
+  step 1190  loss=0.1087  epoch=2.93
+{'loss': '0.1087', 'grad_norm': '0.01779', 'learning_rate': '5.013e-06', 'epoch': '2.932'}
+  step 1200  loss=0.1130  epoch=2.96
+{'loss': '0.113', 'grad_norm': '0.01687', 'learning_rate': '3.284e-06', 'epoch': '2.956'}
+  step 1210  loss=0.1082  epoch=2.98
+{'loss': '0.1082', 'grad_norm': '0.01496', 'learning_rate': '1.556e-06', 'epoch': '2.981'}
+2026-03-13 09:16:40 [INFO] 
+***** Running Evaluation *****
+2026-03-13 09:16:40 [INFO] 
+***** Running Evaluation *****
+2026-03-13 09:16:40 [INFO]   Num examples = 1420
+2026-03-13 09:16:40 [INFO]   Num examples = 1420
+2026-03-13 09:16:40 [INFO]   Batch size = 1
+2026-03-13 09:16:40 [INFO]   Batch size = 1
+{'eval_loss': '0.5507', 'eval_runtime': '236.2', 'eval_samples_per_second': '6.013', 'eval_steps_per_second': '6.013', 'epoch': '3'}
+  step 1218  eval_loss=0.5507
+2026-03-13 09:20:36 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-1218
+2026-03-13 09:20:36 [INFO] Saving model checkpoint to /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-1218
+2026-03-13 09:20:36 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 09:20:36 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 09:20:36 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 09:20:36 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 09:20:36 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 09:20:36 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 09:20:37 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-1218/chat_template.jinja
+2026-03-13 09:20:37 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-1218/tokenizer_config.json
+2026-03-13 09:20:37 [INFO] 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+2026-03-13 09:20:37 [INFO] 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+2026-03-13 09:20:37 [INFO] Loading best model from /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406 (score: 0.42196741700172424).
+2026-03-13 09:20:37 [INFO] Loading best model from /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/checkpoint-406 (score: 0.42196741700172424).
+{'train_runtime': '2.344e+04', 'train_samples_per_second': '1.662', 'train_steps_per_second': '0.052', 'train_loss': '0.2378', 'epoch': '3'}
+2026-03-13 09:20:38 [INFO] Saving LoRA adapter → /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/lora_adapter
+2026-03-13 09:20:38 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 09:20:38 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 09:20:38 [INFO] HTTP Request: HEAD https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-13 09:20:38 [INFO] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mistralai/Mistral-7B-Instruct-v0.2/63a8b081895390a26e140280378bc85ec8bce07a/config.json "HTTP/1.1 200 OK"
+2026-03-13 09:20:38 [INFO] loading configuration file config.json from cache at /home/nnijholt/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/63a8b081895390a26e140280378bc85ec8bce07a/config.json
+2026-03-13 09:20:38 [INFO] Model config MistralConfig {
+  "architectures": [
+    "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-05,
+  "rope_parameters": {
+    "rope_theta": 1000000.0,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": true,
+  "vocab_size": 32000
+}
+
+2026-03-13 09:20:38 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/lora_adapter/chat_template.jinja
+2026-03-13 09:20:38 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/lora_adapter/tokenizer_config.json
+2026-03-13 09:20:38 [INFO] Merging weights → /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16
+2026-03-13 09:20:43 [INFO] Configuration saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16/config.json
+2026-03-13 09:20:43 [INFO] Configuration saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16/generation_config.json
+2026-03-13 09:20:45 [INFO] Model weights saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16/model.safetensors
+2026-03-13 09:20:45 [INFO] chat template saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16/chat_template.jinja
+2026-03-13 09:20:45 [INFO] tokenizer config file saved in /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtsynth/merged_fp16/tokenizer_config.json
+2026-03-13 09:20:45 [INFO] Finished.
+==========================================
+Done : Fri Mar 13 09:20:47 CET 2026
+==========================================
