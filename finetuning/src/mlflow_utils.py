@@ -50,47 +50,48 @@ def log_training_run(
         logger.warning("MLflow/transformers not available: %s", e)
         return None
 
-    mlflow.set_tracking_uri(tracking_uri)
-    mlflow.set_experiment(experiment_name)
+    try:
+        mlflow.set_tracking_uri(tracking_uri)
+        mlflow.set_experiment(experiment_name)
 
-    with mlflow.start_run(run_name=run_name) as run:
-        # Params
-        params = {
-            "base_model": base_model,
-            "lora_rank": cfg_dict.get("lora_rank"),
-            "lora_alpha": cfg_dict.get("lora_alpha"),
-            "epochs": cfg_dict.get("epochs"),
-            "lr": cfg_dict.get("lr"),
-            "max_length": cfg_dict.get("max_length"),
-        }
-        params = {k: v for k, v in params.items() if v is not None}
-        mlflow.log_params(params)
+        with mlflow.start_run(run_name=run_name) as run:
+            # Params
+            params = {
+                "base_model": base_model,
+                "lora_rank": cfg_dict.get("lora_rank"),
+                "lora_alpha": cfg_dict.get("lora_alpha"),
+                "epochs": cfg_dict.get("epochs"),
+                "lr": cfg_dict.get("lr"),
+                "max_length": cfg_dict.get("max_length"),
+            }
+            params = {k: v for k, v in params.items() if v is not None}
+            mlflow.log_params(params)
 
-        # Metrics
-        if train_loss is not None:
-            mlflow.log_metric("train_loss_final", train_loss)
-        if eval_loss is not None:
-            mlflow.log_metric("eval_loss_best", eval_loss)
-        if best_epoch is not None:
-            mlflow.log_metric("best_epoch", best_epoch)
+            # Metrics
+            if train_loss is not None:
+                mlflow.log_metric("train_loss_final", train_loss)
+            if eval_loss is not None:
+                mlflow.log_metric("eval_loss_best", eval_loss)
+            if best_epoch is not None:
+                mlflow.log_metric("best_epoch", best_epoch)
 
-        # Model
-        model = AutoModelForCausalLM.from_pretrained(
-            merged_dir, torch_dtype="auto", low_cpu_mem_usage=True
-        )
-        tokenizer = AutoTokenizer.from_pretrained(merged_dir)
-        signature = infer_signature(
-            model_input="[INST] Judge this claim. [/INST]",
-            model_output="REASON: ... VERDICT: CORRECT",
-        )
-        model_info = mlflow.transformers.log_model(
-            transformers_model={"model": model, "tokenizer": tokenizer},
-            artifact_path="model",
-            signature=signature,
-            registered_model_name=registry_name,
-        )
-        logger.info("MLflow model logged: %s", model_info.model_uri)
-        return run.info.run_id
+            # Model
+            model = AutoModelForCausalLM.from_pretrained(
+                merged_dir, torch_dtype="auto", low_cpu_mem_usage=True
+            )
+            tokenizer = AutoTokenizer.from_pretrained(merged_dir)
+            signature = infer_signature(
+                model_input="[INST] Judge this claim. [/INST]",
+                model_output="REASON: ... VERDICT: CORRECT",
+            )
+            model_info = mlflow.transformers.log_model(
+                transformers_model={"model": model, "tokenizer": tokenizer},
+                artifact_path="model",
+                signature=signature,
+                registered_model_name=registry_name,
+            )
+            logger.info("MLflow model logged: %s", model_info.model_uri)
+            return run.info.run_id
     except Exception as e:
         logger.warning("MLflow logging failed: %s", e)
         return None
