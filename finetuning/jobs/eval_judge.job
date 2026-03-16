@@ -37,14 +37,13 @@ python -m finetuning.src.evaluation.create_eval_subsamples \
     --lit_path finetuning/src/judge_eval_gtlit.xlsx \
     --target_n 1000 --seed 42
 
-# Full eval: finetuned + base, both splits, vLLM for speed
+# Full eval: finetuned + base, both splits (transformers backend; vLLM fails on Snellius Triton)
 python -m finetuning.src.evaluation.evaluate_judge \
     --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
     --val_path finetuning/src/judge_val_synth_1k.xlsx \
     --lit_path finetuning/src/judge_eval_gtlit_1k.xlsx \
     --output_dir results \
-    --inference_backend vllm \
-    --batch_size 32
+    --batch_size 16
 
 echo "=========================================="
 echo "Done : $(date)"
