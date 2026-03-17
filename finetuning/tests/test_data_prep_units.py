@@ -89,3 +89,19 @@ def test_split_by_edge_identity_no_leakage():
     val_edges = set(zip(val_df["source"], val_df["target"], val_df["domain"]))
     assert train_edges.isdisjoint(val_edges)
     assert len(train_df) + len(val_df) == len(df)
+
+
+def test_split_by_edge_identity_stratifies_domain_when_possible():
+    df = pd.DataFrame([
+        {"source": "A", "target": "B", "domain": "d1"},
+        {"source": "C", "target": "D", "domain": "d1"},
+        {"source": "E", "target": "F", "domain": "d2"},
+        {"source": "G", "target": "H", "domain": "d2"},
+    ])
+    for col in ["prompt", "completion", "judge_verdict"]:
+        df[col] = "x"
+
+    train_df, val_df = _split_by_edge_identity(
+        df, val_fraction=0.5, seed=42, stratify_col="domain"
+    )
+    assert set(val_df["domain"]) == {"d1", "d2"}

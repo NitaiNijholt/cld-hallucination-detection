@@ -6,7 +6,8 @@ defaults:
 
 train_file: finetuning/data/gt_lit_trainval/judge_train_gtlit.xlsx
 val_file: finetuning/data/gt_lit_trainval/judge_val_gtlit.xlsx
-output_dir: finetuning/runs/mistral7b_judge_gtlit
+output_dir: finetuning/runs/mistral7b_judge_gtlit_fixed
+dataset_label: GT Lit
 
 load_best_model_at_end: true
-wandb_group: gt_lit
+wandb_group: gt_lit_fixed

@@ -42,10 +42,10 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
-    DataCollatorForLanguageModeling,
     Trainer,
     TrainerCallback,
     TrainingArguments,
+    default_data_collator,
 )
 
 
@@ -166,9 +166,11 @@ def _get_git_sha() -> str:
 
 # ── Data ──────────────────────────────────────────────────────────────────────
 
-def load_split(path: str, smoke_test: bool) -> Dataset:
+def load_split(path: str, smoke_test: bool, max_examples: int | None = None) -> Dataset:
     df = pd.read_excel(path).dropna(subset=["prompt", "completion"])
-    if smoke_test:
+    if max_examples is not None:
+        df = df.head(max_examples)
+    elif smoke_test:
         df = df.head(64)
     return Dataset.from_pandas(df[["prompt", "completion"]].reset_index(drop=True))
 
@@ -240,6 +242,11 @@ def build_tokenised_dataset(
         num_proc=num_proc,
         desc="Tokenising",
     )
+
+
+def get_data_collator():
+    """Preserve precomputed labels instead of regenerating them from input_ids."""
+    return default_data_collator
 
 
 # ── Model ─────────────────────────────────────────────────────────────────────
@@ -338,7 +345,7 @@ def save_artifacts(model, tokenizer, cfg: DictConfig) -> None:
     tokenizer.save_pretrained(merged_dir)
 
 
-def save_loss_curve(trainer, output_dir: str) -> None:
+def save_loss_curve(trainer, output_dir: str, dataset_label: str) -> None:
     history = trainer.state.log_history
     steps = [e["step"] for e in history if "step" in e]
     train_loss = [e["loss"] for e in history if "loss" in e]
@@ -348,10 +355,10 @@ def save_loss_curve(trainer, output_dir: str) -> None:
     if train_loss:
         ax.plot(steps[:len(train_loss)], train_loss, label="train")
     if eval_loss:
-        ax.plot(steps[1:1 + len(eval_loss)], eval_loss, label="val (GT Synth)")
+        ax.plot(steps[1:1 + len(eval_loss)], eval_loss, label=f"val ({dataset_label})")
     ax.set_xlabel("Step")
     ax.set_ylabel("Cross-entropy loss")
-    ax.set_title("CLD Judge — GT Synth QLoRA training")
+    ax.set_title(f"CLD Judge — {dataset_label} QLoRA training")
     ax.legend()
     ax.grid(alpha=0.3)
     fig.tight_layout()
@@ -364,6 +371,8 @@ def save_loss_curve(trainer, output_dir: str) -> None:
 def main(cfg: DictConfig) -> None:
     repo_root = _get_repo_root()
     cfg = _resolve_paths(cfg, repo_root)
+    dataset_label = str(getattr(cfg, "dataset_label", "GT Synth"))
+    max_examples = getattr(cfg, "max_examples", None)
 
     os.makedirs(cfg.output_dir, exist_ok=True)
     _setup_logging(cfg.output_dir)
@@ -382,8 +391,8 @@ def main(cfg: DictConfig) -> None:
         logger.info("GPU: %s (%.1f GB)", props.name, props.total_memory / 1e9)
 
     logger.info("Loading data…")
-    train_ds = load_split(cfg.train_file, cfg.smoke_test)
-    val_ds = load_split(cfg.val_file, cfg.smoke_test)
+    train_ds = load_split(cfg.train_file, cfg.smoke_test, max_examples=max_examples)
+    val_ds = load_split(cfg.val_file, cfg.smoke_test, max_examples=max_examples)
     logger.info("train=%s val=%s", f"{len(train_ds):,}", f"{len(val_ds):,}")
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.base_model)
@@ -410,7 +419,7 @@ def main(cfg: DictConfig) -> None:
         args=build_training_args(cfg),
         train_dataset=train_tok,
         eval_dataset=val_tok,
-        data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
+        data_collator=get_data_collator(),
         processing_class=tokenizer,
         callbacks=callbacks,
     )
@@ -422,7 +431,7 @@ def main(cfg: DictConfig) -> None:
     with open(os.path.join(cfg.output_dir, "run_metadata.txt"), "w") as f:
         f.write(f"git_sha={git_sha}\n")
         f.write(f"config={OmegaConf.to_yaml(cfg)}\n")
-    save_loss_curve(trainer, cfg.output_dir)
+    save_loss_curve(trainer, cfg.output_dir, dataset_label)
     save_artifacts(model, tokenizer, cfg)
 
     # MLflow model versioning and registry

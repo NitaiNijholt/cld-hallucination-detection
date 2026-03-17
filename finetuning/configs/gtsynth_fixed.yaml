@@ -1,0 +1,12 @@
+# Fixed rerun for GT Synth after training-objective and split corrections.
+
+defaults:
+  - default
+
+train_file: finetuning/src/judge_train.xlsx
+val_file: finetuning/src/judge_val_synth.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtsynth_fixed
+dataset_label: GT Synth
+
+load_best_model_at_end: true
+wandb_group: gt_synth_fixed

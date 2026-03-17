@@ -115,3 +115,20 @@ def test_mlflow_and_wandb_config_present():
     assert getattr(cfg, "mlflow_experiment_name", None) == "cld-judge-finetuning"
     assert getattr(cfg, "mlflow_tracking_uri", None) == "mlruns"
     assert getattr(cfg, "wandb_project", None) is None  # enable via env
+
+
+def test_data_collator_preserves_precomputed_labels():
+    """Training must preserve completion-only label masks."""
+    pytest.importorskip("transformers")
+    from finetuning.src.training.train_judge import get_data_collator
+
+    collator = get_data_collator()
+    batch = collator([
+        {
+            "input_ids": [1, 2, 3, 0],
+            "attention_mask": [1, 1, 1, 0],
+            "labels": [-100, -100, 3, -100],
+        }
+    ])
+
+    assert batch["labels"].tolist() == [[-100, -100, 3, -100]]

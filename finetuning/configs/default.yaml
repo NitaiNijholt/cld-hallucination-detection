@@ -7,6 +7,7 @@ base_model: mistralai/Mistral-7B-Instruct-v0.2
 train_file: finetuning/src/judge_train.xlsx
 val_file: finetuning/src/judge_val_synth.xlsx
 output_dir: finetuning/runs/mistral7b_judge_gtsynth
+dataset_label: GT Synth
 
 # Sequence
 max_length: 2048
@@ -28,6 +29,7 @@ seed: 42
 
 # Smoke test (quick local sanity check)
 smoke_test: false
+max_examples: null
 
 # Checkpointing
 save_strategy: epoch

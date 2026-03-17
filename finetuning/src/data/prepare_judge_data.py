@@ -198,13 +198,35 @@ def _build_rows(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _split_by_edge_identity(df: pd.DataFrame, val_fraction: float, seed: int):
+def _split_by_edge_identity(
+    df: pd.DataFrame,
+    val_fraction: float,
+    seed: int,
+    stratify_col: str | None = None,
+):
     """Split rows by unique (source, target, domain) identity."""
-    edge_ids = df[["source", "target", "domain"]].drop_duplicates()
+    edge_ids = df[["source", "target", "domain"]].drop_duplicates().copy()
+    if len(edge_ids) < 2 or val_fraction <= 0:
+        logger.warning("Skipping split; insufficient unique edges for validation split")
+        return df.copy(), df.iloc[0:0].copy()
+    stratify = None
+    if stratify_col is not None and stratify_col in edge_ids.columns:
+        counts = edge_ids[stratify_col].value_counts()
+        n_classes = len(counts)
+        n_val = max(1, int(round(len(edge_ids) * val_fraction)))
+        n_train = len(edge_ids) - n_val
+        if len(counts) > 1 and counts.min() >= 2 and n_val >= n_classes and n_train >= n_classes:
+            stratify = edge_ids[stratify_col]
+        else:
+            logger.warning(
+                "Skipping stratified split on %s; insufficient edge counts per class",
+                stratify_col,
+            )
     train_ids, val_ids = train_test_split(
         edge_ids,
         test_size=val_fraction,
         random_state=seed,
+        stratify=stratify,
     )
 
     train_key = set(zip(train_ids["source"], train_ids["target"], train_ids["domain"]))
@@ -242,7 +264,7 @@ def main(args=None) -> None:
     logger.info("Verdict dist:\n%s", synth_df["judge_verdict"].value_counts().to_string())
 
     train_df, val_synth_df = _split_by_edge_identity(
-        synth_df, args.val_fraction, args.seed
+        synth_df, args.val_fraction, args.seed, stratify_col="domain"
     )
     logger.info("Train rows: %s | Val rows: %s", f"{len(train_df):,}", f"{len(val_synth_df):,}")
 
