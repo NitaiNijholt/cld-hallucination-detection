@@ -89,3 +89,51 @@ def test_prepare_gt_lit_train_val_produces_holdout_split():
         assert train_edges.isdisjoint(val_edges)
         assert train_edges.isdisjoint(test_edges)
         assert val_edges.isdisjoint(test_edges)
+
+
+def test_create_gt_lit_test_subsample_from_holdout():
+    """Held-out GT Lit test subsample is created from the test split only."""
+    import argparse
+    import pandas as pd
+
+    from finetuning.src.data.prepare_gt_lit_train_val import main as split_main
+    from finetuning.src.data.prepare_judge_data import main as prepare_main
+    from finetuning.src.evaluation.create_gt_lit_test_subsample import main as subsample_main
+
+    fixture_root = Path(__file__).resolve().parent / "fixtures" / "final_runs"
+    with tempfile.TemporaryDirectory() as out_dir:
+        prep_args = argparse.Namespace(
+            data_root=str(fixture_root),
+            output_dir=out_dir,
+            val_fraction=0.5,
+            seed=42,
+            min_file_bytes=0,
+        )
+        prepare_main(args=prep_args)
+
+        split_args = argparse.Namespace(
+            input_path=str(Path(out_dir) / "judge_eval_gtlit.xlsx"),
+            output_dir=out_dir,
+            val_fraction=0.2,
+            test_fraction=0.2,
+            seed=42,
+        )
+        split_main(args=split_args)
+
+        import sys
+        orig_argv = sys.argv
+        try:
+            sys.argv = [
+                "create_gt_lit_test_subsample",
+                "--input_path", str(Path(out_dir) / "judge_test_gtlit.xlsx"),
+                "--output_path", str(Path(out_dir) / "judge_test_gtlit_1k.xlsx"),
+                "--target_n", "5",
+                "--seed", "42",
+            ]
+            subsample_main()
+        finally:
+            sys.argv = orig_argv
+
+        test_df = pd.read_excel(Path(out_dir) / "judge_test_gtlit.xlsx")
+        sub_df = pd.read_excel(Path(out_dir) / "judge_test_gtlit_1k.xlsx")
+        assert len(sub_df) <= min(5, len(test_df))

@@ -1,0 +1,62 @@
+#!/bin/bash
+#SBATCH --job-name=cld_judge_eval_gtlit
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=24:00:00
+#SBATCH --output=finetuning/logs/%x_%j.out
+#SBATCH --error=finetuning/logs/%x_%j.err
+
+set -euo pipefail
+
+REPO_DIR="$HOME/cld-hallucination-detection"
+ENV_DIR="$REPO_DIR/venv"
+
+echo "=========================================="
+echo "Job   : $SLURM_JOB_ID  (eval GT Lit-trained judge)"
+echo "Node  : $SLURMD_NODENAME"
+echo "Start : $(date)"
+echo "=========================================="
+
+module purge
+
+cd "$REPO_DIR"
+mkdir -p finetuning/logs results_gtlit
+
+source "$ENV_DIR/bin/activate"
+
+export REPO_ROOT="$REPO_DIR"
+export PYTHONUNBUFFERED=1
+
+# Ensure the GT Lit train/val/test split exists, then create a held-out 1k test subsample.
+python -m finetuning.src.data.prepare_gt_lit_train_val \
+    --input-path finetuning/src/judge_eval_gtlit.xlsx \
+    --output-dir finetuning/data/gt_lit_trainval \
+    --val-fraction 0.10 \
+    --test-fraction 0.10 \
+    --seed 42
+
+python -m finetuning.src.evaluation.create_eval_subsamples \
+    --val_path finetuning/src/judge_val_synth.xlsx \
+    --lit_path finetuning/src/judge_eval_gtlit.xlsx \
+    --target_n 1000 --seed 42
+
+python -m finetuning.src.evaluation.create_gt_lit_test_subsample \
+    --input_path finetuning/data/gt_lit_trainval/judge_test_gtlit.xlsx \
+    --output_path finetuning/data/gt_lit_trainval/judge_test_gtlit_1k.xlsx \
+    --target_n 1000 --seed 42
+
+# Evaluate the GT Lit-trained model on held-out GT Synth and held-out GT Lit test.
+python -m finetuning.src.evaluation.evaluate_judge \
+    --finetuned_model finetuning/runs/mistral7b_judge_gtlit_fixed/lora_adapter \
+    --val_path finetuning/src/judge_val_synth_1k.xlsx \
+    --lit_path finetuning/data/gt_lit_trainval/judge_test_gtlit_1k.xlsx \
+    --output_dir results_gtlit \
+    --batch_size 16
+
+echo "=========================================="
+echo "Done : $(date)"
+echo "=========================================="
