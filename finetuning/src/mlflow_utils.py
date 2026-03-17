@@ -87,6 +87,7 @@ def log_training_run(
             model_info = mlflow.transformers.log_model(
                 transformers_model={"model": model, "tokenizer": tokenizer},
                 artifact_path="model",
+                task="text-generation",
                 signature=signature,
                 registered_model_name=registry_name,
             )
