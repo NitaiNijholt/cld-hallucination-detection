@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import (
+    accuracy_score,
     classification_report,
     confusion_matrix,
     f1_score,
@@ -53,6 +54,7 @@ THESIS_BASELINES = {
 }
 
 from .eval_utils import INCORRECT, VERDICT_LABELS, parse_verdict
+from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, write_json
 
 
 def _get_default_paths():
@@ -130,7 +132,49 @@ def parse_args() -> argparse.Namespace:
         "--output_dir",
         default=str(defaults["output_dir"]),
     )
+    p.add_argument(
+        "--model_label",
+        default=None,
+        help="Optional display label for the finetuned model in reports",
+    )
     return p.parse_args()
+
+
+def _dataset_metadata(path: str | Path) -> dict:
+    file_path = Path(path)
+    sidecar_path = sidecar_metadata_path(file_path)
+    payload = {
+        "path": str(file_path),
+        "sha256": sha256_file(file_path) if file_path.exists() else None,
+        "sidecar_path": str(sidecar_path) if sidecar_path.exists() else None,
+    }
+    sidecar = load_json(sidecar_path)
+    if sidecar is not None:
+        payload["sidecar"] = sidecar
+    return payload
+
+
+def _load_run_metadata_for_model(model_path: str | Path) -> dict | None:
+    path = Path(model_path)
+    candidates = []
+    if path.is_dir():
+        candidates.append(path / "run_metadata.json")
+        candidates.append(path.parent / "run_metadata.json")
+    else:
+        candidates.append(path.parent / "run_metadata.json")
+    for candidate in candidates:
+        metadata = load_json(candidate)
+        if metadata is not None:
+            return metadata
+    return None
+
+
+def _default_model_label(model_path: str, run_metadata: dict | None) -> str:
+    if run_metadata is None:
+        return f"Mistral-7B QLoRA ({Path(model_path).name})"
+    dataset_label = run_metadata.get("dataset_label", "unknown dataset")
+    objective_mode = str(run_metadata.get("objective_mode", "reason_verdict")).replace("_", "+")
+    return f"Mistral-7B QLoRA ({dataset_label} trained, {objective_mode})"
 
 
 def _make_chat_text(prompt: str, completion: str, tokenizer) -> str:
@@ -274,8 +318,9 @@ def evaluate_on_df(
     df = df.copy()
     df["predicted"] = [parse_verdict(o) for o in raw_outputs]
     df["raw_output"] = raw_outputs
+    df["parse_valid"] = df["predicted"].isin(VERDICT_LABELS)
 
-    valid = df[df["predicted"].isin(VERDICT_LABELS)].copy()
+    valid = df[df["parse_valid"]].copy()
     skip_rate = 1 - len(valid) / len(df)
     if skip_rate > 0:
         logger.warning("%.1f%% predictions could not be parsed", skip_rate * 100)
@@ -288,6 +333,7 @@ def evaluate_on_df(
     f1_macro = f1_score(
         y_true_3, y_pred_3, labels=VERDICT_LABELS, average="macro", zero_division=0
     )
+    accuracy = accuracy_score(y_true_3, y_pred_3)
 
     y_true_bin = [1 if v == INCORRECT else 0 for v in y_true_3]
     y_pred_bin = [1 if v == INCORRECT else 0 for v in y_pred_3]
@@ -304,10 +350,25 @@ def evaluate_on_df(
         "n_total": len(df),
         "n_valid": len(valid),
         "skip_rate": round(skip_rate, 4),
+        "accuracy": round(accuracy, 4),
         "f1_macro": round(f1_macro, 4),
         "auc": round(auc, 4),
         "predictions": df[
-            [c for c in ["source", "target", "domain", "judge_verdict", "predicted", "classification", "is_corrupted"] if c in df.columns]
+            [
+                c
+                for c in [
+                    "source",
+                    "target",
+                    "domain",
+                    "judge_verdict",
+                    "predicted",
+                    "parse_valid",
+                    "raw_output",
+                    "classification",
+                    "is_corrupted",
+                ]
+                if c in df.columns
+            ]
         ].to_dict(orient="records"),
     }
 
@@ -358,9 +419,11 @@ def print_summary_table(all_results: list[dict]) -> None:
         "model": "GPT-4.1 Mechanistic (thesis)",
         "GT Synth F1": f"{THESIS_BASELINES['GT Synth']['f1']:.2f}",
         "GT Synth AUC": f"{THESIS_BASELINES['GT Synth']['auc']:.2f}",
+        "GT Synth Parse%": "-",
         "GT Synth Val loss": "-",
         "GT Lit F1": f"{THESIS_BASELINES['GT Lit']['f1']:.2f}",
         "GT Lit AUC": f"{THESIS_BASELINES['GT Lit']['auc']:.2f}",
+        "GT Lit Parse%": "-",
         "Cost/1k": "~$0.30",
     })
 
@@ -373,13 +436,19 @@ def print_summary_table(all_results: list[dict]) -> None:
             if "Synth" in r["dataset"]:
                 row["GT Synth F1"] = f"{r['f1_macro']:.3f}"
                 row["GT Synth AUC"] = f"{r['auc']:.3f}"
+                row["GT Synth Parse%"] = f"{(1 - r['skip_rate']) * 100:.1f}"
                 if "eval_loss" in r and not np.isnan(r.get("eval_loss", float("nan"))):
                     row["GT Synth Val loss"] = f"{r['eval_loss']:.4f}"
             elif "Lit" in r["dataset"]:
                 row["GT Lit F1"] = f"{r['f1_macro']:.3f}"
                 row["GT Lit AUC"] = f"{r['auc']:.3f}"
+                row["GT Lit Parse%"] = f"{(1 - r['skip_rate']) * 100:.1f}"
         if "GT Synth Val loss" not in row:
             row["GT Synth Val loss"] = "-"
+        if "GT Synth Parse%" not in row:
+            row["GT Synth Parse%"] = "-"
+        if "GT Lit Parse%" not in row:
+            row["GT Lit Parse%"] = "-"
         rows.append(row)
 
     df = pd.DataFrame(rows).fillna("-")
@@ -409,7 +478,8 @@ def main() -> None:
     loss_finetuned = loss_base = float("nan")
 
     is_peft = os.path.exists(os.path.join(args.finetuned_model, "adapter_config.json"))
-    model_label = "Mistral-7B QLoRA (GT Synth trained)"
+    finetuned_run_metadata = _load_run_metadata_for_model(args.finetuned_model)
+    model_label = args.model_label or _default_model_label(args.finetuned_model, finetuned_run_metadata)
     use_vllm = args.inference_backend == "vllm"
 
     if use_vllm:
@@ -498,11 +568,41 @@ def main() -> None:
     print_summary_table(all_results)
     plot_confusion(all_results, args.output_dir)
 
+    baseline_results = [
+        {
+            "model_label": "GPT-4.1 Mechanistic (thesis)",
+            "dataset": dataset_name,
+            "f1_macro": metrics["f1"],
+            "auc": metrics["auc"],
+            "source": "thesis",
+            "kind": "external_baseline",
+        }
+        for dataset_name, metrics in THESIS_BASELINES.items()
+    ]
     save_results = [{k: v for k, v in r.items() if k != "predictions"} for r in all_results]
+    save_results.extend(baseline_results)
     out_json = os.path.join(args.output_dir, "evaluation_results.json")
     with open(out_json, "w") as f:
         json.dump(save_results, f, indent=2)
     logger.info("Results saved to %s", out_json)
+    write_json(
+        os.path.join(args.output_dir, "evaluation_metadata.json"),
+        {
+            "finetuned_model": {
+                "path": str(args.finetuned_model),
+                "run_metadata": finetuned_run_metadata,
+            },
+            "base_model": args.base_model,
+            "inference_backend": args.inference_backend,
+            "datasets": {
+                "gt_synth_val": _dataset_metadata(args.val_path),
+                "gt_lit_eval": _dataset_metadata(args.lit_path),
+            },
+            "max_new_tokens": args.max_new_tokens,
+            "batch_size": args.batch_size,
+            "max_samples": args.max_samples,
+        },
+    )
 
     for r in all_results:
         safe_label = r["model_label"].replace(" ", "_").replace("(", "").replace(")", "")

@@ -32,6 +32,8 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from ..metadata_utils import sha256_file, sidecar_metadata_path, summarize_counts, write_json
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -44,7 +46,7 @@ SYSTEM_PROMPT = (
     "You are a causal diagram expert evaluating the quality of a causal explanation."
 )
 
-USER_TEMPLATE = """\
+USER_TEMPLATE_BODY = """\
 SOURCE: {source}
 TARGET: {target}
 RELATIONSHIP: {relationship}
@@ -55,10 +57,18 @@ Assess whether the causal reasoning is logically sound based on:
 - Temporality: does the cause precede the effect?
 - Strength: is the relationship substantial?
 - Coherence: is the reasoning internally consistent?
+"""
 
-Respond with REASON then VERDICT."""
-
-COMPLETION_TEMPLATE = "REASON: {reason}\nVERDICT: {verdict}"
+OBJECTIVE_SPECS = {
+    "reason_verdict": {
+        "response_instruction": "Respond with REASON then VERDICT.",
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+    },
+    "verdict_only": {
+        "response_instruction": "Respond with VERDICT only.",
+        "completion_template": "VERDICT: {verdict}",
+    },
+}
 
 
 def _get_default_data_root() -> Path:
@@ -112,6 +122,17 @@ def parse_args() -> argparse.Namespace:
         default=100_000,
         help="Skip xlsx files smaller than this",
     )
+    p.add_argument(
+        "--objective-mode",
+        choices=sorted(OBJECTIVE_SPECS),
+        default="reason_verdict",
+        help="Target format to build for supervised training/evaluation",
+    )
+    p.add_argument(
+        "--stratify-cols",
+        default="domain,judge_verdict",
+        help="Comma-separated edge-level columns to stratify train/val splits on",
+    )
     return p.parse_args()
 
 
@@ -139,6 +160,126 @@ def _extract_reason(judge_message_str) -> str:
     return m.group(1).strip() if m else ""
 
 
+def _sanitize_reason(reason: str) -> str:
+    text = str(reason).strip()
+    if not text:
+        return ""
+    text = text.replace("\\n", "\n")
+    text = re.sub(r"^\s*REASON\s*:\s*", "", text, flags=re.IGNORECASE)
+    trailing_metadata = re.search(r"(?:^|\n)\s*(?:VERDICT|SCORE)\s*:", text, flags=re.IGNORECASE)
+    if trailing_metadata is not None:
+        text = text[: trailing_metadata.start()]
+    lines = []
+    for line in text.splitlines():
+        if re.match(r"^\s*(VERDICT|SCORE)\s*:", line, flags=re.IGNORECASE):
+            break
+        lines.append(line.rstrip())
+    return "\n".join(lines).strip()
+
+
+def _parse_stratify_cols(value: str | list[str] | None) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        cols = value
+    else:
+        cols = [part.strip() for part in str(value).split(",")]
+    return [col for col in cols if col]
+
+
+def _get_user_template(objective_mode: str) -> str:
+    spec = OBJECTIVE_SPECS[objective_mode]
+    return USER_TEMPLATE_BODY + "\n" + spec["response_instruction"]
+
+
+def _build_prompt(row: pd.Series, objective_mode: str) -> str:
+    user_msg = _get_user_template(objective_mode).format(
+        source=str(row["Source"]).strip(),
+        target=str(row["Target"]).strip(),
+        relationship=str(row["Relationship Type"]).strip(),
+        motivation=str(row["Motivation"]).strip(),
+    )
+    return f"<s>[INST] {SYSTEM_PROMPT}\n\n{user_msg} [/INST]"
+
+
+def _build_completion(reason: str, verdict: str, objective_mode: str) -> str:
+    spec = OBJECTIVE_SPECS[objective_mode]
+    if objective_mode == "reason_verdict":
+        return spec["completion_template"].format(reason=reason, verdict=verdict)
+    return spec["completion_template"].format(verdict=verdict)
+
+
+def _collapse_edge_value(values: pd.Series) -> str:
+    unique = sorted({str(v).strip() for v in values.dropna() if str(v).strip()})
+    if not unique:
+        return "unknown"
+    if len(unique) == 1:
+        return unique[0]
+    return "__MULTI__"
+
+
+def _build_edge_stratify_labels(
+    df: pd.DataFrame,
+    edge_ids: pd.DataFrame,
+    stratify_cols: list[str],
+) -> pd.Series | None:
+    usable_cols = [col for col in stratify_cols if col in df.columns]
+    if not usable_cols:
+        return None
+    edge_with_meta = edge_ids.copy()
+    aggregated_cols = [col for col in usable_cols if col not in edge_with_meta.columns]
+    if aggregated_cols:
+        selection_cols = list(dict.fromkeys(["source", "target", "domain", *aggregated_cols]))
+        edge_meta = (
+            df[selection_cols]
+            .groupby(["source", "target", "domain"], dropna=False)
+            .agg({col: _collapse_edge_value for col in aggregated_cols})
+            .reset_index()
+        )
+        edge_with_meta = edge_with_meta.merge(
+            edge_meta, on=["source", "target", "domain"], how="left"
+        )
+    return edge_with_meta[usable_cols].fillna("unknown").astype(str).agg("||".join, axis=1)
+
+
+def _build_dataset_metadata(
+    df: pd.DataFrame,
+    *,
+    split_name: str,
+    objective_mode: str,
+    source_description: str,
+    stratify_cols: list[str],
+    seed: int,
+) -> dict:
+    unique_edges = df[["source", "target", "domain"]].drop_duplicates().shape[0] if len(df) else 0
+    return {
+        "split_name": split_name,
+        "objective_mode": objective_mode,
+        "source_description": source_description,
+        "seed": seed,
+        "stratify_cols": stratify_cols,
+        "row_count": int(len(df)),
+        "unique_edge_count": int(unique_edges),
+        "domain_counts": summarize_counts(df["domain"].tolist()) if "domain" in df.columns else {},
+        "judge_verdict_counts": summarize_counts(df["judge_verdict"].tolist()) if "judge_verdict" in df.columns else {},
+        "prompt_spec": {
+            "system_prompt": SYSTEM_PROMPT,
+            "user_template": _get_user_template(objective_mode),
+            "completion_template": OBJECTIVE_SPECS[objective_mode]["completion_template"],
+        },
+    }
+
+
+def _save_dataset_with_metadata(df: pd.DataFrame, path: Path, metadata: dict) -> None:
+    df.to_excel(path, index=False)
+    payload = {
+        **metadata,
+        "file_name": path.name,
+        "file_sha256": sha256_file(path),
+    }
+    write_json(sidecar_metadata_path(path), payload)
+
+
 def _load_xlsx_files(glob_pattern: str, min_file_bytes: int) -> pd.DataFrame:
     """Load all per-edge xlsx files matching glob, add domain column."""
     files = [
@@ -162,38 +303,35 @@ def _load_xlsx_files(glob_pattern: str, min_file_bytes: int) -> pd.DataFrame:
     return pd.concat(dfs, ignore_index=True)
 
 
-def _build_rows(df: pd.DataFrame) -> pd.DataFrame:
+def _build_rows(df: pd.DataFrame, objective_mode: str = "reason_verdict") -> pd.DataFrame:
     """Convert raw xlsx rows to prompt/completion pairs, drop unusable rows."""
-    required = ["Source", "Target", "Relationship Type", "Motivation",
-                "Judge Verdict", "Judge Message"]
+    required = ["Source", "Target", "Relationship Type", "Motivation", "Judge Verdict"]
+    if objective_mode == "reason_verdict":
+        required.append("Judge Message")
     df = df.dropna(subset=required).copy()
-
-    df["_reason"] = df["Judge Message"].apply(_extract_reason)
-    df = df[df["_reason"] != ""]
     df = df[~df["Judge Verdict"].str.upper().eq("ERROR")]
+
+    if objective_mode == "reason_verdict":
+        df["_reason"] = df["Judge Message"].apply(_extract_reason).apply(_sanitize_reason)
+        df = df[df["_reason"] != ""]
+    else:
+        df["_reason"] = ""
 
     rows = []
     for _, row in df.iterrows():
-        user_msg = USER_TEMPLATE.format(
-            source=str(row["Source"]).strip(),
-            target=str(row["Target"]).strip(),
-            relationship=str(row["Relationship Type"]).strip(),
-            motivation=str(row["Motivation"]).strip(),
-        )
-        prompt = f"<s>[INST] {SYSTEM_PROMPT}\n\n{user_msg} [/INST]"
-        completion = COMPLETION_TEMPLATE.format(
-            reason=row["_reason"],
-            verdict=str(row["Judge Verdict"]).strip().upper(),
-        )
+        prompt = _build_prompt(row, objective_mode)
+        verdict = str(row["Judge Verdict"]).strip().upper()
+        completion = _build_completion(row["_reason"], verdict, objective_mode)
         rows.append({
             "prompt": prompt,
             "completion": completion,
             "source": str(row["Source"]).strip(),
             "target": str(row["Target"]).strip(),
             "domain": row["domain"],
-            "judge_verdict": str(row["Judge Verdict"]).strip().upper(),
+            "judge_verdict": verdict,
             "classification": row.get("Classification", None),
             "is_corrupted": row.get("Is Corrupted", None),
+            "objective_mode": objective_mode,
         })
     return pd.DataFrame(rows)
 
@@ -203,6 +341,7 @@ def _split_by_edge_identity(
     val_fraction: float,
     seed: int,
     stratify_col: str | None = None,
+    stratify_cols: list[str] | None = None,
 ):
     """Split rows by unique (source, target, domain) identity."""
     edge_ids = df[["source", "target", "domain"]].drop_duplicates().copy()
@@ -210,17 +349,19 @@ def _split_by_edge_identity(
         logger.warning("Skipping split; insufficient unique edges for validation split")
         return df.copy(), df.iloc[0:0].copy()
     stratify = None
-    if stratify_col is not None and stratify_col in edge_ids.columns:
-        counts = edge_ids[stratify_col].value_counts()
+    effective_cols = stratify_cols or ([stratify_col] if stratify_col else [])
+    if effective_cols:
+        labels = _build_edge_stratify_labels(df, edge_ids, effective_cols)
+        counts = labels.value_counts() if labels is not None else pd.Series(dtype=int)
         n_classes = len(counts)
         n_val = max(1, int(round(len(edge_ids) * val_fraction)))
         n_train = len(edge_ids) - n_val
         if len(counts) > 1 and counts.min() >= 2 and n_val >= n_classes and n_train >= n_classes:
-            stratify = edge_ids[stratify_col]
+            stratify = labels
         else:
             logger.warning(
                 "Skipping stratified split on %s; insufficient edge counts per class",
-                stratify_col,
+                effective_cols,
             )
     train_ids, val_ids = train_test_split(
         edge_ids,
@@ -245,6 +386,10 @@ def main(args=None) -> None:
     output_dir = Path(args.output_dir) if args.output_dir else _get_default_output_dir()
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    objective_mode = getattr(args, "objective_mode", "reason_verdict")
+    stratify_cols = _parse_stratify_cols(
+        getattr(args, "stratify_cols", "domain,judge_verdict")
+    )
 
     synth_glob = str(data_root / "RQ1a_gt_synth_correctness" / "**" / "*.xlsx")
     lit_glob = str(data_root / "RQ1a_gt_lit_correctness" / "**" / "*.xlsx")
@@ -258,20 +403,42 @@ def main(args=None) -> None:
     synth_raw = _load_xlsx_files(synth_glob, args.min_file_bytes)
     logger.info("Raw rows: %s", f"{len(synth_raw):,}")
 
-    synth_df = _build_rows(synth_raw)
+    synth_df = _build_rows(synth_raw, objective_mode=objective_mode)
     logger.info("After cleaning: %s rows", f"{len(synth_df):,}")
     logger.info("Unique edges: %s", f"{synth_df[['source','target','domain']].drop_duplicates().shape[0]:,}")
     logger.info("Verdict dist:\n%s", synth_df["judge_verdict"].value_counts().to_string())
 
     train_df, val_synth_df = _split_by_edge_identity(
-        synth_df, args.val_fraction, args.seed, stratify_col="domain"
+        synth_df, args.val_fraction, args.seed, stratify_cols=stratify_cols
     )
     logger.info("Train rows: %s | Val rows: %s", f"{len(train_df):,}", f"{len(val_synth_df):,}")
 
     train_path = output_dir / "judge_train.xlsx"
     val_synth_path = output_dir / "judge_val_synth.xlsx"
-    train_df.to_excel(train_path, index=False)
-    val_synth_df.to_excel(val_synth_path, index=False)
+    _save_dataset_with_metadata(
+        train_df,
+        train_path,
+        _build_dataset_metadata(
+            train_df,
+            split_name="gt_synth_train",
+            objective_mode=objective_mode,
+            source_description=synth_glob,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
+    _save_dataset_with_metadata(
+        val_synth_df,
+        val_synth_path,
+        _build_dataset_metadata(
+            val_synth_df,
+            split_name="gt_synth_val",
+            objective_mode=objective_mode,
+            source_description=synth_glob,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
     logger.info("Saved: %s", train_path)
     logger.info("Saved: %s", val_synth_path)
 
@@ -280,7 +447,7 @@ def main(args=None) -> None:
     lit_raw = _load_xlsx_files(lit_glob, args.min_file_bytes)
     logger.info("Raw rows: %s", f"{len(lit_raw):,}")
 
-    lit_df = _build_rows(lit_raw)
+    lit_df = _build_rows(lit_raw, objective_mode=objective_mode)
     logger.info("After cleaning: %s rows", f"{len(lit_df):,}")
     logger.info("Unique edges: %s", f"{lit_df[['source','target','domain']].drop_duplicates().shape[0]:,}")
     logger.info("Verdict dist:\n%s", lit_df["judge_verdict"].value_counts().to_string())
@@ -288,7 +455,18 @@ def main(args=None) -> None:
         logger.info("Classification dist:\n%s", lit_df["classification"].value_counts().to_string())
 
     lit_path = output_dir / "judge_eval_gtlit.xlsx"
-    lit_df.to_excel(lit_path, index=False)
+    _save_dataset_with_metadata(
+        lit_df,
+        lit_path,
+        _build_dataset_metadata(
+            lit_df,
+            split_name="gt_lit_eval",
+            objective_mode=objective_mode,
+            source_description=lit_glob,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
     logger.info("Saved: %s", lit_path)
 
     # ── Summary ───────────────────────────────────────────────────────────────

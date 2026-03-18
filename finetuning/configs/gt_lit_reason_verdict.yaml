@@ -1,0 +1,10 @@
+defaults:
+  - default
+  - _self_
+
+train_file: finetuning/data/reason_verdict/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file: finetuning/data/reason_verdict/gt_lit_trainval/judge_val_gtlit.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtlit_reason_verdict
+dataset_label: GT Lit
+objective_mode: reason_verdict
+wandb_group: gt_lit_reason_verdict

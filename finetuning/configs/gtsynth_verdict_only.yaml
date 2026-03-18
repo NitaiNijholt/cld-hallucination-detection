@@ -1,0 +1,10 @@
+defaults:
+  - default
+  - _self_
+
+train_file: finetuning/data/verdict_only/judge_train.xlsx
+val_file: finetuning/data/verdict_only/judge_val_synth.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtsynth_verdict_only
+dataset_label: GT Synth
+objective_mode: verdict_only
+wandb_group: gt_synth_verdict_only

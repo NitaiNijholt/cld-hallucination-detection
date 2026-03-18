@@ -19,6 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 from .prepare_judge_data import _split_by_edge_identity
+from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, summarize_counts, write_json
 
 logging.basicConfig(
     level=logging.INFO,
@@ -66,7 +67,56 @@ def parse_args() -> argparse.Namespace:
         default=42,
         help="Random seed for reproducible splitting",
     )
+    p.add_argument(
+        "--stratify-cols",
+        default="domain,judge_verdict",
+        help="Comma-separated edge-level columns to stratify GT Lit splits on",
+    )
     return p.parse_args()
+
+
+def _parse_stratify_cols(value: str | None) -> list[str]:
+    if value is None:
+        return []
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def _build_split_metadata(
+    df: pd.DataFrame,
+    *,
+    split_name: str,
+    input_path: Path,
+    input_metadata: dict | None,
+    stratify_cols: list[str],
+    seed: int,
+) -> dict:
+    unique_edges = df[["source", "target", "domain"]].drop_duplicates().shape[0] if len(df) else 0
+    payload = {
+        "split_name": split_name,
+        "source_path": str(input_path),
+        "source_path_sha256": sha256_file(input_path),
+        "seed": seed,
+        "stratify_cols": stratify_cols,
+        "row_count": int(len(df)),
+        "unique_edge_count": int(unique_edges),
+        "domain_counts": summarize_counts(df["domain"].tolist()) if "domain" in df.columns else {},
+        "judge_verdict_counts": summarize_counts(df["judge_verdict"].tolist()) if "judge_verdict" in df.columns else {},
+    }
+    if input_metadata is not None:
+        payload["source_dataset_metadata"] = input_metadata
+    return payload
+
+
+def _save_split(df: pd.DataFrame, path: Path, metadata: dict) -> None:
+    df.to_excel(path, index=False)
+    write_json(
+        sidecar_metadata_path(path),
+        {
+            **metadata,
+            "file_name": path.name,
+            "file_sha256": sha256_file(path),
+        },
+    )
 
 
 def main(args: argparse.Namespace | None = None) -> None:
@@ -76,6 +126,9 @@ def main(args: argparse.Namespace | None = None) -> None:
     input_path = Path(args.input_path)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    stratify_cols = _parse_stratify_cols(
+        getattr(args, "stratify_cols", "domain,judge_verdict")
+    )
 
     logger.info("Input path: %s", input_path)
     logger.info("Output dir: %s", output_dir)
@@ -87,6 +140,7 @@ def main(args: argparse.Namespace | None = None) -> None:
     )
 
     df = pd.read_excel(input_path).dropna(subset=["prompt", "completion"])
+    input_metadata = load_json(sidecar_metadata_path(input_path))
     logger.info("Loaded GT Lit rows: %s", f"{len(df):,}")
     logger.info(
         "Unique edges: %s",
@@ -95,19 +149,52 @@ def main(args: argparse.Namespace | None = None) -> None:
     logger.info("Verdict dist:\n%s", df["judge_verdict"].value_counts().to_string())
 
     train_val_df, test_df = _split_by_edge_identity(
-        df.copy(), args.test_fraction, args.seed, stratify_col="domain"
+        df.copy(), args.test_fraction, args.seed, stratify_cols=stratify_cols
     )
     adjusted_val_fraction = args.val_fraction / (1.0 - args.test_fraction)
     train_df, val_df = _split_by_edge_identity(
-        train_val_df.copy(), adjusted_val_fraction, args.seed, stratify_col="domain"
+        train_val_df.copy(), adjusted_val_fraction, args.seed, stratify_cols=stratify_cols
     )
 
     train_path = output_dir / "judge_train_gtlit.xlsx"
     val_path = output_dir / "judge_val_gtlit.xlsx"
     test_path = output_dir / "judge_test_gtlit.xlsx"
-    train_df.to_excel(train_path, index=False)
-    val_df.to_excel(val_path, index=False)
-    test_df.to_excel(test_path, index=False)
+    _save_split(
+        train_df,
+        train_path,
+        _build_split_metadata(
+            train_df,
+            split_name="gt_lit_train",
+            input_path=input_path,
+            input_metadata=input_metadata,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
+    _save_split(
+        val_df,
+        val_path,
+        _build_split_metadata(
+            val_df,
+            split_name="gt_lit_val",
+            input_path=input_path,
+            input_metadata=input_metadata,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
+    _save_split(
+        test_df,
+        test_path,
+        _build_split_metadata(
+            test_df,
+            split_name="gt_lit_test",
+            input_path=input_path,
+            input_metadata=input_metadata,
+            stratify_cols=stratify_cols,
+            seed=args.seed,
+        ),
+    )
 
     logger.info("Train rows: %s", f"{len(train_df):,}")
     logger.info("Val rows: %s", f"{len(val_df):,}")

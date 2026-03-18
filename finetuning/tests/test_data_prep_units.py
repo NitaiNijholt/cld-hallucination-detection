@@ -15,6 +15,7 @@ from finetuning.src.data.prepare_judge_data import (
     _build_rows,
     _extract_domain,
     _extract_reason,
+    _sanitize_reason,
     _split_by_edge_identity,
 )
 
@@ -43,6 +44,11 @@ def test_extract_reason_fallback_regex():
     assert _extract_reason(msg) == "Fallback reason"
 
 
+def test_sanitize_reason_strips_embedded_score_and_verdict():
+    reason = "REASON: Plausible mechanism\\nSCORE: 1.0\\nVERDICT: CORRECT"
+    assert _sanitize_reason(reason) == "Plausible mechanism"
+
+
 def test_build_rows_produces_expected_columns():
     df = pd.DataFrame([
         {
@@ -61,6 +67,19 @@ def test_build_rows_produces_expected_columns():
     assert "judge_verdict" in result.columns
     assert "REASON:" in result["completion"].iloc[0]
     assert "VERDICT:" in result["completion"].iloc[0]
+
+
+def test_build_rows_verdict_only_omits_reason():
+    df = pd.DataFrame([
+        {
+            "Source": "A", "Target": "B", "Relationship Type": "causes",
+            "Motivation": "A causes B", "Judge Verdict": "CORRECT",
+            "domain": "depressive",
+        },
+    ])
+    result = _build_rows(df, objective_mode="verdict_only")
+    assert result["completion"].iloc[0] == "VERDICT: CORRECT"
+    assert "Respond with VERDICT only." in result["prompt"].iloc[0]
 
 
 def test_build_rows_drops_error_verdicts():
@@ -105,3 +124,23 @@ def test_split_by_edge_identity_stratifies_domain_when_possible():
         df, val_fraction=0.5, seed=42, stratify_col="domain"
     )
     assert set(val_df["domain"]) == {"d1", "d2"}
+
+
+def test_split_by_edge_identity_stratifies_domain_and_verdict_when_possible():
+    df = pd.DataFrame([
+        {"source": "A", "target": "B", "domain": "d1", "judge_verdict": "CORRECT"},
+        {"source": "C", "target": "D", "domain": "d1", "judge_verdict": "CORRECT"},
+        {"source": "E", "target": "F", "domain": "d2", "judge_verdict": "INCORRECT"},
+        {"source": "G", "target": "H", "domain": "d2", "judge_verdict": "INCORRECT"},
+    ])
+    for col in ["prompt", "completion"]:
+        df[col] = "x"
+
+    train_df, val_df = _split_by_edge_identity(
+        df,
+        val_fraction=0.5,
+        seed=42,
+        stratify_cols=["domain", "judge_verdict"],
+    )
+    held_out_pairs = set(zip(val_df["domain"], val_df["judge_verdict"]))
+    assert held_out_pairs == {("d1", "CORRECT"), ("d2", "INCORRECT")}

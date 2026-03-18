@@ -46,8 +46,10 @@ def test_path_resolution():
 
 def test_build_training_args():
     """TrainingArguments built from config (requires transformers)."""
+    pytest.importorskip("torch")
     pytest.importorskip("transformers")
     pytest.importorskip("datasets")
+    pytest.importorskip("peft")
     from finetuning.src.training.train_judge import build_training_args
     from omegaconf import OmegaConf
 
@@ -69,8 +71,10 @@ def test_build_training_args():
 
 def test_build_training_args_with_wandb():
     """When WANDB_PROJECT is set and WANDB_DISABLED is unset, report_to=wandb."""
+    pytest.importorskip("torch")
     pytest.importorskip("transformers")
     pytest.importorskip("datasets")
+    pytest.importorskip("peft")
     import os
     from finetuning.src.training.train_judge import build_training_args
     from omegaconf import OmegaConf
@@ -115,11 +119,15 @@ def test_mlflow_and_wandb_config_present():
     assert getattr(cfg, "mlflow_experiment_name", None) == "cld-judge-finetuning"
     assert getattr(cfg, "mlflow_tracking_uri", None) == "mlruns"
     assert getattr(cfg, "wandb_project", None) is None  # enable via env
+    assert getattr(cfg, "objective_mode", None) == "reason_verdict"
 
 
 def test_data_collator_preserves_precomputed_labels():
     """Training must preserve completion-only label masks."""
+    pytest.importorskip("torch")
     pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    pytest.importorskip("peft")
     from finetuning.src.training.train_judge import get_data_collator
 
     collator = get_data_collator()
@@ -132,3 +140,21 @@ def test_data_collator_preserves_precomputed_labels():
     ])
 
     assert batch["labels"].tolist() == [[-100, -100, 3, -100]]
+
+
+def test_mask_completion_labels_masks_prompt_and_pad_tokens():
+    """Prompt and padding tokens should never contribute to the loss."""
+    pytest.importorskip("torch")
+    pytest.importorskip("transformers")
+    pytest.importorskip("datasets")
+    pytest.importorskip("peft")
+    from finetuning.src.training.train_judge import mask_completion_labels
+
+    labels = mask_completion_labels(
+        input_ids=[11, 12, 13, 0, 0],
+        prompt_length=2,
+        pad_id=0,
+        max_length=5,
+    )
+
+    assert labels == [-100, -100, 13, -100, -100]

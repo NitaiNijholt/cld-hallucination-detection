@@ -11,6 +11,7 @@ Run on Snellius (via SLURM):
     sbatch finetuning/jobs/train_judge.job
 """
 
+import json
 import logging
 import os
 import random
@@ -47,6 +48,8 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
 )
+
+from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, write_json
 
 
 def _setup_logging(output_dir: str | None) -> None:
@@ -187,6 +190,22 @@ def make_chat_text(prompt: str, completion: str, tokenizer) -> str:
     )
 
 
+def mask_completion_labels(
+    input_ids: list[int],
+    prompt_length: int,
+    pad_id: int,
+    max_length: int,
+) -> list[int]:
+    labels = [-100] * min(prompt_length, len(input_ids)) + input_ids[prompt_length:]
+    labels = labels[:max_length]
+    if len(labels) < max_length:
+        labels.extend([-100] * (max_length - len(labels)))
+    return [
+        -100 if token_id == pad_id else label
+        for token_id, label in zip(input_ids[:max_length], labels[:max_length], strict=False)
+    ]
+
+
 def build_tokenised_dataset(
     ds: Dataset, tokenizer, max_length: int, pad_id: int
 ) -> Dataset:
@@ -223,9 +242,7 @@ def build_tokenised_dataset(
         for i, p_ids in enumerate(prompt_enc["input_ids"]):
             p_len = len(p_ids)
             ids = full_enc["input_ids"][i]
-            labels = [-100] * p_len + ids[p_len:]
-            labels = (labels + [-100] * max_length)[:max_length]
-            masked_labels.append(labels)
+            masked_labels.append(mask_completion_labels(ids, p_len, pad_id, max_length))
 
         full_enc["labels"] = masked_labels
         full_enc["attention_mask"] = [
@@ -247,6 +264,20 @@ def build_tokenised_dataset(
 def get_data_collator():
     """Preserve precomputed labels instead of regenerating them from input_ids."""
     return default_data_collator
+
+
+def collect_dataset_metadata(path: str | Path) -> dict:
+    file_path = Path(path)
+    sidecar_path = sidecar_metadata_path(file_path)
+    metadata = load_json(sidecar_path)
+    payload = {
+        "path": str(file_path),
+        "sha256": sha256_file(file_path) if file_path.exists() else None,
+        "sidecar_path": str(sidecar_path) if sidecar_path.exists() else None,
+    }
+    if metadata is not None:
+        payload["sidecar"] = metadata
+    return payload
 
 
 # ── Model ─────────────────────────────────────────────────────────────────────
@@ -373,6 +404,7 @@ def main(cfg: DictConfig) -> None:
     cfg = _resolve_paths(cfg, repo_root)
     dataset_label = str(getattr(cfg, "dataset_label", "GT Synth"))
     max_examples = getattr(cfg, "max_examples", None)
+    objective_mode = str(getattr(cfg, "objective_mode", "reason_verdict"))
 
     os.makedirs(cfg.output_dir, exist_ok=True)
     _setup_logging(cfg.output_dir)
@@ -394,6 +426,8 @@ def main(cfg: DictConfig) -> None:
     train_ds = load_split(cfg.train_file, cfg.smoke_test, max_examples=max_examples)
     val_ds = load_split(cfg.val_file, cfg.smoke_test, max_examples=max_examples)
     logger.info("train=%s val=%s", f"{len(train_ds):,}", f"{len(val_ds):,}")
+    train_file_metadata = collect_dataset_metadata(cfg.train_file)
+    val_file_metadata = collect_dataset_metadata(cfg.val_file)
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.base_model)
     if tokenizer.pad_token_id is None:
@@ -427,10 +461,32 @@ def main(cfg: DictConfig) -> None:
     logger.info("Training… (step logs every 10 steps)")
     trainer.train()
 
+    cfg_dict = OmegaConf.to_container(cfg, resolve=True)
+    if not isinstance(cfg_dict, dict):
+        cfg_dict = {"raw_config": str(cfg)}
+    run_metadata = {
+        "git_sha": git_sha,
+        "objective_mode": objective_mode,
+        "dataset_label": dataset_label,
+        "config": cfg_dict,
+        "train_dataset": train_file_metadata,
+        "val_dataset": val_file_metadata,
+        "train_examples": len(train_ds),
+        "val_examples": len(val_ds),
+        "prompt_example": train_ds[0]["prompt"] if len(train_ds) else None,
+        "completion_example": train_ds[0]["completion"] if len(train_ds) else None,
+    }
+
     os.makedirs(cfg.output_dir, exist_ok=True)
     with open(os.path.join(cfg.output_dir, "run_metadata.txt"), "w") as f:
         f.write(f"git_sha={git_sha}\n")
         f.write(f"config={OmegaConf.to_yaml(cfg)}\n")
+        f.write(f"objective_mode={objective_mode}\n")
+        f.write(f"train_file={cfg.train_file}\n")
+        f.write(f"val_file={cfg.val_file}\n")
+        f.write(f"train_file_sha256={train_file_metadata.get('sha256')}\n")
+        f.write(f"val_file_sha256={val_file_metadata.get('sha256')}\n")
+    write_json(os.path.join(cfg.output_dir, "run_metadata.json"), run_metadata)
     save_loss_curve(trainer, cfg.output_dir, dataset_label)
     save_artifacts(model, tokenizer, cfg)
 
@@ -450,7 +506,6 @@ def main(cfg: DictConfig) -> None:
                 best_epoch = h.get("epoch")
                 break
         merged_dir = os.path.join(cfg.output_dir, "merged_fp16")
-        cfg_dict = OmegaConf.to_container(cfg, resolve=True)
         if isinstance(cfg_dict, dict):
             mlflow_mod.log_training_run(
                 tracking_uri=tracking_uri,
@@ -459,6 +514,7 @@ def main(cfg: DictConfig) -> None:
                 merged_dir=merged_dir,
                 base_model=str(cfg.base_model),
                 cfg_dict=cfg_dict,
+                run_metadata=run_metadata,
                 train_loss=train_loss_final,
                 eval_loss=float(eval_loss_best) if eval_loss_best is not None else None,
                 best_epoch=float(best_epoch) if best_epoch is not None else None,

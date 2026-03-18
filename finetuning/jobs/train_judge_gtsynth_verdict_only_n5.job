@@ -1,0 +1,41 @@
+#!/bin/bash
+#SBATCH --job-name=cld_judge_gtsynth_vo_n5
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=00:20:00
+#SBATCH --output=finetuning/logs/%x_%j.out
+#SBATCH --error=finetuning/logs/%x_%j.err
+
+set -euo pipefail
+
+REPO_DIR="$HOME/cld-hallucination-detection"
+ENV_DIR="$REPO_DIR/venv"
+
+module purge
+cd "$REPO_DIR"
+mkdir -p finetuning/logs finetuning/runs finetuning/data/verdict_only
+source "$ENV_DIR/bin/activate"
+
+export REPO_ROOT="$REPO_DIR"
+export PYTHONUNBUFFERED=1
+export WANDB_DISABLED=true
+
+python -m finetuning.src.data.prepare_judge_data \
+  --output-dir finetuning/data/verdict_only \
+  --objective-mode verdict_only \
+  --val-fraction 0.10 \
+  --seed 42 \
+  --stratify-cols domain,judge_verdict
+
+python -m finetuning.src.training.train_judge \
+  --config-name gtsynth_verdict_only \
+  max_examples=5 \
+  epochs=1 \
+  grad_accum=1 \
+  save_strategy=no \
+  load_best_model_at_end=false \
+  output_dir=finetuning/runs/mistral7b_judge_gtsynth_verdict_only_n5

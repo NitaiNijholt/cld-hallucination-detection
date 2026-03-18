@@ -1,0 +1,10 @@
+defaults:
+  - default
+  - _self_
+
+train_file: finetuning/data/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file: finetuning/data/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx
+output_dir: finetuning/runs/mistral7b_judge_gtlit_verdict_only
+dataset_label: GT Lit
+objective_mode: verdict_only
+wandb_group: gt_lit_verdict_only

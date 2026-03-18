@@ -42,6 +42,33 @@ def test_prepare_judge_data_produces_expected_files():
             required = ["prompt", "completion", "source", "target", "domain", "judge_verdict"]
             for col in required:
                 assert col in df.columns, f"{name} should have column {col}"
+            metadata_path = p.with_suffix(p.suffix + ".metadata.json")
+            assert metadata_path.exists(), f"{metadata_path.name} should exist"
+
+
+def test_prepare_judge_data_verdict_only_outputs_verdict_only_completion():
+    """Verdict-only mode should build verdict-only completions and sidecar metadata."""
+    from finetuning.src.data.prepare_judge_data import main
+    import argparse
+    import pandas as pd
+
+    fixture_root = Path(__file__).resolve().parent / "fixtures" / "final_runs"
+    with tempfile.TemporaryDirectory() as out_dir:
+        args = argparse.Namespace(
+            data_root=str(fixture_root),
+            output_dir=out_dir,
+            val_fraction=0.5,
+            seed=42,
+            min_file_bytes=0,
+            objective_mode="verdict_only",
+            stratify_cols="domain,judge_verdict",
+        )
+        main(args=args)
+
+        train_path = Path(out_dir) / "judge_train.xlsx"
+        train_df = pd.read_excel(train_path)
+        assert train_df["completion"].str.startswith("VERDICT: ").all()
+        assert not train_df["completion"].str.contains("REASON:").any()
 
 
 def test_prepare_gt_lit_train_val_produces_holdout_split():
@@ -137,3 +164,39 @@ def test_create_gt_lit_test_subsample_from_holdout():
         test_df = pd.read_excel(Path(out_dir) / "judge_test_gtlit.xlsx")
         sub_df = pd.read_excel(Path(out_dir) / "judge_test_gtlit_1k.xlsx")
         assert len(sub_df) <= min(5, len(test_df))
+        metadata_path = Path(out_dir) / "judge_test_gtlit_1k.xlsx.metadata.json"
+        assert metadata_path.exists()
+
+
+def test_create_eval_subsamples_creates_stratified_outputs():
+    """Frozen eval subsets should be created with the configured output suffix."""
+    import argparse
+
+    from finetuning.src.data.prepare_judge_data import main as prepare_main
+    from finetuning.src.evaluation.create_eval_subsamples import main as subsample_main
+
+    fixture_root = Path(__file__).resolve().parent / "fixtures" / "final_runs"
+    with tempfile.TemporaryDirectory() as out_dir:
+        prep_args = argparse.Namespace(
+            data_root=str(fixture_root),
+            output_dir=out_dir,
+            val_fraction=0.5,
+            seed=42,
+            min_file_bytes=0,
+            objective_mode="reason_verdict",
+            stratify_cols="domain,judge_verdict",
+        )
+        prepare_main(args=prep_args)
+
+        subsample_args = argparse.Namespace(
+            val_path=str(Path(out_dir) / "judge_val_synth.xlsx"),
+            lit_path=str(Path(out_dir) / "judge_eval_gtlit.xlsx"),
+            target_n=2,
+            seed=42,
+            stratify_cols="domain,judge_verdict",
+            output_suffix="_1k_stratified",
+        )
+        subsample_main(args=subsample_args)
+
+        assert (Path(out_dir) / "judge_val_synth_1k_stratified.xlsx").exists()
+        assert (Path(out_dir) / "judge_eval_gtlit_1k_stratified.xlsx").exists()
