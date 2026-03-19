@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from zipfile import BadZipFile
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -18,6 +19,7 @@ from finetuning.src.data.prepare_judge_data import (
     _sanitize_reason,
     _split_by_edge_identity,
 )
+from finetuning.src.metadata_utils import atomic_to_excel, read_excel_with_retry
 
 
 def test_extract_domain():
@@ -144,3 +146,23 @@ def test_split_by_edge_identity_stratifies_domain_and_verdict_when_possible():
     )
     held_out_pairs = set(zip(val_df["domain"], val_df["judge_verdict"]))
     assert held_out_pairs == {("d1", "CORRECT"), ("d2", "INCORRECT")}
+
+
+def test_read_excel_with_retry_recovers_from_transient_badzip(tmp_path, monkeypatch):
+    path = tmp_path / "sample.xlsx"
+    atomic_to_excel(pd.DataFrame([{"prompt": "p", "completion": "c"}]), path)
+
+    original = pd.read_excel
+    state = {"calls": 0}
+
+    def flaky_read_excel(*args, **kwargs):
+        state["calls"] += 1
+        if state["calls"] == 1:
+            raise BadZipFile("Bad CRC-32 for file 'docProps/core.xml'")
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(pd, "read_excel", flaky_read_excel)
+
+    df = read_excel_with_retry(path, attempts=3, delay_seconds=0.01)
+    assert len(df) == 1
+    assert state["calls"] == 2

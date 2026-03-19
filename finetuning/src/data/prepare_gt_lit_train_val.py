@@ -19,7 +19,15 @@ from pathlib import Path
 import pandas as pd
 
 from .prepare_judge_data import _split_by_edge_identity
-from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, summarize_counts, write_json
+from ..metadata_utils import (
+    atomic_to_excel,
+    load_json,
+    read_excel_with_retry,
+    sha256_file,
+    sidecar_metadata_path,
+    summarize_counts,
+    write_json,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -108,7 +116,7 @@ def _build_split_metadata(
 
 
 def _save_split(df: pd.DataFrame, path: Path, metadata: dict) -> None:
-    df.to_excel(path, index=False)
+    atomic_to_excel(df, path)
     write_json(
         sidecar_metadata_path(path),
         {
@@ -139,7 +147,7 @@ def main(args: argparse.Namespace | None = None) -> None:
         args.seed,
     )
 
-    df = pd.read_excel(input_path).dropna(subset=["prompt", "completion"])
+    df = read_excel_with_retry(input_path).dropna(subset=["prompt", "completion"])
     input_metadata = load_json(sidecar_metadata_path(input_path))
     logger.info("Loaded GT Lit rows: %s", f"{len(df):,}")
     logger.info(

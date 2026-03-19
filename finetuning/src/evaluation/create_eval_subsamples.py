@@ -16,7 +16,15 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, summarize_counts, write_json
+from ..metadata_utils import (
+    atomic_to_excel,
+    load_json,
+    read_excel_with_retry,
+    sha256_file,
+    sidecar_metadata_path,
+    summarize_counts,
+    write_json,
+)
 
 
 def _get_default_paths():
@@ -91,7 +99,7 @@ def _save_subset(
     stratify_cols: list[str],
     seed: int,
 ) -> None:
-    df.to_excel(output_path, index=False)
+    atomic_to_excel(df, output_path)
     payload = {
         "split_name": label,
         "source_path": str(input_path),
@@ -117,7 +125,7 @@ def main(args: argparse.Namespace | None = None) -> None:
     for label, path in [("GT Synth Val", args.val_path), ("GT Lit", args.lit_path)]:
         if not os.path.exists(path):
             raise FileNotFoundError(f"{label} file not found: {path}")
-        df = pd.read_excel(path).dropna(subset=["prompt", "judge_verdict"])
+        df = read_excel_with_retry(path).dropna(subset=["prompt", "judge_verdict"])
         input_path = Path(path)
         input_metadata = load_json(sidecar_metadata_path(input_path))
         n_orig = len(df)

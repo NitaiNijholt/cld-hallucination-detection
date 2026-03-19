@@ -32,7 +32,14 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ..metadata_utils import sha256_file, sidecar_metadata_path, summarize_counts, write_json
+from ..metadata_utils import (
+    atomic_to_excel,
+    read_excel_with_retry,
+    sha256_file,
+    sidecar_metadata_path,
+    summarize_counts,
+    write_json,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -271,7 +278,7 @@ def _build_dataset_metadata(
 
 
 def _save_dataset_with_metadata(df: pd.DataFrame, path: Path, metadata: dict) -> None:
-    df.to_excel(path, index=False)
+    atomic_to_excel(df, path)
     payload = {
         **metadata,
         "file_name": path.name,
@@ -294,7 +301,7 @@ def _load_xlsx_files(glob_pattern: str, min_file_bytes: int) -> pd.DataFrame:
     dfs = []
     for f in files:
         try:
-            df = pd.read_excel(f)
+            df = read_excel_with_retry(f)
             df["_file"] = f
             df["domain"] = _extract_domain(f)
             dfs.append(df)

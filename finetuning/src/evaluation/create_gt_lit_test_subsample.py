@@ -13,7 +13,15 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, summarize_counts, write_json
+from ..metadata_utils import (
+    atomic_to_excel,
+    load_json,
+    read_excel_with_retry,
+    sha256_file,
+    sidecar_metadata_path,
+    summarize_counts,
+    write_json,
+)
 
 
 def _get_default_paths():
@@ -78,10 +86,10 @@ def main(args: argparse.Namespace | None = None) -> None:
         args = parse_args()
     stratify_cols = _parse_stratify_cols(args.stratify_cols)
 
-    df = pd.read_excel(args.input_path).dropna(subset=["prompt", "judge_verdict"])
+    df = read_excel_with_retry(args.input_path).dropna(subset=["prompt", "judge_verdict"])
     n_orig = len(df)
     sub = _stratified_subsample(df, args.target_n, args.seed, stratify_cols)
-    sub.to_excel(args.output_path, index=False)
+    atomic_to_excel(sub, args.output_path)
     input_metadata = load_json(sidecar_metadata_path(args.input_path))
     payload = {
         "split_name": "gt_lit_test_frozen_subset",
