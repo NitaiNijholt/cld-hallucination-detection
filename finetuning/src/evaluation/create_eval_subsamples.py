@@ -54,6 +54,11 @@ def parse_args() -> argparse.Namespace:
         default="_1k_stratified",
         help="Suffix to append before .xlsx for the frozen subset",
     )
+    p.add_argument(
+        "--require-stratification",
+        action="store_true",
+        help="Fail instead of falling back to an unstratified subset when requested strata cannot be preserved",
+    )
     return p.parse_args()
 
 
@@ -70,7 +75,13 @@ def _build_stratify_labels(df: pd.DataFrame, stratify_cols: list[str]) -> pd.Ser
     return df[usable_cols].fillna("unknown").astype(str).agg("||".join, axis=1)
 
 
-def _stratified_subsample(df: pd.DataFrame, target_n: int, seed: int, stratify_cols: list[str]) -> pd.DataFrame:
+def _stratified_subsample(
+    df: pd.DataFrame,
+    target_n: int,
+    seed: int,
+    stratify_cols: list[str],
+    require_stratification: bool = False,
+) -> pd.DataFrame:
     if len(df) <= target_n:
         return df.reset_index(drop=True)
     labels = _build_stratify_labels(df, stratify_cols)
@@ -80,6 +91,11 @@ def _stratified_subsample(df: pd.DataFrame, target_n: int, seed: int, stratify_c
         remaining = len(df) - target_n
         if len(counts) > 1 and counts.min() >= 2 and target_n >= len(counts) and remaining >= len(counts):
             stratify = labels
+        elif require_stratification:
+            raise ValueError(
+                f"Unable to preserve requested stratification on {stratify_cols}; "
+                "dataset does not have enough rows per class for a frozen subset"
+            )
     _, sub = train_test_split(
         df,
         test_size=target_n,
@@ -129,7 +145,13 @@ def main(args: argparse.Namespace | None = None) -> None:
         input_path = Path(path)
         input_metadata = load_json(sidecar_metadata_path(input_path))
         n_orig = len(df)
-        sub = _stratified_subsample(df, args.target_n, args.seed, stratify_cols)
+        sub = _stratified_subsample(
+            df,
+            args.target_n,
+            args.seed,
+            stratify_cols,
+            require_stratification=getattr(args, "require_stratification", False),
+        )
         out_path = input_path.with_name(f"{input_path.stem}{args.output_suffix}.xlsx")
         _save_subset(
             sub,

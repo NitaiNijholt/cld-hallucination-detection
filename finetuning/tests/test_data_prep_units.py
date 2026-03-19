@@ -148,6 +148,25 @@ def test_split_by_edge_identity_stratifies_domain_and_verdict_when_possible():
     assert held_out_pairs == {("d1", "CORRECT"), ("d2", "INCORRECT")}
 
 
+def test_split_by_edge_identity_can_fail_closed_when_stratification_required():
+    df = pd.DataFrame([
+        {"source": "A", "target": "B", "domain": "d1", "judge_verdict": "CORRECT"},
+        {"source": "C", "target": "D", "domain": "d1", "judge_verdict": "INCORRECT"},
+        {"source": "E", "target": "F", "domain": "d2", "judge_verdict": "CORRECT"},
+    ])
+    for col in ["prompt", "completion"]:
+        df[col] = "x"
+
+    with pytest.raises(ValueError, match="Unable to preserve requested stratification"):
+        _split_by_edge_identity(
+            df,
+            val_fraction=0.5,
+            seed=42,
+            stratify_cols=["domain", "judge_verdict"],
+            require_stratification=True,
+        )
+
+
 def test_read_excel_with_retry_recovers_from_transient_badzip(tmp_path, monkeypatch):
     path = tmp_path / "sample.xlsx"
     atomic_to_excel(pd.DataFrame([{"prompt": "p", "completion": "c"}]), path)

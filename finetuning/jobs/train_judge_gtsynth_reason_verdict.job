@@ -17,18 +17,19 @@ ENV_DIR="$REPO_DIR/venv"
 
 module purge
 cd "$REPO_DIR"
-mkdir -p finetuning/logs finetuning/runs finetuning/data/reason_verdict
+mkdir -p finetuning/logs finetuning/runs/canonical
 source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
 export WANDB_PROJECT=cld-judge-finetuning
 
-python -m finetuning.src.data.prepare_judge_data \
-  --output-dir finetuning/data/reason_verdict \
-  --objective-mode reason_verdict \
-  --val-fraction 0.10 \
-  --seed 42 \
-  --stratify-cols domain,judge_verdict
+DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
+DATA_ROOT="finetuning/data/canonical/$DATA_TAG/reason_verdict"
+RUN_ROOT="finetuning/runs/canonical/$DATA_TAG"
 
-python -m finetuning.src.training.train_judge --config-name gtsynth_reason_verdict
+python -m finetuning.src.training.train_judge \
+  --config-name gtsynth_reason_verdict \
+  train_file="$DATA_ROOT/judge_train.xlsx" \
+  val_file="$DATA_ROOT/judge_val_synth.xlsx" \
+  output_dir="$RUN_ROOT/mistral7b_judge_gtsynth_reason_verdict"

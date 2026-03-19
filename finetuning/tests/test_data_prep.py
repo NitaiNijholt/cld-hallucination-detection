@@ -200,3 +200,40 @@ def test_create_eval_subsamples_creates_stratified_outputs():
 
         assert (Path(out_dir) / "judge_val_synth_1k_stratified.xlsx").exists()
         assert (Path(out_dir) / "judge_eval_gtlit_1k_stratified.xlsx").exists()
+
+
+def test_prepare_canonical_matrix_data_creates_frozen_bundle():
+    """Canonical prep should generate immutable train/val/test/eval artifacts for both objectives."""
+    import argparse
+
+    from finetuning.src.data.prepare_canonical_matrix_data import main as canonical_main
+
+    fixture_root = Path(__file__).resolve().parent / "fixtures" / "final_runs"
+    with tempfile.TemporaryDirectory() as out_dir:
+        args = argparse.Namespace(
+            output_root=str(Path(out_dir) / "canonical"),
+            data_root=str(fixture_root),
+            seed=42,
+            val_fraction=0.2,
+            test_fraction=0.2,
+            target_n=1000,
+            min_file_bytes=0,
+            stratify_cols="",
+            force=False,
+        )
+        canonical_main(args=args)
+
+        root = Path(out_dir) / "canonical"
+        for objective_mode in ["reason_verdict", "verdict_only"]:
+            mode_root = root / objective_mode
+            assert (mode_root / "judge_train.xlsx").exists()
+            assert (mode_root / "judge_val_synth.xlsx").exists()
+            assert (mode_root / "judge_eval_gtlit.xlsx").exists()
+            assert (mode_root / "judge_val_synth_1k_stratified.xlsx").exists()
+            assert (mode_root / "judge_eval_gtlit_1k_stratified.xlsx").exists()
+            assert (mode_root / "gt_lit_trainval" / "judge_train_gtlit.xlsx").exists()
+            assert (mode_root / "gt_lit_trainval" / "judge_val_gtlit.xlsx").exists()
+            assert (mode_root / "gt_lit_trainval" / "judge_test_gtlit.xlsx").exists()
+            assert (mode_root / "gt_lit_trainval" / "judge_test_gtlit_1k_stratified.xlsx").exists()
+
+        assert (root / "canonical_manifest.json").exists()

@@ -80,6 +80,11 @@ def parse_args() -> argparse.Namespace:
         default="domain,judge_verdict",
         help="Comma-separated edge-level columns to stratify GT Lit splits on",
     )
+    p.add_argument(
+        "--require-stratification",
+        action="store_true",
+        help="Fail instead of falling back to unstratified splits when requested strata cannot be preserved",
+    )
     return p.parse_args()
 
 
@@ -157,11 +162,19 @@ def main(args: argparse.Namespace | None = None) -> None:
     logger.info("Verdict dist:\n%s", df["judge_verdict"].value_counts().to_string())
 
     train_val_df, test_df = _split_by_edge_identity(
-        df.copy(), args.test_fraction, args.seed, stratify_cols=stratify_cols
+        df.copy(),
+        args.test_fraction,
+        args.seed,
+        stratify_cols=stratify_cols,
+        require_stratification=getattr(args, "require_stratification", False),
     )
     adjusted_val_fraction = args.val_fraction / (1.0 - args.test_fraction)
     train_df, val_df = _split_by_edge_identity(
-        train_val_df.copy(), adjusted_val_fraction, args.seed, stratify_cols=stratify_cols
+        train_val_df.copy(),
+        adjusted_val_fraction,
+        args.seed,
+        stratify_cols=stratify_cols,
+        require_stratification=getattr(args, "require_stratification", False),
     )
 
     train_path = output_dir / "judge_train_gtlit.xlsx"

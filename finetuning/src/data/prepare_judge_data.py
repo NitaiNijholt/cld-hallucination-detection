@@ -140,6 +140,11 @@ def parse_args() -> argparse.Namespace:
         default="domain,judge_verdict",
         help="Comma-separated edge-level columns to stratify train/val splits on",
     )
+    p.add_argument(
+        "--require-stratification",
+        action="store_true",
+        help="Fail instead of falling back to unstratified splits when requested strata cannot be preserved",
+    )
     return p.parse_args()
 
 
@@ -349,6 +354,7 @@ def _split_by_edge_identity(
     seed: int,
     stratify_col: str | None = None,
     stratify_cols: list[str] | None = None,
+    require_stratification: bool = False,
 ):
     """Split rows by unique (source, target, domain) identity."""
     edge_ids = df[["source", "target", "domain"]].drop_duplicates().copy()
@@ -366,6 +372,11 @@ def _split_by_edge_identity(
         if len(counts) > 1 and counts.min() >= 2 and n_val >= n_classes and n_train >= n_classes:
             stratify = labels
         else:
+            if require_stratification:
+                raise ValueError(
+                    f"Unable to preserve requested stratification on {effective_cols}; "
+                    "dataset does not have enough edge counts per class"
+                )
             logger.warning(
                 "Skipping stratified split on %s; insufficient edge counts per class",
                 effective_cols,
@@ -416,7 +427,11 @@ def main(args=None) -> None:
     logger.info("Verdict dist:\n%s", synth_df["judge_verdict"].value_counts().to_string())
 
     train_df, val_synth_df = _split_by_edge_identity(
-        synth_df, args.val_fraction, args.seed, stratify_cols=stratify_cols
+        synth_df,
+        args.val_fraction,
+        args.seed,
+        stratify_cols=stratify_cols,
+        require_stratification=getattr(args, "require_stratification", False),
     )
     logger.info("Train rows: %s | Val rows: %s", f"{len(train_df):,}", f"{len(val_synth_df):,}")
 

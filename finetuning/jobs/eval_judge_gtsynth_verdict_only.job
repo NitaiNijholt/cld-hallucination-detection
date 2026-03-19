@@ -17,31 +17,21 @@ ENV_DIR="$REPO_DIR/venv"
 
 module purge
 cd "$REPO_DIR"
-mkdir -p finetuning/logs results_gtsynth_verdict_only
+mkdir -p finetuning/logs results/canonical
 source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
 
-python -m finetuning.src.data.prepare_judge_data \
-  --output-dir finetuning/data/verdict_only \
-  --objective-mode verdict_only \
-  --val-fraction 0.10 \
-  --seed 42 \
-  --stratify-cols domain,judge_verdict
-
-python -m finetuning.src.evaluation.create_eval_subsamples \
-  --val_path finetuning/data/verdict_only/judge_val_synth.xlsx \
-  --lit_path finetuning/data/verdict_only/judge_eval_gtlit.xlsx \
-  --target_n 1000 \
-  --seed 42 \
-  --stratify-cols domain,judge_verdict \
-  --output-suffix _1k_stratified
+DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
+DATA_ROOT="finetuning/data/canonical/$DATA_TAG/verdict_only"
+RUN_ROOT="finetuning/runs/canonical/$DATA_TAG"
+RESULT_ROOT="results/canonical/$DATA_TAG"
 
 python -m finetuning.src.evaluation.evaluate_judge \
-  --finetuned_model finetuning/runs/mistral7b_judge_gtsynth_verdict_only/lora_adapter \
-  --val_path finetuning/data/verdict_only/judge_val_synth_1k_stratified.xlsx \
-  --lit_path finetuning/data/verdict_only/judge_eval_gtlit_1k_stratified.xlsx \
-  --output_dir results_gtsynth_verdict_only \
+  --finetuned_model "$RUN_ROOT/mistral7b_judge_gtsynth_verdict_only/lora_adapter" \
+  --val_path "$DATA_ROOT/judge_val_synth_1k_stratified.xlsx" \
+  --lit_path "$DATA_ROOT/judge_eval_gtlit_1k_stratified.xlsx" \
+  --output_dir "$RESULT_ROOT/gtsynth_verdict_only" \
   --batch_size 16 \
   --model_label "Mistral-7B QLoRA (GT Synth trained, verdict-only)"
