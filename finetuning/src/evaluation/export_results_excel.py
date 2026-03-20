@@ -227,7 +227,7 @@ def _build_wide_summary(long_df: pd.DataFrame) -> pd.DataFrame:
     if long_df.empty:
         return pd.DataFrame()
 
-    value_cols = ["f1", "auc", "loss", "skip_rate", "accuracy", "n_scored", "eval_mode", "ground_truth_source"]
+    value_cols = ["f1", "auc", "loss", "skip_rate", "accuracy", "n_scored"]
     index_cols = ["model", "objective", "train_source", "kind"]
     pivot = long_df.pivot_table(
         index=index_cols,
@@ -244,28 +244,51 @@ def _build_wide_summary(long_df: pd.DataFrame) -> pd.DataFrame:
     )
     wide_df = wide_df.merge(run_dirs, on=index_cols, how="left")
 
+    gt_summary = (
+        long_df.groupby(index_cols, dropna=False)
+        .apply(
+            lambda g: "; ".join(
+                sorted(
+                    {
+                        f"{row['dataset_key']}={row['ground_truth_source']}"
+                        for _, row in g.iterrows()
+                        if pd.notna(row.get("ground_truth_source"))
+                    }
+                )
+            ),
+            include_groups=False,
+        )
+        .reset_index(name="ground_truth_sources")
+    )
+    wide_df = wide_df.merge(gt_summary, on=index_cols, how="left")
+
+    eval_mode_summary = (
+        long_df.groupby(index_cols, dropna=False)["eval_mode"]
+        .agg(lambda vals: ", ".join(sorted({str(v) for v in vals if pd.notna(v)})))
+        .reset_index(name="eval_mode")
+    )
+    wide_df = wide_df.merge(eval_mode_summary, on=index_cols, how="left")
+
     preferred_order = [
         "model",
         "objective",
         "train_source",
         "kind",
         "result_dirs",
+        "ground_truth_sources",
+        "eval_mode",
         "synth_test_f1",
         "synth_test_auc",
         "synth_test_loss",
         "synth_test_skip_rate",
         "synth_test_accuracy",
         "synth_test_n_scored",
-        "synth_test_ground_truth_source",
         "lit_test_f1",
         "lit_test_auc",
         "lit_test_loss",
         "lit_test_skip_rate",
         "lit_test_accuracy",
         "lit_test_n_scored",
-        "lit_test_ground_truth_source",
-        "synth_test_eval_mode",
-        "lit_test_eval_mode",
     ]
     existing = [col for col in preferred_order if col in wide_df.columns]
     remaining = [col for col in wide_df.columns if col not in existing]
