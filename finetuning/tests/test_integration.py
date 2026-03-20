@@ -1,5 +1,6 @@
 """Integration tests: data prep -> training data format compatibility."""
 
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -62,3 +63,108 @@ def test_full_config_flow():
 
     assert args.num_train_epochs == 1
     assert cfg.smoke_test is True
+
+
+def test_prepare_shared_edge_matrix_data_builds_aligned_disjoint_splits():
+    """Shared-edge prep should keep synth/lit partitions aligned without leakage."""
+    import argparse
+    import pandas as pd
+
+    from finetuning.src.data.prepare_shared_edge_matrix_data import main
+
+    prompt_spec = {
+        "system_prompt": "Judge causal explanations.",
+        "user_template": "SOURCE: {source}",
+        "completion_template": "VERDICT: {verdict}",
+    }
+
+    def make_rows(prefix: str, verdicts: list[str], *, extra_edge: tuple[str, str] | None = None):
+        rows = []
+        for idx, verdict in enumerate(verdicts):
+            rows.append(
+                {
+                    "prompt": f"{prefix} prompt {idx}",
+                    "completion": f"VERDICT: {verdict}",
+                    "source": f"S{idx}",
+                    "target": f"T{idx}",
+                    "domain": "depressive",
+                    "judge_verdict": verdict,
+                    "prompt_variant": "mechanistic",
+                }
+            )
+        if extra_edge is not None:
+            rows.append(
+                {
+                    "prompt": f"{prefix} extra",
+                    "completion": "VERDICT: CORRECT",
+                    "source": extra_edge[0],
+                    "target": extra_edge[1],
+                    "domain": "depressive",
+                    "judge_verdict": "CORRECT",
+                    "prompt_variant": "mechanistic",
+                }
+            )
+        return pd.DataFrame(rows)
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_root = Path(tmp_dir)
+        input_root = tmp_root / "canonical_input"
+        output_root = tmp_root / "canonical_shared"
+
+        for objective_mode in ["reason_verdict", "verdict_only"]:
+            mode_root = input_root / objective_mode
+            mode_root.mkdir(parents=True, exist_ok=True)
+
+            synth_train = make_rows("synth_train", ["CORRECT", "INCORRECT", "PARTIALLY_CORRECT"])
+            synth_val = make_rows("synth_val", ["CORRECT", "INCORRECT", "PARTIALLY_CORRECT"], extra_edge=("ONLY_SYNTH", "X"))
+            lit_eval = make_rows("lit_eval", ["INCORRECT", "PARTIALLY_CORRECT", "CORRECT", "CORRECT", "INCORRECT", "PARTIALLY_CORRECT"], extra_edge=("ONLY_LIT", "Y"))
+
+            synth_train.to_excel(mode_root / "judge_train.xlsx", index=False)
+            synth_val.to_excel(mode_root / "judge_val_synth.xlsx", index=False)
+            lit_eval.to_excel(mode_root / "judge_eval_gtlit.xlsx", index=False)
+
+            for stem in ["judge_train.xlsx", "judge_val_synth.xlsx", "judge_eval_gtlit.xlsx"]:
+                metadata_path = mode_root / f"{stem}.metadata.json"
+                metadata_path.write_text(json.dumps({"prompt_spec": prompt_spec}), encoding="utf-8")
+
+        main(
+            args=argparse.Namespace(
+                input_root=str(input_root),
+                output_root=str(output_root),
+                seed=42,
+                val_fraction=0.17,
+                test_fraction=0.17,
+                prompt_variant="mechanistic",
+                stratify_cols="domain",
+                force=False,
+            )
+        )
+
+        for objective_mode in ["reason_verdict", "verdict_only"]:
+            mode_root = output_root / objective_mode
+            synth_train = pd.read_excel(mode_root / "shared_train_synth.xlsx")
+            synth_val = pd.read_excel(mode_root / "shared_val_synth.xlsx")
+            synth_test = pd.read_excel(mode_root / "shared_test_synth.xlsx")
+            lit_train = pd.read_excel(mode_root / "shared_train_lit.xlsx")
+            lit_val = pd.read_excel(mode_root / "shared_val_lit.xlsx")
+            lit_test = pd.read_excel(mode_root / "shared_test_lit.xlsx")
+
+            def edge_keys(df: pd.DataFrame) -> set[tuple[str, str, str]]:
+                return set(map(tuple, df[["source", "target", "domain"]].drop_duplicates().itertuples(index=False, name=None)))
+
+            train_keys = edge_keys(synth_train)
+            val_keys = edge_keys(synth_val)
+            test_keys = edge_keys(synth_test)
+
+            assert train_keys
+            assert val_keys
+            assert test_keys
+            assert train_keys.isdisjoint(val_keys)
+            assert train_keys.isdisjoint(test_keys)
+            assert val_keys.isdisjoint(test_keys)
+            assert train_keys == edge_keys(lit_train)
+            assert val_keys == edge_keys(lit_val)
+            assert test_keys == edge_keys(lit_test)
+            assert ("ONLY_SYNTH", "X", "depressive") not in train_keys | val_keys | test_keys
+            assert ("ONLY_LIT", "Y", "depressive") not in train_keys | val_keys | test_keys
+            assert (mode_root / "shared_edge_split_manifest.json").exists()
