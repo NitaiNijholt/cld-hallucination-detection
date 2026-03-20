@@ -1,0 +1,54 @@
+{
+  "domain_counts": {
+    "depressive": 504,
+    "emergency_department": 2855,
+    "social_norms": 264
+  },
+  "file_name": "judge_train_gtlit.xlsx",
+  "file_sha256": "1b635dcc14b8340312c02c0ea5cc662c09d1d93ebaec10b765d522f482fce16f",
+  "judge_verdict_counts": {
+    "CORRECT": 2745,
+    "INCORRECT": 334,
+    "PARTIALLY_CORRECT": 544
+  },
+  "row_count": 3623,
+  "seed": 42,
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 630,
+      "emergency_department": 3568,
+      "social_norms": 330
+    },
+    "file_name": "judge_eval_gtlit.xlsx",
+    "file_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+    "judge_verdict_counts": {
+      "CORRECT": 3407,
+      "INCORRECT": 439,
+      "PARTIALLY_CORRECT": 682
+    },
+    "objective_mode": "verdict_only",
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "prompt_variant_counts": {
+      "mechanistic": 4528
+    },
+    "row_count": 4528,
+    "seed": 42,
+    "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+    "split_name": "gt_lit_eval",
+    "stratify_cols": [
+      "domain"
+    ],
+    "unique_edge_count": 1510
+  },
+  "source_path": "finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/judge_eval_gtlit.xlsx",
+  "source_path_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+  "split_name": "gt_lit_train",
+  "stratify_cols": [
+    "domain"
+  ],
+  "unique_edge_count": 1208
+}

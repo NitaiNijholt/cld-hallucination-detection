@@ -1,0 +1,2053 @@
+{
+  "input_root": "finetuning/data/canonical/62a7584-shared-edge-v1",
+  "objective_modes": {
+    "reason_verdict": {
+      "shared_test_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 36,
+            "emergency_department": 332,
+            "social_norms": 18
+          },
+          "file_name": "shared_test_lit.xlsx",
+          "file_sha256": "652b00e4e1bc3a3a2f097c3fc072a46a9db9776e30ba54f982bad68edad91010",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 292,
+            "INCORRECT": 22,
+            "PARTIALLY_CORRECT": 72
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 386
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 386,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_test_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_test_lit.xlsx"
+      },
+      "shared_test_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 46,
+            "emergency_department": 316,
+            "social_norms": 17
+          },
+          "file_name": "shared_test_synth.xlsx",
+          "file_sha256": "f014a51ca025a4e4c7aaed3039a3b4049250417baa0f08f0acc6e2f41d0d95be",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 217,
+            "INCORRECT": 51,
+            "PARTIALLY_CORRECT": 111
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 379
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 379,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "d3a3c54708c06aa2e7579391c8a30df59a0c30a9e5484c2d5fbcf27f9ae1a193",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_test_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_test_synth.xlsx"
+      },
+      "shared_train_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 333,
+            "emergency_department": 2619,
+            "social_norms": 117
+          },
+          "file_name": "shared_train_lit.xlsx",
+          "file_sha256": "0ac6d5fd7eab3ec474eeb9b176fd4ae8d33e4098fd0898294e100439a4942773",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 2481,
+            "INCORRECT": 219,
+            "PARTIALLY_CORRECT": 369
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 1029,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 3069
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 3069,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_train_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 1029
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx"
+      },
+      "shared_train_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 413,
+            "emergency_department": 2488,
+            "social_norms": 111
+          },
+          "file_name": "shared_train_synth.xlsx",
+          "file_sha256": "36ec7b0c42bd13b5979e80e596721ba6f711a716c5487a800f050213b87e7b2e",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 2006,
+            "INCORRECT": 299,
+            "PARTIALLY_CORRECT": 707
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 1029,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 3012
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 3012,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "d3a3c54708c06aa2e7579391c8a30df59a0c30a9e5484c2d5fbcf27f9ae1a193",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_train_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 1029
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_synth.xlsx"
+      },
+      "shared_val_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 39,
+            "emergency_department": 331,
+            "social_norms": 15
+          },
+          "file_name": "shared_val_lit.xlsx",
+          "file_sha256": "2eff26936d36e39fd69801b8cfeb56d3faa4004e95de25ed7debac050a13e2d0",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 312,
+            "INCORRECT": 29,
+            "PARTIALLY_CORRECT": 44
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 385
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 385,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_val_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx"
+      },
+      "shared_val_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 43,
+            "emergency_department": 320,
+            "social_norms": 15
+          },
+          "file_name": "shared_val_synth.xlsx",
+          "file_sha256": "8c393394bbf21a0c71856a86db5879db6c2d6282f9a1420fce07d9673a23b72c",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 261,
+            "INCORRECT": 38,
+            "PARTIALLY_CORRECT": 79
+          },
+          "objective_mode": "reason_verdict",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 378
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 378,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "d3a3c54708c06aa2e7579391c8a30df59a0c30a9e5484c2d5fbcf27f9ae1a193",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_val_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_synth.xlsx"
+      }
+    },
+    "verdict_only": {
+      "shared_test_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 36,
+            "emergency_department": 326,
+            "social_norms": 18
+          },
+          "file_name": "shared_test_lit.xlsx",
+          "file_sha256": "c7759e90fd394b0b85cb1e114a746f30283d7d594aa04c66d64309dc569ee7e1",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 292,
+            "INCORRECT": 16,
+            "PARTIALLY_CORRECT": 72
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 380
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 380,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_test_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_test_lit.xlsx"
+      },
+      "shared_test_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 33,
+            "emergency_department": 188,
+            "social_norms": 10
+          },
+          "file_name": "shared_test_synth.xlsx",
+          "file_sha256": "a8ce8fbe6fc561d591b855b833847c5722234aab999d49e5fab9b9352e45d036",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 90,
+            "INCORRECT": 39,
+            "PARTIALLY_CORRECT": 102
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 231
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 231,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "cbefa681b0597f6b57d38e39e6dbe63fb03c76f420c1e2032e05b45c4269f49d",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_test_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_test_synth.xlsx"
+      },
+      "shared_train_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 331,
+            "emergency_department": 2561,
+            "social_norms": 117
+          },
+          "file_name": "shared_train_lit.xlsx",
+          "file_sha256": "76dc68951e5db1033bae7fc8a83b8b6adff642a6efeaec4bcf38a6a98d2197c1",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 2481,
+            "INCORRECT": 160,
+            "PARTIALLY_CORRECT": 368
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 1029,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 3009
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 3009,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_train_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 1029
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_lit.xlsx"
+      },
+      "shared_train_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 242,
+            "emergency_department": 1355,
+            "social_norms": 59
+          },
+          "file_name": "shared_train_synth.xlsx",
+          "file_sha256": "1341b208f199206c3b7cb7378bf25b8fc1a25f88506f5e6f7c251523a4b538ab",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 827,
+            "INCORRECT": 212,
+            "PARTIALLY_CORRECT": 617
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 1029,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 1656
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 1656,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "cbefa681b0597f6b57d38e39e6dbe63fb03c76f420c1e2032e05b45c4269f49d",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_train_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 1029
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_synth.xlsx"
+      },
+      "shared_val_lit": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 39,
+            "emergency_department": 326,
+            "social_norms": 15
+          },
+          "file_name": "shared_val_lit.xlsx",
+          "file_sha256": "252dc234dc59a0c67c05fa238ff4816d45fb29461d9458be5e4957ec27620cbd",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 312,
+            "INCORRECT": 24,
+            "PARTIALLY_CORRECT": 44
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 380
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 380,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            }
+          ],
+          "source_name": "gt_lit",
+          "split_name": "shared_val_lit",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_lit.xlsx"
+      },
+      "shared_val_synth": {
+        "metadata": {
+          "domain_counts": {
+            "depressive": 24,
+            "emergency_department": 168,
+            "social_norms": 8
+          },
+          "file_name": "shared_val_synth.xlsx",
+          "file_sha256": "f1c8cb3646f76bf5e16ee9393b590524536e0f8d9196c25b2d3e239103f3aa83",
+          "input_paths": [
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_train.xlsx",
+            "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx"
+          ],
+          "judge_verdict_counts": {
+            "CORRECT": 106,
+            "INCORRECT": 29,
+            "PARTIALLY_CORRECT": 65
+          },
+          "objective_mode": "verdict_only",
+          "partition_edge_count": 129,
+          "prompt_spec": {
+            "completion_template": "VERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 200
+          },
+          "prompt_variant_filter": "mechanistic",
+          "row_count": 200,
+          "seed": 42,
+          "shared_edge_count": 1287,
+          "source_dataset_metadata": [
+            {
+              "domain_counts": {
+                "depressive": 488,
+                "emergency_department": 2972,
+                "social_norms": 135
+              },
+              "file_name": "judge_train.xlsx",
+              "file_sha256": "cbefa681b0597f6b57d38e39e6dbe63fb03c76f420c1e2032e05b45c4269f49d",
+              "judge_verdict_counts": {
+                "CORRECT": 2384,
+                "INCORRECT": 392,
+                "PARTIALLY_CORRECT": 819
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 3595
+              },
+              "row_count": 3595,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_train",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1158
+            },
+            {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            }
+          ],
+          "source_name": "gt_synth",
+          "split_name": "shared_val_synth",
+          "stratify_cols": [
+            "domain",
+            "judge_verdict_synth",
+            "judge_verdict_lit"
+          ],
+          "unique_edge_count": 129
+        },
+        "path": "finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_synth.xlsx"
+      }
+    }
+  },
+  "prompt_variant": "mechanistic",
+  "seed": 42,
+  "source_manifest": {
+    "git_sha": "2845bd6",
+    "objective_modes": {
+      "reason_verdict": {
+        "judge_eval_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 630,
+              "emergency_department": 3568,
+              "social_norms": 330
+            },
+            "file_name": "judge_eval_gtlit.xlsx",
+            "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+            "judge_verdict_counts": {
+              "CORRECT": 3407,
+              "INCORRECT": 439,
+              "PARTIALLY_CORRECT": 682
+            },
+            "objective_mode": "reason_verdict",
+            "prompt_spec": {
+              "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 4528
+            },
+            "row_count": 4528,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+            "split_name": "gt_lit_eval",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1510
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+        },
+        "judge_eval_gtlit_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 93,
+              "emergency_department": 93,
+              "social_norms": 93
+            },
+            "file_name": "judge_eval_gtlit_1k_stratified.xlsx",
+            "file_sha256": "57cd19eb5323b13bb5868e16ef408ca83932a46dc75bb51380f28f075562f7a2",
+            "judge_verdict_counts": {
+              "CORRECT": 93,
+              "INCORRECT": 93,
+              "PARTIALLY_CORRECT": 93
+            },
+            "row_count": 279,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+            "split_name": "GT Lit",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit_1k_stratified.xlsx"
+        },
+        "judge_test_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 63,
+              "emergency_department": 357,
+              "social_norms": 33
+            },
+            "file_name": "judge_test_gtlit.xlsx",
+            "file_sha256": "d09ba1996401d03b4f8422d23902f5d5fdffd0ae25163b3e7bc3c807c1376c2c",
+            "judge_verdict_counts": {
+              "CORRECT": 334,
+              "INCORRECT": 48,
+              "PARTIALLY_CORRECT": 71
+            },
+            "row_count": 453,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+            "split_name": "gt_lit_test",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 151
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/gt_lit_trainval/judge_test_gtlit.xlsx"
+        },
+        "judge_test_gtlit_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 9,
+              "emergency_department": 9,
+              "social_norms": 9
+            },
+            "file_name": "judge_test_gtlit_1k_stratified.xlsx",
+            "file_sha256": "5dfd213444663c4575aa9f0e67ab3fa097430a9a79b55a840f6e786a93584d29",
+            "judge_verdict_counts": {
+              "CORRECT": 9,
+              "INCORRECT": 9,
+              "PARTIALLY_CORRECT": 9
+            },
+            "row_count": 27,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 63,
+                "emergency_department": 357,
+                "social_norms": 33
+              },
+              "file_name": "judge_test_gtlit.xlsx",
+              "file_sha256": "d09ba1996401d03b4f8422d23902f5d5fdffd0ae25163b3e7bc3c807c1376c2c",
+              "judge_verdict_counts": {
+                "CORRECT": 334,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 71
+              },
+              "row_count": 453,
+              "seed": 42,
+              "source_dataset_metadata": {
+                "domain_counts": {
+                  "depressive": 630,
+                  "emergency_department": 3568,
+                  "social_norms": 330
+                },
+                "file_name": "judge_eval_gtlit.xlsx",
+                "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+                "judge_verdict_counts": {
+                  "CORRECT": 3407,
+                  "INCORRECT": 439,
+                  "PARTIALLY_CORRECT": 682
+                },
+                "objective_mode": "reason_verdict",
+                "prompt_spec": {
+                  "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                  "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                  "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+                },
+                "prompt_variant_counts": {
+                  "mechanistic": 4528
+                },
+                "row_count": 4528,
+                "seed": 42,
+                "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+                "split_name": "gt_lit_eval",
+                "stratify_cols": [
+                  "domain"
+                ],
+                "unique_edge_count": 1510
+              },
+              "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx",
+              "source_path_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "split_name": "gt_lit_test",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 151
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/gt_lit_trainval/judge_test_gtlit.xlsx",
+            "source_path_sha256": "d09ba1996401d03b4f8422d23902f5d5fdffd0ae25163b3e7bc3c807c1376c2c",
+            "split_name": "gt_lit_test_frozen_subset",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/gt_lit_trainval/judge_test_gtlit_1k_stratified.xlsx"
+        },
+        "judge_train": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 488,
+              "emergency_department": 2972,
+              "social_norms": 135
+            },
+            "file_name": "judge_train.xlsx",
+            "file_sha256": "d3a3c54708c06aa2e7579391c8a30df59a0c30a9e5484c2d5fbcf27f9ae1a193",
+            "judge_verdict_counts": {
+              "CORRECT": 2384,
+              "INCORRECT": 392,
+              "PARTIALLY_CORRECT": 819
+            },
+            "objective_mode": "reason_verdict",
+            "prompt_spec": {
+              "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 3595
+            },
+            "row_count": 3595,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+            "split_name": "gt_synth_train",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1158
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_train.xlsx"
+        },
+        "judge_train_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 504,
+              "emergency_department": 2855,
+              "social_norms": 264
+            },
+            "file_name": "judge_train_gtlit.xlsx",
+            "file_sha256": "e5417fc69de719a9a079a32514c11b2ba3acb24d4a6c47749fc07437688d0cd0",
+            "judge_verdict_counts": {
+              "CORRECT": 2745,
+              "INCORRECT": 334,
+              "PARTIALLY_CORRECT": 544
+            },
+            "row_count": 3623,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+            "split_name": "gt_lit_train",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1208
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/gt_lit_trainval/judge_train_gtlit.xlsx"
+        },
+        "judge_val_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 63,
+              "emergency_department": 356,
+              "social_norms": 33
+            },
+            "file_name": "judge_val_gtlit.xlsx",
+            "file_sha256": "911b314c5733b8303160ee307e66bf5a4401c884936907691553494dff92e5a7",
+            "judge_verdict_counts": {
+              "CORRECT": 328,
+              "INCORRECT": 57,
+              "PARTIALLY_CORRECT": 67
+            },
+            "row_count": 452,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+            "split_name": "gt_lit_val",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 151
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/gt_lit_trainval/judge_val_gtlit.xlsx"
+        },
+        "judge_val_synth": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 56,
+              "emergency_department": 329,
+              "social_norms": 15
+            },
+            "file_name": "judge_val_synth.xlsx",
+            "file_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+            "judge_verdict_counts": {
+              "CORRECT": 259,
+              "INCORRECT": 48,
+              "PARTIALLY_CORRECT": 93
+            },
+            "objective_mode": "reason_verdict",
+            "prompt_spec": {
+              "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 400
+            },
+            "row_count": 400,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+            "split_name": "gt_synth_val",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 129
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth.xlsx"
+        },
+        "judge_val_synth_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 12,
+              "emergency_department": 12,
+              "social_norms": 12
+            },
+            "file_name": "judge_val_synth_1k_stratified.xlsx",
+            "file_sha256": "61f4eb59c8004bd49c3627ced5ceecdb8ecdca1187fa0174b4b901475225c457",
+            "judge_verdict_counts": {
+              "CORRECT": 12,
+              "INCORRECT": 12,
+              "PARTIALLY_CORRECT": 12
+            },
+            "row_count": 36,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "reason_verdict",
+              "prompt_spec": {
+                "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth.xlsx",
+            "source_path_sha256": "643a918d8e2a9476346413a171eb6904f5e2f1557d8cfe460df9912658efe73a",
+            "split_name": "GT Synth Val",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_val_synth_1k_stratified.xlsx"
+        }
+      },
+      "verdict_only": {
+        "judge_eval_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 630,
+              "emergency_department": 3568,
+              "social_norms": 330
+            },
+            "file_name": "judge_eval_gtlit.xlsx",
+            "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+            "judge_verdict_counts": {
+              "CORRECT": 3407,
+              "INCORRECT": 439,
+              "PARTIALLY_CORRECT": 682
+            },
+            "objective_mode": "verdict_only",
+            "prompt_spec": {
+              "completion_template": "VERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 4528
+            },
+            "row_count": 4528,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+            "split_name": "gt_lit_eval",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1510
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+        },
+        "judge_eval_gtlit_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 93,
+              "emergency_department": 93,
+              "social_norms": 93
+            },
+            "file_name": "judge_eval_gtlit_1k_stratified.xlsx",
+            "file_sha256": "c7a949f5d12854eb304830f9f32a3f4936580a606ad6a2afe12988d5444bbbdc",
+            "judge_verdict_counts": {
+              "CORRECT": 93,
+              "INCORRECT": 93,
+              "PARTIALLY_CORRECT": 93
+            },
+            "row_count": 279,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+            "split_name": "GT Lit",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit_1k_stratified.xlsx"
+        },
+        "judge_test_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 63,
+              "emergency_department": 357,
+              "social_norms": 33
+            },
+            "file_name": "judge_test_gtlit.xlsx",
+            "file_sha256": "56cdb31e4b7df2a9015f447fa3e9d95cee5a7e2a9d1da4ec9890a583d9f5b2b3",
+            "judge_verdict_counts": {
+              "CORRECT": 334,
+              "INCORRECT": 48,
+              "PARTIALLY_CORRECT": 71
+            },
+            "row_count": 453,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+            "split_name": "gt_lit_test",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 151
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_test_gtlit.xlsx"
+        },
+        "judge_test_gtlit_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 9,
+              "emergency_department": 9,
+              "social_norms": 9
+            },
+            "file_name": "judge_test_gtlit_1k_stratified.xlsx",
+            "file_sha256": "8f22c3d75d2cc0f37b54c061d8592727d9ae127d118e847debaebcbd6215c744",
+            "judge_verdict_counts": {
+              "CORRECT": 9,
+              "INCORRECT": 9,
+              "PARTIALLY_CORRECT": 9
+            },
+            "row_count": 27,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 63,
+                "emergency_department": 357,
+                "social_norms": 33
+              },
+              "file_name": "judge_test_gtlit.xlsx",
+              "file_sha256": "56cdb31e4b7df2a9015f447fa3e9d95cee5a7e2a9d1da4ec9890a583d9f5b2b3",
+              "judge_verdict_counts": {
+                "CORRECT": 334,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 71
+              },
+              "row_count": 453,
+              "seed": 42,
+              "source_dataset_metadata": {
+                "domain_counts": {
+                  "depressive": 630,
+                  "emergency_department": 3568,
+                  "social_norms": 330
+                },
+                "file_name": "judge_eval_gtlit.xlsx",
+                "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+                "judge_verdict_counts": {
+                  "CORRECT": 3407,
+                  "INCORRECT": 439,
+                  "PARTIALLY_CORRECT": 682
+                },
+                "objective_mode": "verdict_only",
+                "prompt_spec": {
+                  "completion_template": "VERDICT: {verdict}",
+                  "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                  "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+                },
+                "prompt_variant_counts": {
+                  "mechanistic": 4528
+                },
+                "row_count": 4528,
+                "seed": 42,
+                "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+                "split_name": "gt_lit_eval",
+                "stratify_cols": [
+                  "domain"
+                ],
+                "unique_edge_count": 1510
+              },
+              "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+              "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "split_name": "gt_lit_test",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 151
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_test_gtlit.xlsx",
+            "source_path_sha256": "56cdb31e4b7df2a9015f447fa3e9d95cee5a7e2a9d1da4ec9890a583d9f5b2b3",
+            "split_name": "gt_lit_test_frozen_subset",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_test_gtlit_1k_stratified.xlsx"
+        },
+        "judge_train": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 488,
+              "emergency_department": 2972,
+              "social_norms": 135
+            },
+            "file_name": "judge_train.xlsx",
+            "file_sha256": "cbefa681b0597f6b57d38e39e6dbe63fb03c76f420c1e2032e05b45c4269f49d",
+            "judge_verdict_counts": {
+              "CORRECT": 2384,
+              "INCORRECT": 392,
+              "PARTIALLY_CORRECT": 819
+            },
+            "objective_mode": "verdict_only",
+            "prompt_spec": {
+              "completion_template": "VERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 3595
+            },
+            "row_count": 3595,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+            "split_name": "gt_synth_train",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1158
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_train.xlsx"
+        },
+        "judge_train_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 504,
+              "emergency_department": 2855,
+              "social_norms": 264
+            },
+            "file_name": "judge_train_gtlit.xlsx",
+            "file_sha256": "60f94b30e32081dbf122e29418d1d947b135d0e0072e938e0e847f256deb25d6",
+            "judge_verdict_counts": {
+              "CORRECT": 2745,
+              "INCORRECT": 334,
+              "PARTIALLY_CORRECT": 544
+            },
+            "row_count": 3623,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+            "split_name": "gt_lit_train",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 1208
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx"
+        },
+        "judge_val_gtlit": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 63,
+              "emergency_department": 356,
+              "social_norms": 33
+            },
+            "file_name": "judge_val_gtlit.xlsx",
+            "file_sha256": "57a98512f136f1e67f390ca6da25b580ead3aad26df119f2b7c289db388adc4e",
+            "judge_verdict_counts": {
+              "CORRECT": 328,
+              "INCORRECT": 57,
+              "PARTIALLY_CORRECT": 67
+            },
+            "row_count": 452,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 630,
+                "emergency_department": 3568,
+                "social_norms": 330
+              },
+              "file_name": "judge_eval_gtlit.xlsx",
+              "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+              "judge_verdict_counts": {
+                "CORRECT": 3407,
+                "INCORRECT": 439,
+                "PARTIALLY_CORRECT": 682
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 4528
+              },
+              "row_count": 4528,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+              "split_name": "gt_lit_eval",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 1510
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+            "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+            "split_name": "gt_lit_val",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 151
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx"
+        },
+        "judge_val_synth": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 56,
+              "emergency_department": 329,
+              "social_norms": 15
+            },
+            "file_name": "judge_val_synth.xlsx",
+            "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+            "judge_verdict_counts": {
+              "CORRECT": 259,
+              "INCORRECT": 48,
+              "PARTIALLY_CORRECT": 93
+            },
+            "objective_mode": "verdict_only",
+            "prompt_spec": {
+              "completion_template": "VERDICT: {verdict}",
+              "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+              "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+            },
+            "prompt_variant_counts": {
+              "mechanistic": 400
+            },
+            "row_count": 400,
+            "seed": 42,
+            "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+            "split_name": "gt_synth_val",
+            "stratify_cols": [
+              "domain"
+            ],
+            "unique_edge_count": 129
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx"
+        },
+        "judge_val_synth_1k": {
+          "metadata": {
+            "domain_counts": {
+              "depressive": 12,
+              "emergency_department": 12,
+              "social_norms": 12
+            },
+            "file_name": "judge_val_synth_1k_stratified.xlsx",
+            "file_sha256": "edfb9d4e92decee28351dfd806fe03b12e647abd0d3a84c6364eec1988f9e35d",
+            "judge_verdict_counts": {
+              "CORRECT": 12,
+              "INCORRECT": 12,
+              "PARTIALLY_CORRECT": 12
+            },
+            "row_count": 36,
+            "seed": 42,
+            "source_dataset_metadata": {
+              "domain_counts": {
+                "depressive": 56,
+                "emergency_department": 329,
+                "social_norms": 15
+              },
+              "file_name": "judge_val_synth.xlsx",
+              "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+              "judge_verdict_counts": {
+                "CORRECT": 259,
+                "INCORRECT": 48,
+                "PARTIALLY_CORRECT": 93
+              },
+              "objective_mode": "verdict_only",
+              "prompt_spec": {
+                "completion_template": "VERDICT: {verdict}",
+                "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+                "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+              },
+              "prompt_variant_counts": {
+                "mechanistic": 400
+              },
+              "row_count": 400,
+              "seed": 42,
+              "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+              "split_name": "gt_synth_val",
+              "stratify_cols": [
+                "domain"
+              ],
+              "unique_edge_count": 129
+            },
+            "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx",
+            "source_path_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+            "split_name": "GT Synth Val",
+            "stratify_cols": [
+              "domain"
+            ]
+          },
+          "path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth_1k_stratified.xlsx"
+        }
+      }
+    },
+    "seed": 42,
+    "stratify_cols": "domain",
+    "target_n": 1000,
+    "test_fraction": 0.1,
+    "val_fraction": 0.1
+  },
+  "source_manifest_path": "finetuning/data/canonical/62a7584-shared-edge-v1/canonical_manifest.json",
+  "stratify_cols": [
+    "domain",
+    "judge_verdict_synth",
+    "judge_verdict_lit"
+  ],
+  "test_fraction": 0.1,
+  "val_fraction": 0.1
+}

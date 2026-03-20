@@ -7,13 +7,14 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=00:20:00
-#SBATCH --output=finetuning/logs/%x_%j.out
-#SBATCH --error=finetuning/logs/%x_%j.err
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
 
 set -euo pipefail
 
 REPO_DIR="$HOME/cld-hallucination-detection"
 ENV_DIR="$REPO_DIR/venv"
+SCRATCH_ROOT="/scratch-shared/nnijholt/cld-hallucination-detection"
 
 echo "=========================================="
 echo "Job   : $SLURM_JOB_ID  (smoke test)"
@@ -24,13 +25,15 @@ echo "=========================================="
 module purge
 
 cd "$REPO_DIR"
-mkdir -p finetuning/logs finetuning/runs
+mkdir -p "$SCRATCH_ROOT/logs" "$SCRATCH_ROOT/runs"
 
 source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
 export PYTHONUNBUFFERED=1
-python -m finetuning.src.training.train_judge --config-name test_batch
+python -m finetuning.src.training.train_judge \
+  --config-name test_batch \
+  output_dir="$SCRATCH_ROOT/runs/test_batch_smoke"
 
 echo "=========================================="
 echo "Done : $(date)"

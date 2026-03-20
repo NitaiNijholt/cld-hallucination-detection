@@ -1,0 +1,76 @@
+{
+  "domain_counts": {
+    "depressive": 9,
+    "emergency_department": 9,
+    "social_norms": 9
+  },
+  "file_name": "judge_test_gtlit_1k_stratified.xlsx",
+  "file_sha256": "8f22c3d75d2cc0f37b54c061d8592727d9ae127d118e847debaebcbd6215c744",
+  "judge_verdict_counts": {
+    "CORRECT": 9,
+    "INCORRECT": 9,
+    "PARTIALLY_CORRECT": 9
+  },
+  "row_count": 27,
+  "seed": 42,
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 63,
+      "emergency_department": 357,
+      "social_norms": 33
+    },
+    "file_name": "judge_test_gtlit.xlsx",
+    "file_sha256": "56cdb31e4b7df2a9015f447fa3e9d95cee5a7e2a9d1da4ec9890a583d9f5b2b3",
+    "judge_verdict_counts": {
+      "CORRECT": 334,
+      "INCORRECT": 48,
+      "PARTIALLY_CORRECT": 71
+    },
+    "row_count": 453,
+    "seed": 42,
+    "source_dataset_metadata": {
+      "domain_counts": {
+        "depressive": 630,
+        "emergency_department": 3568,
+        "social_norms": 330
+      },
+      "file_name": "judge_eval_gtlit.xlsx",
+      "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+      "judge_verdict_counts": {
+        "CORRECT": 3407,
+        "INCORRECT": 439,
+        "PARTIALLY_CORRECT": 682
+      },
+      "objective_mode": "verdict_only",
+      "prompt_spec": {
+        "completion_template": "VERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 4528
+      },
+      "row_count": 4528,
+      "seed": 42,
+      "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+      "split_name": "gt_lit_eval",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 1510
+    },
+    "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+    "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+    "split_name": "gt_lit_test",
+    "stratify_cols": [
+      "domain"
+    ],
+    "unique_edge_count": 151
+  },
+  "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/gt_lit_trainval/judge_test_gtlit.xlsx",
+  "source_path_sha256": "56cdb31e4b7df2a9015f447fa3e9d95cee5a7e2a9d1da4ec9890a583d9f5b2b3",
+  "split_name": "gt_lit_test_frozen_subset",
+  "stratify_cols": [
+    "domain"
+  ]
+}

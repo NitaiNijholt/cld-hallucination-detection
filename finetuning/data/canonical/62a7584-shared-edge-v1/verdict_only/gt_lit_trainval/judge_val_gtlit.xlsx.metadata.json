@@ -1,0 +1,54 @@
+{
+  "domain_counts": {
+    "depressive": 63,
+    "emergency_department": 356,
+    "social_norms": 33
+  },
+  "file_name": "judge_val_gtlit.xlsx",
+  "file_sha256": "57a98512f136f1e67f390ca6da25b580ead3aad26df119f2b7c289db388adc4e",
+  "judge_verdict_counts": {
+    "CORRECT": 328,
+    "INCORRECT": 57,
+    "PARTIALLY_CORRECT": 67
+  },
+  "row_count": 452,
+  "seed": 42,
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 630,
+      "emergency_department": 3568,
+      "social_norms": 330
+    },
+    "file_name": "judge_eval_gtlit.xlsx",
+    "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+    "judge_verdict_counts": {
+      "CORRECT": 3407,
+      "INCORRECT": 439,
+      "PARTIALLY_CORRECT": 682
+    },
+    "objective_mode": "verdict_only",
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "prompt_variant_counts": {
+      "mechanistic": 4528
+    },
+    "row_count": 4528,
+    "seed": 42,
+    "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+    "split_name": "gt_lit_eval",
+    "stratify_cols": [
+      "domain"
+    ],
+    "unique_edge_count": 1510
+  },
+  "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx",
+  "source_path_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+  "split_name": "gt_lit_val",
+  "stratify_cols": [
+    "domain"
+  ],
+  "unique_edge_count": 151
+}

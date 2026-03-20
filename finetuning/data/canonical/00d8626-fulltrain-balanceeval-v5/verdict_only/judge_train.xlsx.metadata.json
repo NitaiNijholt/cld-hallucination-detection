@@ -1,0 +1,31 @@
+{
+  "domain_counts": {
+    "depressive": 488,
+    "emergency_department": 2972,
+    "social_norms": 135
+  },
+  "file_name": "judge_train.xlsx",
+  "file_sha256": "b4898db4665511b8649bd9e47898a42db8fdb56e135289d20d89a3aba23c0b3c",
+  "judge_verdict_counts": {
+    "CORRECT": 2384,
+    "INCORRECT": 392,
+    "PARTIALLY_CORRECT": 819
+  },
+  "objective_mode": "verdict_only",
+  "prompt_spec": {
+    "completion_template": "VERDICT: {verdict}",
+    "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+    "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+  },
+  "prompt_variant_counts": {
+    "mechanistic": 3595
+  },
+  "row_count": 3595,
+  "seed": 42,
+  "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+  "split_name": "gt_synth_train",
+  "stratify_cols": [
+    "domain"
+  ],
+  "unique_edge_count": 1158
+}

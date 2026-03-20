@@ -1,0 +1,39 @@
+#!/bin/bash
+#SBATCH --job-name=cld_prepare_shared
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=02:00:00
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
+
+set -euo pipefail
+
+REPO_DIR="$HOME/cld-hallucination-detection"
+ENV_DIR="$REPO_DIR/venv"
+SCRATCH_ROOT="/scratch-shared/nnijholt/cld-hallucination-detection"
+
+module purge
+cd "$REPO_DIR"
+mkdir -p "$SCRATCH_ROOT/logs" finetuning/data/canonical_shared
+source "$ENV_DIR/bin/activate"
+
+export REPO_ROOT="$REPO_DIR"
+export PYTHONUNBUFFERED=1
+
+DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
+CANONICAL_ROOT="finetuning/data/canonical/$DATA_TAG"
+SHARED_ROOT="finetuning/data/canonical_shared/$DATA_TAG"
+
+"$ENV_DIR/bin/python" -m finetuning.src.data.prepare_shared_edge_matrix_data \
+  --input-root "$CANONICAL_ROOT" \
+  --output-root "$SHARED_ROOT" \
+  --seed 42 \
+  --val-fraction 0.10 \
+  --test-fraction 0.10 \
+  --prompt-variant mechanistic \
+  --stratify-cols domain,judge_verdict_synth,judge_verdict_lit \
+  --force

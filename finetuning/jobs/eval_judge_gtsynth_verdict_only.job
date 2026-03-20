@@ -7,17 +7,18 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=24:00:00
-#SBATCH --output=finetuning/logs/%x_%j.out
-#SBATCH --error=finetuning/logs/%x_%j.err
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
 
 set -euo pipefail
 
 REPO_DIR="$HOME/cld-hallucination-detection"
 ENV_DIR="$REPO_DIR/venv"
+SCRATCH_ROOT="/scratch-shared/nnijholt/cld-hallucination-detection"
 
 module purge
 cd "$REPO_DIR"
-mkdir -p finetuning/logs results/canonical
+mkdir -p "$SCRATCH_ROOT/logs" "$SCRATCH_ROOT/results/canonical"
 source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
@@ -25,8 +26,8 @@ export PYTHONUNBUFFERED=1
 
 DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
 DATA_ROOT="finetuning/data/canonical/$DATA_TAG/verdict_only"
-RUN_ROOT="finetuning/runs/canonical/$DATA_TAG"
-RESULT_ROOT="results/canonical/$DATA_TAG"
+RUN_ROOT="${RUN_ROOT:-$SCRATCH_ROOT/runs/canonical/$DATA_TAG}"
+RESULT_ROOT="${RESULT_ROOT:-$SCRATCH_ROOT/results/canonical/$DATA_TAG}"
 
 "$ENV_DIR/bin/python" -m finetuning.src.evaluation.evaluate_judge \
   --finetuned_model "$RUN_ROOT/mistral7b_judge_gtsynth_verdict_only/lora_adapter" \

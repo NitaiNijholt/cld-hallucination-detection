@@ -52,6 +52,7 @@ THESIS_BASELINES = {
     "GT Synth": {"f1": 0.74, "auc": 0.86},
     "GT Lit": {"f1": 0.35, "auc": 0.60},
 }
+EVAL_MODES = ("teacher_verdict", "ground_truth")
 
 from .eval_utils import INCORRECT, VERDICT_LABELS, parse_verdict
 from ..metadata_utils import load_json, sha256_file, sidecar_metadata_path, write_json
@@ -107,6 +108,33 @@ def parse_args() -> argparse.Namespace:
         help="Path to GT Lit eval xlsx",
     )
     p.add_argument(
+        "--val_label",
+        default="GT Synth Val",
+        help="Display label for the first evaluation split",
+    )
+    p.add_argument(
+        "--lit_label",
+        default="GT Lit",
+        help="Display label for the second evaluation split",
+    )
+    p.add_argument(
+        "--benchmark_label",
+        default="Judge Benchmark",
+        help="Display label for summary reporting",
+    )
+    p.add_argument(
+        "--include_thesis_baselines",
+        action="store_true",
+        help="Include hard-coded thesis GPT-4.1 baselines in the summary when matching labels exist",
+    )
+    p.add_argument(
+        "--no_include_thesis_baselines",
+        dest="include_thesis_baselines",
+        action="store_false",
+        help="Do not include hard-coded thesis GPT-4.1 baselines in the summary",
+    )
+    p.set_defaults(include_thesis_baselines=True)
+    p.add_argument(
         "--max_new_tokens",
         type=int,
         default=512,
@@ -136,6 +164,12 @@ def parse_args() -> argparse.Namespace:
         "--model_label",
         default=None,
         help="Optional display label for the finetuned model in reports",
+    )
+    p.add_argument(
+        "--eval_mode",
+        choices=EVAL_MODES,
+        default="teacher_verdict",
+        help="Score against teacher verdict labels or actual ground-truth labels",
     )
     return p.parse_args()
 
@@ -296,6 +330,49 @@ def run_inference(
     return outputs
 
 
+def _coerce_boolish(value) -> int | None:
+    if pd.isna(value):
+        return None
+    if isinstance(value, (bool, np.bool_)):
+        return int(bool(value))
+    if isinstance(value, (int, np.integer)):
+        return int(value != 0)
+    if isinstance(value, float):
+        if np.isnan(value):
+            return None
+        return int(value != 0.0)
+    text = str(value).strip().lower()
+    if text in {"1", "1.0", "true", "t", "yes", "y"}:
+        return 1
+    if text in {"0", "0.0", "false", "f", "no", "n"}:
+        return 0
+    return None
+
+
+def _resolve_ground_truth_targets(df: pd.DataFrame) -> tuple[pd.Series, str]:
+    if "is_corrupted" in df.columns:
+        mapped = df["is_corrupted"].map(_coerce_boolish)
+        usable = mapped.dropna().astype(int)
+        if not usable.empty and usable.nunique() > 1:
+            return mapped, "is_corrupted"
+
+    if "classification" in df.columns:
+        mapping = {"TP": 0, "TN": 0, "FP": 1, "FN": 1}
+        mapped = df["classification"].astype(str).str.strip().str.upper().map(mapping)
+        usable = mapped.dropna().astype(int)
+        if not usable.empty and usable.nunique() > 1:
+            return mapped, "classification"
+
+    raise ValueError(
+        "Ground-truth eval mode requires either `is_corrupted` with both classes present "
+        "or `classification` containing TP/TN/FP/FN."
+    )
+
+
+def _predicted_hallucination_label(verdict: str) -> int:
+    return int(verdict in {INCORRECT, "PARTIALLY_CORRECT"})
+
+
 def evaluate_on_df(
     df: pd.DataFrame,
     max_new_tokens: int,
@@ -304,6 +381,7 @@ def evaluate_on_df(
     model=None,
     tokenizer=None,
     run_inference_fn=None,
+    eval_mode: str = "teacher_verdict",
 ) -> dict:
     """Run inference and compute metrics for one evaluation split.
     Pass either (model, tokenizer) for HF, or run_inference_fn for vLLM.
@@ -327,32 +405,64 @@ def evaluate_on_df(
 
     df.loc[~df["predicted"].isin(VERDICT_LABELS), "predicted"] = INCORRECT
 
-    y_true_3 = df["judge_verdict"].tolist()
-    y_pred_3 = df["predicted"].tolist()
+    if eval_mode == "teacher_verdict":
+        y_true = df["judge_verdict"].tolist()
+        y_pred = df["predicted"].tolist()
+        f1_value = f1_score(
+            y_true, y_pred, labels=VERDICT_LABELS, average="macro", zero_division=0
+        )
+        accuracy = accuracy_score(y_true, y_pred)
+        y_true_auc = [1 if v == INCORRECT else 0 for v in y_true]
+        y_pred_auc = [1 if v == INCORRECT else 0 for v in y_pred]
+        try:
+            auc = roc_auc_score(y_true_auc, y_pred_auc)
+        except ValueError:
+            auc = float("nan")
+        report = classification_report(y_true, y_pred, labels=VERDICT_LABELS, zero_division=0)
+        cm = confusion_matrix(y_true, y_pred, labels=VERDICT_LABELS)
+        cm_labels = VERDICT_LABELS
+        truth_source = "judge_verdict"
+        metric_name = "macro_f1_teacher_verdict"
+    else:
+        y_true_series, truth_source = _resolve_ground_truth_targets(df)
+        gt_mask = y_true_series.notna()
+        y_true = y_true_series[gt_mask].astype(int).tolist()
+        y_pred = [
+            _predicted_hallucination_label(v)
+            for v in df.loc[gt_mask, "predicted"].tolist()
+        ]
+        f1_value = f1_score(y_true, y_pred, zero_division=0)
+        accuracy = accuracy_score(y_true, y_pred)
+        try:
+            auc = roc_auc_score(y_true, y_pred)
+        except ValueError:
+            auc = float("nan")
+        report = classification_report(
+            y_true,
+            y_pred,
+            labels=[0, 1],
+            target_names=["clean", "hallucination"],
+            zero_division=0,
+        )
+        cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+        cm_labels = ["clean", "hallucination"]
+        metric_name = "binary_f1_ground_truth"
 
-    f1_macro = f1_score(
-        y_true_3, y_pred_3, labels=VERDICT_LABELS, average="macro", zero_division=0
-    )
-    accuracy = accuracy_score(y_true_3, y_pred_3)
-
-    y_true_bin = [1 if v == INCORRECT else 0 for v in y_true_3]
-    y_pred_bin = [1 if v == INCORRECT else 0 for v in y_pred_3]
-    try:
-        auc = roc_auc_score(y_true_bin, y_pred_bin)
-    except ValueError:
-        auc = float("nan")
-
-    logger.info("%s  F1=%.3f  AUC=%.3f", dataset_label, f1_macro, auc)
-    logger.info("\n%s", classification_report(y_true_3, y_pred_3, labels=VERDICT_LABELS, zero_division=0))
+    logger.info("%s  F1=%.3f  AUC=%.3f", dataset_label, f1_value, auc)
+    logger.info("\n%s", report)
 
     result = {
         "dataset": dataset_label,
         "n_total": len(df),
         "n_valid": len(valid),
+        "n_scored": len(y_pred),
         "skip_rate": round(skip_rate, 4),
         "accuracy": round(accuracy, 4),
-        "f1_macro": round(f1_macro, 4),
+        "f1_macro": round(f1_value, 4),
         "auc": round(auc, 4),
+        "eval_mode": eval_mode,
+        "f1_metric": metric_name,
+        "ground_truth_source": truth_source,
         "predictions": df[
             [
                 c
@@ -372,8 +482,8 @@ def evaluate_on_df(
         ].to_dict(orient="records"),
     }
 
-    cm = confusion_matrix(y_true_3, y_pred_3, labels=VERDICT_LABELS)
     result["confusion_matrix"] = cm.tolist()
+    result["confusion_matrix_labels"] = cm_labels
 
     return result
 
@@ -389,10 +499,25 @@ def plot_confusion(results: list[dict], output_dir: str) -> None:
         cm_norm = cm.astype(float) / cm.sum(axis=1, keepdims=True).clip(1)
         im = ax.imshow(cm_norm, interpolation="nearest", cmap="Blues", vmin=0, vmax=1)
         plt.colorbar(im, ax=ax)
-        ax.set_xticks(range(len(VERDICT_LABELS)))
-        ax.set_yticks(range(len(VERDICT_LABELS)))
-        ax.set_xticklabels(["COR", "PART", "INCOR"], rotation=45, ha="right", fontsize=8)
-        ax.set_yticklabels(["COR", "PART", "INCOR"], fontsize=8)
+        labels = res.get("confusion_matrix_labels", VERDICT_LABELS)
+        short_labels = []
+        for label in labels:
+            if label == "CORRECT":
+                short_labels.append("COR")
+            elif label == "PARTIALLY_CORRECT":
+                short_labels.append("PART")
+            elif label == "INCORRECT":
+                short_labels.append("INCOR")
+            elif label == "hallucination":
+                short_labels.append("HALL")
+            elif label == "clean":
+                short_labels.append("CLEAN")
+            else:
+                short_labels.append(str(label))
+        ax.set_xticks(range(len(labels)))
+        ax.set_yticks(range(len(labels)))
+        ax.set_xticklabels(short_labels, rotation=45, ha="right", fontsize=8)
+        ax.set_yticklabels(short_labels, fontsize=8)
         ax.set_title(
             f"{res['model_label']}\n{res['dataset']}\nF1={res['f1_macro']:.3f}  AUC={res['auc']:.3f}",
             fontsize=9,
@@ -413,19 +538,42 @@ def plot_confusion(results: list[dict], output_dir: str) -> None:
     plt.close()
 
 
-def print_summary_table(all_results: list[dict]) -> None:
+def _summary_columns(val_label: str, lit_label: str) -> dict[str, str]:
+    return {
+        "val_f1": f"{val_label} F1",
+        "val_auc": f"{val_label} AUC",
+        "val_parse": f"{val_label} Parse%",
+        "val_loss": f"{val_label} loss",
+        "lit_f1": f"{lit_label} F1",
+        "lit_auc": f"{lit_label} AUC",
+        "lit_parse": f"{lit_label} Parse%",
+    }
+
+
+def print_summary_table(
+    all_results: list[dict],
+    *,
+    val_label: str,
+    lit_label: str,
+    benchmark_label: str,
+    include_thesis_baselines: bool,
+) -> list[dict]:
+    columns = _summary_columns(val_label, lit_label)
     rows = []
-    rows.append({
-        "model": "GPT-4.1 Mechanistic (thesis)",
-        "GT Synth F1": f"{THESIS_BASELINES['GT Synth']['f1']:.2f}",
-        "GT Synth AUC": f"{THESIS_BASELINES['GT Synth']['auc']:.2f}",
-        "GT Synth Parse%": "-",
-        "GT Synth Val loss": "-",
-        "GT Lit F1": f"{THESIS_BASELINES['GT Lit']['f1']:.2f}",
-        "GT Lit AUC": f"{THESIS_BASELINES['GT Lit']['auc']:.2f}",
-        "GT Lit Parse%": "-",
-        "Cost/1k": "~$0.30",
-    })
+    thesis_baseline_row = None
+    if include_thesis_baselines and val_label in THESIS_BASELINES and lit_label in THESIS_BASELINES:
+        thesis_baseline_row = {
+            "model": "GPT-4.1 Mechanistic (thesis)",
+            columns["val_f1"]: f"{THESIS_BASELINES[val_label]['f1']:.2f}",
+            columns["val_auc"]: f"{THESIS_BASELINES[val_label]['auc']:.2f}",
+            columns["val_parse"]: "-",
+            columns["val_loss"]: "-",
+            columns["lit_f1"]: f"{THESIS_BASELINES[lit_label]['f1']:.2f}",
+            columns["lit_auc"]: f"{THESIS_BASELINES[lit_label]['auc']:.2f}",
+            columns["lit_parse"]: "-",
+            "Cost/1k": "~$0.30",
+        }
+        rows.append(thesis_baseline_row)
 
     model_names = list(dict.fromkeys(r["model_label"] for r in all_results))
     for model_name in model_names:
@@ -433,44 +581,50 @@ def print_summary_table(all_results: list[dict]) -> None:
         for r in all_results:
             if r["model_label"] != model_name:
                 continue
-            if "Synth" in r["dataset"]:
-                row["GT Synth F1"] = f"{r['f1_macro']:.3f}"
-                row["GT Synth AUC"] = f"{r['auc']:.3f}"
-                row["GT Synth Parse%"] = f"{(1 - r['skip_rate']) * 100:.1f}"
+            if r["dataset"] == val_label:
+                row[columns["val_f1"]] = f"{r['f1_macro']:.3f}"
+                row[columns["val_auc"]] = f"{r['auc']:.3f}"
+                row[columns["val_parse"]] = f"{(1 - r['skip_rate']) * 100:.1f}"
                 if "eval_loss" in r and not np.isnan(r.get("eval_loss", float("nan"))):
-                    row["GT Synth Val loss"] = f"{r['eval_loss']:.4f}"
-            elif "Lit" in r["dataset"]:
-                row["GT Lit F1"] = f"{r['f1_macro']:.3f}"
-                row["GT Lit AUC"] = f"{r['auc']:.3f}"
-                row["GT Lit Parse%"] = f"{(1 - r['skip_rate']) * 100:.1f}"
-        if "GT Synth Val loss" not in row:
-            row["GT Synth Val loss"] = "-"
-        if "GT Synth Parse%" not in row:
-            row["GT Synth Parse%"] = "-"
-        if "GT Lit Parse%" not in row:
-            row["GT Lit Parse%"] = "-"
+                    row[columns["val_loss"]] = f"{r['eval_loss']:.4f}"
+            elif r["dataset"] == lit_label:
+                row[columns["lit_f1"]] = f"{r['f1_macro']:.3f}"
+                row[columns["lit_auc"]] = f"{r['auc']:.3f}"
+                row[columns["lit_parse"]] = f"{(1 - r['skip_rate']) * 100:.1f}"
+        if columns["val_loss"] not in row:
+            row[columns["val_loss"]] = "-"
+        if columns["val_parse"] not in row:
+            row[columns["val_parse"]] = "-"
+        if columns["lit_parse"] not in row:
+            row[columns["lit_parse"]] = "-"
         rows.append(row)
 
     df = pd.DataFrame(rows).fillna("-")
     logger.info("\n" + "═" * 80)
-    logger.info("SUMMARY TABLE — GT Synth→GT Lit Transfer Gap Experiment")
+    logger.info("SUMMARY TABLE — %s", benchmark_label)
     logger.info("═" * 80)
     logger.info("\n%s", df.to_string(index=False))
     logger.info("═" * 80)
-    logger.info("Key result: compare 'Mistral-7B QLoRA' GT Lit AUC vs GPT-4.1 baseline")
+    return rows, thesis_baseline_row
 
 
 def main() -> None:
     args = parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
 
-    val_df = pd.read_excel(args.val_path).dropna(subset=["prompt", "judge_verdict"])
-    lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt", "judge_verdict"])
+    val_df = pd.read_excel(args.val_path).dropna(subset=["prompt"])
+    lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt"])
     if args.max_samples is not None:
         val_df = val_df.head(args.max_samples)
         lit_df = lit_df.head(args.max_samples)
         logger.info("Smoke test: limited to %s samples per split", args.max_samples)
-    logger.info("Loaded: GT Synth val = %s rows | GT Lit = %s rows", f"{len(val_df):,}", f"{len(lit_df):,}")
+    logger.info(
+        "Loaded: %s = %s rows | %s = %s rows",
+        args.val_label,
+        f"{len(val_df):,}",
+        args.lit_label,
+        f"{len(lit_df):,}",
+    )
 
     val_df_loss = val_df.dropna(subset=["completion"]) if "completion" in val_df.columns else pd.DataFrame()
 
@@ -489,10 +643,11 @@ def main() -> None:
         run_fn_finetuned = lambda p: run_inference_vllm(
             p, base_for_finetuned, lora_path, args.max_new_tokens, args.batch_size
         )
-        for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+        for df, label in [(val_df, args.val_label), (lit_df, args.lit_label)]:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 run_inference_fn=run_fn_finetuned,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = model_label
             all_results.append(res)
@@ -502,10 +657,11 @@ def main() -> None:
             run_fn_base = lambda p: run_inference_vllm(
                 p, args.base_model, None, args.max_new_tokens, args.batch_size
             )
-            for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+            for df, label in [(val_df, args.val_label), (lit_df, args.lit_label)]:
                 res = evaluate_on_df(
                     df, args.max_new_tokens, args.batch_size, label,
                     run_inference_fn=run_fn_base,
+                    eval_mode=args.eval_mode,
                 )
                 res["model_label"] = base_label
                 all_results.append(res)
@@ -514,17 +670,18 @@ def main() -> None:
         model, tokenizer = _load_model_tokenizer(args.finetuned_model, args.base_model, is_peft)
 
         if len(val_df_loss) > 0:
-            logger.info("Computing eval loss (GT Synth Val) for finetuned model...")
+            logger.info("Computing eval loss (%s) for finetuned model...", args.val_label)
             loss_finetuned = compute_eval_loss(model, tokenizer, val_df_loss, batch_size=args.batch_size)
-            logger.info("Finetuned eval_loss (GT Synth Val) = %.4f", loss_finetuned)
+            logger.info("Finetuned eval_loss (%s) = %.4f", args.val_label, loss_finetuned)
 
-        for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+        for df, label in [(val_df, args.val_label), (lit_df, args.lit_label)]:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 model=model, tokenizer=tokenizer,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = model_label
-            if "Synth" in label and not np.isnan(loss_finetuned):
+            if label == args.val_label and not np.isnan(loss_finetuned):
                 res["eval_loss"] = loss_finetuned
             all_results.append(res)
 
@@ -539,17 +696,18 @@ def main() -> None:
                 args.base_model, args.base_model, is_peft=False
             )
             if len(val_df_loss) > 0:
-                logger.info("Computing eval loss (GT Synth Val) for base model...")
+                logger.info("Computing eval loss (%s) for base model...", args.val_label)
                 loss_base = compute_eval_loss(base_model_obj, tokenizer, val_df_loss, batch_size=args.batch_size)
-                logger.info("Base eval_loss (GT Synth Val) = %.4f", loss_base)
+                logger.info("Base eval_loss (%s) = %.4f", args.val_label, loss_base)
 
-            for df, label in [(val_df, "GT Synth Val"), (lit_df, "GT Lit")]:
+            for df, label in [(val_df, args.val_label), (lit_df, args.lit_label)]:
                 res = evaluate_on_df(
                     df, args.max_new_tokens, args.batch_size, label,
                     model=base_model_obj, tokenizer=tokenizer,
+                    eval_mode=args.eval_mode,
                 )
                 res["model_label"] = base_label
-                if "Synth" in label and not np.isnan(loss_base):
+                if label == args.val_label and not np.isnan(loss_base):
                     res["eval_loss"] = loss_base
                 all_results.append(res)
 
@@ -559,26 +717,35 @@ def main() -> None:
 
     if not np.isnan(loss_finetuned) or not np.isnan(loss_base):
         logger.info("\n" + "═" * 80)
-        logger.info("LOSS BASELINE (GT Synth Val) — cross-entropy on completion tokens")
+        logger.info("LOSS BASELINE (%s) — cross-entropy on completion tokens", args.val_label)
         logger.info("═" * 80)
         logger.info("  Base (zero-shot):    %.4f", loss_base)
         logger.info("  Finetuned (QLoRA):   %.4f", loss_finetuned)
         logger.info("═" * 80)
 
-    print_summary_table(all_results)
+    _, thesis_baseline_row = print_summary_table(
+        all_results,
+        val_label=args.val_label,
+        lit_label=args.lit_label,
+        benchmark_label=args.benchmark_label,
+        include_thesis_baselines=args.include_thesis_baselines,
+    )
     plot_confusion(all_results, args.output_dir)
 
-    baseline_results = [
-        {
-            "model_label": "GPT-4.1 Mechanistic (thesis)",
-            "dataset": dataset_name,
-            "f1_macro": metrics["f1"],
-            "auc": metrics["auc"],
-            "source": "thesis",
-            "kind": "external_baseline",
-        }
-        for dataset_name, metrics in THESIS_BASELINES.items()
-    ]
+    baseline_results = []
+    if thesis_baseline_row is not None:
+        for dataset_name in [args.val_label, args.lit_label]:
+            metrics = THESIS_BASELINES[dataset_name]
+            baseline_results.append(
+                {
+                    "model_label": "GPT-4.1 Mechanistic (thesis)",
+                    "dataset": dataset_name,
+                    "f1_macro": metrics["f1"],
+                    "auc": metrics["auc"],
+                    "source": "thesis",
+                    "kind": "external_baseline",
+                }
+            )
     save_results = [{k: v for k, v in r.items() if k != "predictions"} for r in all_results]
     save_results.extend(baseline_results)
     out_json = os.path.join(args.output_dir, "evaluation_results.json")
@@ -595,9 +762,18 @@ def main() -> None:
             "base_model": args.base_model,
             "inference_backend": args.inference_backend,
             "datasets": {
-                "gt_synth_val": _dataset_metadata(args.val_path),
-                "gt_lit_eval": _dataset_metadata(args.lit_path),
+                "first_split": {
+                    "label": args.val_label,
+                    **_dataset_metadata(args.val_path),
+                },
+                "second_split": {
+                    "label": args.lit_label,
+                    **_dataset_metadata(args.lit_path),
+                },
             },
+            "benchmark_label": args.benchmark_label,
+            "eval_mode": args.eval_mode,
+            "include_thesis_baselines": args.include_thesis_baselines,
             "max_new_tokens": args.max_new_tokens,
             "batch_size": args.batch_size,
             "max_samples": args.max_samples,

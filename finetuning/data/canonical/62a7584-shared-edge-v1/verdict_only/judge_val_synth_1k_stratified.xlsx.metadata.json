@@ -1,0 +1,53 @@
+{
+  "domain_counts": {
+    "depressive": 12,
+    "emergency_department": 12,
+    "social_norms": 12
+  },
+  "file_name": "judge_val_synth_1k_stratified.xlsx",
+  "file_sha256": "edfb9d4e92decee28351dfd806fe03b12e647abd0d3a84c6364eec1988f9e35d",
+  "judge_verdict_counts": {
+    "CORRECT": 12,
+    "INCORRECT": 12,
+    "PARTIALLY_CORRECT": 12
+  },
+  "row_count": 36,
+  "seed": 42,
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 56,
+      "emergency_department": 329,
+      "social_norms": 15
+    },
+    "file_name": "judge_val_synth.xlsx",
+    "file_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+    "judge_verdict_counts": {
+      "CORRECT": 259,
+      "INCORRECT": 48,
+      "PARTIALLY_CORRECT": 93
+    },
+    "objective_mode": "verdict_only",
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "prompt_variant_counts": {
+      "mechanistic": 400
+    },
+    "row_count": 400,
+    "seed": 42,
+    "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+    "split_name": "gt_synth_val",
+    "stratify_cols": [
+      "domain"
+    ],
+    "unique_edge_count": 129
+  },
+  "source_path": "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_val_synth.xlsx",
+  "source_path_sha256": "20a25b89339a9bfc0910bfc2a1898d1ae209c1bfa8db59659339d6eb5f14199b",
+  "split_name": "GT Synth Val",
+  "stratify_cols": [
+    "domain"
+  ]
+}

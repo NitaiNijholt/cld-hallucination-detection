@@ -1,0 +1,51 @@
+{
+  "domain_counts": {
+    "depressive": 306,
+    "emergency_department": 2214
+  },
+  "file_name": "judge_val_gtlit.xlsx",
+  "file_sha256": "927ede1529ae4118b326e731340a6399a805068a4b92af86797905805f09363d",
+  "judge_verdict_counts": {
+    "CORRECT": 2156,
+    "INCORRECT": 202,
+    "PARTIALLY_CORRECT": 162
+  },
+  "row_count": 2520,
+  "seed": 42,
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 3780,
+      "emergency_department": 21412
+    },
+    "file_name": "judge_eval_gtlit.xlsx",
+    "file_sha256": "b1719fa3d2e18dbf16a061a7035132759fa1e3b628ea47c49da0136c828b9910",
+    "judge_verdict_counts": {
+      "CORRECT": 21572,
+      "INCORRECT": 2068,
+      "PARTIALLY_CORRECT": 1552
+    },
+    "objective_mode": "verdict_only",
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "row_count": 25192,
+    "seed": 42,
+    "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+    "split_name": "gt_lit_eval",
+    "stratify_cols": [
+      "domain",
+      "judge_verdict"
+    ],
+    "unique_edge_count": 1400
+  },
+  "source_path": "finetuning/data/verdict_only/judge_eval_gtlit.xlsx",
+  "source_path_sha256": "b1719fa3d2e18dbf16a061a7035132759fa1e3b628ea47c49da0136c828b9910",
+  "split_name": "gt_lit_val",
+  "stratify_cols": [
+    "domain",
+    "judge_verdict"
+  ],
+  "unique_edge_count": 140
+}

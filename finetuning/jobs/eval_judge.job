@@ -7,13 +7,14 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=56:00:00
-#SBATCH --output=finetuning/logs/%x_%j.out
-#SBATCH --error=finetuning/logs/%x_%j.err
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
 
 set -euo pipefail
 
 REPO_DIR="$HOME/cld-hallucination-detection"
 ENV_DIR="$REPO_DIR/venv"
+SCRATCH_ROOT="/scratch-shared/nnijholt/cld-hallucination-detection"
 
 echo "=========================================="
 echo "Job   : $SLURM_JOB_ID  (eval judge)"
@@ -24,7 +25,7 @@ echo "=========================================="
 module purge
 
 cd "$REPO_DIR"
-mkdir -p finetuning/logs results
+mkdir -p "$SCRATCH_ROOT/logs" "$SCRATCH_ROOT/results"
 
 source "$ENV_DIR/bin/activate"
 
@@ -39,10 +40,10 @@ python -m finetuning.src.evaluation.create_eval_subsamples \
 
 # Full eval: finetuned + base, both splits (transformers backend; vLLM fails on Snellius Triton)
 python -m finetuning.src.evaluation.evaluate_judge \
-    --finetuned_model finetuning/runs/mistral7b_judge_gtsynth/lora_adapter \
+    --finetuned_model "$SCRATCH_ROOT/runs/mistral7b_judge_gtsynth/lora_adapter" \
     --val_path finetuning/src/judge_val_synth_1k.xlsx \
     --lit_path finetuning/src/judge_eval_gtlit_1k.xlsx \
-    --output_dir results \
+    --output_dir "$SCRATCH_ROOT/results/legacy_eval_judge" \
     --batch_size 16
 
 echo "=========================================="

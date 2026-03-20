@@ -61,6 +61,12 @@ def parse_args() -> argparse.Namespace:
         help="Inference backend: transformers (HF) or vllm",
     )
     p.add_argument("--output_dir", default=str(defaults["output_dir"]))
+    p.add_argument(
+        "--eval_mode",
+        choices=["teacher_verdict", "ground_truth"],
+        default="teacher_verdict",
+        help="Score against teacher verdict labels or actual ground-truth labels",
+    )
     return p.parse_args()
 
 
@@ -74,8 +80,8 @@ def main() -> None:
     args = parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
 
-    val_df = pd.read_excel(args.val_path).dropna(subset=["prompt", "judge_verdict"])
-    lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt", "judge_verdict"])
+    val_df = pd.read_excel(args.val_path).dropna(subset=["prompt"])
+    lit_df = pd.read_excel(args.lit_path).dropna(subset=["prompt"])
     logger.info("Loaded: GT Synth val = %s | GT Lit = %s", f"{len(val_df):,}", f"{len(lit_df):,}")
 
     all_results: list[dict] = []
@@ -93,6 +99,7 @@ def main() -> None:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 run_inference_fn=run_fn_finetuned,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = "Mistral-7B QLoRA (finetuned)"
             all_results.append(res)
@@ -104,6 +111,7 @@ def main() -> None:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 run_inference_fn=run_fn_base,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = "Mistral-7B base (zero-shot)"
             all_results.append(res)
@@ -115,6 +123,7 @@ def main() -> None:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 model=model, tokenizer=tokenizer,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = "Mistral-7B QLoRA (finetuned)"
             all_results.append(res)
@@ -129,6 +138,7 @@ def main() -> None:
             res = evaluate_on_df(
                 df, args.max_new_tokens, args.batch_size, label,
                 model=base_model_obj, tokenizer=tokenizer,
+                eval_mode=args.eval_mode,
             )
             res["model_label"] = "Mistral-7B base (zero-shot)"
             all_results.append(res)

@@ -7,17 +7,18 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=00:20:00
-#SBATCH --output=finetuning/logs/%x_%j.out
-#SBATCH --error=finetuning/logs/%x_%j.err
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
 
 set -euo pipefail
 
 REPO_DIR="$HOME/cld-hallucination-detection"
 ENV_DIR="$REPO_DIR/venv"
+SCRATCH_ROOT="/scratch-shared/nnijholt/cld-hallucination-detection"
 
 module purge
 cd "$REPO_DIR"
-mkdir -p finetuning/logs finetuning/runs finetuning/data/verdict_only/gt_lit_trainval
+mkdir -p "$SCRATCH_ROOT/logs" "$SCRATCH_ROOT/runs" finetuning/data/verdict_only/gt_lit_trainval
 source "$ENV_DIR/bin/activate"
 
 export REPO_ROOT="$REPO_DIR"
@@ -46,4 +47,4 @@ python -m finetuning.src.training.train_judge \
   grad_accum=1 \
   save_strategy=no \
   load_best_model_at_end=false \
-  output_dir=finetuning/runs/mistral7b_judge_gtlit_verdict_only_n5
+  output_dir="$SCRATCH_ROOT/runs/mistral7b_judge_gtlit_verdict_only_n5"

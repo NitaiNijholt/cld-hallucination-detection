@@ -1,0 +1,72 @@
+{
+  "domain_counts": {
+    "depressive": 36,
+    "emergency_department": 332,
+    "social_norms": 18
+  },
+  "file_name": "shared_test_lit.xlsx",
+  "file_sha256": "652b00e4e1bc3a3a2f097c3fc072a46a9db9776e30ba54f982bad68edad91010",
+  "input_paths": [
+    "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+  ],
+  "judge_verdict_counts": {
+    "CORRECT": 292,
+    "INCORRECT": 22,
+    "PARTIALLY_CORRECT": 72
+  },
+  "objective_mode": "reason_verdict",
+  "partition_edge_count": 129,
+  "prompt_spec": {
+    "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+    "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+    "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+  },
+  "prompt_variant_counts": {
+    "mechanistic": 386
+  },
+  "prompt_variant_filter": "mechanistic",
+  "row_count": 386,
+  "seed": 42,
+  "shared_edge_count": 1287,
+  "source_dataset_metadata": [
+    {
+      "domain_counts": {
+        "depressive": 630,
+        "emergency_department": 3568,
+        "social_norms": 330
+      },
+      "file_name": "judge_eval_gtlit.xlsx",
+      "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+      "judge_verdict_counts": {
+        "CORRECT": 3407,
+        "INCORRECT": 439,
+        "PARTIALLY_CORRECT": 682
+      },
+      "objective_mode": "reason_verdict",
+      "prompt_spec": {
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 4528
+      },
+      "row_count": 4528,
+      "seed": 42,
+      "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+      "split_name": "gt_lit_eval",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 1510
+    }
+  ],
+  "source_name": "gt_lit",
+  "split_name": "shared_test_lit",
+  "stratify_cols": [
+    "domain",
+    "judge_verdict_synth",
+    "judge_verdict_lit"
+  ],
+  "unique_edge_count": 129
+}
