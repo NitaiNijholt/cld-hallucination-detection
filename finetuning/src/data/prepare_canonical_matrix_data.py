@@ -40,8 +40,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--val-fraction", type=float, default=0.10)
     p.add_argument("--test-fraction", type=float, default=0.10)
     p.add_argument("--target-n", type=int, default=1000)
-    p.add_argument("--min-file-bytes", type=int, default=100_000)
+    p.add_argument("--min-file-bytes", type=int, default=0)
     p.add_argument("--stratify-cols", default="domain,judge_verdict")
+    p.add_argument("--prompt-variant", choices=prepare_judge_data.PROMPT_VARIANTS, default=None)
+    p.add_argument("--balance-cols", default="")
+    p.add_argument("--balance-samples-per-group", type=int, default=None)
+    p.add_argument("--lit-eval-balance-cols", default="")
+    p.add_argument("--lit-eval-balance-samples-per-group", type=int, default=None)
+    p.add_argument("--preserve-split-group-cols", default="")
+    p.add_argument("--eval-balance-cols", default="")
+    p.add_argument("--eval-balance-samples-per-group", type=int, default=None)
+    p.add_argument("--exclude-lit-overlap-from-synth", action="store_true")
     p.add_argument(
         "--force",
         action="store_true",
@@ -112,6 +121,13 @@ def main(args: argparse.Namespace | None = None) -> None:
                 objective_mode=objective_mode,
                 stratify_cols=args.stratify_cols,
                 require_stratification=True,
+                prompt_variant=getattr(args, "prompt_variant", None),
+                balance_cols=getattr(args, "balance_cols", ""),
+                balance_samples_per_group=getattr(args, "balance_samples_per_group", None),
+                balance_lit_eval_cols=getattr(args, "lit_eval_balance_cols", ""),
+                balance_lit_eval_samples_per_group=getattr(args, "lit_eval_balance_samples_per_group", None),
+                preserve_split_group_cols=getattr(args, "preserve_split_group_cols", ""),
+                exclude_lit_overlap_from_synth=getattr(args, "exclude_lit_overlap_from_synth", False),
             )
         )
 
@@ -124,6 +140,8 @@ def main(args: argparse.Namespace | None = None) -> None:
                 seed=args.seed,
                 stratify_cols=args.stratify_cols,
                 require_stratification=True,
+                balance_cols=getattr(args, "balance_cols", ""),
+                balance_samples_per_group=None,
             )
         )
 
@@ -136,6 +154,8 @@ def main(args: argparse.Namespace | None = None) -> None:
                 stratify_cols=args.stratify_cols,
                 output_suffix="_1k_stratified",
                 require_stratification=True,
+                balance_cols=getattr(args, "eval_balance_cols", ""),
+                balance_samples_per_group=getattr(args, "eval_balance_samples_per_group", None),
             )
         )
 
@@ -147,6 +167,8 @@ def main(args: argparse.Namespace | None = None) -> None:
                 seed=args.seed,
                 stratify_cols=args.stratify_cols,
                 require_stratification=True,
+                balance_cols=getattr(args, "eval_balance_cols", ""),
+                balance_samples_per_group=getattr(args, "eval_balance_samples_per_group", None),
             )
         )
 

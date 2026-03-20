@@ -28,7 +28,7 @@ DATA_ROOT="finetuning/data/canonical/$DATA_TAG/reason_verdict"
 RUN_ROOT="finetuning/runs/canonical/$DATA_TAG"
 RESULT_ROOT="results/canonical/$DATA_TAG"
 
-python -m finetuning.src.evaluation.evaluate_judge \
+"$ENV_DIR/bin/python" -m finetuning.src.evaluation.evaluate_judge \
   --finetuned_model "$RUN_ROOT/mistral7b_judge_gtlit_reason_verdict/lora_adapter" \
   --val_path "$DATA_ROOT/judge_val_synth_1k_stratified.xlsx" \
   --lit_path "$DATA_ROOT/gt_lit_trainval/judge_test_gtlit_1k_stratified.xlsx" \

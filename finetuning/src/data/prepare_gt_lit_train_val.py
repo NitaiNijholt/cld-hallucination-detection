@@ -18,7 +18,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from .prepare_judge_data import _split_by_edge_identity
+from .prepare_judge_data import (
+    _balance_rows_exact,
+    _build_rows,
+    _load_xlsx_files,
+    _split_by_edge_identity,
+)
 from ..metadata_utils import (
     atomic_to_excel,
     load_json,
@@ -85,6 +90,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Fail instead of falling back to unstratified splits when requested strata cannot be preserved",
     )
+    p.add_argument(
+        "--balance-cols",
+        default="",
+        help="Comma-separated row-level columns to exact-balance after splitting, e.g. domain,judge_verdict",
+    )
+    p.add_argument(
+        "--balance-samples-per-group",
+        type=int,
+        default=None,
+        help="Optional exact row count per balance group; defaults to each split's smallest group",
+    )
     return p.parse_args()
 
 
@@ -132,6 +148,21 @@ def _save_split(df: pd.DataFrame, path: Path, metadata: dict) -> None:
     )
 
 
+def _rebuild_input_df_from_source_metadata(input_metadata: dict | None) -> pd.DataFrame | None:
+    if input_metadata is None:
+        return None
+    source_glob = input_metadata.get("source_description")
+    objective_mode = input_metadata.get("objective_mode")
+    if not source_glob or not objective_mode:
+        return None
+    raw = _load_xlsx_files(source_glob, 0)
+    prompt_variant_counts = input_metadata.get("prompt_variant_counts", {})
+    if len(prompt_variant_counts) == 1:
+        prompt_variant = next(iter(prompt_variant_counts))
+        raw = raw[raw["prompt_variant"].eq(prompt_variant)].copy()
+    return _build_rows(raw, objective_mode=objective_mode)
+
+
 def main(args: argparse.Namespace | None = None) -> None:
     if args is None:
         args = parse_args()
@@ -142,6 +173,7 @@ def main(args: argparse.Namespace | None = None) -> None:
     stratify_cols = _parse_stratify_cols(
         getattr(args, "stratify_cols", "domain,judge_verdict")
     )
+    balance_cols = _parse_stratify_cols(getattr(args, "balance_cols", ""))
 
     logger.info("Input path: %s", input_path)
     logger.info("Output dir: %s", output_dir)
@@ -152,8 +184,13 @@ def main(args: argparse.Namespace | None = None) -> None:
         args.seed,
     )
 
-    df = read_excel_with_retry(input_path).dropna(subset=["prompt", "completion"])
     input_metadata = load_json(sidecar_metadata_path(input_path))
+    rebuilt_df = _rebuild_input_df_from_source_metadata(input_metadata) if balance_cols else None
+    if rebuilt_df is not None:
+        df = rebuilt_df
+        logger.info("Rebuilt GT Lit split source from metadata-backed raw judged files")
+    else:
+        df = read_excel_with_retry(input_path).dropna(subset=["prompt", "completion"])
     logger.info("Loaded GT Lit rows: %s", f"{len(df):,}")
     logger.info(
         "Unique edges: %s",
@@ -176,6 +213,25 @@ def main(args: argparse.Namespace | None = None) -> None:
         stratify_cols=stratify_cols,
         require_stratification=getattr(args, "require_stratification", False),
     )
+    if balance_cols:
+        train_df = _balance_rows_exact(
+            train_df,
+            balance_cols,
+            args.seed,
+            samples_per_group=getattr(args, "balance_samples_per_group", None),
+        )
+        val_df = _balance_rows_exact(
+            val_df,
+            balance_cols,
+            args.seed,
+            samples_per_group=getattr(args, "balance_samples_per_group", None),
+        )
+        test_df = _balance_rows_exact(
+            test_df,
+            balance_cols,
+            args.seed,
+            samples_per_group=getattr(args, "balance_samples_per_group", None),
+        )
 
     train_path = output_dir / "judge_train_gtlit.xlsx"
     val_path = output_dir / "judge_val_gtlit.xlsx"

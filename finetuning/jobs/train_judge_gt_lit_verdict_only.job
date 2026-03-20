@@ -28,7 +28,7 @@ DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
 DATA_ROOT="finetuning/data/canonical/$DATA_TAG/verdict_only/gt_lit_trainval"
 RUN_ROOT="finetuning/runs/canonical/$DATA_TAG"
 
-python -m finetuning.src.training.train_judge \
+"$ENV_DIR/bin/python" -m finetuning.src.training.train_judge \
   --config-name gt_lit_verdict_only \
   train_file="$DATA_ROOT/judge_train_gtlit.xlsx" \
   val_file="$DATA_ROOT/judge_val_gtlit.xlsx" \

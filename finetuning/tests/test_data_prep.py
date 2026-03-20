@@ -25,6 +25,8 @@ def test_prepare_judge_data_produces_expected_files():
             val_fraction=0.5,  # 50% val for small fixture
             seed=42,
             min_file_bytes=0,  # include small fixture files
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
         )
         main(args=args)
 
@@ -62,6 +64,8 @@ def test_prepare_judge_data_verdict_only_outputs_verdict_only_completion():
             min_file_bytes=0,
             objective_mode="verdict_only",
             stratify_cols="domain,judge_verdict",
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
         )
         main(args=args)
 
@@ -69,6 +73,171 @@ def test_prepare_judge_data_verdict_only_outputs_verdict_only_completion():
         train_df = pd.read_excel(train_path)
         assert train_df["completion"].str.startswith("VERDICT: ").all()
         assert not train_df["completion"].str.contains("REASON:").any()
+
+
+def test_prepare_judge_data_can_filter_prompt_variant_and_balance_groups():
+    """Prompt-variant filtering and exact balancing should be reflected in outputs."""
+    from finetuning.src.data.prepare_judge_data import main
+    import argparse
+    import pandas as pd
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        root = Path(tmp_dir)
+        data_root = root / "final_runs"
+        out_dir = root / "out"
+        samples = [
+            ("RQ1a_gt_synth_correctness", "depressive", "CORRECT"),
+            ("RQ1a_gt_synth_correctness", "depressive", "INCORRECT"),
+            ("RQ1a_gt_synth_correctness", "emergency_department", "CORRECT"),
+            ("RQ1a_gt_synth_correctness", "emergency_department", "INCORRECT"),
+            ("RQ1a_gt_lit_correctness", "depressive", "CORRECT"),
+            ("RQ1a_gt_lit_correctness", "depressive", "INCORRECT"),
+            ("RQ1a_gt_lit_correctness", "emergency_department", "CORRECT"),
+            ("RQ1a_gt_lit_correctness", "emergency_department", "INCORRECT"),
+        ]
+        for dataset, domain, verdict in samples:
+            run_dir = data_root / dataset / domain / "run_1"
+            run_dir.mkdir(parents=True, exist_ok=True)
+            df = pd.DataFrame(
+                [
+                    {
+                        "Source": f"{domain}-{verdict}-1",
+                        "Target": "T1",
+                        "Relationship Type": "causes",
+                        "Motivation": f"{domain} {verdict}",
+                        "Judge Verdict": verdict,
+                        "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+                    },
+                    {
+                        "Source": f"{domain}-{verdict}-2",
+                        "Target": "T2",
+                        "Relationship Type": "causes",
+                        "Motivation": f"{domain} {verdict}",
+                        "Judge Verdict": verdict,
+                        "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+                    },
+                ]
+            )
+            df.to_excel(run_dir / f"judged_demo_mechanistic_{domain}_{verdict}.xlsx", index=False)
+            df.to_excel(run_dir / f"judged_demo_cot_{domain}_{verdict}.xlsx", index=False)
+
+        args = argparse.Namespace(
+            data_root=str(data_root),
+            output_dir=str(out_dir),
+            val_fraction=0.5,
+            seed=42,
+            min_file_bytes=0,
+            objective_mode="reason_verdict",
+            stratify_cols="domain",
+            require_stratification=False,
+            prompt_variant="mechanistic",
+            balance_cols="domain,judge_verdict",
+            balance_samples_per_group=None,
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
+        )
+        main(args=args)
+
+        train_df = pd.read_excel(out_dir / "judge_train.xlsx")
+        lit_df = pd.read_excel(out_dir / "judge_eval_gtlit.xlsx")
+        assert set(train_df["prompt_variant"]) == {"mechanistic"}
+        assert set(lit_df["prompt_variant"]) == {"mechanistic"}
+        assert train_df.groupby(["domain", "judge_verdict"]).size().nunique() == 1
+        assert lit_df.groupby(["domain", "judge_verdict"]).size().nunique() == 1
+
+
+def test_prepare_judge_data_can_exclude_gt_lit_overlap_from_synth():
+    """Overlapping GT Synth edges should be removed when GT Lit is treated as held-out."""
+    from finetuning.src.data.prepare_judge_data import main
+    import argparse
+    import pandas as pd
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        root = Path(tmp_dir)
+        data_root = root / "final_runs"
+        out_dir = root / "out"
+
+        def write_sheet(dataset: str, domain: str, filename: str, rows: list[dict]) -> None:
+            run_dir = data_root / dataset / domain / "run_1"
+            run_dir.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(rows).to_excel(run_dir / filename, index=False)
+
+        shared_rows = [
+            {
+                "Source": "shared_s",
+                "Target": "shared_t",
+                "Relationship Type": "causes",
+                "Motivation": "shared edge",
+                "Judge Verdict": "CORRECT",
+                "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+            },
+            {
+                "Source": "synth_only_s",
+                "Target": "synth_only_t",
+                "Relationship Type": "causes",
+                "Motivation": "synth only edge",
+                "Judge Verdict": "INCORRECT",
+                "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+            },
+        ]
+        lit_rows = [
+            {
+                "Source": "shared_s",
+                "Target": "shared_t",
+                "Relationship Type": "causes",
+                "Motivation": "shared edge",
+                "Judge Verdict": "CORRECT",
+                "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+            },
+            {
+                "Source": "lit_only_s",
+                "Target": "lit_only_t",
+                "Relationship Type": "causes",
+                "Motivation": "lit only edge",
+                "Judge Verdict": "PARTIALLY_CORRECT",
+                "Judge Message": '{"judge_results": [{"reason": "Ok"}]}',
+            },
+        ]
+        write_sheet(
+            "RQ1a_gt_synth_correctness",
+            "depressive",
+            "judged_demo_mechanistic_synth.xlsx",
+            shared_rows,
+        )
+        write_sheet(
+            "RQ1a_gt_lit_correctness",
+            "depressive",
+            "judged_demo_mechanistic_lit.xlsx",
+            lit_rows,
+        )
+
+        args = argparse.Namespace(
+            data_root=str(data_root),
+            output_dir=str(out_dir),
+            val_fraction=0.5,
+            seed=42,
+            min_file_bytes=0,
+            objective_mode="reason_verdict",
+            stratify_cols="domain",
+            require_stratification=False,
+            prompt_variant="mechanistic",
+            balance_cols="",
+            balance_samples_per_group=None,
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
+            exclude_lit_overlap_from_synth=True,
+        )
+        main(args=args)
+
+        train_df = pd.read_excel(out_dir / "judge_train.xlsx")
+        val_df = pd.read_excel(out_dir / "judge_val_synth.xlsx")
+        synth_edges = set(map(tuple, pd.concat([train_df, val_df])[["source", "target", "domain"]].drop_duplicates().itertuples(index=False, name=None)))
+        lit_df = pd.read_excel(out_dir / "judge_eval_gtlit.xlsx")
+        lit_edges = set(map(tuple, lit_df[["source", "target", "domain"]].drop_duplicates().itertuples(index=False, name=None)))
+
+        assert ("shared_s", "shared_t", "depressive") not in synth_edges
+        assert ("shared_s", "shared_t", "depressive") in lit_edges
+        assert synth_edges.isdisjoint(lit_edges)
 
 
 def test_prepare_gt_lit_train_val_produces_holdout_split():
@@ -87,6 +256,8 @@ def test_prepare_gt_lit_train_val_produces_holdout_split():
             val_fraction=0.5,
             seed=42,
             min_file_bytes=0,
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
         )
         prepare_main(args=prep_args)
 
@@ -135,6 +306,8 @@ def test_create_gt_lit_test_subsample_from_holdout():
             val_fraction=0.5,
             seed=42,
             min_file_bytes=0,
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
         )
         prepare_main(args=prep_args)
 
@@ -185,6 +358,8 @@ def test_create_eval_subsamples_creates_stratified_outputs():
             min_file_bytes=0,
             objective_mode="reason_verdict",
             stratify_cols="domain,judge_verdict",
+            balance_lit_eval_cols="",
+            balance_lit_eval_samples_per_group=None,
         )
         prepare_main(args=prep_args)
 
@@ -200,6 +375,98 @@ def test_create_eval_subsamples_creates_stratified_outputs():
 
         assert (Path(out_dir) / "judge_val_synth_1k_stratified.xlsx").exists()
         assert (Path(out_dir) / "judge_eval_gtlit_1k_stratified.xlsx").exists()
+
+
+def test_create_eval_subsamples_can_exact_balance_domain_and_verdict():
+    import argparse
+    import pandas as pd
+
+    from finetuning.src.evaluation.create_eval_subsamples import main as subsample_main
+
+    with tempfile.TemporaryDirectory() as out_dir:
+        base = Path(out_dir)
+        df = pd.DataFrame(
+            [
+                {"prompt": "p1", "completion": "c1", "domain": "d1", "judge_verdict": "CORRECT"},
+                {"prompt": "p2", "completion": "c2", "domain": "d1", "judge_verdict": "CORRECT"},
+                {"prompt": "p3", "completion": "c3", "domain": "d1", "judge_verdict": "INCORRECT"},
+                {"prompt": "p4", "completion": "c4", "domain": "d1", "judge_verdict": "INCORRECT"},
+                {"prompt": "p5", "completion": "c5", "domain": "d2", "judge_verdict": "CORRECT"},
+                {"prompt": "p6", "completion": "c6", "domain": "d2", "judge_verdict": "CORRECT"},
+                {"prompt": "p7", "completion": "c7", "domain": "d2", "judge_verdict": "INCORRECT"},
+                {"prompt": "p8", "completion": "c8", "domain": "d2", "judge_verdict": "INCORRECT"},
+            ]
+        )
+        val_path = base / "judge_val_synth.xlsx"
+        lit_path = base / "judge_eval_gtlit.xlsx"
+        df.to_excel(val_path, index=False)
+        df.to_excel(lit_path, index=False)
+
+        args = argparse.Namespace(
+            val_path=str(val_path),
+            lit_path=str(lit_path),
+            target_n=1000,
+            seed=42,
+            stratify_cols="domain,judge_verdict",
+            output_suffix="_balanced",
+            require_stratification=True,
+            balance_cols="domain,judge_verdict",
+            balance_samples_per_group=2,
+        )
+        subsample_main(args=args)
+
+        balanced = pd.read_excel(base / "judge_eval_gtlit_balanced.xlsx")
+        assert balanced.groupby(["domain", "judge_verdict"]).size().to_dict() == {
+            ("d1", "CORRECT"): 2,
+            ("d1", "INCORRECT"): 2,
+            ("d2", "CORRECT"): 2,
+            ("d2", "INCORRECT"): 2,
+        }
+
+
+def test_create_gt_lit_test_subsample_can_exact_balance_domain_and_verdict():
+    import argparse
+    import pandas as pd
+
+    from finetuning.src.evaluation.create_gt_lit_test_subsample import main as subsample_main
+
+    with tempfile.TemporaryDirectory() as out_dir:
+        base = Path(out_dir)
+        df = pd.DataFrame(
+            [
+                {"prompt": "p1", "completion": "c1", "domain": "d1", "judge_verdict": "CORRECT"},
+                {"prompt": "p2", "completion": "c2", "domain": "d1", "judge_verdict": "CORRECT"},
+                {"prompt": "p3", "completion": "c3", "domain": "d1", "judge_verdict": "INCORRECT"},
+                {"prompt": "p4", "completion": "c4", "domain": "d1", "judge_verdict": "INCORRECT"},
+                {"prompt": "p5", "completion": "c5", "domain": "d2", "judge_verdict": "CORRECT"},
+                {"prompt": "p6", "completion": "c6", "domain": "d2", "judge_verdict": "CORRECT"},
+                {"prompt": "p7", "completion": "c7", "domain": "d2", "judge_verdict": "INCORRECT"},
+                {"prompt": "p8", "completion": "c8", "domain": "d2", "judge_verdict": "INCORRECT"},
+            ]
+        )
+        input_path = base / "judge_test_gtlit.xlsx"
+        output_path = base / "judge_test_gtlit_balanced.xlsx"
+        df.to_excel(input_path, index=False)
+
+        args = argparse.Namespace(
+            input_path=str(input_path),
+            output_path=str(output_path),
+            target_n=1000,
+            seed=42,
+            stratify_cols="domain,judge_verdict",
+            require_stratification=True,
+            balance_cols="domain,judge_verdict",
+            balance_samples_per_group=2,
+        )
+        subsample_main(args=args)
+
+        balanced = pd.read_excel(output_path)
+        assert balanced.groupby(["domain", "judge_verdict"]).size().to_dict() == {
+            ("d1", "CORRECT"): 2,
+            ("d1", "INCORRECT"): 2,
+            ("d2", "CORRECT"): 2,
+            ("d2", "INCORRECT"): 2,
+        }
 
 
 def test_prepare_canonical_matrix_data_creates_frozen_bundle():
@@ -220,6 +487,8 @@ def test_prepare_canonical_matrix_data_creates_frozen_bundle():
             min_file_bytes=0,
             stratify_cols="",
             force=False,
+            lit_eval_balance_cols="",
+            lit_eval_balance_samples_per_group=None,
         )
         canonical_main(args=args)
 

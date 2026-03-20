@@ -26,10 +26,17 @@ export PYTHONUNBUFFERED=1
 DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
 DATA_ROOT="finetuning/data/canonical/$DATA_TAG"
 
-python -m finetuning.src.data.prepare_canonical_matrix_data \
+"$ENV_DIR/bin/python" -m finetuning.src.data.prepare_canonical_matrix_data \
   --output-root "$DATA_ROOT" \
   --seed 42 \
   --val-fraction 0.10 \
   --test-fraction 0.10 \
   --target-n 1000 \
-  --stratify-cols domain,judge_verdict
+  --min-file-bytes 0 \
+  --stratify-cols domain \
+  --prompt-variant mechanistic \
+  --exclude-lit-overlap-from-synth \
+  --lit-eval-balance-cols domain,judge_verdict \
+  --lit-eval-balance-samples-per-group 31 \
+  --preserve-split-group-cols domain,judge_verdict \
+  --eval-balance-cols domain,judge_verdict
