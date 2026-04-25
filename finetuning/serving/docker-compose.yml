@@ -1,0 +1,71 @@
+services:
+  cld-judge-14b:
+    build:
+      context: ..
+      dockerfile: serving/Dockerfile
+    runtime: nvidia
+    environment:
+      - CLD_PRESET=qwen3-14b
+      - CLD_LORA_PATH=/adapters/lora_adapter
+      - NVIDIA_VISIBLE_DEVICES=0
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ../runs/canonical_shared/62a7584-shared-edge-v1/qwen3_14b_judge_shared_lit_verdict_only/lora_adapter:/adapters/lora_adapter:ro
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  cld-judge-32b:
+    build:
+      context: ..
+      dockerfile: serving/Dockerfile
+    runtime: nvidia
+    environment:
+      - CLD_PRESET=qwen3-32b
+      - CLD_LORA_PATH=/adapters/lora_adapter
+      - NVIDIA_VISIBLE_DEVICES=0
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ../runs/canonical_shared/62a7584-shared-edge-v1/qwen3_32b_judge_shared_lit_verdict_only/lora_adapter:/adapters/lora_adapter:ro
+    ports:
+      - "8001:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  cld-judge-235b:
+    build:
+      context: ..
+      dockerfile: serving/Dockerfile
+    runtime: nvidia
+    environment:
+      - CLD_PRESET=qwen3-235b
+      - CLD_LORA_PATH=/adapters/lora_adapter
+      - CLD_QUANTIZATION=awq
+      - CLD_TENSOR_PARALLEL_SIZE=2
+      - NVIDIA_VISIBLE_DEVICES=0,1
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ../runs/canonical_shared/62a7584-shared-edge-v1/qwen3_235b_judge_shared_lit_verdict_only_s1500_seed42_trainonly/lora_adapter:/adapters/lora_adapter:ro
+    ports:
+      - "8002:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 2
+              capabilities: [gpu]
+
+volumes:
+  hf_cache:

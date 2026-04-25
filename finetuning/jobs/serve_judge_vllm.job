@@ -15,13 +15,17 @@ set -euo pipefail
 REPO_DIR="${REPO_DIR:-$HOME/cld-hallucination-detection}"
 ENV_DIR="${ENV_DIR:-$REPO_DIR/venv}"
 SCRATCH_ROOT="${SCRATCH_ROOT:-/scratch-shared/nnijholt/cld-hallucination-detection}"
-LORA_PATH="${LORA_PATH:-$SCRATCH_ROOT/runs/mistral7b_judge_gtsynth/lora_adapter}"
-BASE_MODEL="${BASE_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}"
-PORT="${PORT:-8000}"
+
+# Model configuration — override via env or sbatch --export
+export CLD_PRESET="${CLD_PRESET:-qwen3-14b}"
+export CLD_LORA_PATH="${CLD_LORA_PATH:-$SCRATCH_ROOT/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_14b_judge_shared_lit_verdict_only/lora_adapter}"
+export CLD_PORT="${CLD_PORT:-8000}"
 
 echo "=========================================="
 echo "Job   : $SLURM_JOB_ID  (vLLM serve)"
 echo "Node  : $SLURMD_NODENAME"
+echo "Preset: $CLD_PRESET"
+echo "LoRA  : $CLD_LORA_PATH"
 echo "Start : $(date)"
 echo "=========================================="
 
@@ -31,11 +35,7 @@ mkdir -p "$SCRATCH_ROOT/logs"
 source "$ENV_DIR/bin/activate"
 export REPO_ROOT="$REPO_DIR"
 
-python -m finetuning.src.serving.serve_judge_vllm \
-    --base_model "$BASE_MODEL" \
-    --lora_path "$LORA_PATH" \
-    --host 0.0.0.0 \
-    --port "$PORT"
+python -m finetuning.src.serving.serve_judge_vllm
 
 echo "=========================================="
 echo "Done : $(date)"
