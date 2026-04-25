@@ -1,0 +1,61 @@
+#!/bin/bash
+#SBATCH --job-name=cld_eval_qwen3_14b_shared_synth_rv
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=48G
+#SBATCH --time=24:00:00
+#SBATCH --output=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.out
+#SBATCH --error=/scratch-shared/nnijholt/cld-hallucination-detection/logs/%x_%j.err
+
+set -euo pipefail
+
+REPO_DIR="$HOME/cld-hallucination-detection"
+ENV_DIR="$REPO_DIR/venv"
+
+module purge
+cd "$REPO_DIR"
+mkdir -p /scratch-shared/nnijholt/cld-hallucination-detection/logs /scratch-shared/nnijholt/cld-hallucination-detection/results
+source "$ENV_DIR/bin/activate"
+
+export REPO_ROOT="$REPO_DIR"
+export PYTHONUNBUFFERED=1
+
+DATA_TAG="${CANONICAL_DATA_TAG:-$(git rev-parse --short HEAD)}"
+DATA_ROOT="finetuning/data/canonical_shared/$DATA_TAG/reason_verdict"
+RUN_ROOT="${RUN_ROOT:-/scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/$DATA_TAG}"
+RESULT_ROOT="${RESULT_ROOT:-/scratch-shared/nnijholt/cld-hallucination-detection/results/canonical_shared/$DATA_TAG}"
+RUN_NAME="${RUN_NAME:-qwen3_14b_judge_shared_synth_reason_verdict}"
+RESULT_NAME="${RESULT_NAME:-qwen3_14b_shared_synth_reason_verdict}"
+BENCHMARK_LABEL="${BENCHMARK_LABEL:-Shared-edge supervision-source benchmark}"
+VAL_LABEL="${VAL_LABEL:-Shared GT Synth Test}"
+LIT_LABEL="${LIT_LABEL:-Shared GT Lit Test}"
+EVAL_MAX_SAMPLES="${EVAL_MAX_SAMPLES:-}"
+EVAL_MODE="${EVAL_MODE:-teacher_verdict}"
+mkdir -p "$RESULT_ROOT"
+
+EVAL_ARGS=(
+  --finetuned_model "$RUN_ROOT/$RUN_NAME/lora_adapter"
+  --base_model Qwen/Qwen3-14B
+  --val_path "$DATA_ROOT/shared_test_synth.xlsx"
+  --lit_path "$DATA_ROOT/shared_test_lit.xlsx"
+  --val_label "$VAL_LABEL"
+  --lit_label "$LIT_LABEL"
+  --benchmark_label "$BENCHMARK_LABEL"
+  --eval_mode "$EVAL_MODE"
+  --output_dir "$RESULT_ROOT/$RESULT_NAME"
+  --batch_size 8
+  --model_label "Qwen3-14B QLoRA (Shared GT Synth trained, reason+verdict)"
+  --no_include_thesis_baselines
+)
+
+if [[ "${EVAL_INCLUDE_BASE:-false}" != "true" ]]; then
+  EVAL_ARGS+=(--no_eval_base)
+fi
+if [[ -n "$EVAL_MAX_SAMPLES" ]]; then
+  EVAL_ARGS+=(--max_samples "$EVAL_MAX_SAMPLES")
+fi
+
+"$ENV_DIR/bin/python" -m finetuning.src.evaluation.evaluate_judge "${EVAL_ARGS[@]}"

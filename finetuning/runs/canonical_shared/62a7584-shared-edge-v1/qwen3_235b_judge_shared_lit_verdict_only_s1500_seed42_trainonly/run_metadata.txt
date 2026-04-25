@@ -1,0 +1,53 @@
+git_sha=88cdc35d
+config=base_model: Qwen/Qwen3-235B-A22B
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_lit.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_lit.xlsx
+output_dir: /scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_235b_judge_shared_lit_verdict_only_s1500_seed42_trainonly
+dataset_label: Shared GT Lit
+objective_mode: verdict_only
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+max_examples: null
+max_train_examples: 1500
+max_val_examples: null
+train_subsample_strategy: stratified
+train_subsample_seed: 42
+train_subsample_stratify_cols_csv: domain;classification;judge_verdict
+val_subsample_strategy: null
+val_subsample_seed: 42
+val_subsample_stratify_cols_csv: null
+eval_strategy: 'no'
+save_strategy: 'no'
+save_total_limit: 2
+load_best_model_at_end: false
+metric_for_best_model: eval_loss
+save_adapter_model: true
+save_merged_model: false
+wandb_project: null
+wandb_run_name: null
+wandb_group: gt_lit_verdict_only
+report_to: none
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+inference_backend: transformers
+logging_steps: 10
+
+objective_mode=verdict_only
+train_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_lit.xlsx
+val_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_lit.xlsx
+train_source_file_sha256=76dc68951e5db1033bae7fc8a83b8b6adff642a6efeaec4bcf38a6a98d2197c1
+val_source_file_sha256=252dc234dc59a0c67c05fa238ff4816d45fb29461d9458be5e4957ec27620cbd
+train_selected_file=/scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_235b_judge_shared_lit_verdict_only_s1500_seed42_trainonly/train_selected.xlsx
+val_selected_file=/scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_235b_judge_shared_lit_verdict_only_s1500_seed42_trainonly/val_selected.xlsx
+train_selected_file_sha256=27177b2761be6b253d5e494e1a09edb8e93ca8d05916a81fea038cc29390ce45
+val_selected_file_sha256=ad95fedac8b4baa853c4e81136411912f8f38e513ec0572bfda6d5c805daf7d6

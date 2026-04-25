@@ -1,0 +1,38 @@
+git_sha=00d86265
+config=base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/gt_lit_trainval/judge_val_gtlit.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/canonical/00d8626-fulltrain-balanceeval-v5/mistral7b_judge_gtlit_reason_verdict
+dataset_label: GT Lit
+objective_mode: reason_verdict
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+max_examples: null
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+wandb_project: null
+wandb_run_name: null
+wandb_group: gt_lit_reason_verdict
+report_to: none
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+inference_backend: transformers
+logging_steps: 10
+
+objective_mode=reason_verdict
+train_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/gt_lit_trainval/judge_val_gtlit.xlsx
+train_file_sha256=8f43fd79e8ccf59c9b1d786a816b68d29bcbfc10113385a4733e24f950c681d6
+val_file_sha256=410cc0e3c49b79b81d23563bfc2fe7b2479b5dce94c93723087649f9d7ac96da

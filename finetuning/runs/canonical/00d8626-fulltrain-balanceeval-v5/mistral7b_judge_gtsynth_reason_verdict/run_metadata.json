@@ -1,0 +1,114 @@
+{
+  "completion_example": "REASON: The explanation fails on multiple criteria. PLAUSIBILITY is not satisfied, as it describes a mechanism where Capacity affects Acute care demand leading to an ED visit\u2014not the reverse\u2014thus no pathway is given for how Acute care demand affects Capacity. TEMPORALITY is violated; the causal direction described is Capacity \u2192 Acute care demand, contradicting the claimed direction. STRENGTH is not met, since the actual influence described is in the opposite direction, making the causal claim about Acute care demand\u2019s impact on Capacity unsupported. COHERENCE is lacking due to the internal inconsistency between the claimed and described direction.\nVERDICT: INCORRECT",
+  "config": {
+    "base_model": "mistralai/Mistral-7B-Instruct-v0.2",
+    "batch_size": 1,
+    "dataset_label": "GT Synth",
+    "epochs": 3,
+    "grad_accum": 32,
+    "inference_backend": "transformers",
+    "load_best_model_at_end": true,
+    "logging_steps": 10,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "lora_rank": 32,
+    "lr": 0.0002,
+    "max_examples": null,
+    "max_length": 2048,
+    "metric_for_best_model": "eval_loss",
+    "mlflow_experiment_name": "cld-judge-finetuning",
+    "mlflow_registry_name": "cld_judge",
+    "mlflow_tracking_uri": "mlruns",
+    "objective_mode": "reason_verdict",
+    "output_dir": "/home/nnijholt/cld-hallucination-detection/finetuning/runs/canonical/00d8626-fulltrain-balanceeval-v5/mistral7b_judge_gtsynth_reason_verdict",
+    "report_to": "none",
+    "save_strategy": "epoch",
+    "save_total_limit": 2,
+    "seed": 42,
+    "smoke_test": false,
+    "train_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_train.xlsx",
+    "val_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_val_synth.xlsx",
+    "wandb_group": "gt_synth_reason_verdict",
+    "wandb_project": null,
+    "wandb_run_name": null,
+    "warmup_ratio": 0.05
+  },
+  "dataset_label": "GT Synth",
+  "git_sha": "00d86265",
+  "objective_mode": "reason_verdict",
+  "prompt_example": "<s>[INST] You are a causal diagram expert evaluating the quality of a causal explanation.\n\nSOURCE: Acute care demand leading to an ED visit\nTARGET: Capacity\nRELATIONSHIP: NEGATIVE\nEXPLANATION: An increase in Capacity within the emergency department directly prompts a compensatory decrease in Acute care demand leading to an ED visit, as the perceived abundance of available resources encourages patients to delay or avoid seeking acute care services. In contrast, when Capacity is limited, patients are more likely to perceive urgency and thus Acute care demand leading to an ED visit increases, resulting in the observed negative relationship.\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT. [/INST]",
+  "train_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_train.xlsx",
+    "sha256": "b8dc131cae43785623871c83fd228d5a1c25b71f3d7b67d3ba4ecc147af6a594",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 488,
+        "emergency_department": 2972,
+        "social_norms": 135
+      },
+      "file_name": "judge_train.xlsx",
+      "file_sha256": "b8dc131cae43785623871c83fd228d5a1c25b71f3d7b67d3ba4ecc147af6a594",
+      "judge_verdict_counts": {
+        "CORRECT": 2384,
+        "INCORRECT": 392,
+        "PARTIALLY_CORRECT": 819
+      },
+      "objective_mode": "reason_verdict",
+      "prompt_spec": {
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 3595
+      },
+      "row_count": 3595,
+      "seed": 42,
+      "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+      "split_name": "gt_synth_train",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 1158
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_train.xlsx.metadata.json"
+  },
+  "train_examples": 3595,
+  "val_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_val_synth.xlsx",
+    "sha256": "2949044ad7f88b12ab7a0ce957732cb769ee8dfead132fb6bb789d8f7ddc7309",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 56,
+        "emergency_department": 329,
+        "social_norms": 15
+      },
+      "file_name": "judge_val_synth.xlsx",
+      "file_sha256": "2949044ad7f88b12ab7a0ce957732cb769ee8dfead132fb6bb789d8f7ddc7309",
+      "judge_verdict_counts": {
+        "CORRECT": 259,
+        "INCORRECT": 48,
+        "PARTIALLY_CORRECT": 93
+      },
+      "objective_mode": "reason_verdict",
+      "prompt_spec": {
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 400
+      },
+      "row_count": 400,
+      "seed": 42,
+      "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_synth_correctness/**/*.xlsx",
+      "split_name": "gt_synth_val",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 129
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/reason_verdict/judge_val_synth.xlsx.metadata.json"
+  },
+  "val_examples": 400
+}

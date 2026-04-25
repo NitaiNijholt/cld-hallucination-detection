@@ -1,0 +1,116 @@
+[
+  {
+    "dataset": "Shared GT Synth Test",
+    "n_total": 231,
+    "n_valid": 231,
+    "n_scored": 231,
+    "skip_rate": 0.0,
+    "accuracy": 0.9307,
+    "f1_macro": 0.9394,
+    "auc": 0.9252,
+    "eval_mode": "ground_truth",
+    "f1_metric": "binary_f1_ground_truth",
+    "ground_truth_source": "is_corrupted",
+    "confusion_matrix": [
+      [
+        91,
+        16
+      ],
+      [
+        0,
+        124
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "clean",
+      "hallucination"
+    ],
+    "model_label": "Qwen3-32B QLoRA (Shared GT Synth trained, verdict-only)",
+    "eval_loss": 2.3599024211168875
+  },
+  {
+    "dataset": "Shared GT Lit Test",
+    "n_total": 380,
+    "n_valid": 380,
+    "n_scored": 380,
+    "skip_rate": 0.0,
+    "accuracy": 0.8737,
+    "f1_macro": 0.7176,
+    "auc": 0.8181,
+    "eval_mode": "ground_truth",
+    "f1_metric": "binary_f1_ground_truth",
+    "ground_truth_source": "classification",
+    "confusion_matrix": [
+      [
+        271,
+        24
+      ],
+      [
+        24,
+        61
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "clean",
+      "hallucination"
+    ],
+    "model_label": "Qwen3-32B QLoRA (Shared GT Synth trained, verdict-only)"
+  },
+  {
+    "dataset": "Shared GT Synth Test",
+    "n_total": 231,
+    "n_valid": 0,
+    "n_scored": 231,
+    "skip_rate": 1.0,
+    "accuracy": 0.5368,
+    "f1_macro": 0.6986,
+    "auc": 0.5,
+    "eval_mode": "ground_truth",
+    "f1_metric": "binary_f1_ground_truth",
+    "ground_truth_source": "is_corrupted",
+    "confusion_matrix": [
+      [
+        0,
+        107
+      ],
+      [
+        0,
+        124
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "clean",
+      "hallucination"
+    ],
+    "model_label": "Mistral-7B base (zero-shot)",
+    "eval_loss": 2.5420345702456975
+  },
+  {
+    "dataset": "Shared GT Lit Test",
+    "n_total": 380,
+    "n_valid": 0,
+    "n_scored": 380,
+    "skip_rate": 1.0,
+    "accuracy": 0.2237,
+    "f1_macro": 0.3656,
+    "auc": 0.5,
+    "eval_mode": "ground_truth",
+    "f1_metric": "binary_f1_ground_truth",
+    "ground_truth_source": "classification",
+    "confusion_matrix": [
+      [
+        0,
+        295
+      ],
+      [
+        0,
+        85
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "clean",
+      "hallucination"
+    ],
+    "model_label": "Mistral-7B base (zero-shot)"
+  }
+]

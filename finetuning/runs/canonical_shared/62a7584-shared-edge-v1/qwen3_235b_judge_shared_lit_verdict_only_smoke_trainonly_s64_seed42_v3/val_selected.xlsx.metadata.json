@@ -1,0 +1,171 @@
+{
+  "classification_counts": {
+    "FP": 4,
+    "TN": 56,
+    "TP": 4
+  },
+  "domain_counts": {
+    "depressive": 7,
+    "emergency_department": 57
+  },
+  "file_name": "val_selected.xlsx",
+  "file_sha256": "31c09905e361ffffa54270b88fdfbb730a470e357108db1c277e88e144a331cc",
+  "judge_verdict_counts": {
+    "CORRECT": 53,
+    "INCORRECT": 2,
+    "PARTIALLY_CORRECT": 9
+  },
+  "row_count": 64,
+  "selection": {
+    "requested_max_examples": 64,
+    "seed": 42,
+    "selected_row_count": 64,
+    "selected_row_numbers": [
+      0,
+      5,
+      9,
+      15,
+      22,
+      25,
+      30,
+      31,
+      33,
+      39,
+      42,
+      45,
+      46,
+      55,
+      56,
+      57,
+      73,
+      76,
+      78,
+      84,
+      90,
+      101,
+      104,
+      108,
+      110,
+      116,
+      118,
+      126,
+      141,
+      148,
+      157,
+      168,
+      173,
+      194,
+      208,
+      227,
+      232,
+      234,
+      238,
+      242,
+      244,
+      246,
+      250,
+      258,
+      261,
+      262,
+      265,
+      266,
+      280,
+      285,
+      292,
+      307,
+      311,
+      312,
+      318,
+      321,
+      325,
+      342,
+      358,
+      363,
+      367,
+      368,
+      374,
+      376
+    ],
+    "selection_index_sha256": "9ab7e062968a5551908348ba3ffb5d2fd479fd99eb58ec7d34faf7b65d816cdf",
+    "selection_strategy": "random",
+    "source_row_count": 380,
+    "split_name": "val",
+    "stratify_cols_requested": [],
+    "stratify_cols_used": []
+  },
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 39,
+      "emergency_department": 326,
+      "social_norms": 15
+    },
+    "file_name": "shared_val_lit.xlsx",
+    "file_sha256": "252dc234dc59a0c67c05fa238ff4816d45fb29461d9458be5e4957ec27620cbd",
+    "input_paths": [
+      "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+    ],
+    "judge_verdict_counts": {
+      "CORRECT": 312,
+      "INCORRECT": 24,
+      "PARTIALLY_CORRECT": 44
+    },
+    "objective_mode": "verdict_only",
+    "partition_edge_count": 129,
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "prompt_variant_counts": {
+      "mechanistic": 380
+    },
+    "prompt_variant_filter": "mechanistic",
+    "row_count": 380,
+    "seed": 42,
+    "shared_edge_count": 1287,
+    "source_dataset_metadata": [
+      {
+        "domain_counts": {
+          "depressive": 630,
+          "emergency_department": 3568,
+          "social_norms": 330
+        },
+        "file_name": "judge_eval_gtlit.xlsx",
+        "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+        "judge_verdict_counts": {
+          "CORRECT": 3407,
+          "INCORRECT": 439,
+          "PARTIALLY_CORRECT": 682
+        },
+        "objective_mode": "verdict_only",
+        "prompt_spec": {
+          "completion_template": "VERDICT: {verdict}",
+          "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+          "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+        },
+        "prompt_variant_counts": {
+          "mechanistic": 4528
+        },
+        "row_count": 4528,
+        "seed": 42,
+        "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+        "split_name": "gt_lit_eval",
+        "stratify_cols": [
+          "domain"
+        ],
+        "unique_edge_count": 1510
+      }
+    ],
+    "source_name": "gt_lit",
+    "split_name": "shared_val_lit",
+    "stratify_cols": [
+      "domain",
+      "judge_verdict_synth",
+      "judge_verdict_lit"
+    ],
+    "unique_edge_count": 129
+  },
+  "source_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_lit.xlsx",
+  "source_path_sha256": "252dc234dc59a0c67c05fa238ff4816d45fb29461d9458be5e4957ec27620cbd",
+  "split_name": "val"
+}

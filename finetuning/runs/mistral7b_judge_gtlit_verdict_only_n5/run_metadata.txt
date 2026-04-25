@@ -1,0 +1,38 @@
+git_sha=6b79776a
+config=base_model: mistralai/Mistral-7B-Instruct-v0.2
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx
+output_dir: /home/nnijholt/cld-hallucination-detection/finetuning/runs/mistral7b_judge_gtlit_verdict_only_n5
+dataset_label: GT Lit
+objective_mode: verdict_only
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 1
+epochs: 1
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+max_examples: 5
+save_strategy: 'no'
+save_total_limit: 2
+load_best_model_at_end: false
+metric_for_best_model: eval_loss
+wandb_project: null
+wandb_run_name: null
+wandb_group: gt_lit_verdict_only
+report_to: none
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+inference_backend: transformers
+logging_steps: 10
+
+objective_mode=verdict_only
+train_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx
+val_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx
+train_file_sha256=dc66e77eb5a360bb37a18155929280e07a242e843f3d2bf683607c4069e07bb2
+val_file_sha256=d9e6f1851fbfcf669b767c0cdf832d2341c35a0ca475b9bbb073f383244fadd3

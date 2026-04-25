@@ -1,0 +1,38 @@
+git_sha=88cdc35d
+config=base_model: Qwen/Qwen3-32B
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx
+output_dir: /scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_32b_judge_shared_lit_reason_verdict
+dataset_label: Shared GT Lit
+objective_mode: reason_verdict
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+max_examples: null
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+wandb_project: null
+wandb_run_name: null
+wandb_group: gt_lit_reason_verdict
+report_to: none
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+inference_backend: transformers
+logging_steps: 10
+
+objective_mode=reason_verdict
+train_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx
+val_file=/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx
+train_file_sha256=0ac6d5fd7eab3ec474eeb9b176fd4ae8d33e4098fd0898294e100439a4942773
+val_file_sha256=2eff26936d36e39fd69801b8cfeb56d3faa4004e95de25ed7debac050a13e2d0

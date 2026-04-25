@@ -1,0 +1,160 @@
+{
+  "completion_example": "VERDICT: CORRECT",
+  "config": {
+    "base_model": "mistralai/Mistral-7B-Instruct-v0.2",
+    "batch_size": 1,
+    "dataset_label": "GT Lit",
+    "epochs": 3,
+    "grad_accum": 32,
+    "inference_backend": "transformers",
+    "load_best_model_at_end": true,
+    "logging_steps": 10,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "lora_rank": 32,
+    "lr": 0.0002,
+    "max_examples": null,
+    "max_length": 2048,
+    "metric_for_best_model": "eval_loss",
+    "mlflow_experiment_name": "cld-judge-finetuning",
+    "mlflow_registry_name": "cld_judge",
+    "mlflow_tracking_uri": "mlruns",
+    "objective_mode": "verdict_only",
+    "output_dir": "/home/nnijholt/cld-hallucination-detection/finetuning/runs/canonical/00d8626-fulltrain-balanceeval-v5/mistral7b_judge_gtlit_verdict_only",
+    "report_to": "none",
+    "save_strategy": "epoch",
+    "save_total_limit": 2,
+    "seed": 42,
+    "smoke_test": false,
+    "train_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx",
+    "val_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx",
+    "wandb_group": "gt_lit_verdict_only",
+    "wandb_project": null,
+    "wandb_run_name": null,
+    "warmup_ratio": 0.05
+  },
+  "dataset_label": "GT Lit",
+  "git_sha": "00d86265",
+  "objective_mode": "verdict_only",
+  "prompt_example": "<s>[INST] You are a causal diagram expert evaluating the quality of a causal explanation.\n\nSOURCE: Acute care demand leading to an ED visit\nTARGET: Capacity\nRELATIONSHIP: NEGATIVE\nEXPLANATION: Acute care demand leading to an ED visit causes Capacity to change in an inverse relationship. As more patients require acute care and present to the ED, the available capacity (beds, staff, resources) decreases because capacity is consumed by demand. Conversely, if acute care demand leading to ED visits falls, more capacity becomes available. This is a direct, negative causal relationship.\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only. [/INST]",
+  "train_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx",
+    "sha256": "1b635dcc14b8340312c02c0ea5cc662c09d1d93ebaec10b765d522f482fce16f",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 504,
+        "emergency_department": 2855,
+        "social_norms": 264
+      },
+      "file_name": "judge_train_gtlit.xlsx",
+      "file_sha256": "1b635dcc14b8340312c02c0ea5cc662c09d1d93ebaec10b765d522f482fce16f",
+      "judge_verdict_counts": {
+        "CORRECT": 2745,
+        "INCORRECT": 334,
+        "PARTIALLY_CORRECT": 544
+      },
+      "row_count": 3623,
+      "seed": 42,
+      "source_dataset_metadata": {
+        "domain_counts": {
+          "depressive": 630,
+          "emergency_department": 3568,
+          "social_norms": 330
+        },
+        "file_name": "judge_eval_gtlit.xlsx",
+        "file_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+        "judge_verdict_counts": {
+          "CORRECT": 3407,
+          "INCORRECT": 439,
+          "PARTIALLY_CORRECT": 682
+        },
+        "objective_mode": "verdict_only",
+        "prompt_spec": {
+          "completion_template": "VERDICT: {verdict}",
+          "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+          "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+        },
+        "prompt_variant_counts": {
+          "mechanistic": 4528
+        },
+        "row_count": 4528,
+        "seed": 42,
+        "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+        "split_name": "gt_lit_eval",
+        "stratify_cols": [
+          "domain"
+        ],
+        "unique_edge_count": 1510
+      },
+      "source_path": "finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/judge_eval_gtlit.xlsx",
+      "source_path_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+      "split_name": "gt_lit_train",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 1208
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_train_gtlit.xlsx.metadata.json"
+  },
+  "train_examples": 3623,
+  "val_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx",
+    "sha256": "c4fb118b711157a8c4297253670c2c2530577f4a7c4736e7bf952456ed9aaa08",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 63,
+        "emergency_department": 356,
+        "social_norms": 33
+      },
+      "file_name": "judge_val_gtlit.xlsx",
+      "file_sha256": "c4fb118b711157a8c4297253670c2c2530577f4a7c4736e7bf952456ed9aaa08",
+      "judge_verdict_counts": {
+        "CORRECT": 328,
+        "INCORRECT": 57,
+        "PARTIALLY_CORRECT": 67
+      },
+      "row_count": 452,
+      "seed": 42,
+      "source_dataset_metadata": {
+        "domain_counts": {
+          "depressive": 630,
+          "emergency_department": 3568,
+          "social_norms": 330
+        },
+        "file_name": "judge_eval_gtlit.xlsx",
+        "file_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+        "judge_verdict_counts": {
+          "CORRECT": 3407,
+          "INCORRECT": 439,
+          "PARTIALLY_CORRECT": 682
+        },
+        "objective_mode": "verdict_only",
+        "prompt_spec": {
+          "completion_template": "VERDICT: {verdict}",
+          "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+          "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+        },
+        "prompt_variant_counts": {
+          "mechanistic": 4528
+        },
+        "row_count": 4528,
+        "seed": 42,
+        "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+        "split_name": "gt_lit_eval",
+        "stratify_cols": [
+          "domain"
+        ],
+        "unique_edge_count": 1510
+      },
+      "source_path": "finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/judge_eval_gtlit.xlsx",
+      "source_path_sha256": "84fe02c66fa2de8251b139022b8df904b4e4dd6b8c309677f092f93f081bf48f",
+      "split_name": "gt_lit_val",
+      "stratify_cols": [
+        "domain"
+      ],
+      "unique_edge_count": 151
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical/00d8626-fulltrain-balanceeval-v5/verdict_only/gt_lit_trainval/judge_val_gtlit.xlsx.metadata.json"
+  },
+  "val_examples": 452
+}

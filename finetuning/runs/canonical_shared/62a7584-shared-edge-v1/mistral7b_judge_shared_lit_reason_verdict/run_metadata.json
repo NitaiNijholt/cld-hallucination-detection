@@ -1,0 +1,196 @@
+{
+  "completion_example": "REASON: The explanation provides a plausible causal mechanism, describing how health literacy enables individuals to understand health information, manage chronic conditions, and engage in preventive behaviors, which plausibly reduces frailty (Plausibility). It clearly supports the direction Health literacy \u2192 Frailty, with the cause preceding the effect and no suggestion of reverse causation (Temporality). The explanation implies a substantial influence by stating that higher health literacy \"directly reduces frailty\" and that lower health literacy \"increases the risk\" (Strength). The reasoning is internally consistent, non-circular, and the claims about mechanism and causal direction are coherent with each other (Coherence).\nVERDICT: CORRECT",
+  "config": {
+    "base_model": "mistralai/Mistral-7B-Instruct-v0.2",
+    "batch_size": 1,
+    "dataset_label": "Shared GT Lit",
+    "epochs": 3,
+    "grad_accum": 32,
+    "inference_backend": "transformers",
+    "load_best_model_at_end": true,
+    "logging_steps": 10,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "lora_rank": 32,
+    "lr": 0.0002,
+    "max_examples": null,
+    "max_length": 2048,
+    "metric_for_best_model": "eval_loss",
+    "mlflow_experiment_name": "cld-judge-finetuning",
+    "mlflow_registry_name": "cld_judge",
+    "mlflow_tracking_uri": "mlruns",
+    "objective_mode": "reason_verdict",
+    "output_dir": "/scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/mistral7b_judge_shared_lit_reason_verdict",
+    "report_to": "none",
+    "save_strategy": "epoch",
+    "save_total_limit": 2,
+    "seed": 42,
+    "smoke_test": false,
+    "train_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx",
+    "val_file": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx",
+    "wandb_group": "gt_lit_reason_verdict",
+    "wandb_project": null,
+    "wandb_run_name": null,
+    "warmup_ratio": 0.05
+  },
+  "dataset_label": "Shared GT Lit",
+  "git_sha": "2845bd64",
+  "objective_mode": "reason_verdict",
+  "prompt_example": "<s>[INST] You are a causal diagram expert evaluating the quality of a causal explanation.\n\nSOURCE: Health literacy\nTARGET: Frailty\nRELATIONSHIP: NEGATIVE\nEXPLANATION: Health literacy causes frailty to change in an inverse causal relationship. Higher health literacy enables individuals to better understand health information, manage chronic conditions, and engage in preventive behaviors, which directly reduces frailty. Conversely, lower health literacy impairs self-management and increases the risk of frailty.\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT. [/INST]",
+  "train_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx",
+    "sha256": "0ac6d5fd7eab3ec474eeb9b176fd4ae8d33e4098fd0898294e100439a4942773",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 333,
+        "emergency_department": 2619,
+        "social_norms": 117
+      },
+      "file_name": "shared_train_lit.xlsx",
+      "file_sha256": "0ac6d5fd7eab3ec474eeb9b176fd4ae8d33e4098fd0898294e100439a4942773",
+      "input_paths": [
+        "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+      ],
+      "judge_verdict_counts": {
+        "CORRECT": 2481,
+        "INCORRECT": 219,
+        "PARTIALLY_CORRECT": 369
+      },
+      "objective_mode": "reason_verdict",
+      "partition_edge_count": 1029,
+      "prompt_spec": {
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 3069
+      },
+      "prompt_variant_filter": "mechanistic",
+      "row_count": 3069,
+      "seed": 42,
+      "shared_edge_count": 1287,
+      "source_dataset_metadata": [
+        {
+          "domain_counts": {
+            "depressive": 630,
+            "emergency_department": 3568,
+            "social_norms": 330
+          },
+          "file_name": "judge_eval_gtlit.xlsx",
+          "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+          "judge_verdict_counts": {
+            "CORRECT": 3407,
+            "INCORRECT": 439,
+            "PARTIALLY_CORRECT": 682
+          },
+          "objective_mode": "reason_verdict",
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 4528
+          },
+          "row_count": 4528,
+          "seed": 42,
+          "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+          "split_name": "gt_lit_eval",
+          "stratify_cols": [
+            "domain"
+          ],
+          "unique_edge_count": 1510
+        }
+      ],
+      "source_name": "gt_lit",
+      "split_name": "shared_train_lit",
+      "stratify_cols": [
+        "domain",
+        "judge_verdict_synth",
+        "judge_verdict_lit"
+      ],
+      "unique_edge_count": 1029
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_train_lit.xlsx.metadata.json"
+  },
+  "train_examples": 3069,
+  "val_dataset": {
+    "path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx",
+    "sha256": "2eff26936d36e39fd69801b8cfeb56d3faa4004e95de25ed7debac050a13e2d0",
+    "sidecar": {
+      "domain_counts": {
+        "depressive": 39,
+        "emergency_department": 331,
+        "social_norms": 15
+      },
+      "file_name": "shared_val_lit.xlsx",
+      "file_sha256": "2eff26936d36e39fd69801b8cfeb56d3faa4004e95de25ed7debac050a13e2d0",
+      "input_paths": [
+        "finetuning/data/canonical/62a7584-shared-edge-v1/reason_verdict/judge_eval_gtlit.xlsx"
+      ],
+      "judge_verdict_counts": {
+        "CORRECT": 312,
+        "INCORRECT": 29,
+        "PARTIALLY_CORRECT": 44
+      },
+      "objective_mode": "reason_verdict",
+      "partition_edge_count": 129,
+      "prompt_spec": {
+        "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+        "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+        "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+      },
+      "prompt_variant_counts": {
+        "mechanistic": 385
+      },
+      "prompt_variant_filter": "mechanistic",
+      "row_count": 385,
+      "seed": 42,
+      "shared_edge_count": 1287,
+      "source_dataset_metadata": [
+        {
+          "domain_counts": {
+            "depressive": 630,
+            "emergency_department": 3568,
+            "social_norms": 330
+          },
+          "file_name": "judge_eval_gtlit.xlsx",
+          "file_sha256": "93228320de6f807adc7bfbe2eb02e5d4b04f2955dfa963e1b184e9b68ee92e7a",
+          "judge_verdict_counts": {
+            "CORRECT": 3407,
+            "INCORRECT": 439,
+            "PARTIALLY_CORRECT": 682
+          },
+          "objective_mode": "reason_verdict",
+          "prompt_spec": {
+            "completion_template": "REASON: {reason}\nVERDICT: {verdict}",
+            "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+            "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with REASON then VERDICT."
+          },
+          "prompt_variant_counts": {
+            "mechanistic": 4528
+          },
+          "row_count": 4528,
+          "seed": 42,
+          "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+          "split_name": "gt_lit_eval",
+          "stratify_cols": [
+            "domain"
+          ],
+          "unique_edge_count": 1510
+        }
+      ],
+      "source_name": "gt_lit",
+      "split_name": "shared_val_lit",
+      "stratify_cols": [
+        "domain",
+        "judge_verdict_synth",
+        "judge_verdict_lit"
+      ],
+      "unique_edge_count": 129
+    },
+    "sidecar_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/reason_verdict/shared_val_lit.xlsx.metadata.json"
+  },
+  "val_examples": 385
+}

@@ -1,0 +1,180 @@
+{
+  "classification_counts": {
+    "FN": 2,
+    "FP": 6,
+    "TN": 54,
+    "TP": 2
+  },
+  "domain_counts": {
+    "depressive": 7,
+    "emergency_department": 55,
+    "social_norms": 2
+  },
+  "file_name": "train_selected.xlsx",
+  "file_sha256": "3d3e5ae58e7f45b9c10b6073bbb98eb2cea6d3ccdfc2067b7ac28b9f9f75721a",
+  "judge_verdict_counts": {
+    "CORRECT": 50,
+    "INCORRECT": 5,
+    "PARTIALLY_CORRECT": 9
+  },
+  "row_count": 64,
+  "selection": {
+    "requested_max_examples": 64,
+    "seed": 42,
+    "selected_row_count": 64,
+    "selected_row_numbers": [
+      34,
+      59,
+      180,
+      386,
+      423,
+      460,
+      556,
+      658,
+      659,
+      661,
+      769,
+      796,
+      871,
+      882,
+      947,
+      975,
+      1037,
+      1052,
+      1099,
+      1109,
+      1133,
+      1152,
+      1153,
+      1190,
+      1227,
+      1236,
+      1266,
+      1271,
+      1370,
+      1390,
+      1398,
+      1426,
+      1469,
+      1477,
+      1517,
+      1542,
+      1605,
+      1665,
+      1733,
+      1779,
+      1829,
+      1843,
+      1932,
+      1936,
+      1943,
+      1947,
+      2079,
+      2143,
+      2179,
+      2205,
+      2323,
+      2340,
+      2356,
+      2427,
+      2557,
+      2625,
+      2654,
+      2687,
+      2693,
+      2723,
+      2736,
+      2831,
+      2935,
+      3007
+    ],
+    "selection_index_sha256": "80b5ce9ee9fc381f0ee197d925979dc7b3031c5bbb1a32ae69d6bfef9d755564",
+    "selection_strategy": "random_stratified",
+    "source_row_count": 3009,
+    "split_name": "train",
+    "stratify_cols_requested": [
+      "domain",
+      "classification",
+      "judge_verdict"
+    ],
+    "stratify_cols_used": [
+      "domain",
+      "classification"
+    ]
+  },
+  "source_dataset_metadata": {
+    "domain_counts": {
+      "depressive": 331,
+      "emergency_department": 2561,
+      "social_norms": 117
+    },
+    "file_name": "shared_train_lit.xlsx",
+    "file_sha256": "76dc68951e5db1033bae7fc8a83b8b6adff642a6efeaec4bcf38a6a98d2197c1",
+    "input_paths": [
+      "finetuning/data/canonical/62a7584-shared-edge-v1/verdict_only/judge_eval_gtlit.xlsx"
+    ],
+    "judge_verdict_counts": {
+      "CORRECT": 2481,
+      "INCORRECT": 160,
+      "PARTIALLY_CORRECT": 368
+    },
+    "objective_mode": "verdict_only",
+    "partition_edge_count": 1029,
+    "prompt_spec": {
+      "completion_template": "VERDICT: {verdict}",
+      "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+      "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+    },
+    "prompt_variant_counts": {
+      "mechanistic": 3009
+    },
+    "prompt_variant_filter": "mechanistic",
+    "row_count": 3009,
+    "seed": 42,
+    "shared_edge_count": 1287,
+    "source_dataset_metadata": [
+      {
+        "domain_counts": {
+          "depressive": 630,
+          "emergency_department": 3568,
+          "social_norms": 330
+        },
+        "file_name": "judge_eval_gtlit.xlsx",
+        "file_sha256": "1e77d9297f7942ddc93b4f9312f8c7953e416f9f8bb1800fecfc36f76c7fc951",
+        "judge_verdict_counts": {
+          "CORRECT": 3407,
+          "INCORRECT": 439,
+          "PARTIALLY_CORRECT": 682
+        },
+        "objective_mode": "verdict_only",
+        "prompt_spec": {
+          "completion_template": "VERDICT: {verdict}",
+          "system_prompt": "You are a causal diagram expert evaluating the quality of a causal explanation.",
+          "user_template": "SOURCE: {source}\nTARGET: {target}\nRELATIONSHIP: {relationship}\nEXPLANATION: {motivation}\n\nAssess whether the causal reasoning is logically sound based on:\n- Plausibility: is there a clear causal mechanism?\n- Temporality: does the cause precede the effect?\n- Strength: is the relationship substantial?\n- Coherence: is the reasoning internally consistent?\n\nRespond with VERDICT only."
+        },
+        "prompt_variant_counts": {
+          "mechanistic": 4528
+        },
+        "row_count": 4528,
+        "seed": 42,
+        "source_description": "/home/nnijholt/cld-hallucination-detection/final_runs/RQ1a_gt_lit_correctness/**/*.xlsx",
+        "split_name": "gt_lit_eval",
+        "stratify_cols": [
+          "domain"
+        ],
+        "unique_edge_count": 1510
+      }
+    ],
+    "source_name": "gt_lit",
+    "split_name": "shared_train_lit",
+    "stratify_cols": [
+      "domain",
+      "judge_verdict_synth",
+      "judge_verdict_lit"
+    ],
+    "unique_edge_count": 1029
+  },
+  "source_path": "/home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_lit.xlsx",
+  "source_path_sha256": "76dc68951e5db1033bae7fc8a83b8b6adff642a6efeaec4bcf38a6a98d2197c1",
+  "split_name": "train"
+}

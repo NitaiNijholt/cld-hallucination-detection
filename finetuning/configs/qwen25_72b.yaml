@@ -1,0 +1,10 @@
+# Qwen2.5-72B-Instruct — strongest clean ~70B open-weight candidate
+# Chosen because the overall open-source top 10 is dominated by much larger MoE models,
+# while HF's Open LLM leaderboard still tags Qwen2.5-72B as the best pretrained ~70B model.
+# Usage: python -m finetuning.src.training.train_judge --config-name qwen25_72b
+
+defaults:
+  - default
+
+base_model: Qwen/Qwen2.5-72B-Instruct
+output_dir: finetuning/runs/qwen25_72b_judge

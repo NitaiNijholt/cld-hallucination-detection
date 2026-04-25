@@ -1,0 +1,112 @@
+[
+  {
+    "dataset": "Shared GT Synth Test",
+    "n_total": 379,
+    "n_valid": 379,
+    "skip_rate": 0.0,
+    "accuracy": 0.8707,
+    "f1_macro": 0.7994,
+    "auc": 0.7338,
+    "confusion_matrix": [
+      [
+        209,
+        8,
+        0
+      ],
+      [
+        13,
+        97,
+        1
+      ],
+      [
+        12,
+        15,
+        24
+      ]
+    ],
+    "model_label": "Mistral-7B QLoRA (Shared GT Synth trained, reason+verdict)",
+    "eval_loss": 0.4337772140462071
+  },
+  {
+    "dataset": "Shared GT Lit Test",
+    "n_total": 386,
+    "n_valid": 386,
+    "skip_rate": 0.0,
+    "accuracy": 0.8549,
+    "f1_macro": 0.8231,
+    "auc": 0.9091,
+    "confusion_matrix": [
+      [
+        260,
+        32,
+        0
+      ],
+      [
+        20,
+        52,
+        0
+      ],
+      [
+        4,
+        0,
+        18
+      ]
+    ],
+    "model_label": "Mistral-7B QLoRA (Shared GT Synth trained, reason+verdict)"
+  },
+  {
+    "dataset": "Shared GT Synth Test",
+    "n_total": 379,
+    "n_valid": 0,
+    "skip_rate": 1.0,
+    "accuracy": 0.1346,
+    "f1_macro": 0.0791,
+    "auc": 0.5,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        217
+      ],
+      [
+        0,
+        0,
+        111
+      ],
+      [
+        0,
+        0,
+        51
+      ]
+    ],
+    "model_label": "Mistral-7B base (zero-shot)",
+    "eval_loss": 2.5705349773215853
+  },
+  {
+    "dataset": "Shared GT Lit Test",
+    "n_total": 386,
+    "n_valid": 0,
+    "skip_rate": 1.0,
+    "accuracy": 0.057,
+    "f1_macro": 0.0359,
+    "auc": 0.5,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        292
+      ],
+      [
+        0,
+        0,
+        72
+      ],
+      [
+        0,
+        0,
+        22
+      ]
+    ],
+    "model_label": "Mistral-7B base (zero-shot)"
+  }
+]

@@ -1,0 +1,145 @@
+2026-03-21 02:54:14 [INFO] Config: base_model: Qwen/Qwen3-235B-A22B
+train_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_train_lit.xlsx
+val_file: /home/nnijholt/cld-hallucination-detection/finetuning/data/canonical_shared/62a7584-shared-edge-v1/verdict_only/shared_val_lit.xlsx
+output_dir: /scratch-shared/nnijholt/cld-hallucination-detection/runs/canonical_shared/62a7584-shared-edge-v1/qwen3_235b_judge_shared_lit_verdict_only
+dataset_label: Shared GT Lit
+objective_mode: verdict_only
+max_length: 2048
+lora_rank: 32
+lora_alpha: 64
+lora_dropout: 0.05
+batch_size: 1
+grad_accum: 32
+epochs: 3
+lr: 0.0002
+warmup_ratio: 0.05
+seed: 42
+smoke_test: false
+max_examples: null
+save_strategy: epoch
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+wandb_project: null
+wandb_run_name: null
+wandb_group: gt_lit_verdict_only
+report_to: none
+mlflow_tracking_uri: mlruns
+mlflow_experiment_name: cld-judge-finetuning
+mlflow_registry_name: cld_judge
+inference_backend: transformers
+logging_steps: 10
+
+2026-03-21 02:54:14 [INFO] Git SHA: 88cdc35d
+2026-03-21 02:54:14 [INFO] Device: cuda
+2026-03-21 02:54:14 [INFO] GPU: NVIDIA H100 (100.0 GB)
+2026-03-21 02:54:14 [INFO] Loading data…
+2026-03-21 02:54:15 [INFO] train=3,009 val=380
+2026-03-21 02:54:15 [INFO] loading file vocab.json from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/vocab.json
+2026-03-21 02:54:15 [INFO] loading file merges.txt from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/merges.txt
+2026-03-21 02:54:15 [INFO] loading file tokenizer.json from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/tokenizer.json
+2026-03-21 02:54:15 [INFO] loading file added_tokens.json from cache at None
+2026-03-21 02:54:15 [INFO] loading file special_tokens_map.json from cache at None
+2026-03-21 02:54:15 [INFO] loading file tokenizer_config.json from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/tokenizer_config.json
+2026-03-21 02:54:15 [INFO] loading file chat_template.jinja from cache at None
+2026-03-21 02:54:15 [INFO] Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2026-03-21 02:54:19 [INFO] Loading Qwen/Qwen3-235B-A22B (4-bit QLoRA)…
+2026-03-21 02:54:19 [INFO] Multi-GPU mode: 4 GPU(s) detected
+2026-03-21 02:54:19 [INFO]   GPU 0: NVIDIA H100 (100.0 GB)
+2026-03-21 02:54:19 [INFO]   GPU 1: NVIDIA H100 (100.0 GB)
+2026-03-21 02:54:19 [INFO]   GPU 2: NVIDIA H100 (100.0 GB)
+2026-03-21 02:54:19 [INFO]   GPU 3: NVIDIA H100 (100.0 GB)
+2026-03-21 02:54:19 [INFO] loading configuration file config.json from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/config.json
+2026-03-21 02:54:19 [INFO] Model config Qwen3MoeConfig {
+  "architectures": [
+    "Qwen3MoeForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "decoder_sparse_step": 1,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 12288,
+  "max_position_embeddings": 40960,
+  "max_window_layers": 94,
+  "mlp_only_layers": [],
+  "model_type": "qwen3_moe",
+  "moe_intermediate_size": 1536,
+  "norm_topk_prob": true,
+  "num_attention_heads": 64,
+  "num_experts": 128,
+  "num_experts_per_tok": 8,
+  "num_hidden_layers": 94,
+  "num_key_value_heads": 4,
+  "output_router_logits": false,
+  "rms_norm_eps": 1e-06,
+  "rope_scaling": null,
+  "rope_theta": 1000000.0,
+  "router_aux_loss_coef": 0.001,
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "transformers_version": "4.57.6",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+2026-03-21 02:54:21 [INFO] Overriding dtype=None with `dtype=torch.float16` due to requirements of `bitsandbytes` to enable model loading in 8-bit or 4-bit. Pass your own dtype to specify the dtype of the remaining non-linear layers or pass dtype=torch.float16 to remove this warning.
+2026-03-21 02:54:21 [INFO] loading weights file model.safetensors from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/model.safetensors.index.json
+2026-03-21 02:54:21 [INFO] Instantiating Qwen3MoeForCausalLM model under default dtype torch.float16.
+2026-03-21 02:54:21 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645
+}
+
+2026-03-21 02:54:39 [INFO] target_dtype {target_dtype} is replaced by `CustomDtype.INT4` for 4-bit BnB quantization
+2026-03-21 03:29:47 [INFO] loading configuration file generation_config.json from cache at /scratch-shared/nnijholt/cld-hallucination-detection/hf_cache/hub/models--Qwen--Qwen3-235B-A22B/snapshots/8efa61729e24bd65b1d152b5ab5409052aa80e65/generation_config.json
+2026-03-21 03:29:47 [INFO] Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "temperature": 0.6,
+  "top_k": 20,
+  "top_p": 0.95
+}
+
+2026-03-21 03:29:47 [INFO] Could not locate the custom_generate/generate.py inside Qwen/Qwen3-235B-A22B.
+trainable params: 6,607,011,840 || all params: 241,700,646,400 || trainable%: 2.7336
+2026-03-21 03:32:10 [INFO] PyTorch: setting up devices
+2026-03-21 03:32:10 [INFO] You have loaded a model on multiple GPUs. `is_model_parallel` attribute will be force-set to `True` to avoid any unexpected behavior such as device placement mismatching.
+2026-03-21 03:32:10 [INFO] You have loaded a model on multiple GPUs. `is_model_parallel` attribute will be force-set to `True` to avoid any unexpected behavior such as device placement mismatching.
+2026-03-21 03:32:12 [INFO] Using auto half precision backend
+2026-03-21 03:32:12 [INFO] Using auto half precision backend
+2026-03-21 03:32:12 [INFO] Training… (step logs every 10 steps)
+2026-03-21 03:32:12 [WARNING] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+2026-03-21 03:32:12 [WARNING] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+2026-03-21 03:33:47 [INFO] ***** Running training *****
+2026-03-21 03:33:47 [INFO] ***** Running training *****
+2026-03-21 03:33:47 [INFO]   Num examples = 3,009
+2026-03-21 03:33:47 [INFO]   Num examples = 3,009
+2026-03-21 03:33:47 [INFO]   Num Epochs = 3
+2026-03-21 03:33:47 [INFO]   Num Epochs = 3
+2026-03-21 03:33:47 [INFO]   Instantaneous batch size per device = 1
+2026-03-21 03:33:47 [INFO]   Instantaneous batch size per device = 1
+2026-03-21 03:33:47 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-21 03:33:47 [INFO]   Total train batch size (w. parallel, distributed & accumulation) = 32
+2026-03-21 03:33:47 [INFO]   Gradient Accumulation steps = 32
+2026-03-21 03:33:47 [INFO]   Gradient Accumulation steps = 32
+2026-03-21 03:33:47 [INFO]   Total optimization steps = 285
+2026-03-21 03:33:47 [INFO]   Total optimization steps = 285
+2026-03-21 03:33:48 [INFO]   Number of trainable parameters = 6,607,011,840
+2026-03-21 03:33:48 [INFO]   Number of trainable parameters = 6,607,011,840
+2026-03-21 03:33:49 [INFO] Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+  step 10  loss=0.5649  epoch=0.11
+{'loss': 0.5649, 'grad_norm': 0.33020684123039246, 'learning_rate': 0.00012, 'epoch': 0.11}
+  step 20  loss=0.0229  epoch=0.21
+{'loss': 0.0229, 'grad_norm': 0.1864372044801712, 'learning_rate': 0.00019703703703703704, 'epoch': 0.21}
